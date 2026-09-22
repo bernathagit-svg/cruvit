@@ -2917,6 +2917,51 @@ window.addEventListener('message', function(ev) {
       });
     });
   }
+  if (d.type === 'cruvit:garden-design-qa-auto-blend-set') {
+    const layer = plantLayers && plantLayers[0];
+    const api = gdAutoBlendApi();
+    if (!GD_QA_PREVIEW_QUERY || !layer || !api) {
+      gdPostToHost({
+        type:'cruvit:garden-design-qa-auto-blend-result',
+        requestId:d.requestId||null,
+        ok:false,
+        enabled:false,
+        code:'QA_AUTO_BLEND_UNAVAILABLE'
+      });
+    } else if (d.enabled === false) {
+      if (typeof api.disableAutoBlend === 'function') api.disableAutoBlend(layer);
+      renderPlantLayers();
+      gdPostToHost({
+        type:'cruvit:garden-design-qa-auto-blend-result',
+        requestId:d.requestId||null,
+        ok:true,
+        enabled:false,
+        code:'QA_AUTO_BLEND_RAW'
+      });
+    } else {
+      gdRecalculateAutoBlendLayer(layer, { silent:true }).then(function(result) {
+        renderPlantLayers();
+        const state = gdAutoBlendState(layer);
+        gdPostToHost({
+          type:'cruvit:garden-design-qa-auto-blend-result',
+          requestId:d.requestId||null,
+          ok:result && result.ok === true,
+          enabled:state.enabled === true,
+          code:result && result.ok ? 'QA_AUTO_BLEND_APPLIED' : (result && result.code) || 'QA_AUTO_BLEND_FAILED',
+          blend:state
+        });
+      }).catch(function(err) {
+        gdPostToHost({
+          type:'cruvit:garden-design-qa-auto-blend-result',
+          requestId:d.requestId||null,
+          ok:false,
+          enabled:false,
+          code:'QA_AUTO_BLEND_EXCEPTION',
+          error:String(err && err.message || err)
+        });
+      });
+    }
+  }
   if (d.type === 'cruvit:garden-design-owned-plants') {
     if (!gdOwnedGardenContext) gdOwnedGardenContext = {};
     gdOwnedGardenContext.ownedPlants = d.ownedPlants || [];
@@ -3826,9 +3871,21 @@ function updateLayerToolbar() {
       : 'Match local garden tone, sharpness and ground contact without changing the plant asset';
   }
   if (blendStatus) {
-    blendStatus.textContent = blend.enabled
-      ? (blend.source === 'local-scene-sample' ? 'Scene matched' : 'Blend active')
-      : '';
+    if (!blend.enabled) {
+      blendStatus.textContent = '';
+    } else {
+      const a = blend.adaptation || {};
+      const sh = blend.shadow || {};
+      const fmt = function(v, d) { return Number.isFinite(Number(v)) ? Number(v).toFixed(d) : '—'; };
+      blendStatus.textContent =
+        (blend.source === 'local-scene-sample' ? 'Scene matched' : 'Blend active')
+        + ' · B ' + fmt(a.brightness, 2)
+        + ' · C ' + fmt(a.contrast, 2)
+        + ' · S ' + fmt(a.saturate, 2)
+        + ' · blur ' + fmt(a.blurPx, 2)
+        + ' · shadow ' + fmt(sh.opacity, 2);
+      blendStatus.title = blendStatus.textContent;
+    }
   }
 }
 
@@ -3889,7 +3946,11 @@ async function gdToggleAutoBlendSelected() {
   const layer = getSelectedPlantLayer();
   if (!layer) return;
   const api = gdAutoBlendApi();
-  if (!api) return;
+  if (!api) {
+    const status = document.getElementById('gdAutoBlendStatus');
+    if (status) status.textContent = 'Blend engine unavailable';
+    return;
+  }
   const current = gdAutoBlendState(layer);
   if (current.enabled) {
     if (typeof api.disableAutoBlend === 'function') api.disableAutoBlend(layer);
