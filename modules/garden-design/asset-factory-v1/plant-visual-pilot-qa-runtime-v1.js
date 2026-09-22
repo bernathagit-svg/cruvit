@@ -181,6 +181,39 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function ensureAutoBlendReviewShortcut() {
+  if (MANIFEST_ID === 'wave1-owner-review-2026-09-22-v1') return null;
+  let wrap = document.getElementById('autoBlendReviewShortcut');
+  if (wrap) return wrap;
+  wrap = document.createElement('div');
+  wrap.id = 'autoBlendReviewShortcut';
+  wrap.className = 'ok';
+  wrap.style.display = 'none';
+  wrap.style.margin = '10px 0';
+  wrap.innerHTML = '<strong>In-Garden capture is complete.</strong> '
+    + '<button type="button" id="openAutoBlendReviewShortcut" '
+    + 'style="margin-left:8px;font-weight:700">Open Auto Blend Review (7)</button>';
+  const panel = document.getElementById('rendererPanel');
+  if (panel) panel.insertBefore(wrap, panel.firstChild);
+  const btn = wrap.querySelector('#openAutoBlendReviewShortcut');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      const url = new URL(window.top.location.href);
+      url.searchParams.set('plantVisualQaManifest', 'wave1-owner-review-2026-09-22-v1');
+      url.searchParams.set('plantVisualQaAutoBlend', '1');
+      url.searchParams.delete('inGardenCaptureRun');
+      url.hash = '#plant-visual-pilot-qa-v1';
+      window.top.location.href = url.toString();
+    });
+  }
+  return wrap;
+}
+
+function showAutoBlendReviewShortcut() {
+  const wrap = ensureAutoBlendReviewShortcut();
+  if (wrap) wrap.style.display = '';
+}
+
 function captureStatusEl() {
   let el = document.getElementById('inGardenCaptureStatus');
   if (el) return el;
@@ -271,6 +304,7 @@ async function runInGardenCaptureBatch() {
     captureFinished = true;
     captureStarted = false;
     setCaptureStatus('In-Garden capture already complete · ' + alreadyCaptured + ' / ' + allJobs.length + ' stored · zero paid AI calls.', true);
+    showAutoBlendReviewShortcut();
     return;
   }
   setCaptureStatus('In-Garden capture resume · ' + alreadyCaptured + ' already stored · ' + jobs.length + ' remaining.', false);
@@ -307,6 +341,7 @@ async function runInGardenCaptureBatch() {
     'In-Garden capture complete · ' + (alreadyCaptured + stored) + ' / ' + allJobs.length + ' stored · ' + failed + ' failed · zero paid AI calls.',
     failed === 0 && (alreadyCaptured + stored) === allJobs.length
   );
+  if (failed === 0 && (alreadyCaptured + stored) === allJobs.length) showAutoBlendReviewShortcut();
 }
 
 function maybeStartInGardenCapture() {
