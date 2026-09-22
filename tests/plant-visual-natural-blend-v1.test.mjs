@@ -29,7 +29,9 @@ test('Natural Blend+ server is approval-gated and candidate-only',()=>{
   const source=fs.readFileSync(jobPath,'utf8');
   assert.match(source,/plant-visual-natural-blend-spend-approval-v1/);
   assert.match(source,/NATURAL_BLEND_SPEND_OWNER_APPROVAL_REQUIRED/);
-  assert.match(source,/gpt-image-2\.5-sunburst/);
+  const plan=JSON.parse(fs.readFileSync(planPath,'utf8'));
+  assert.equal(plan.model,'gpt-image-2.5-sunburst-2026-09-08');
+  assert.match(source,/form\.append\('model',plan\.model\)/);
   assert.match(source,/\/v1\/images\/edits/);
   assert.match(source,/mask/);
   assert.match(source,/image\[\]/);
