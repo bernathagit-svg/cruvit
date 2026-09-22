@@ -1,0 +1,668 @@
+{
+  "contract": "plant-visual-model-qa-report-v1",
+  "runId": "plant-visual-wave-001-model-qa-2026-09-22-v1",
+  "completedAt": "2026-09-22",
+  "jobCount": 21,
+  "reviewed": 21,
+  "pending": 0,
+  "pass": 1,
+  "fail": 1,
+  "uncertain": 19,
+  "autoPassEligible": 0,
+  "actualSpendUsd": 0.015813,
+  "productionWrites": 0,
+  "registryWrites": 0,
+  "rows": [
+    {
+      "jobId": "cypress__mature__tree__vegetative__v1",
+      "canonicalSlug": "cypress",
+      "status": "REVIEWED",
+      "overall": "UNCERTAIN",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.000752,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "UNCERTAIN",
+          "confidence": "medium",
+          "reason": "The narrow evergreen form is consistent with cypress, but visible pixels alone cannot safely confirm Cupressus sempervirens versus similar conifers."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The plant visibly has a tall woody trunk and an upright, branched tree canopy."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "medium",
+          "reason": "The substantial trunk and fully developed, dense canopy are consistent with a mature tree."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "medium",
+          "reason": "The visible canopy is fully green and leafy, with no clear flowers, fruit, or deciduous senescence."
+        }
+      }
+    },
+    {
+      "jobId": "cypress__young__tree__vegetative__v1",
+      "canonicalSlug": "cypress",
+      "status": "REVIEWED",
+      "overall": "UNCERTAIN",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.000779,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "UNCERTAIN",
+          "confidence": "medium",
+          "reason": "The narrow evergreen form is consistent with cypress, but visible pixels alone cannot safely distinguish Cupressus sempervirens from similar columnar conifers."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The plant has a clear woody trunk and upright, branched tree structure."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "medium",
+          "reason": "The relatively slender trunk and developing, narrow crown are consistent with a young tree."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The plant is visibly leafy and evergreen with no apparent flowers, fruit, or dormancy indicators."
+        }
+      }
+    },
+    {
+      "jobId": "lavender__mature__shrub__flowering__v1",
+      "canonicalSlug": "lavender",
+      "status": "REVIEWED",
+      "overall": "UNCERTAIN",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.000794,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "UNCERTAIN",
+          "confidence": "medium",
+          "reason": "The visible narrow gray-green foliage and purple flower spikes strongly indicate lavender, but pixels alone cannot safely distinguish Lavandula angustifolia from closely related Lavandula species or hybrids."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The plant forms a dense, woody-based, rounded multi-stemmed shrub with numerous upright flowering stems."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The substantial woody base, dense branching, and fully developed canopy are consistent with a mature plant."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "Numerous visible purple flower spikes show the plant is actively flowering."
+        }
+      }
+    },
+    {
+      "jobId": "lavender__mature__shrub__vegetative__v1",
+      "canonicalSlug": "lavender",
+      "status": "REVIEWED",
+      "overall": "FAIL",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.000743,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "FAIL",
+          "confidence": "high",
+          "reason": "Visible foliage is narrow, needle-like, and densely woody, more consistent with rosemary than Lavandula angustifolia lavender."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The plant has a dense, multi-stemmed, rounded woody shrub architecture."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The visible plant is a large, well-established woody specimen with extensive branching."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "medium",
+          "reason": "The plant is visibly leafy and lacks flowers or other reproductive structures, consistent with a vegetative state."
+        }
+      }
+    },
+    {
+      "jobId": "olive__young__tree__vegetative__v1",
+      "canonicalSlug": "olive",
+      "status": "REVIEWED",
+      "overall": "UNCERTAIN",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.000761,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "UNCERTAIN",
+          "confidence": "medium",
+          "reason": "Narrow, silvery-green leaves and branching are consistent with olive, but pixels alone cannot safely confirm Olea europaea."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "Visible pixels clearly show a single-trunk woody tree with an elevated, branching crown."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "medium",
+          "reason": "The relatively slender trunk and developing crown are consistent with a young tree rather than a fully mature specimen."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "medium",
+          "reason": "The plant is visibly leafy and vegetative, with no clear flowers or fruit apparent."
+        }
+      }
+    },
+    {
+      "jobId": "rosemary__mature__shrub__vegetative__v1",
+      "canonicalSlug": "rosemary",
+      "status": "REVIEWED",
+      "overall": "PASS",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.00074,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "Visible narrow, linear, densely arranged aromatic-looking leaves and woody branching are strongly consistent with rosemary (Salvia rosmarinus)."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The plant has a multi-stemmed, densely branched shrub form."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "Substantial woody stems and a fully developed, large branching canopy indicate a mature plant."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "medium",
+          "reason": "The visible plant is leafy and vegetative, with no clearly visible flowers or fruit."
+        }
+      }
+    },
+    {
+      "jobId": "acerola__mature__shrub__fruiting__v1",
+      "canonicalSlug": "acerola",
+      "status": "REVIEWED",
+      "overall": "UNCERTAIN",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.000755,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "UNCERTAIN",
+          "confidence": "medium",
+          "reason": "The shrub visibly has acerola-like leaves, pink-white flowers, and red fruits, but pixels alone cannot safely distinguish Malpighia emarginata from similar fruiting shrubs."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The plant has a dense, multi-stemmed, broadly branching shrub architecture."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The substantial woody framework and extensive branching indicate a mature plant."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "Numerous visibly developed red fruits are present, along with some flowers."
+        }
+      }
+    },
+    {
+      "jobId": "acerola__mature__shrub__vegetative__v1",
+      "canonicalSlug": "acerola",
+      "status": "REVIEWED",
+      "overall": "UNCERTAIN",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.000725,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "UNCERTAIN",
+          "confidence": "high",
+          "reason": "The visible shrub has foliage and branching consistent with acerola, but pixels alone cannot safely distinguish Malpighia emarginata from similar woody shrubs."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The plant has a dense, rounded, multi-stemmed woody shrub architecture."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The substantial woody framework and dense branching indicate a mature plant rather than a young specimen."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "medium",
+          "reason": "The visible canopy is fully leafy and vegetative, with no clearly visible flowers or fruits."
+        }
+      }
+    },
+    {
+      "jobId": "almond__mature__tree__dormant__v1",
+      "canonicalSlug": "almond",
+      "status": "REVIEWED",
+      "overall": "UNCERTAIN",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.000705,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "UNCERTAIN",
+          "confidence": "medium",
+          "reason": "The visible leafless branching structure is compatible with almond but cannot safely distinguish Prunus dulcis from other dormant deciduous trees."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The pixels clearly show a woody, branched tree form with a substantial trunk and crown."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The substantial trunk, mature bark, and extensive established branching indicate a mature tree."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The tree is visibly leafless, with dormant-season woody twigs and branches."
+        }
+      }
+    },
+    {
+      "jobId": "almond__mature__tree__vegetative__v1",
+      "canonicalSlug": "almond",
+      "status": "REVIEWED",
+      "overall": "UNCERTAIN",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.000762,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "UNCERTAIN",
+          "confidence": "high",
+          "reason": "The visible tree form and narrow leaves are compatible with almond, but pixels alone cannot safely distinguish Prunus dulcis from similar Prunus species."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The plant visibly has a single substantial trunk with extensive woody branching and a tree canopy."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "medium",
+          "reason": "The large trunk, developed scaffold branches, and extensive mature canopy visibly support a mature tree stage."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "medium",
+          "reason": "The canopy is visibly leafed with green foliage and shows no clear flowers or fruit, consistent with a vegetative state."
+        }
+      }
+    },
+    {
+      "jobId": "almond__young__tree__vegetative__v1",
+      "canonicalSlug": "almond",
+      "status": "REVIEWED",
+      "overall": "UNCERTAIN",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.000808,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "UNCERTAIN",
+          "confidence": "medium",
+          "reason": "Visible foliage and branching are consistent with Prunus, but the pixels cannot safely distinguish almond from similar Prunus species."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The visible plant has a clear woody trunk with multiple elevated branches and a tree-like crown."
+        },
+        "growthStage": {
+          "verdict": "UNCERTAIN",
+          "confidence": "medium",
+          "reason": "The slender trunk and relatively open crown suggest a young tree, but age or developmental stage cannot be established reliably from pixels alone."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The plant is visibly fully leafed with green foliage and no visible flowers, fruit, or dormancy cues, consistent with a vegetative state."
+        }
+      }
+    },
+    {
+      "jobId": "aloe-vera__mature__default__vegetative__v1",
+      "canonicalSlug": "aloe-vera",
+      "status": "REVIEWED",
+      "overall": "UNCERTAIN",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.000757,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "UNCERTAIN",
+          "confidence": "medium",
+          "reason": "The visible rosette of spiny, fleshy leaves is consistent with Aloe vera, but pixels alone cannot safely distinguish it from closely related Aloe species."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The plant clearly has a succulent rosette architecture with thick, lance-shaped leaves."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The large, fully developed multi-leaf rosette is consistent with a mature plant."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The plant is entirely vegetative, with foliage present and no visible flowers or reproductive structures."
+        }
+      }
+    },
+    {
+      "jobId": "apple__mature__tree__dormant__v1",
+      "canonicalSlug": "apple",
+      "status": "REVIEWED",
+      "overall": "UNCERTAIN",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.000712,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "UNCERTAIN",
+          "confidence": "medium",
+          "reason": "The mature leafless tree is compatible with apple, but the visible pixels do not safely distinguish Malus domestica from similar dormant deciduous trees."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The plant clearly has a woody trunk with extensive branching and a tree form."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The substantial trunk and fully developed, extensive branching indicate a mature tree."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The branches are leafless and show dormant woody structure without visible active foliage."
+        }
+      }
+    },
+    {
+      "jobId": "apple__mature__tree__fruiting__v1",
+      "canonicalSlug": "apple",
+      "status": "REVIEWED",
+      "overall": "UNCERTAIN",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.000739,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "UNCERTAIN",
+          "confidence": "medium",
+          "reason": "The tree visibly bears apple-like fruits and foliage, but pixels alone cannot safely distinguish Malus domestica from closely related Malus species or crabapples."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "Visible woody trunk and branching canopy clearly form a tree."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The substantial trunk, developed branching structure, and extensive canopy indicate a mature tree."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "Numerous visibly developed fruits are present throughout the canopy, clearly indicating fruiting."
+        }
+      }
+    },
+    {
+      "jobId": "apple__young__tree__vegetative__v1",
+      "canonicalSlug": "apple",
+      "status": "REVIEWED",
+      "overall": "UNCERTAIN",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.00073,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "UNCERTAIN",
+          "confidence": "medium",
+          "reason": "The visible tree has apple-like foliage and branching, but the pixels alone cannot safely distinguish Malus domestica from similar fruit trees."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "Visible structure is clearly a woody, upright, branched tree."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "medium",
+          "reason": "The slender trunk and relatively small, developing crown are consistent with a young tree."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The plant is visibly leafed out with green foliage and shows no flowers, fruit, or dormancy."
+        }
+      }
+    },
+    {
+      "jobId": "apricot__mature__tree__dormant__v1",
+      "canonicalSlug": "apricot",
+      "status": "REVIEWED",
+      "overall": "UNCERTAIN",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.000713,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "UNCERTAIN",
+          "confidence": "high",
+          "reason": "The visible leafless woody structure is compatible with apricot but cannot safely distinguish Prunus armeniaca from similar dormant deciduous trees."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The pixels clearly show a single-trunk, extensively branched tree form."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "medium",
+          "reason": "The substantial trunk, mature bark, and developed branching framework are consistent with a mature tree."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The tree is visibly leafless and shows dormant buds with no flowers or active foliage."
+        }
+      }
+    },
+    {
+      "jobId": "apricot__mature__tree__fruiting__v1",
+      "canonicalSlug": "apricot",
+      "status": "REVIEWED",
+      "overall": "UNCERTAIN",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.000726,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "UNCERTAIN",
+          "confidence": "medium",
+          "reason": "The visible tree has apricot-like orange fruits and foliage, but pixels alone cannot safely distinguish Prunus armeniaca from similar stone-fruit trees."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "A clear woody trunk with multiple substantial branches and a tree-shaped canopy is visible."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The thick trunk, mature branching structure, and extensive canopy indicate a mature tree."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "Numerous visibly developed orange fruits are present throughout the canopy."
+        }
+      }
+    },
+    {
+      "jobId": "apricot__mature__tree__vegetative__v1",
+      "canonicalSlug": "apricot",
+      "status": "REVIEWED",
+      "overall": "UNCERTAIN",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.000743,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "UNCERTAIN",
+          "confidence": "medium",
+          "reason": "The pixels show a Prunus-like deciduous fruit tree, but foliage alone cannot safely distinguish apricot from similar species."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "A single woody trunk with substantial branching and a developed crown clearly forms a tree."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The thick trunk, mature bark, extensive branching, and fully developed canopy indicate a mature tree."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The plant has abundant fully expanded green foliage with no visible flowers or dormant leafless state, consistent with vegetative growth."
+        }
+      }
+    },
+    {
+      "jobId": "apricot__young__tree__vegetative__v1",
+      "canonicalSlug": "apricot",
+      "status": "REVIEWED",
+      "overall": "UNCERTAIN",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.000749,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "UNCERTAIN",
+          "confidence": "medium",
+          "reason": "The leafy tree form is compatible with apricot, but visible pixels alone cannot safely distinguish Prunus armeniaca from similar Prunus species."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The plant clearly has a woody trunk with branching crown architecture characteristic of a tree."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "medium",
+          "reason": "The relatively slender trunk and developing, open crown are consistent with a young tree."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The visible canopy is actively leafy and vegetative, with no visible flowers or fruit."
+        }
+      }
+    },
+    {
+      "jobId": "areca-palm__mature__default__vegetative__v1",
+      "canonicalSlug": "areca-palm",
+      "status": "REVIEWED",
+      "overall": "UNCERTAIN",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.00083,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "UNCERTAIN",
+          "confidence": "medium",
+          "reason": "Visible pixels clearly show an areca-type clustering palm, but species-level identity as Dypsis lutescens cannot be confirmed reliably from appearance alone."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The plant has the expected multi-stemmed, densely clumping palm architecture with arching pinnate fronds."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "medium",
+          "reason": "The large, fully developed clump with numerous mature stems and extensive fronds is consistent with a mature growth stage."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The visible plant pixels show healthy green foliage with no visible flowers, fruits, or obvious reproductive structures."
+        }
+      }
+    },
+    {
+      "jobId": "areca-palm__young__default__vegetative__v1",
+      "canonicalSlug": "areca-palm",
+      "status": "REVIEWED",
+      "overall": "UNCERTAIN",
+      "autoPassEligible": false,
+      "actualSpendUsd": 0.00079,
+      "code": null,
+      "checks": {
+        "botanicalIdentity": {
+          "verdict": "UNCERTAIN",
+          "confidence": "medium",
+          "reason": "Visible foliage and clustered stems are consistent with an areca palm, but pixels alone cannot safely confirm the exact species Dypsis lutescens."
+        },
+        "architecture": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "The plant has clear pinnate fronds and multiple slender palm stems, matching palm architecture."
+        },
+        "growthStage": {
+          "verdict": "PASS",
+          "confidence": "medium",
+          "reason": "The clustered, relatively slender stems and developing fronds are consistent with a young plant."
+        },
+        "phenologyState": {
+          "verdict": "PASS",
+          "confidence": "high",
+          "reason": "Only green vegetative fronds and stems are visible, with no apparent flowers, fruits, or senescent reproductive structures."
+        }
+      }
+    }
+  ]
+}
