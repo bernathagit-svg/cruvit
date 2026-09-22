@@ -48,7 +48,8 @@ export const GD_HOST_TO_DESIGN = Object.freeze({
   DELETE_PLACEMENT_RESULT: 'cruvit:garden-design-delete-placement-result',
   SAVE_DESIGN_RESULT: 'cruvit:garden-design-save-design-result',
   SAVE_SOURCE_MEDIA_RESULT: 'cruvit:garden-design-save-source-media-result',
-  QA_PREVIEW: 'cruvit:garden-design-qa-preview'
+  QA_PREVIEW: 'cruvit:garden-design-qa-preview',
+  QA_CAPTURE_REQUEST: 'cruvit:garden-design-qa-capture-request'
 });
 
 export const GD_DESIGN_TO_HOST = Object.freeze({
@@ -61,7 +62,8 @@ export const GD_DESIGN_TO_HOST = Object.freeze({
   UPDATE_PLACEMENT: 'cruvit:garden-design-update-placement',
   DELETE_PLACEMENT: 'cruvit:garden-design-delete-placement',
   SAVE_DESIGN: 'cruvit:garden-design-save-design',
-  SAVE_SOURCE_MEDIA: 'cruvit:garden-design-save-source-media'
+  SAVE_SOURCE_MEDIA: 'cruvit:garden-design-save-source-media',
+  QA_CAPTURE_RESULT: 'cruvit:garden-design-qa-capture-result'
 });
 
 export const GD_AUTOSAVE_DEBOUNCE_MS = 600;
