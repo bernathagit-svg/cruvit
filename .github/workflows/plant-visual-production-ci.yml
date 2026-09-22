@@ -26,6 +26,11 @@ on:
       - 'app.html'
       - 'modules/garden-design/plant-visual-pilot-qa-v1.html'
       - 'netlify/functions/plant-visual-pilot-qa.mjs'
+      - 'netlify/functions/plant-visual-generate-wave-job.mjs'
+      - 'netlify/functions/plant-visual-wave-status.mjs'
+      - 'data/garden-design/plant-visual-production-wave-execution-manifests/**'
+      - 'data/garden-design/plant-visual-production-wave-spend-approvals/**'
+      - 'tests/plant-visual-wave-r2-execution-v1.test.mjs'
       - '.github/workflows/plant-visual-production-ci.yml'
   pull_request:
     paths:
@@ -51,6 +56,11 @@ on:
       - 'app.html'
       - 'modules/garden-design/plant-visual-pilot-qa-v1.html'
       - 'netlify/functions/plant-visual-pilot-qa.mjs'
+      - 'netlify/functions/plant-visual-generate-wave-job.mjs'
+      - 'netlify/functions/plant-visual-wave-status.mjs'
+      - 'data/garden-design/plant-visual-production-wave-execution-manifests/**'
+      - 'data/garden-design/plant-visual-production-wave-spend-approvals/**'
+      - 'tests/plant-visual-wave-r2-execution-v1.test.mjs'
       - '.github/workflows/plant-visual-production-ci.yml'
   workflow_dispatch:
 
@@ -75,6 +85,9 @@ jobs:
 
       - name: Test Garden Design persistence
         run: node --test tests/garden-design-server-persistence-v1.test.mjs
+
+      - name: Test Wave 1 R2 execution safety
+        run: node --test tests/plant-visual-wave-r2-execution-v1.test.mjs
 
       - name: Dry-run production wave planner
         run: node scripts/plant-visual-production-wave-v1.mjs --dry-run --max-jobs-per-wave=24 --max-plants-per-wave=12
