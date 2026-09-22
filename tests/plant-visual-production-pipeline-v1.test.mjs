@@ -57,6 +57,10 @@ import {
   evaluateQaManifestPromotionReadiness,
   PROMOTION_READINESS_GOVERNANCE
 } from '../modules/garden-design/asset-factory-v1/plant-visual-promotion-readiness-v1.js';
+import {
+  activateVerifiedPromotionResults,
+  REGISTRY_ACTIVATION_GOVERNANCE
+} from '../modules/garden-design/asset-factory-v1/plant-visual-registry-activation-v1.js';
 
 function technicalPass(overrides = {}) {
   return {
@@ -1087,6 +1091,89 @@ test('promotion endpoint requires exact manifest-scoped owner approval artifact'
   assert.equal(approval.scope.newImageGenerationAllowed, false);
   assert.match(control, /Execute approved promotion/);
   assert.match(control, /plant-visual-promote-manifest/);
+});
+
+test('verified manifest promotion results activate registry generically after R2 verification', () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const manifest = JSON.parse(
+    fs.readFileSync(
+      path.join(root, 'data/garden-design/plant-visual-qa-manifests/pilot-2026-09-21-v1.json'),
+      'utf8'
+    )
+  );
+  const currentRegistry = JSON.parse(
+    fs.readFileSync(
+      path.join(root, 'modules/garden-design/assets/plants/design-asset-registry-v1.json'),
+      'utf8'
+    )
+  );
+  const readiness = evaluateQaManifestPromotionReadiness(manifest);
+  assert.equal(readiness.readyJobs, 4);
+
+  const promotion = {
+    manifestId: manifest.manifestId,
+    results: readiness.evaluations.map((evaluation) => ({
+      jobId: evaluation.jobId,
+      ok: true,
+      code: 'PROMOTED_AND_VERIFIED',
+      productionKey: evaluation.productionKey,
+      sha256: evaluation.registryVariant.sha256,
+      bytes: evaluation.registryVariant.bytes,
+      wrote: true
+    }))
+  };
+
+  const activated = activateVerifiedPromotionResults(currentRegistry, manifest, promotion);
+  assert.equal(activated.activatedJobs, 4);
+  assert.equal(activated.skippedJobs, 0);
+  assert.equal(REGISTRY_ACTIVATION_GOVERNANCE.perPlantCodeForbidden, true);
+
+  for (const row of activated.activated) {
+    assert.match(row.url, /^\/\.netlify\/functions\/plant-visual-production-asset\?key=/);
+    assert.ok(row.productionKey.startsWith('production/'));
+  }
+
+  const mangoFruiting = activated.registry.sets
+    .find((set) => set.canonicalSlug === 'mango')
+    .variants
+    .find((variant) => variant.phenology === 'fruiting' && variant.growthStage === 'mature');
+  assert.equal(mangoFruiting.productionReadbackVerified, true);
+  assert.equal(mangoFruiting.baseWidthPx, 480);
+  assert.match(mangoFruiting.url, /plant-visual-production-asset\?key=/);
+});
+
+test('registry activation skips only a promotion result whose SHA does not match the manifest', () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const manifest = JSON.parse(
+    fs.readFileSync(
+      path.join(root, 'data/garden-design/plant-visual-qa-manifests/pilot-2026-09-21-v1.json'),
+      'utf8'
+    )
+  );
+  const currentRegistry = JSON.parse(
+    fs.readFileSync(
+      path.join(root, 'modules/garden-design/assets/plants/design-asset-registry-v1.json'),
+      'utf8'
+    )
+  );
+  const readiness = evaluateQaManifestPromotionReadiness(manifest);
+  const results = readiness.evaluations.map((evaluation) => ({
+    jobId: evaluation.jobId,
+    ok: true,
+    code: 'PROMOTED_AND_VERIFIED',
+    productionKey: evaluation.productionKey,
+    sha256: evaluation.registryVariant.sha256,
+    bytes: evaluation.registryVariant.bytes
+  }));
+  results[0].sha256 = '0'.repeat(64);
+
+  const activated = activateVerifiedPromotionResults(currentRegistry, manifest, {
+    manifestId: manifest.manifestId,
+    results
+  });
+  assert.equal(activated.activatedJobs, 3);
+  assert.equal(activated.skippedJobs, 1);
+  assert.equal(activated.skipped[0].code, 'PROMOTION_RESULT_INTEGRITY_MISMATCH');
 });
 
 test('pilot QA recovered candidates remain explicitly quarantined from production', () => {
