@@ -25,6 +25,7 @@ const CAPTURE_PLAN_URL = IN_GARDEN_CAPTURE_RUN
   ? '../../data/garden-design/plant-visual-in-garden-model-qa-plans/' + encodeURIComponent(IN_GARDEN_CAPTURE_RUN) + '.json?v=20260922a'
   : null;
 const CAPTURE_STORE_URL = '/.netlify/functions/plant-visual-in-garden-capture-store';
+const CAPTURE_STATUS_URL = '/.netlify/functions/plant-visual-in-garden-capture-status';
 const OWNER_CHOICES = Object.freeze([
   'PASS_OWNER_VISUAL_GATES',
   'NEEDS_REGENERATION',
@@ -242,10 +243,32 @@ async function runInGardenCaptureBatch() {
   if (captureStarted || captureFinished || !IN_GARDEN_CAPTURE_RUN || !capturePlan) return;
   if (!sourceMediaUrl || !rendererReady) return;
   captureStarted = true;
-  const jobs = Array.isArray(capturePlan.jobs) ? capturePlan.jobs : [];
+  const allJobs = Array.isArray(capturePlan.jobs) ? capturePlan.jobs : [];
+  let capturedJobIds = new Set();
+  try {
+    const statusRes = await fetch(CAPTURE_STATUS_URL + '?runId=' + encodeURIComponent(IN_GARDEN_CAPTURE_RUN), { cache: 'no-store' });
+    if (statusRes.ok) {
+      const statusData = await statusRes.json();
+      capturedJobIds = new Set(
+        Array.isArray(statusData?.rows)
+          ? statusData.rows.filter((row) => row?.status === 'CAPTURED').map((row) => row.jobId)
+          : []
+      );
+    }
+  } catch (err) {
+    console.warn('[in-garden-capture-status]', err?.message || err);
+  }
+  const jobs = allJobs.filter((job) => !capturedJobIds.has(job.jobId));
+  const alreadyCaptured = allJobs.length - jobs.length;
   let stored = 0;
   let failed = 0;
-  setCaptureStatus('In-Garden capture starting · 0 / ' + jobs.length, false);
+  if (!jobs.length) {
+    captureFinished = true;
+    captureStarted = false;
+    setCaptureStatus('In-Garden capture already complete · ' + alreadyCaptured + ' / ' + allJobs.length + ' stored · zero paid AI calls.', true);
+    return;
+  }
+  setCaptureStatus('In-Garden capture resume · ' + alreadyCaptured + ' already stored · ' + jobs.length + ' remaining.', false);
 
   for (let i = 0; i < jobs.length; i++) {
     const job = jobs[i];
@@ -257,7 +280,7 @@ async function runInGardenCaptureBatch() {
     updateSelectedUi();
     sendRendererPreview();
     setCaptureStatus(
-      'In-Garden capture · ' + (i + 1) + ' / ' + jobs.length + ' · ' + rowTitle(rowsById.get(job.jobId)),
+      'In-Garden capture · ' + (alreadyCaptured + i + 1) + ' / ' + allJobs.length + ' · ' + rowTitle(rowsById.get(job.jobId)),
       false
     );
     await sleep(900);
@@ -276,8 +299,8 @@ async function runInGardenCaptureBatch() {
   captureFinished = true;
   captureStarted = false;
   setCaptureStatus(
-    'In-Garden capture complete · ' + stored + ' stored · ' + failed + ' failed · zero paid AI calls.',
-    failed === 0
+    'In-Garden capture complete · ' + (alreadyCaptured + stored) + ' / ' + allJobs.length + ' stored · ' + failed + ' failed · zero paid AI calls.',
+    failed === 0 && (alreadyCaptured + stored) === allJobs.length
   );
 }
 
