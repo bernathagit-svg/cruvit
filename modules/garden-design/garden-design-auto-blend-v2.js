@@ -290,6 +290,43 @@ export async function sampleLocalGardenV2(options = {}) {
   );
   const ambient = statsFromRegion(base.ctx, base.mapping, ambientRegion);
   const ground = statsFromRegion(base.ctx, base.mapping, groundRegion);
+
+  const sideW = clamp(layerRect.width * 0.42, 42, 140);
+  const sideH = clamp(layerRect.height * 0.38, 48, 150);
+  const topPoint = displayPointToSource(
+    base.mapping,
+    layerRect.left + layerRect.width / 2 - imageRect.left,
+    layerRect.top + layerRect.height * 0.22 - imageRect.top
+  );
+  const bottomPoint = displayPointToSource(
+    base.mapping,
+    layerRect.left + layerRect.width / 2 - imageRect.left,
+    layerRect.top + layerRect.height * 0.78 - imageRect.top
+  );
+  const leftPoint = displayPointToSource(
+    base.mapping,
+    layerRect.left - layerRect.width * 0.18 - imageRect.left,
+    layerRect.top + layerRect.height * 0.48 - imageRect.top
+  );
+  const rightPoint = displayPointToSource(
+    base.mapping,
+    layerRect.right + layerRect.width * 0.18 - imageRect.left,
+    layerRect.top + layerRect.height * 0.48 - imageRect.top
+  );
+
+  const directionalRegions = {
+    left:regionAround(base.mapping, leftPoint, sideW, sideH),
+    right:regionAround(base.mapping, rightPoint, sideW, sideH),
+    top:regionAround(base.mapping, topPoint, sideW, sideH),
+    bottom:regionAround(base.mapping, bottomPoint, sideW, sideH)
+  };
+  const directional = {
+    left:statsFromRegion(base.ctx, base.mapping, directionalRegions.left),
+    right:statsFromRegion(base.ctx, base.mapping, directionalRegions.right),
+    top:statsFromRegion(base.ctx, base.mapping, directionalRegions.top),
+    bottom:statsFromRegion(base.ctx, base.mapping, directionalRegions.bottom)
+  };
+
   const primary = ambient.available ? ambient : ground;
   if (!primary.available) return { available:false, reason:'LOCAL_SCENE_SAMPLE_UNAVAILABLE' };
 
@@ -298,7 +335,8 @@ export async function sampleLocalGardenV2(options = {}) {
     ...primary,
     ambient,
     ground,
-    sampleRegions:{ ambient:ambientRegion, ground:groundRegion }
+    directional,
+    sampleRegions:{ ambient:ambientRegion, ground:groundRegion, directional:directionalRegions }
   };
 }
 
