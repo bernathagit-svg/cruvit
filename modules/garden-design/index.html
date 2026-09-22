@@ -2769,7 +2769,7 @@ function gdApplyQaPreview(msg) {
     qaWidth: Number(msg.width || 0) || null,
     qaHeight: Number(msg.height || 0) || null,
     authorityUserResized: msg.authorityUserResized === true,
-    metadata: { qaPreview: true }
+    metadata: { qaPreview: true, jobId: msg.jobId || null }
   }];
 
   selectedPlantLayerId = null;
@@ -2782,12 +2782,126 @@ function gdApplyQaPreview(msg) {
   return true;
 }
 
+
+async function gdQaFetchBitmap(url) {
+  const res = await fetch(String(url), { cache: 'no-store', credentials: 'omit' });
+  if (!res.ok) throw new Error('qa-image-fetch-' + res.status);
+  const blob = await res.blob();
+  return createImageBitmap(blob);
+}
+
+async function gdCaptureQaPreviewPng() {
+  if (!GD_QA_PREVIEW_QUERY) {
+    return { ok: false, code: 'QA_PREVIEW_MODE_REQUIRED' };
+  }
+  const wrap = document.getElementById('imgAfterWrap');
+  const base = document.getElementById('imgAfter');
+  const layerEl = document.querySelector('.gd-plant-layer[data-layer-id="qa-preview-layer"]');
+  const cutout = layerEl && layerEl.querySelector('img.gd-plant-cutout');
+  if (!wrap || !base || !layerEl || !cutout || !plantLayers.length) {
+    return { ok: false, code: 'QA_PREVIEW_NOT_READY' };
+  }
+  const layer = plantLayers[0];
+  const wrapRect = wrap.getBoundingClientRect();
+  const baseRect = base.getBoundingClientRect();
+  const cutoutRect = cutout.getBoundingClientRect();
+  if (!(wrapRect.width > 0 && wrapRect.height > 0 && baseRect.width > 0 && baseRect.height > 0 && cutoutRect.width > 0 && cutoutRect.height > 0)) {
+    return { ok: false, code: 'QA_PREVIEW_GEOMETRY_INVALID' };
+  }
+
+  const width = Math.max(1, Math.round(wrapRect.width));
+  const height = Math.max(1, Math.round(wrapRect.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d', { alpha: false });
+  if (!ctx) return { ok: false, code: 'QA_CAPTURE_CANVAS_UNAVAILABLE' };
+
+  try {
+    const [baseBitmap, cutoutBitmap] = await Promise.all([
+      gdQaFetchBitmap(base.src),
+      gdQaFetchBitmap(cutout.src)
+    ]);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, height);
+
+    const bx = baseRect.left - wrapRect.left;
+    const by = baseRect.top - wrapRect.top;
+    ctx.drawImage(baseBitmap, bx, by, baseRect.width, baseRect.height);
+
+    const cx = cutoutRect.left - wrapRect.left;
+    const cy = cutoutRect.top - wrapRect.top;
+
+    // Match the production renderer's non-destructive visual integration aids.
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,.26)';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetY = 5;
+    ctx.drawImage(cutoutBitmap, cx, cy, cutoutRect.width, cutoutRect.height);
+    ctx.restore();
+
+    const pngBlob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+    if (!pngBlob) return { ok: false, code: 'QA_CAPTURE_PNG_FAILED' };
+    const bytes = new Uint8Array(await pngBlob.arrayBuffer());
+
+    return {
+      ok: true,
+      code: 'QA_PREVIEW_CAPTURED',
+      jobId: layer.id === 'qa-preview-layer' ? (layer.metadata?.jobId || null) : null,
+      canonicalSlug: layer.canonicalSlug || null,
+      width,
+      height,
+      bytes: Array.from(bytes),
+      geometry: {
+        wrapper: { width: wrapRect.width, height: wrapRect.height },
+        base: {
+          x: bx, y: by, width: baseRect.width, height: baseRect.height
+        },
+        cutout: {
+          x: cx, y: cy, width: cutoutRect.width, height: cutoutRect.height
+        },
+        layer: {
+          x: layer.x, y: layer.y, scale: layer.scale, rotation: layer.rotation,
+          qaBaseWidthPx: layer.qaBaseWidthPx || null
+        }
+      },
+      rendererOwner: 'Garden Design production renderer',
+      independentQaScaleMath: false,
+      productionWrites: 0,
+      registryWrites: 0
+    };
+  } catch (err) {
+    return {
+      ok: false,
+      code: 'QA_CAPTURE_FETCH_OR_DRAW_FAILED',
+      error: String(err && err.message || err)
+    };
+  }
+}
+
 window.addEventListener('message', function(ev) {
   const accepted = gdAcceptHostMessage(ev);
   if (!accepted.ok) return;
   const d = accepted.payload || ev.data;
   if (d.type === 'cruvit:garden-design-context') gdApplyOwnedGardenContext(d);
   if (d.type === 'cruvit:garden-design-qa-preview') gdApplyQaPreview(d);
+  if (d.type === 'cruvit:garden-design-qa-capture-request') {
+    gdCaptureQaPreviewPng().then(function(result) {
+      gdPostToHost(Object.assign({
+        type: 'cruvit:garden-design-qa-capture-result',
+        requestId: d.requestId || null
+      }, result || { ok:false, code:'QA_CAPTURE_FAILED' }));
+    }).catch(function(err) {
+      gdPostToHost({
+        type:'cruvit:garden-design-qa-capture-result',
+        requestId:d.requestId||null,
+        ok:false,
+        code:'QA_CAPTURE_EXCEPTION',
+        error:String(err && err.message || err)
+      });
+    });
+  }
   if (d.type === 'cruvit:garden-design-owned-plants') {
     if (!gdOwnedGardenContext) gdOwnedGardenContext = {};
     gdOwnedGardenContext.ownedPlants = d.ownedPlants || [];
