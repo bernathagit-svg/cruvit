@@ -22,6 +22,11 @@
     .renderer-panel{background:#fff;border:1px solid #cdd8cf;border-radius:16px;padding:14px;margin:18px 0 22px;box-shadow:0 10px 30px rgba(23,42,30,.06)}
     .renderer-panel iframe{display:block;width:100%;height:760px;border:1px solid #d7dfd9;border-radius:12px;background:#eef5ef}
     .renderer-note{padding:9px 11px;border-radius:9px;background:#eef7f0;color:#2f4f3a;font-size:12px;margin:8px 0}
+    .blend-review-controls{display:none;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0 4px}
+    .blend-review-controls.is-visible{display:flex}
+    .blend-review-controls button{font-weight:700}
+    .blend-review-controls button.is-active{background:#153d2c;color:#fff;border-color:#153d2c}
+    .blend-review-readout{font-size:12px;color:#345143;min-width:220px;flex:1}
     #qaRows{display:grid;gap:20px}
     .plant{background:#fff;border:1px solid #d9ddd9;border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(23,42,30,.06)}
     .candidate-grid{display:grid;grid-template-columns:minmax(320px,1fr) minmax(320px,1fr);gap:14px;margin-top:12px}
@@ -54,16 +59,21 @@
     <p class="renderer-note">This is the real Garden Design renderer in read-only QA mode. There is no separate QA scale renderer.</p>
     <p id="rendererStatus" class="warn">Loading production renderer…</p>
     <p id="rendererSelection" class="small">Choose a candidate below.</p>
+    <div id="blendReviewControls" class="blend-review-controls">
+      <button type="button" id="blendRawBtn" class="is-active">RAW</button>
+      <button type="button" id="blendAutoBtn">✨ AUTO BLEND</button>
+      <span id="blendReviewReadout" class="blend-review-readout">RAW candidate · no runtime matching applied.</span>
+    </div>
     <iframe
       id="productionRendererFrame"
       title="Production Garden Design renderer — QA preview"
-      src="./index.html?gdQaPreview=1&v=20260921batchqa1"
+      src="./index.html?gdQaPreview=1&v=20260922autoblendreview1"
       loading="eager"></iframe>
   </section>
 
   <p id="ownerDecisionSummary" class="small">0 / 0 owner decisions recorded in this browser session.</p>
   <div id="qaRows"></div>
 
-  <script type="module" src="./asset-factory-v1/plant-visual-pilot-qa-runtime-v1.js?v=20260921renderer1"></script>
+  <script type="module" src="./asset-factory-v1/plant-visual-pilot-qa-runtime-v1.js?v=20260922autoblendreview1"></script>
 </body>
 </html>
