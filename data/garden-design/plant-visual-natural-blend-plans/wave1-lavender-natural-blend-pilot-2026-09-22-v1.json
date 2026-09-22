@@ -1,0 +1,41 @@
+{
+  "contract": "plant-visual-natural-blend-plan-v1",
+  "runId": "wave1-lavender-natural-blend-pilot-2026-09-22-v1",
+  "createdAt": "2026-09-22",
+  "sourceManifestId": "wave1-owner-review-2026-09-22-v1",
+  "sourceJobId": "lavender__mature__shrub__flowering__v1",
+  "canonicalSlug": "lavender",
+  "scientific": "Lavandula angustifolia",
+  "model": "gpt-image-2.5-sunburst-2026-09-08",
+  "endpoint": "/v1/images/edits",
+  "quality": "medium",
+  "maxCalls": 1,
+  "maxRetries": 0,
+  "ownerSpendApprovalRequired": true,
+  "inputContract": {
+    "startingRendererState": "AUTO_BLEND_V3",
+    "cropOnly": true,
+    "cropMaxPx": 1024,
+    "exactPlantCandidateReferenceRequired": true,
+    "maskRequired": true,
+    "finalCompositeUsesMaskAsHardPixelBoundary": true
+  },
+  "editIntent": [
+    "preserve the exact lavender plant identity and geometry",
+    "match local exposure, white balance, softness, and ambient light",
+    "remove sticker-like edge separation and color fringing",
+    "create natural soil contact and soft local shadow",
+    "preserve all garden structure and all pixels outside the allowed local edit mask"
+  ],
+  "governance": {
+    "sceneSpecific": true,
+    "globalPlantRegistryWriteForbidden": true,
+    "candidateAssetMutationForbidden": true,
+    "sourceGardenMutationForbidden": true,
+    "outputIsPlacementSpecificPatch": true,
+    "invalidatedByMoveOrResize": true,
+    "productionPromotionForbidden": true,
+    "ownerReviewRequired": true,
+    "zeroRetries": true
+  }
+}
