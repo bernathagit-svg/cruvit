@@ -44,6 +44,8 @@ on:
       - 'tests/plant-visual-in-garden-vision-qa-v1.test.mjs'
       - 'modules/garden-design/garden-design-auto-blend-v1.js'
       - 'tests/garden-design-auto-blend-v1.test.mjs'
+      - 'modules/garden-design/garden-design-auto-blend-v2.js'
+      - 'tests/garden-design-auto-blend-v2.test.mjs'
       - 'data/garden-design/plant-visual-wave-metadata-qa/**'
       - 'scripts/plant-visual-wave-metadata-qa-v1.mjs'
       - 'netlify/functions/plant-visual-model-qa-job.mjs'
@@ -58,6 +60,8 @@ on:
       - 'tests/plant-visual-in-garden-vision-qa-v1.test.mjs'
       - 'modules/garden-design/garden-design-auto-blend-v1.js'
       - 'tests/garden-design-auto-blend-v1.test.mjs'
+      - 'modules/garden-design/garden-design-auto-blend-v2.js'
+      - 'tests/garden-design-auto-blend-v2.test.mjs'
       - 'data/garden-design/plant-visual-wave-metadata-qa/**'
       - '.github/workflows/plant-visual-production-ci.yml'
   pull_request:
@@ -125,6 +129,9 @@ jobs:
 
       - name: Test production Auto Blend V1
         run: node --test tests/garden-design-auto-blend-v1.test.mjs
+
+      - name: Test production Auto Blend V2
+        run: node --test tests/garden-design-auto-blend-v2.test.mjs
 
       - name: Run Wave 1 metadata QA
         run: node scripts/plant-visual-wave-metadata-qa-v1.mjs --manifest=wave1-2026-09-22-v1
