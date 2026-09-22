@@ -13,6 +13,7 @@ function safeManifestId(value) {
 const PARAMS = new URLSearchParams(window.location.search);
 const MANIFEST_ID = safeManifestId(PARAMS.get('manifest'));
 const IN_GARDEN_CAPTURE_RUN = String(PARAMS.get('inGardenCaptureRun') || '').trim();
+const AUTO_BLEND_REVIEW = PARAMS.get('autoBlendReview') === '1';
 const SUMMARY_URL = '../../data/garden-design/plant-visual-qa-manifests/' + MANIFEST_ID + '.json?v=20260921a';
 const ANCHOR_REGISTRY_URL = DEFAULT_ANCHOR_REGISTRY_URL;
 const IMAGE_URL = (jobId) =>
@@ -44,6 +45,8 @@ let capturePlan = null;
 let captureStarted = false;
 let captureFinished = false;
 const captureWaiters = new Map();
+let qaAutoBlendEnabled = false;
+let qaAutoBlendLastResult = null;
 
 function esc(value) {
   return String(value == null ? '' : value)
@@ -310,6 +313,73 @@ function maybeStartInGardenCapture() {
 }
 
 
+function blendControls() {
+  return {
+    root: document.getElementById('blendReviewControls'),
+    raw: document.getElementById('blendRawBtn'),
+    auto: document.getElementById('blendAutoBtn'),
+    readout: document.getElementById('blendReviewReadout')
+  };
+}
+
+function formatBlendReadout(blend) {
+  const a = blend?.adaptation || {};
+  const sh = blend?.shadow || {};
+  const fmt = (v, d = 2) => Number.isFinite(Number(v)) ? Number(v).toFixed(d) : '—';
+  if (!blend || blend.enabled !== true) return 'RAW candidate · no runtime matching applied.';
+  return (blend.source === 'local-scene-sample' ? 'Scene matched' : 'Blend active')
+    + ' · brightness ' + fmt(a.brightness)
+    + ' · contrast ' + fmt(a.contrast)
+    + ' · saturation ' + fmt(a.saturate)
+    + ' · blur ' + fmt(a.blurPx) + 'px'
+    + ' · shadow ' + fmt(sh.opacity);
+}
+
+function updateBlendControls() {
+  const ui = blendControls();
+  if (!ui.root) return;
+  ui.root.classList.toggle('is-visible', AUTO_BLEND_REVIEW);
+  if (!AUTO_BLEND_REVIEW) return;
+  ui.raw?.classList.toggle('is-active', !qaAutoBlendEnabled);
+  ui.auto?.classList.toggle('is-active', qaAutoBlendEnabled);
+  if (ui.readout) ui.readout.textContent = qaAutoBlendEnabled
+    ? formatBlendReadout(qaAutoBlendLastResult?.blend)
+    : 'RAW candidate · no runtime matching applied.';
+}
+
+function sendQaAutoBlendState() {
+  if (!AUTO_BLEND_REVIEW || !rendererReady) return false;
+  const frame = rendererFrame();
+  if (!frame?.contentWindow) return false;
+  const requestId = 'qab_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+  frame.contentWindow.postMessage({
+    type:'cruvit:garden-design-qa-auto-blend-set',
+    requestId,
+    enabled:qaAutoBlendEnabled === true
+  }, window.location.origin);
+  const ui = blendControls();
+  if (ui.readout) ui.readout.textContent = qaAutoBlendEnabled ? 'Matching local scene…' : 'Returning to RAW…';
+  return true;
+}
+
+function setQaAutoBlend(enabled) {
+  if (!AUTO_BLEND_REVIEW) return;
+  qaAutoBlendEnabled = enabled === true;
+  qaAutoBlendLastResult = null;
+  updateBlendControls();
+  sendQaAutoBlendState();
+}
+
+function wireBlendReviewControls() {
+  const ui = blendControls();
+  if (!ui.root) return;
+  ui.root.classList.toggle('is-visible', AUTO_BLEND_REVIEW);
+  if (!AUTO_BLEND_REVIEW) return;
+  ui.raw?.addEventListener('click', () => setQaAutoBlend(false));
+  ui.auto?.addEventListener('click', () => setQaAutoBlend(true));
+  updateBlendControls();
+}
+
 function markRendererReady(source) {
   rendererReady = true;
   const status = document.getElementById('rendererStatus');
@@ -411,6 +481,9 @@ function sendRendererPreview() {
       + ' · scale '
       + preview.scale;
   }
+  if (AUTO_BLEND_REVIEW) {
+    setTimeout(() => sendQaAutoBlendState(), 350);
+  }
   return true;
 }
 
@@ -462,6 +535,19 @@ window.addEventListener('message', (ev) => {
     return;
   }
 
+  if (frame && ev.source === frame.contentWindow && d?.type === 'cruvit:garden-design-qa-auto-blend-result') {
+    qaAutoBlendLastResult = d;
+    if (d.ok) qaAutoBlendEnabled = d.enabled === true;
+    const ui = blendControls();
+    if (ui.readout) {
+      ui.readout.textContent = d.ok
+        ? formatBlendReadout(d.blend)
+        : ('Auto Blend unavailable · ' + (d.code || 'unknown'));
+    }
+    updateBlendControls();
+    return;
+  }
+
   if (!d || d.type !== CALIBRATION_SOURCE_MESSAGE_TYPE) return;
   if (d.sourceMediaUrl) applySignedGardenUrl(d.sourceMediaUrl);
 });
@@ -508,6 +594,7 @@ async function boot() {
     status.className = qaRows.every((r) => r.technicalQA === 'PASS' && r.framingQA === 'PASS') ? 'ok' : 'warn';
     wireChoices();
     wirePreviewButtons();
+    wireBlendReviewControls();
     installRendererHandshake();
     if (IN_GARDEN_CAPTURE_RUN) {
       setCaptureStatus('Waiting for authenticated saved Garden photo and production renderer…', false);
