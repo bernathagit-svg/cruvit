@@ -2936,49 +2936,77 @@ window.addEventListener('message', function(ev) {
     });
   }
   if (d.type === 'cruvit:garden-design-qa-auto-blend-set') {
-    const layer = plantLayers && plantLayers[0];
-    const api = gdAutoBlendApi();
-    if (!GD_QA_PREVIEW_QUERY || !layer || !api) {
-      gdPostToHost({
-        type:'cruvit:garden-design-qa-auto-blend-result',
-        requestId:d.requestId||null,
-        ok:false,
-        enabled:false,
-        code:'QA_AUTO_BLEND_UNAVAILABLE'
-      });
-    } else if (d.enabled === false) {
-      if (typeof api.disableAutoBlend === 'function') api.disableAutoBlend(layer);
-      renderPlantLayers();
-      gdPostToHost({
-        type:'cruvit:garden-design-qa-auto-blend-result',
-        requestId:d.requestId||null,
-        ok:true,
-        enabled:false,
-        code:'QA_AUTO_BLEND_RAW'
-      });
-    } else {
-      gdRecalculateAutoBlendLayer(layer, { silent:true }).then(function(result) {
+    (async function() {
+      const ready = await gdWaitForQaAutoBlendReady(4500);
+      if (!ready.ok) {
+        gdPostToHost({
+          type:'cruvit:garden-design-qa-auto-blend-result',
+          requestId:d.requestId||null,
+          ok:false,
+          enabled:false,
+          code:ready.code || 'QA_AUTO_BLEND_UNAVAILABLE',
+          diagnostics:{
+            qaMode:ready.qaMode === true,
+            engineReady:!!ready.api,
+            layerReady:!!ready.layer
+          }
+        });
+        return;
+      }
+
+      const layer = ready.layer;
+      const api = ready.api;
+
+      if (d.enabled === false) {
+        if (typeof api.disableAutoBlend === 'function') api.disableAutoBlend(layer);
+        renderPlantLayers();
+        gdPostToHost({
+          type:'cruvit:garden-design-qa-auto-blend-result',
+          requestId:d.requestId||null,
+          ok:true,
+          enabled:false,
+          code:'QA_AUTO_BLEND_RAW',
+          blend:gdAutoBlendState(layer)
+        });
+        return;
+      }
+
+      try {
+        const result = await gdRecalculateAutoBlendLayer(layer, { silent:true });
         renderPlantLayers();
         const state = gdAutoBlendState(layer);
         gdPostToHost({
           type:'cruvit:garden-design-qa-auto-blend-result',
           requestId:d.requestId||null,
-          ok:result && result.ok === true,
+          ok:result && result.ok === true && state.enabled === true,
           enabled:state.enabled === true,
-          code:result && result.ok ? 'QA_AUTO_BLEND_APPLIED' : (result && result.code) || 'QA_AUTO_BLEND_FAILED',
-          blend:state
+          code:result && result.ok && state.enabled
+            ? 'QA_AUTO_BLEND_APPLIED'
+            : (result && result.code) || 'QA_AUTO_BLEND_FAILED',
+          blend:state,
+          diagnostics:{
+            qaMode:true,
+            engineReady:true,
+            layerReady:true,
+            source:state.source || null
+          }
         });
-      }).catch(function(err) {
+      } catch (err) {
         gdPostToHost({
           type:'cruvit:garden-design-qa-auto-blend-result',
           requestId:d.requestId||null,
           ok:false,
           enabled:false,
           code:'QA_AUTO_BLEND_EXCEPTION',
-          error:String(err && err.message || err)
+          error:String(err && err.message || err),
+          diagnostics:{
+            qaMode:true,
+            engineReady:true,
+            layerReady:true
+          }
         });
-      });
-    }
+      }
+    })();
   }
   if (d.type === 'cruvit:garden-design-owned-plants') {
     if (!gdOwnedGardenContext) gdOwnedGardenContext = {};
@@ -3911,6 +3939,57 @@ function gdAutoBlendApi() {
   return window.CruvitGardenDesignAutoBlend || null;
 }
 
+let gdAutoBlendImportPromise = null;
+async function gdEnsureAutoBlendApi() {
+  const ready = gdAutoBlendApi();
+  if (ready) return ready;
+  if (!gdAutoBlendImportPromise) {
+    gdAutoBlendImportPromise = import('./garden-design-auto-blend-v1.js?v=20260922autoblend3')
+      .then(function(mod) {
+        const api = {
+          AUTO_BLEND_V1_POLICY: mod.AUTO_BLEND_V1_POLICY,
+          GARDEN_DESIGN_AUTO_BLEND_V1_VERSION: mod.GARDEN_DESIGN_AUTO_BLEND_V1_VERSION,
+          applyAutoBlendToLayerElement: mod.applyAutoBlendToLayerElement,
+          autoBlendMetadata: mod.autoBlendMetadata,
+          blendFilterCss: mod.blendFilterCss,
+          calculateAutoBlendForLayer: mod.calculateAutoBlendForLayer,
+          disableAutoBlend: mod.disableAutoBlend
+        };
+        window.CruvitGardenDesignAutoBlend = api;
+        return api;
+      })
+      .catch(function(err) {
+        console.warn('[garden-design-auto-blend] dynamic import failed', err && err.message ? err.message : err);
+        gdAutoBlendImportPromise = null;
+        return null;
+      });
+  }
+  return gdAutoBlendImportPromise;
+}
+
+async function gdWaitForQaAutoBlendReady(timeoutMs) {
+  const deadline = Date.now() + Math.max(500, Number(timeoutMs) || 4500);
+  let api = null;
+  let layer = null;
+  while (Date.now() < deadline) {
+    api = await gdEnsureAutoBlendApi();
+    layer = plantLayers && plantLayers[0] ? plantLayers[0] : null;
+    if (GD_QA_PREVIEW_QUERY && api && layer) {
+      return { ok:true, api, layer };
+    }
+    await new Promise(function(resolve) { setTimeout(resolve, 80); });
+  }
+  return {
+    ok:false,
+    api:api || gdAutoBlendApi(),
+    layer:layer || (plantLayers && plantLayers[0]) || null,
+    qaMode:GD_QA_PREVIEW_QUERY === true,
+    code:!GD_QA_PREVIEW_QUERY
+      ? 'QA_AUTO_BLEND_NOT_QA_MODE'
+      : (!api ? 'QA_AUTO_BLEND_ENGINE_NOT_READY' : 'QA_AUTO_BLEND_LAYER_NOT_READY')
+  };
+}
+
 function gdAutoBlendState(layer) {
   const api = gdAutoBlendApi();
   if (api && typeof api.autoBlendMetadata === 'function') return api.autoBlendMetadata(layer || {});
@@ -3931,7 +4010,7 @@ function gdApplyAutoBlendVisual(layer, el) {
 }
 
 async function gdRecalculateAutoBlendLayer(layer, options) {
-  const api = gdAutoBlendApi();
+  const api = await gdEnsureAutoBlendApi();
   if (!api || !layer || typeof api.calculateAutoBlendForLayer !== 'function') {
     return { ok:false, code:'AUTO_BLEND_ENGINE_UNAVAILABLE' };
   }
@@ -3963,7 +4042,7 @@ async function gdRecalculateAutoBlendLayer(layer, options) {
 async function gdToggleAutoBlendSelected() {
   const layer = getSelectedPlantLayer();
   if (!layer) return;
-  const api = gdAutoBlendApi();
+  const api = await gdEnsureAutoBlendApi();
   if (!api) {
     const status = document.getElementById('gdAutoBlendStatus');
     if (status) status.textContent = 'Blend engine unavailable';
