@@ -127,6 +127,7 @@ function approvalAuthorizes(approval, plan) {
   if (Number(approval.maxCalls) !== Number(plan.jobCount)) return false;
   if (Number(approval.maxRetries) !== 0) return false;
   if (!(Number(approval.maxSpendUsd) > 0)) return false;
+  if (!(Number(approval.perCallReserveUsd) > 0)) return false;
   if (approval.productionWritesAllowed !== false) return false;
   if (approval.registryWritesAllowed !== false) return false;
   const approved = new Set(Array.isArray(approval.jobIds) ? approval.jobIds : []);
@@ -136,6 +137,16 @@ function approvalAuthorizes(approval, plan) {
 
 function lockKey(plan, jobId) {
   return `candidates/${safeSegment(plan.sourceManifestId)}/model-qa-locks/${safeSegment(plan.runId)}/${safeSegment(jobId)}.json`;
+}
+
+async function currentRecordedSpend(client, bucket, plan) {
+  let total = 0;
+  for (const j of plan.jobs || []) {
+    const evidence = await readJsonObject(client, bucket, evidenceKey(plan, j.jobId));
+    const spend = Number(evidence?.actualSpendUsd);
+    if (Number.isFinite(spend)) total += spend;
+  }
+  return +total.toFixed(6);
 }
 
 function evidenceKey(plan, jobId) {
@@ -246,6 +257,20 @@ export default async (req) => {
     });
   }
 
+  const recordedSpendUsd = await currentRecordedSpend(client, bucket, plan);
+  if (
+    recordedSpendUsd + Number(approval.perCallReserveUsd)
+    > Number(approval.maxSpendUsd) + 1e-9
+  ) {
+    return json(409, {
+      ok:false,
+      code:'MODEL_QA_SPEND_CAP_REACHED',
+      recordedSpendUsd,
+      perCallReserveUsd:Number(approval.perCallReserveUsd),
+      maxSpendUsd:Number(approval.maxSpendUsd)
+    });
+  }
+
   try {
     await putJson(client, bucket, lockKey(plan, jobId), {
       contract:'plant-visual-model-qa-lock-v1',
@@ -295,7 +320,7 @@ export default async (req) => {
     body:JSON.stringify({
       model:plan.model,
       reasoning:{ effort:plan.reasoningEffort || 'low' },
-      max_output_tokens:700,
+      max_output_tokens:400,
       input:[{
         role:'user',
         content:[
