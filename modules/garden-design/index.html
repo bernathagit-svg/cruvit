@@ -274,6 +274,11 @@ body.gd-qa-preview-mode #plantLayersHost{pointer-events:none}
 .gd-layer-btn:hover{border-color:#3d8a50;background:rgba(109,204,136,.08)}
 .gd-layer-btn.danger{color:#c62828;border-color:rgba(198,40,40,.35)}
 .gd-layer-btn.danger:hover{background:rgba(198,40,40,.06)}
+.gd-auto-blend-btn{border-color:rgba(61,138,80,.45);color:#2d6a3f;font-weight:600;white-space:nowrap}
+.gd-auto-blend-btn.is-active{background:rgba(61,138,80,.12);border-color:#3d8a50}
+.gd-auto-blend-status{font-size:11px;color:#3d8a50;min-width:0;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gd-plant-layer.gd-auto-blended .gd-plant-shadow{transition:width .18s ease,height .18s ease,opacity .18s ease,filter .18s ease}
+.gd-plant-layer.gd-auto-blended .gd-plant-cutout{transition:filter .18s ease,opacity .18s ease}
 .gd-layer-scale-slider{flex:1;min-width:72px;max-width:130px;accent-color:#3d8a50}
 .overlay-placement-active .result-img-wrap img{cursor:default}
 .overlay-placement-active #plantsOverlay{display:none}
@@ -1167,6 +1172,8 @@ body.gd-qa-preview-mode #plantLayersHost{pointer-events:none}
         <button type="button" class="gd-layer-btn" onclick="adjustPlantLayerScale(-0.1)" aria-label="Smaller">−</button>
         <input type="range" class="gd-layer-scale-slider" id="gdLayerScaleSlider" min="0.35" max="2.2" step="0.05" value="1" oninput="gdPreviewPlantLayerScale(parseFloat(this.value))" onchange="setPlantLayerScale(parseFloat(this.value))"/>
         <button type="button" class="gd-layer-btn" onclick="adjustPlantLayerScale(0.1)" aria-label="Larger">+</button>
+        <button type="button" class="gd-layer-btn gd-auto-blend-btn" id="gdAutoBlendBtn" onclick="gdToggleAutoBlendSelected()">✨ Auto Blend</button>
+        <span class="gd-auto-blend-status" id="gdAutoBlendStatus" aria-live="polite"></span>
         <button type="button" class="gd-layer-btn danger" onclick="deleteSelectedPlantLayer()">Remove</button>
       </div>
 
@@ -3681,6 +3688,7 @@ function renderPlantLayers() {
     el.dataset.layerId = layer.id;
     el.innerHTML = gdBuildPlantLayerInnerHtml(layer);
     applyLayerDomTransform(layer, el);
+    gdApplyAutoBlendVisual(layer, el);
     if (!GD_QA_PREVIEW_QUERY) el.addEventListener('pointerdown', e => onPlantLayerPointerDown(e, layer.id));
     host.appendChild(el);
   });
@@ -3777,6 +3785,13 @@ function onPlantLayerPointerUp(e) {
   gdSafeReleasePointerCapture(gdLayerDrag.captureEl, e.pointerId);
   gdLayerDrag = null;
   gdSetLayerDragScrollLock(false);
+  const layer = plantLayers.find(function(l) { return l.id === layerId; });
+  if (layer && gdAutoBlendState(layer).enabled) {
+    gdRefreshEnabledAutoBlend(layerId).finally(function() {
+      gdPersistDesignSnapshot({ clientInstanceId: layerId, hostAction: 'update', phase: 'pointerup' });
+    });
+    return;
+  }
   gdPersistDesignSnapshot({ clientInstanceId: layerId, hostAction: 'update', phase: 'pointerup' });
 }
 
@@ -3788,6 +3803,8 @@ function updateLayerToolbar() {
   const bar = document.getElementById('gdLayerToolbar');
   const nameEl = document.getElementById('gdLayerToolbarName');
   const slider = document.getElementById('gdLayerScaleSlider');
+  const blendBtn = document.getElementById('gdAutoBlendBtn');
+  const blendStatus = document.getElementById('gdAutoBlendStatus');
   const layer = getSelectedPlantLayer();
   if (!bar) return;
   if (!overlayPlacementActive || !layer) {
@@ -3800,6 +3817,101 @@ function updateLayerToolbar() {
     nameEl.textContent = areaName ? (layer.name + ' · ' + areaName) : layer.name;
   }
   if (slider) slider.value = layer.scale;
+  const blend = gdAutoBlendState(layer);
+  if (blendBtn) {
+    blendBtn.textContent = blend.enabled ? '↺ Raw' : '✨ Auto Blend';
+    blendBtn.classList.toggle('is-active', blend.enabled);
+    blendBtn.title = blend.enabled
+      ? 'Return this plant to its raw cutout appearance'
+      : 'Match local garden tone, sharpness and ground contact without changing the plant asset';
+  }
+  if (blendStatus) {
+    blendStatus.textContent = blend.enabled
+      ? (blend.source === 'local-scene-sample' ? 'Scene matched' : 'Blend active')
+      : '';
+  }
+}
+
+function gdAutoBlendApi() {
+  return window.CruvitGardenDesignAutoBlend || null;
+}
+
+function gdAutoBlendState(layer) {
+  const api = gdAutoBlendApi();
+  if (api && typeof api.autoBlendMetadata === 'function') return api.autoBlendMetadata(layer || {});
+  const metadata = layer && layer.metadata && typeof layer.metadata === 'object' ? layer.metadata : {};
+  const blend = metadata.autoBlendV1 && typeof metadata.autoBlendV1 === 'object' ? metadata.autoBlendV1 : {};
+  return { enabled: blend.enabled === true, source: blend.source || null };
+}
+
+function gdApplyAutoBlendVisual(layer, el) {
+  const api = gdAutoBlendApi();
+  if (!api || typeof api.applyAutoBlendToLayerElement !== 'function') return false;
+  try {
+    return api.applyAutoBlendToLayerElement(layer, el);
+  } catch (err) {
+    console.warn('[garden-design-auto-blend] apply failed', err && err.message ? err.message : err);
+    return false;
+  }
+}
+
+async function gdRecalculateAutoBlendLayer(layer, options) {
+  const api = gdAutoBlendApi();
+  if (!api || !layer || typeof api.calculateAutoBlendForLayer !== 'function') {
+    return { ok:false, code:'AUTO_BLEND_ENGINE_UNAVAILABLE' };
+  }
+  const layerEl = document.querySelector('.gd-plant-layer[data-layer-id="' + layer.id + '"]');
+  const imageEl = document.getElementById('imgAfter');
+  const sceneEl = document.getElementById('imgAfterWrap');
+  if (!layerEl || !imageEl || !sceneEl) {
+    return { ok:false, code:'AUTO_BLEND_SCENE_NOT_READY' };
+  }
+  const status = document.getElementById('gdAutoBlendStatus');
+  if (status && !(options && options.silent)) status.textContent = 'Matching scene…';
+  try {
+    const result = await api.calculateAutoBlendForLayer({
+      layer,
+      layerEl,
+      imageEl,
+      sceneEl
+    });
+    gdApplyAutoBlendVisual(layer, layerEl);
+    updateLayerToolbar();
+    return { ok:true, result };
+  } catch (err) {
+    console.warn('[garden-design-auto-blend] calculate failed', err && err.message ? err.message : err);
+    if (status && !(options && options.silent)) status.textContent = 'Blend unavailable';
+    return { ok:false, code:'AUTO_BLEND_CALCULATION_FAILED' };
+  }
+}
+
+async function gdToggleAutoBlendSelected() {
+  const layer = getSelectedPlantLayer();
+  if (!layer) return;
+  const api = gdAutoBlendApi();
+  if (!api) return;
+  const current = gdAutoBlendState(layer);
+  if (current.enabled) {
+    if (typeof api.disableAutoBlend === 'function') api.disableAutoBlend(layer);
+    renderPlantLayers();
+    gdPersistDesignSnapshot({ clientInstanceId: layer.id, hostAction: 'update', phase: 'auto-blend-toggle' });
+    updateLayerToolbar();
+    return;
+  }
+  await gdRecalculateAutoBlendLayer(layer);
+  renderPlantLayers();
+  gdPersistDesignSnapshot({ clientInstanceId: layer.id, hostAction: 'update', phase: 'auto-blend-toggle' });
+  updateLayerToolbar();
+}
+
+window.gdToggleAutoBlendSelected = gdToggleAutoBlendSelected;
+
+async function gdRefreshEnabledAutoBlend(layerId) {
+  const layer = plantLayers.find(function(l) { return l.id === layerId; });
+  if (!layer || !gdAutoBlendState(layer).enabled) return false;
+  await gdRecalculateAutoBlendLayer(layer, { silent:true });
+  renderPlantLayers();
+  return true;
 }
 
 function gdMarkAuthorityUserScaleOverride(layer) {
@@ -6283,6 +6395,23 @@ The plants array MUST match the exact counts specified above.`}]);
   <script type="module">
     import './garden-design-variant-policy-v1.js?v=20260917a';
     import './garden-design-variant-selection-policy-v1.js?v=20260917a';
+    import {
+      AUTO_BLEND_V1_POLICY,
+      GARDEN_DESIGN_AUTO_BLEND_V1_VERSION,
+      applyAutoBlendToLayerElement,
+      autoBlendMetadata,
+      calculateAutoBlendForLayer,
+      disableAutoBlend
+    } from './garden-design-auto-blend-v1.js?v=20260922autoblend1';
+    window.CruvitGardenDesignAutoBlend = {
+      AUTO_BLEND_V1_POLICY,
+      GARDEN_DESIGN_AUTO_BLEND_V1_VERSION,
+      applyAutoBlendToLayerElement,
+      autoBlendMetadata,
+      calculateAutoBlendForLayer,
+      disableAutoBlend
+    };
+    if (typeof renderPlantLayers === 'function') renderPlantLayers();
     import {
       GARDEN_SIZE_AUTHORITY_ACTIVATION,
       getAuthorityRecordBySlug,
