@@ -158,7 +158,20 @@ async function imagePixels(imageEl) {
     canvas.height = mapping.naturalHeight;
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     if (!ctx) return { ok: false, reason: 'CANVAS_CONTEXT_UNAVAILABLE' };
-    ctx.drawImage(imageEl, 0, 0, mapping.naturalWidth, mapping.naturalHeight);
+
+    // The saved Garden photo is normally a temporary cross-origin signed URL.
+    // Fetch bytes with CORS and draw an ImageBitmap so the sampling canvas stays readable.
+    const src = String(imageEl.currentSrc || imageEl.src || '');
+    if (src && typeof fetch === 'function' && typeof createImageBitmap === 'function') {
+      const res = await fetch(src, { cache: 'no-store', credentials: 'omit' });
+      if (!res.ok) throw new Error('garden-photo-fetch-' + res.status);
+      const blob = await res.blob();
+      const bitmap = await createImageBitmap(blob);
+      ctx.drawImage(bitmap, 0, 0, mapping.naturalWidth, mapping.naturalHeight);
+      if (typeof bitmap.close === 'function') bitmap.close();
+    } else {
+      ctx.drawImage(imageEl, 0, 0, mapping.naturalWidth, mapping.naturalHeight);
+    }
     return { ok: true, ctx, mapping };
   } catch (err) {
     return {
