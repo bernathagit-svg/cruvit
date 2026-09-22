@@ -1,11 +1,15 @@
 {
-  "schemaVersion": "storefront-readiness-v1",
-  "commerceMode": "VALIDATION_ONLY",
+  "schemaVersion": "storefront-readiness-v2",
+  "commerceMode": "SHOPIFY_ACTIVE_ONLY",
   "sellableProducts": [],
   "firstRealProductSlot": {
     "insertInto": "sellableProducts",
     "requiredFields": [
       "id",
+      "candidateId",
+      "shopifyProductId",
+      "shopifyStatus",
+      "ownerApprovedForSale",
       "handle",
       "title",
       "priceUsd",
@@ -18,7 +22,7 @@
       "returnsSummary",
       "purchaseEnabled"
     ],
-    "notes": "INTERNAL: populate only after Commercial Lead → validation → physical test → Owner approval → Shopify product creation."
+    "notes": "Populate only after Owner approval for sale and Shopify ACTIVE confirmation. Customer storefront filters again at render time."
   },
   "categories": [
     {
@@ -80,5 +84,15 @@
   "notes": [
     "INTERNAL: sellableProducts must remain empty until Owner-approved path completes.",
     "INTERNAL: DEMO_PREVIEW_ONLY / productExperiencePreview is never real inventory."
-  ]
+  ],
+  "publicationPolicy": {
+    "systemOfRecord": "SHOPIFY",
+    "requireShopifyStatus": "ACTIVE",
+    "requireOwnerApprovedForSale": true,
+    "requirePurchaseEnabled": true,
+    "dashboardMayStageDrafts": true,
+    "draftProductsNeverAppearInCustomerStore": true,
+    "zeroPriceProductsNeverAppearInCustomerStore": true,
+    "missingImageProductsNeverBecomeStoreReady": true
+  }
 }

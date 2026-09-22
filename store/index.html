@@ -21,6 +21,7 @@
         <img src="/homepage-v1/assets/cruvit-logo.svg" alt="" width="36" height="36" />
         <span>CRUVIT</span>
       </a>
+      <button class="store-menu-toggle" id="storeMenuToggle" type="button" aria-expanded="false" aria-controls="storeNav">Menu</button>
       <nav class="store-nav" id="storeNav" aria-label="CRUVIT">
         <a href="/">Home</a>
         <a href="/app">My Garden</a>
@@ -63,6 +64,17 @@
             not as a random shelf of products.
           </p>
         </div>
+      </div>
+    </section>
+
+    <section class="section store-live-products" id="products" hidden>
+      <div class="shell">
+        <header class="section-head">
+          <p class="section-kicker">Available now</p>
+          <h2>Products ready for a real garden.</h2>
+          <p class="section-lead">Only products that have cleared CRUVIT commercial review and are active in Shopify appear here.</p>
+        </header>
+        <div class="product-grid" id="productGrid"></div>
       </div>
     </section>
 
@@ -196,6 +208,41 @@
     (function () {
       const grid = document.getElementById("categoryGrid");
       const demoCard = document.getElementById("demoCard");
+      const productGrid = document.getElementById("productGrid");
+      const productSection = document.getElementById("products");
+      const menuToggle = document.getElementById("storeMenuToggle");
+      const storeNav = document.getElementById("storeNav");
+
+      if (menuToggle && storeNav) {
+        menuToggle.addEventListener("click", () => {
+          const open = storeNav.classList.toggle("open");
+          menuToggle.setAttribute("aria-expanded", String(open));
+          menuToggle.textContent = open ? "Close" : "Menu";
+        });
+      }
+
+      function productHtml(product) {
+        const image = Array.isArray(product.images) && product.images.length
+          ? `<img src="${product.images[0]}" alt="${product.title}" />`
+          : `<span class="media-hint">Product image coming soon</span>`;
+        const price = Number.isFinite(Number(product.priceUsd))
+          ? `${Number(product.priceUsd).toFixed(2)}`
+          : "Price unavailable";
+        const href = product.handle ? `/store/product/${product.handle}/` : "#";
+        return `
+          <article class="product-card store-product-card" data-product-id="${product.id || ""}">
+            <a class="media" href="${href}">${image}</a>
+            <div class="body">
+              <p class="store-product-kicker">CRUVIT selected</p>
+              <h3><a href="${href}">${product.title}</a></h3>
+              <p class="price">${price}</p>
+              <p class="use-case">${product.useCase || ""}</p>
+              ${product.shippingSummary ? `<p class="shipping">${product.shippingSummary}</p>` : ""}
+              ${product.whySelected ? `<p class="relevance">${product.whySelected}</p>` : ""}
+              <div class="actions"><a class="btn btn-primary" href="${href}">View product</a></div>
+            </div>
+          </article>`;
+      }
 
       function cardHtml(preview) {
         const relevance = preview.relevanceCue
@@ -239,8 +286,28 @@
             </article>`,
             )
             .join("");
+          const sellable = Array.isArray(data.sellableProducts)
+            ? data.sellableProducts.filter((product) =>
+                product &&
+                product.purchaseEnabled === true &&
+                product.shopifyStatus === "ACTIVE" &&
+                product.ownerApprovedForSale === true
+              )
+            : [];
+          if (sellable.length) {
+            productGrid.innerHTML = sellable.map(productHtml).join("");
+            productSection.hidden = false;
+          } else {
+            productSection.hidden = true;
+          }
+
           const preview = data.productExperiencePreview || data.demoPreviewOnlyProductCard;
-          if (preview) demoCard.innerHTML = cardHtml(preview);
+          const previewSection = document.getElementById("experience-preview");
+          if (sellable.length) {
+            if (previewSection) previewSection.hidden = true;
+          } else if (preview) {
+            demoCard.innerHTML = cardHtml(preview);
+          }
         })
         .catch(() => {
           grid.innerHTML = "<p class=\"section-lead\">Categories will appear here shortly.</p>";
