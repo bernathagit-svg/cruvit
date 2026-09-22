@@ -9433,6 +9433,7 @@ function openPlantVisualPilotQaReview(){
     ? rawManifest
     : 'pilot-2026-09-21-v1';
   const showAll=params.get('plantVisualQaShowAll')==='1';
+  const autoBlendReview=params.get('plantVisualQaAutoBlend')==='1';
   const rawCaptureRun=String(params.get('inGardenCaptureRun')||'').trim();
   const inGardenCaptureRun=/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,159}$/.test(rawCaptureRun)
     ? rawCaptureRun
@@ -9456,7 +9457,8 @@ function openPlantVisualPilotQaReview(){
     +encodeURIComponent(manifest)
     +(showAll?'&showAll=1':'')
     +(inGardenCaptureRun?'&inGardenCaptureRun='+encodeURIComponent(inGardenCaptureRun):'')
-    +'&v=20260922ingardencapture1';
+    +(autoBlendReview?'&autoBlendReview=1':'')
+    +'&v=20260922autoblendreview2';
   if(frame.getAttribute('src')!==reviewSrc) frame.src=reviewSrc;
   else if(ctrl&&typeof ctrl.noteFrameLoaded==='function') ctrl.noteFrameLoaded();
   if(ctrl) ctrl.open();
