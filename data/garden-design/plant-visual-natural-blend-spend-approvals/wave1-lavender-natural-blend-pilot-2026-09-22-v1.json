@@ -1,0 +1,36 @@
+{
+  "contract": "plant-visual-natural-blend-spend-approval-v1",
+  "runId": "wave1-lavender-natural-blend-pilot-2026-09-22-v1",
+  "approved": true,
+  "approvedAt": "2026-09-22T21:40:00+03:00",
+  "approvalSource": "owner explicitly approved Natural Blend+ Lavender up to USD 0.25, one call, no retries",
+  "provider": "openai-images-api",
+  "model": "gpt-image-2.5-sunburst-2026-09-08",
+  "quality": "medium",
+  "jobId": "lavender__mature__shrub__flowering__v1",
+  "maxCalls": 1,
+  "maxRetries": 0,
+  "maxSpendUsd": 0.25,
+  "allowedActions": [
+    "read exact Lavender candidate PNG from candidate R2",
+    "read bounded local Auto Blend V3 renderer crop and local edit mask",
+    "perform one GPT Image edit call on the local crop",
+    "write crop, mask, edit output and evidence only to candidate R2",
+    "return edited crop for client-side hard-masked comparison"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "sourceGardenMutationAllowed": false,
+  "candidateAssetMutationAllowed": false,
+  "globalPlantAssetReplacementAllowed": false,
+  "carryForward": false,
+  "previousApprovalReuse": false,
+  "notes": [
+    "Approval applies only to wave1-lavender-natural-blend-pilot-2026-09-22-v1.",
+    "Only lavender__mature__shrub__flowering__v1 is authorized.",
+    "No retries are authorized.",
+    "No Production R2 promotion is authorized.",
+    "No global plant registry mutation is authorized.",
+    "Final comparison must hard-composite model output only inside the client-side bounded mask."
+  ]
+}
