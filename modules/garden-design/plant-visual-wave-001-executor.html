@@ -1,0 +1,99 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CRUVIT Wave 1 candidate executor</title>
+<pre id="out">starting…</pre>
+<script>
+(async () => {
+  const out = document.getElementById('out');
+  const runId = 'plant-visual-wave-001-2026-09-22-v1';
+  const render = (state) => { out.textContent = JSON.stringify(state, null, 2); };
+  const state = {
+    runId,
+    started: true,
+    attempted: 0,
+    completed: 0,
+    stopped: false,
+    results: []
+  };
+  render(state);
+
+  try {
+    const manifestRes = await fetch(
+      '/data/garden-design/plant-visual-production-wave-execution-manifests/' + runId + '.json',
+      { cache: 'no-store' }
+    );
+    if (!manifestRes.ok) throw new Error('manifest-load-' + manifestRes.status);
+    const manifest = await manifestRes.json();
+
+    for (const job of manifest.jobs || []) {
+      state.attempted += 1;
+      state.currentJobId = job.jobId;
+      render(state);
+
+      let res;
+      let data;
+      try {
+        res = await fetch('/.netlify/functions/plant-visual-generate-wave-job', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ runId, jobId: job.jobId })
+        });
+        data = await res.json();
+      } catch (err) {
+        state.results.push({
+          jobId: job.jobId,
+          ok: false,
+          status: null,
+          code: 'CLIENT_FETCH_FAILURE',
+          error: String(err && err.message || err)
+        });
+        state.stopped = true;
+        state.stopReason = 'CLIENT_FETCH_FAILURE';
+        break;
+      }
+
+      state.results.push({
+        jobId: job.jobId,
+        ok: res.ok && data.ok === true,
+        status: res.status,
+        code: data.code || null,
+        objectKey: data.objectKey || null,
+        sha256: data.sha256 || null,
+        bytes: data.bytes || null,
+        technicalQA: data.technicalQA?.result || data.evidence?.technicalQA?.result || null,
+        framingQA: data.framingQA?.result || data.evidence?.framingQA?.result || null,
+        projectedUsd: data.projectedUsd ?? data.evidence?.projectedUsd ?? null,
+        actualSpendUsd: data.actualSpendUsd ?? data.evidence?.actualSpendUsd ?? null
+      });
+      if (res.ok && data.ok === true) state.completed += 1;
+      render(state);
+
+      if (!res.ok || data.ok !== true) {
+        state.stopped = true;
+        state.stopReason = data.code || ('HTTP_' + res.status);
+        break;
+      }
+    }
+
+    delete state.currentJobId;
+    try {
+      const statusRes = await fetch(
+        '/.netlify/functions/plant-visual-wave-status?runId=' + encodeURIComponent(runId),
+        { cache: 'no-store' }
+      );
+      state.status = await statusRes.json();
+      state.statusHttp = statusRes.status;
+    } catch (err) {
+      state.statusError = String(err && err.message || err);
+    }
+    state.finished = true;
+    render(state);
+  } catch (err) {
+    state.stopped = true;
+    state.stopReason = 'EXECUTOR_EXCEPTION';
+    state.error = String(err && err.message || err);
+    state.finished = true;
+    render(state);
+  }
+})();
+</script>
