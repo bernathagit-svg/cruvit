@@ -106,9 +106,10 @@ test('V2 filter includes bounded tone, temperature and edge integration',()=>{
   assert.match(css,/drop-shadow\(/);
 });
 
-test('production renderer imports V2',()=>{
-  const html=fs.readFileSync(path.join(ROOT,'modules/garden-design/index.html'),'utf8');
-  assert.match(html,/garden-design-auto-blend-v2\.js/);
-  assert.match(html,/GARDEN_DESIGN_AUTO_BLEND_V2_VERSION/);
-  assert.match(html,/AUTO_BLEND_V2_POLICY/);
+test('V2 remains the bounded base engine used by V3',()=>{
+  const v3=fs.readFileSync(path.join(ROOT,'modules/garden-design/garden-design-auto-blend-v3.js'),'utf8');
+  assert.match(v3,/garden-design-auto-blend-v2\.js/);
+  assert.match(v3,/computeAutoBlendV2/);
+  assert.match(v3,/sampleLocalGardenV2/);
+  assert.match(v3,/samplePlantCutoutV2/);
 });
