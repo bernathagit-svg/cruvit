@@ -46,19 +46,21 @@ export default async (req)=>{
   const missing=required.filter(k=>!env(k));
   if(missing.length) return json(500,{ok:false,code:'ENV_MISSING',missing});
 
-  const arr=Array.isArray(body.bytes)?body.bytes:null;
-  if(!arr||!arr.length||arr.length>15*1024*1024) return json(400,{ok:false,code:'PNG_BYTES_REQUIRED'});
-  const bytes=Buffer.from(arr);
+  const imageBase64=String(body.imageBase64||'').trim();
+  if(!imageBase64) return json(400,{ok:false,code:'CAPTURE_BASE64_REQUIRED'});
+  let bytes;
+  try{ bytes=Buffer.from(imageBase64,'base64'); }catch{return json(400,{ok:false,code:'CAPTURE_BASE64_INVALID'});}
+  if(!bytes.length||bytes.length>8*1024*1024) return json(400,{ok:false,code:'CAPTURE_BYTES_INVALID'});
   const digest=sha256(bytes);
   const bucket=env('PLANT_VISUAL_R2_CANDIDATES_BUCKET');
   const c=client();
-  const key=`candidates/${safeSegment(plan.sourceManifestId)}/in-garden-captures/${safeSegment(runId)}/${safeSegment(jobId)}__${digest}.png`;
+  const key=`candidates/${safeSegment(plan.sourceManifestId)}/in-garden-captures/${safeSegment(runId)}/${safeSegment(jobId)}__${digest}.jpg`;
   const metaKey=`candidates/${safeSegment(plan.sourceManifestId)}/in-garden-captures/${safeSegment(runId)}/${safeSegment(jobId)}.json`;
 
   const existing=await readBytes(c,bucket,key);
   if(!existing){
     await c.send(new PutObjectCommand({
-      Bucket:bucket,Key:key,Body:bytes,ContentType:'image/png',CacheControl:'private, no-store',
+      Bucket:bucket,Key:key,Body:bytes,ContentType:'image/jpeg',CacheControl:'private, no-store',
       Metadata:{'cruvit-run-id':runId,'cruvit-job-id':jobId,'cruvit-sha256':digest}
     }));
   }
