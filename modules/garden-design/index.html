@@ -3932,7 +3932,10 @@ function gdPreviewPlantLayerScale(scale) {
     gdMarkAuthorityUserScaleOverride(layer);
   }
   const el = document.querySelector('.gd-plant-layer[data-layer-id="' + layer.id + '"]');
-  if (el) applyLayerDomTransform(layer, el);
+  if (el) {
+    applyLayerDomTransform(layer, el);
+    gdApplyAutoBlendVisual(layer, el);
+  }
 }
 
 function adjustPlantLayerScale(delta) {
@@ -3943,6 +3946,12 @@ function adjustPlantLayerScale(delta) {
     gdMarkAuthorityUserScaleOverride(layer);
   }
   renderPlantLayers();
+  if (gdAutoBlendState(layer).enabled) {
+    gdRefreshEnabledAutoBlend(layer.id).finally(function() {
+      gdPersistDesignSnapshot({ clientInstanceId: layer.id, hostAction: 'update', phase: 'change' });
+    });
+    return;
+  }
   gdPersistDesignSnapshot({ clientInstanceId: layer.id, hostAction: 'update', phase: 'change' });
 }
 
@@ -3954,9 +3963,18 @@ function setPlantLayerScale(scale) {
     gdMarkAuthorityUserScaleOverride(layer);
   }
   const el = document.querySelector('.gd-plant-layer[data-layer-id="' + layer.id + '"]');
-  if (el) applyLayerDomTransform(layer, el);
+  if (el) {
+    applyLayerDomTransform(layer, el);
+    gdApplyAutoBlendVisual(layer, el);
+  }
   const slider = document.getElementById('gdLayerScaleSlider');
   if (slider) slider.value = layer.scale;
+  if (gdAutoBlendState(layer).enabled) {
+    gdRefreshEnabledAutoBlend(layer.id).finally(function() {
+      gdPersistDesignSnapshot({ clientInstanceId: layer.id, hostAction: 'update', phase: 'change' });
+    });
+    return;
+  }
   gdPersistDesignSnapshot({ clientInstanceId: layer.id, hostAction: 'update', phase: 'change' });
 }
 
