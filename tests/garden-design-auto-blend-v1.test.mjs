@@ -84,3 +84,14 @@ test('Garden Design production UI exposes Auto Blend and persists through placem
   assert.match(owned,/metadata:/);
   assert.match(owned,/layer\.metadata/);
 });
+
+
+test('QA Auto Blend waits for engine and layer instead of generic unavailable',()=>{
+  const html=fs.readFileSync(path.join(ROOT,'modules/garden-design/index.html'),'utf8');
+  assert.match(html,/gdEnsureAutoBlendApi/);
+  assert.match(html,/gdWaitForQaAutoBlendReady/);
+  assert.match(html,/QA_AUTO_BLEND_ENGINE_NOT_READY/);
+  assert.match(html,/QA_AUTO_BLEND_LAYER_NOT_READY/);
+  assert.match(html,/diagnostics:/);
+  assert.match(html,/await gdWaitForQaAutoBlendReady\(4500\)/);
+});
