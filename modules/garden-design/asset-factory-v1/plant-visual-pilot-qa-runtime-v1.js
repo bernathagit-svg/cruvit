@@ -14,6 +14,11 @@ const PARAMS = new URLSearchParams(window.location.search);
 const MANIFEST_ID = safeManifestId(PARAMS.get('manifest'));
 const IN_GARDEN_CAPTURE_RUN = String(PARAMS.get('inGardenCaptureRun') || '').trim();
 const AUTO_BLEND_REVIEW = PARAMS.get('autoBlendReview') === '1';
+const NATURAL_BLEND_RUN = String(PARAMS.get('naturalBlendRun') || '').trim();
+const NATURAL_BLEND_PLAN_URL = NATURAL_BLEND_RUN
+  ? '../../data/garden-design/plant-visual-natural-blend-plans/' + encodeURIComponent(NATURAL_BLEND_RUN) + '.json?v=20260922a'
+  : null;
+const NATURAL_BLEND_JOB_URL = '/.netlify/functions/plant-visual-natural-blend-job';
 const SUMMARY_URL = '../../data/garden-design/plant-visual-qa-manifests/' + MANIFEST_ID + '.json?v=20260921a';
 const ANCHOR_REGISTRY_URL = DEFAULT_ANCHOR_REGISTRY_URL;
 const IMAGE_URL = (jobId) =>
@@ -49,6 +54,9 @@ let qaAutoBlendEnabled = false;
 let qaAutoBlendLastResult = null;
 const qaBlendWaiters = new Map();
 let qaBlendCompareRunning = false;
+let naturalBlendPlan = null;
+let naturalBlendRunning = false;
+let naturalBlendLastComposite = null;
 
 function esc(value) {
   return String(value == null ? '' : value)
@@ -359,7 +367,10 @@ function blendControls() {
     compare: document.getElementById('blendCompareBtn'),
     comparePanel: document.getElementById('blendCompare'),
     compareRawImg: document.getElementById('blendCompareRawImg'),
-    compareAutoImg: document.getElementById('blendCompareAutoImg')
+    compareAutoImg: document.getElementById('blendCompareAutoImg'),
+    natural: document.getElementById('naturalBlendBtn'),
+    naturalFigure: document.getElementById('naturalBlendFigure'),
+    naturalImg: document.getElementById('naturalBlendImg')
   };
 }
 
@@ -396,6 +407,20 @@ function updateBlendControls() {
   if (ui.readout) ui.readout.textContent = qaAutoBlendEnabled
     ? formatBlendReadout(qaAutoBlendLastResult?.blend)
     : 'RAW candidate · no runtime matching applied.';
+
+  const naturalEligible = Boolean(
+    NATURAL_BLEND_RUN
+    && naturalBlendPlan
+    && selectedJobId
+    && selectedJobId === naturalBlendPlan.sourceJobId
+  );
+  if (ui.natural) {
+    ui.natural.style.display = naturalEligible ? '' : 'none';
+    ui.natural.disabled = naturalBlendRunning;
+    ui.natural.title = naturalEligible
+      ? 'Create one bounded local AI integration patch for this exact placement'
+      : 'Natural Blend+ is available only for the bounded Lavender pilot';
+  }
 }
 
 function requestQaAutoBlend(enabled) {
@@ -437,6 +462,222 @@ function setQaAutoBlend(enabled) {
   qaAutoBlendLastResult = null;
   updateBlendControls();
   sendQaAutoBlendState();
+}
+
+function clampNumber(value, min, max) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return min;
+  return Math.min(max, Math.max(min, n));
+}
+
+function loadDataImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('IMAGE_DECODE_FAILED'));
+    img.src = src;
+  });
+}
+
+function canvasBase64(canvas, type = 'image/png', quality) {
+  const dataUrl = canvas.toDataURL(type, quality);
+  return dataUrl.slice(dataUrl.indexOf(',') + 1);
+}
+
+function roundedRectPath(ctx, x, y, w, h, radius) {
+  const r = Math.min(radius, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+async function buildNaturalBlendInput(capture) {
+  if (!capture?.ok || !capture.imageBase64 || !capture.geometry?.cutout) {
+    throw new Error('NATURAL_BLEND_CAPTURE_INVALID');
+  }
+
+  const fullSrc = 'data:image/jpeg;base64,' + capture.imageBase64;
+  const fullImg = await loadDataImage(fullSrc);
+  const frameW = Number(capture.width || fullImg.naturalWidth || fullImg.width);
+  const frameH = Number(capture.height || fullImg.naturalHeight || fullImg.height);
+  const cut = capture.geometry.cutout;
+
+  const cx = Number(cut.x) + Number(cut.width) / 2;
+  const cy = Number(cut.y) + Number(cut.height) * 0.54;
+  const desired = Math.max(
+    Number(cut.width) * 1.65,
+    Number(cut.height) * 1.34,
+    Math.min(frameW, frameH) * 0.34
+  );
+  const side = Math.max(64, Math.min(desired, frameW, frameH));
+  let cropX = cx - side / 2;
+  let cropY = cy - side / 2 + Number(cut.height) * 0.06;
+  cropX = clampNumber(cropX, 0, Math.max(0, frameW - side));
+  cropY = clampNumber(cropY, 0, Math.max(0, frameH - side));
+
+  const outSize = 1024;
+  const cropCanvas = document.createElement('canvas');
+  cropCanvas.width = outSize;
+  cropCanvas.height = outSize;
+  const cropCtx = cropCanvas.getContext('2d');
+  if (!cropCtx) throw new Error('NATURAL_BLEND_CROP_CANVAS_UNAVAILABLE');
+  cropCtx.drawImage(fullImg, cropX, cropY, side, side, 0, 0, outSize, outSize);
+
+  const sx = outSize / side;
+  const bx = (Number(cut.x) - cropX) * sx;
+  const by = (Number(cut.y) - cropY) * sx;
+  const bw = Number(cut.width) * sx;
+  const bh = Number(cut.height) * sx;
+
+  const expandX = Math.max(18, bw * 0.12);
+  const expandTop = Math.max(14, bh * 0.07);
+  const expandBottom = Math.max(28, bh * 0.16);
+  const editX = clampNumber(bx - expandX, 0, outSize);
+  const editY = clampNumber(by - expandTop, 0, outSize);
+  const editW = clampNumber(bw + expandX * 2, 1, outSize - editX);
+  const editH = clampNumber(bh + expandTop + expandBottom, 1, outSize - editY);
+
+  // OpenAI mask: opaque = preserve/context, transparent = editable.
+  const maskCanvas = document.createElement('canvas');
+  maskCanvas.width = outSize;
+  maskCanvas.height = outSize;
+  const maskCtx = maskCanvas.getContext('2d');
+  if (!maskCtx) throw new Error('NATURAL_BLEND_MASK_CANVAS_UNAVAILABLE');
+  maskCtx.fillStyle = 'rgba(255,255,255,1)';
+  maskCtx.fillRect(0, 0, outSize, outSize);
+  maskCtx.globalCompositeOperation = 'destination-out';
+  roundedRectPath(maskCtx, editX, editY, editW, editH, Math.max(24, editW * 0.08));
+  maskCtx.fill();
+  maskCtx.beginPath();
+  maskCtx.ellipse(
+    bx + bw / 2,
+    Math.min(outSize - 2, by + bh * 0.98),
+    Math.max(24, bw * 0.48),
+    Math.max(12, bh * 0.10),
+    0, 0, Math.PI * 2
+  );
+  maskCtx.fill();
+  maskCtx.globalCompositeOperation = 'source-over';
+
+  // Hard client-side composite mask: output is only allowed inside the same region.
+  const alphaCanvas = document.createElement('canvas');
+  alphaCanvas.width = outSize;
+  alphaCanvas.height = outSize;
+  const alphaCtx = alphaCanvas.getContext('2d');
+  if (!alphaCtx) throw new Error('NATURAL_BLEND_ALPHA_CANVAS_UNAVAILABLE');
+  alphaCtx.fillStyle = '#fff';
+  roundedRectPath(alphaCtx, editX, editY, editW, editH, Math.max(24, editW * 0.08));
+  alphaCtx.fill();
+  alphaCtx.beginPath();
+  alphaCtx.ellipse(
+    bx + bw / 2,
+    Math.min(outSize - 2, by + bh * 0.98),
+    Math.max(24, bw * 0.48),
+    Math.max(12, bh * 0.10),
+    0, 0, Math.PI * 2
+  );
+  alphaCtx.fill();
+
+  return {
+    cropBase64: canvasBase64(cropCanvas),
+    maskBase64: canvasBase64(maskCanvas),
+    alphaCanvas,
+    fullImg,
+    fullSrc,
+    frameW,
+    frameH,
+    cropRect: { x: cropX, y: cropY, side },
+    outputSize: outSize
+  };
+}
+
+async function hardCompositeNaturalBlend(input, editedBase64) {
+  const editedImg = await loadDataImage('data:image/png;base64,' + editedBase64);
+  const patch = document.createElement('canvas');
+  patch.width = input.outputSize;
+  patch.height = input.outputSize;
+  const pctx = patch.getContext('2d');
+  if (!pctx) throw new Error('NATURAL_BLEND_PATCH_CANVAS_UNAVAILABLE');
+  pctx.drawImage(editedImg, 0, 0, input.outputSize, input.outputSize);
+  pctx.globalCompositeOperation = 'destination-in';
+  pctx.drawImage(input.alphaCanvas, 0, 0);
+  pctx.globalCompositeOperation = 'source-over';
+
+  const full = document.createElement('canvas');
+  full.width = input.frameW;
+  full.height = input.frameH;
+  const fctx = full.getContext('2d');
+  if (!fctx) throw new Error('NATURAL_BLEND_FULL_CANVAS_UNAVAILABLE');
+  fctx.drawImage(input.fullImg, 0, 0, input.frameW, input.frameH);
+  const r = input.cropRect;
+  fctx.drawImage(patch, r.x, r.y, r.side, r.side);
+
+  return full.toDataURL('image/jpeg', 0.94);
+}
+
+async function runNaturalBlendPilot() {
+  if (!NATURAL_BLEND_RUN || !naturalBlendPlan || naturalBlendRunning) return;
+  if (selectedJobId !== naturalBlendPlan.sourceJobId) return;
+
+  const ui = blendControls();
+  naturalBlendRunning = true;
+  updateBlendControls();
+  if (ui.natural) ui.natural.textContent = 'Natural Blend+…';
+  if (ui.readout) ui.readout.textContent = 'Preparing bounded local edit crop…';
+
+  try {
+    qaAutoBlendEnabled = true;
+    updateBlendControls();
+    const blendResult = await requestQaAutoBlend(true);
+    qaAutoBlendLastResult = blendResult;
+    await sleep(300);
+
+    const capture = await requestRendererCapture(selectedJobId);
+    const input = await buildNaturalBlendInput(capture);
+
+    const res = await fetch(NATURAL_BLEND_JOB_URL, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        runId: NATURAL_BLEND_RUN,
+        jobId: selectedJobId,
+        cropBase64: input.cropBase64,
+        maskBase64: input.maskBase64
+      })
+    });
+
+    const text = await res.text();
+    let data = null;
+    try { data = JSON.parse(text); } catch {}
+
+    if (res.status === 403 && data?.code === 'NATURAL_BLEND_SPEND_OWNER_APPROVAL_REQUIRED') {
+      if (ui.readout) ui.readout.textContent = 'Natural Blend+ ready · owner spend approval required.';
+      return;
+    }
+    if (!res.ok || !data?.ok || !data?.outputBase64) {
+      throw new Error(data?.code || ('NATURAL_BLEND_HTTP_' + res.status));
+    }
+
+    const finalDataUrl = await hardCompositeNaturalBlend(input, data.outputBase64);
+    naturalBlendLastComposite = finalDataUrl;
+    if (ui.naturalImg) ui.naturalImg.src = finalDataUrl;
+    if (ui.naturalFigure) ui.naturalFigure.style.display = '';
+    ui.comparePanel?.classList.add('is-visible');
+    if (ui.readout) {
+      ui.readout.textContent =
+        'Natural Blend+ local patch ready · pixels outside the bounded mask preserved from V3 capture.';
+    }
+  } catch (err) {
+    if (ui.readout) ui.readout.textContent = 'Natural Blend+ failed · ' + String(err?.message || err);
+  } finally {
+    naturalBlendRunning = false;
+    if (ui.natural) ui.natural.textContent = '✨ Natural Blend+';
+    updateBlendControls();
+  }
 }
 
 async function compareRawVsAutoBlend() {
@@ -488,6 +729,7 @@ function wireBlendReviewControls() {
   ui.raw?.addEventListener('click', () => setQaAutoBlend(false));
   ui.auto?.addEventListener('click', () => setQaAutoBlend(true));
   ui.compare?.addEventListener('click', compareRawVsAutoBlend);
+  ui.natural?.addEventListener('click', runNaturalBlendPilot);
   updateBlendControls();
 }
 
@@ -603,6 +845,8 @@ function selectPreview(jobId) {
   selectedJobId = jobId;
   const ui = blendControls();
   ui.comparePanel?.classList.remove('is-visible');
+  if (ui.naturalFigure) ui.naturalFigure.style.display = 'none';
+  naturalBlendLastComposite = null;
   updateSelectedUi();
   sendRendererPreview();
   const panel = document.getElementById('rendererPanel');
@@ -674,10 +918,11 @@ window.addEventListener('message', (ev) => {
 async function boot() {
   const status = document.getElementById('qaLoadStatus');
   try {
-    const [summaryRes, anchorRes, capturePlanRes] = await Promise.all([
+    const [summaryRes, anchorRes, capturePlanRes, naturalBlendPlanRes] = await Promise.all([
       fetch(SUMMARY_URL, { cache: 'no-store' }),
       fetch(ANCHOR_REGISTRY_URL, { cache: 'no-store' }),
-      CAPTURE_PLAN_URL ? fetch(CAPTURE_PLAN_URL, { cache: 'no-store' }) : Promise.resolve(null)
+      CAPTURE_PLAN_URL ? fetch(CAPTURE_PLAN_URL, { cache: 'no-store' }) : Promise.resolve(null),
+      NATURAL_BLEND_PLAN_URL ? fetch(NATURAL_BLEND_PLAN_URL, { cache: 'no-store' }) : Promise.resolve(null)
     ]);
     const data = await summaryRes.json();
     if (!summaryRes.ok || !data || !Array.isArray(data.rows)) {
@@ -697,6 +942,14 @@ async function boot() {
         if (parsedCapturePlan && Array.isArray(parsedCapturePlan.jobs)) capturePlan = parsedCapturePlan;
       } catch (_) {
         capturePlan = null;
+      }
+    }
+    if (naturalBlendPlanRes && naturalBlendPlanRes.ok) {
+      try {
+        const parsedNaturalBlendPlan = await naturalBlendPlanRes.json();
+        if (parsedNaturalBlendPlan && parsedNaturalBlendPlan.sourceJobId) naturalBlendPlan = parsedNaturalBlendPlan;
+      } catch (_) {
+        naturalBlendPlan = null;
       }
     }
     qaRows = data.rows;
