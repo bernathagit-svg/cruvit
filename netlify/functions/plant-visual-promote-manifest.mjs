@@ -48,6 +48,44 @@ function s3Client() {
   });
 }
 
+
+async function loadApproval(req, manifestId) {
+  const url = new URL(
+    '/data/garden-design/plant-visual-production-promotion-approvals/' + manifestId + '.json',
+    req.url
+  );
+  const res = await fetch(url, { headers: { 'cache-control': 'no-cache' } });
+  if (!res.ok) return null;
+  const approval = await res.json();
+  if (
+    !approval
+    || approval.contract !== 'plant-visual-production-promotion-approval-v1'
+    || approval.manifestId !== manifestId
+  ) return null;
+  return approval;
+}
+
+function approvalAuthorizesManifest(approval, manifest) {
+  if (!approval || !manifest) return false;
+  const scope = approval.scope || {};
+  if (scope.paidGenerationAllowed !== false) return false;
+  if (scope.newImageGenerationAllowed !== false) return false;
+  if (scope.unrelatedRegistryChangesAllowed !== false) return false;
+
+  const allowedActions = Array.isArray(scope.allowedActions) ? scope.allowedActions : [];
+  const requiredActions = [
+    'copy exact verified candidate bytes to immutable Production R2 keys',
+    'verify production readback checksum',
+    'update design asset registry only for successfully verified production objects'
+  ];
+  if (!requiredActions.every((action) => allowedActions.includes(action))) return false;
+
+  const approvedJobs = new Set(Array.isArray(scope.candidateJobs) ? scope.candidateJobs : []);
+  const manifestJobs = (manifest.rows || []).map((row) => row.jobId);
+  if (!manifestJobs.length || manifestJobs.length !== approvedJobs.size) return false;
+  return manifestJobs.every((jobId) => approvedJobs.has(jobId));
+}
+
 async function loadManifest(req, manifestId) {
   const url = new URL(
     '/data/garden-design/plant-visual-qa-manifests/' + manifestId + '.json',
@@ -205,8 +243,7 @@ export default async (req) => {
     'PLANT_VISUAL_R2_ACCESS_KEY_ID',
     'PLANT_VISUAL_R2_SECRET_ACCESS_KEY',
     'PLANT_VISUAL_R2_CANDIDATES_BUCKET',
-    'PLANT_VISUAL_R2_PRODUCTION_BUCKET',
-    'CRUVIT_PLANT_VISUAL_PROMOTION_NONCE'
+    'PLANT_VISUAL_R2_PRODUCTION_BUCKET'
   ];
   const missing = required.filter((key) => !env(key));
   if (missing.length) return json(500, { ok: false, code: 'ENV_MISSING', missing });
@@ -221,18 +258,27 @@ export default async (req) => {
   const manifestId = safeManifestId(body.manifestId);
   if (!manifestId) return json(400, { ok: false, code: 'MANIFEST_ID_REQUIRED' });
 
-  if (
-    !body.nonce
-    || String(body.nonce) !== String(env('CRUVIT_PLANT_VISUAL_PROMOTION_NONCE'))
-  ) {
-    return json(403, { ok: false, code: 'PROMOTION_NONCE_INVALID' });
-  }
-
   let manifest;
   try {
     manifest = await loadManifest(req, manifestId);
   } catch (err) {
     return json(404, { ok: false, code: err?.message || 'QA_MANIFEST_LOAD_FAILED' });
+  }
+
+  const nonceAuthorized = Boolean(
+    env('CRUVIT_PLANT_VISUAL_PROMOTION_NONCE')
+    && body.nonce
+    && String(body.nonce) === String(env('CRUVIT_PLANT_VISUAL_PROMOTION_NONCE'))
+  );
+  const approval = await loadApproval(req, manifestId);
+  const artifactAuthorized = approvalAuthorizesManifest(approval, manifest);
+
+  if (!nonceAuthorized && !artifactAuthorized) {
+    return json(403, {
+      ok: false,
+      code: 'PROMOTION_OWNER_APPROVAL_REQUIRED',
+      manifestId
+    });
   }
 
   const rows = manifest.rows || [];
@@ -262,6 +308,7 @@ export default async (req) => {
     failed: failed.length,
     productionWrites: results.filter((row) => row.wrote === true).length,
     registryWrites: 0,
+    authorization: artifactAuthorized ? 'OWNER_APPROVAL_ARTIFACT' : 'NONCE',
     results
   });
 };
