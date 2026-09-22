@@ -9433,6 +9433,10 @@ function openPlantVisualPilotQaReview(){
     ? rawManifest
     : 'pilot-2026-09-21-v1';
   const showAll=params.get('plantVisualQaShowAll')==='1';
+  const rawCaptureRun=String(params.get('inGardenCaptureRun')||'').trim();
+  const inGardenCaptureRun=/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,159}$/.test(rawCaptureRun)
+    ? rawCaptureRun
+    : '';
   const status=document.getElementById('ownedGardenDesignAssetPromotionStatus');
   if(status) status.textContent='Plant Visual Batch QA · '+manifest+' · read-only production renderer.';
   root.classList.add('dac-active');
@@ -9451,7 +9455,8 @@ function openPlantVisualPilotQaReview(){
   const reviewSrc='modules/garden-design/plant-visual-pilot-qa-v1.html?manifest='
     +encodeURIComponent(manifest)
     +(showAll?'&showAll=1':'')
-    +'&v=20260921batchqa2';
+    +(inGardenCaptureRun?'&inGardenCaptureRun='+encodeURIComponent(inGardenCaptureRun):'')
+    +'&v=20260922ingardencapture1';
   if(frame.getAttribute('src')!==reviewSrc) frame.src=reviewSrc;
   else if(ctrl&&typeof ctrl.noteFrameLoaded==='function') ctrl.noteFrameLoaded();
   if(ctrl) ctrl.open();
