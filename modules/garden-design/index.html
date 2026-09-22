@@ -2900,6 +2900,63 @@ async function gdCaptureQaPreviewPng() {
     ctx.drawImage(cutoutBitmap, cx, cy, cutoutRect.width, cutoutRect.height);
     ctx.restore();
 
+    if (blend && blend.enabled && blend.version === 'garden-design-auto-blend-v3') {
+      const dl = blend.directionalLighting || {};
+      const gs = blend.groundSpill || {};
+      const overlayCanvas = document.createElement('canvas');
+      overlayCanvas.width = width;
+      overlayCanvas.height = height;
+      const octx = overlayCanvas.getContext('2d');
+      if (octx) {
+        // Directional lighting masked by the plant alpha.
+        octx.clearRect(0, 0, width, height);
+        octx.drawImage(cutoutBitmap, cx, cy, cutoutRect.width, cutoutRect.height);
+        octx.globalCompositeOperation = 'source-in';
+        const angle = ((Number(dl.angleDeg) || 0) + 90) * Math.PI / 180;
+        const vx = Math.cos(angle), vy = Math.sin(angle);
+        const len = Math.max(cutoutRect.width, cutoutRect.height);
+        const mx = cx + cutoutRect.width / 2, my = cy + cutoutRect.height / 2;
+        const grad = octx.createLinearGradient(
+          mx - vx * len / 2, my - vy * len / 2,
+          mx + vx * len / 2, my + vy * len / 2
+        );
+        const hi = Math.min(0.14, Math.max(0.03, Number(dl.highlightOpacity) || 0.06));
+        const shade = Math.min(0.17, Math.max(0.04, Number(dl.shadeOpacity) || 0.08));
+        grad.addColorStop(0, 'rgba(255,255,255,' + hi + ')');
+        grad.addColorStop(0.48, 'rgba(255,255,255,0)');
+        grad.addColorStop(1, 'rgba(0,0,0,' + shade + ')');
+        octx.fillStyle = grad;
+        octx.fillRect(cx, cy, cutoutRect.width, cutoutRect.height);
+        ctx.save();
+        ctx.globalCompositeOperation = 'soft-light';
+        ctx.drawImage(overlayCanvas, 0, 0);
+        ctx.restore();
+
+        // Ground-color spill into the lower part of the cutout.
+        octx.clearRect(0, 0, width, height);
+        octx.globalCompositeOperation = 'source-over';
+        octx.drawImage(cutoutBitmap, cx, cy, cutoutRect.width, cutoutRect.height);
+        octx.globalCompositeOperation = 'source-in';
+        const color = gs.color || {};
+        const rr = Math.max(0, Math.min(255, Number(color.r) || 128));
+        const gg = Math.max(0, Math.min(255, Number(color.g) || 128));
+        const bb = Math.max(0, Math.min(255, Number(color.b) || 128));
+        const alpha = Math.min(0.20, Math.max(0.06, Number(gs.colorAlpha) || 0.12));
+        const coverage = Math.min(28, Math.max(14, Number(gs.coveragePct) || 20)) / 100;
+        const gy0 = cy + cutoutRect.height * (1 - coverage);
+        const ggrad = octx.createLinearGradient(0, cy + cutoutRect.height, 0, gy0);
+        ggrad.addColorStop(0, 'rgba(' + rr + ',' + gg + ',' + bb + ',' + alpha + ')');
+        ggrad.addColorStop(0.55, 'rgba(' + rr + ',' + gg + ',' + bb + ',' + (alpha * 0.55) + ')');
+        ggrad.addColorStop(1, 'rgba(' + rr + ',' + gg + ',' + bb + ',0)');
+        octx.fillStyle = ggrad;
+        octx.fillRect(cx, gy0, cutoutRect.width, cutoutRect.height * coverage);
+        ctx.save();
+        ctx.globalCompositeOperation = 'multiply';
+        ctx.drawImage(overlayCanvas, 0, 0);
+        ctx.restore();
+      }
+    }
+
     const captureBlob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.9));
     if (!captureBlob) return { ok: false, code: 'QA_CAPTURE_JPEG_FAILED' };
     const bytes = new Uint8Array(await captureBlob.arrayBuffer());
@@ -3959,7 +4016,7 @@ function updateLayerToolbar() {
       const sh = blend.shadow || {};
       const fmt = function(v, d) { return Number.isFinite(Number(v)) ? Number(v).toFixed(d) : '—'; };
       blendStatus.textContent =
-        (blend.version === 'garden-design-auto-blend-v2' ? 'V2 matched' : (blend.source === 'local-scene-sample' ? 'Scene matched' : 'Blend active'))
+        (blend.version === 'garden-design-auto-blend-v3' ? 'V3 matched' : (blend.version === 'garden-design-auto-blend-v2' ? 'V2 matched' : (blend.source === 'local-scene-sample' ? 'Scene matched' : 'Blend active')))
         + ' · B ' + fmt(a.brightness, 2)
         + ' · C ' + fmt(a.contrast, 2)
         + ' · S ' + fmt(a.saturate, 2)
@@ -3981,11 +4038,11 @@ async function gdEnsureAutoBlendApi() {
   const ready = gdAutoBlendApi();
   if (ready) return ready;
   if (!gdAutoBlendImportPromise) {
-    gdAutoBlendImportPromise = import('./garden-design-auto-blend-v2.js?v=20260922autoblendv2a')
+    gdAutoBlendImportPromise = import('./garden-design-auto-blend-v3.js?v=20260922autoblendv3a')
       .then(function(mod) {
         const api = {
-          AUTO_BLEND_V2_POLICY: mod.AUTO_BLEND_V2_POLICY,
-          GARDEN_DESIGN_AUTO_BLEND_V2_VERSION: mod.GARDEN_DESIGN_AUTO_BLEND_V2_VERSION,
+          AUTO_BLEND_V3_POLICY: mod.AUTO_BLEND_V3_POLICY,
+          GARDEN_DESIGN_AUTO_BLEND_V3_VERSION: mod.GARDEN_DESIGN_AUTO_BLEND_V3_VERSION,
           applyAutoBlendToLayerElement: mod.applyAutoBlendToLayerElement,
           autoBlendMetadata: mod.autoBlendMetadata,
           blendFilterCss: mod.blendFilterCss,
@@ -6609,17 +6666,17 @@ The plants array MUST match the exact counts specified above.`}]);
     import './garden-design-variant-policy-v1.js?v=20260917a';
     import './garden-design-variant-selection-policy-v1.js?v=20260917a';
     import {
-      AUTO_BLEND_V2_POLICY,
-      GARDEN_DESIGN_AUTO_BLEND_V2_VERSION,
+      AUTO_BLEND_V3_POLICY,
+      GARDEN_DESIGN_AUTO_BLEND_V3_VERSION,
       applyAutoBlendToLayerElement,
       autoBlendMetadata,
       blendFilterCss,
       calculateAutoBlendForLayer,
       disableAutoBlend
-    } from './garden-design-auto-blend-v2.js?v=20260922autoblendv2a';
+    } from './garden-design-auto-blend-v3.js?v=20260922autoblendv3a';
     window.CruvitGardenDesignAutoBlend = {
-      AUTO_BLEND_V2_POLICY,
-      GARDEN_DESIGN_AUTO_BLEND_V2_VERSION,
+      AUTO_BLEND_V3_POLICY,
+      GARDEN_DESIGN_AUTO_BLEND_V3_VERSION,
       applyAutoBlendToLayerElement,
       autoBlendMetadata,
       blendFilterCss,
