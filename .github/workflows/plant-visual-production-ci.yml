@@ -48,6 +48,11 @@ on:
       - 'tests/garden-design-auto-blend-v2.test.mjs'
       - 'modules/garden-design/garden-design-auto-blend-v3.js'
       - 'tests/garden-design-auto-blend-v3.test.mjs'
+      - 'netlify/functions/plant-visual-natural-blend-job.mjs'
+      - 'data/garden-design/plant-visual-natural-blend-plans/**'
+      - 'data/garden-design/plant-visual-natural-blend-spend-approvals/**'
+      - 'data/garden-design/plant-visual-natural-blend-spend-proposals/**'
+      - 'tests/plant-visual-natural-blend-v1.test.mjs'
       - 'data/garden-design/plant-visual-wave-metadata-qa/**'
       - 'scripts/plant-visual-wave-metadata-qa-v1.mjs'
       - 'netlify/functions/plant-visual-model-qa-job.mjs'
@@ -66,6 +71,11 @@ on:
       - 'tests/garden-design-auto-blend-v2.test.mjs'
       - 'modules/garden-design/garden-design-auto-blend-v3.js'
       - 'tests/garden-design-auto-blend-v3.test.mjs'
+      - 'netlify/functions/plant-visual-natural-blend-job.mjs'
+      - 'data/garden-design/plant-visual-natural-blend-plans/**'
+      - 'data/garden-design/plant-visual-natural-blend-spend-approvals/**'
+      - 'data/garden-design/plant-visual-natural-blend-spend-proposals/**'
+      - 'tests/plant-visual-natural-blend-v1.test.mjs'
       - 'data/garden-design/plant-visual-wave-metadata-qa/**'
       - '.github/workflows/plant-visual-production-ci.yml'
   pull_request:
@@ -139,6 +149,9 @@ jobs:
 
       - name: Test production Auto Blend V3
         run: node --test tests/garden-design-auto-blend-v3.test.mjs
+
+      - name: Test bounded Natural Blend+ pilot
+        run: node --test tests/plant-visual-natural-blend-v1.test.mjs
 
       - name: Run Wave 1 metadata QA
         run: node scripts/plant-visual-wave-metadata-qa-v1.mjs --manifest=wave1-2026-09-22-v1
