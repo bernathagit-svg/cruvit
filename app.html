@@ -9433,7 +9433,9 @@ function openPlantVisualPilotQaReview(){
     ? rawManifest
     : 'pilot-2026-09-21-v1';
   const showAll=params.get('plantVisualQaShowAll')==='1';
-  const autoBlendReview=params.get('plantVisualQaAutoBlend')==='1';
+  const autoBlendReview=
+    params.get('plantVisualQaAutoBlend')==='1'
+    || manifest==='wave1-owner-review-2026-09-22-v1';
   const rawCaptureRun=String(params.get('inGardenCaptureRun')||'').trim();
   const inGardenCaptureRun=/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,159}$/.test(rawCaptureRun)
     ? rawCaptureRun
