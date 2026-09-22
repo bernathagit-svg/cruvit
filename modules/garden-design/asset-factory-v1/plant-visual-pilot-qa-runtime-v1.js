@@ -47,6 +47,8 @@ let captureFinished = false;
 const captureWaiters = new Map();
 let qaAutoBlendEnabled = false;
 let qaAutoBlendLastResult = null;
+const qaBlendWaiters = new Map();
+let qaBlendCompareRunning = false;
 
 function esc(value) {
   return String(value == null ? '' : value)
@@ -318,7 +320,11 @@ function blendControls() {
     root: document.getElementById('blendReviewControls'),
     raw: document.getElementById('blendRawBtn'),
     auto: document.getElementById('blendAutoBtn'),
-    readout: document.getElementById('blendReviewReadout')
+    readout: document.getElementById('blendReviewReadout'),
+    compare: document.getElementById('blendCompareBtn'),
+    comparePanel: document.getElementById('blendCompare'),
+    compareRawImg: document.getElementById('blendCompareRawImg'),
+    compareAutoImg: document.getElementById('blendCompareAutoImg')
   };
 }
 
@@ -347,18 +353,36 @@ function updateBlendControls() {
     : 'RAW candidate · no runtime matching applied.';
 }
 
+function requestQaAutoBlend(enabled) {
+  return new Promise((resolve, reject) => {
+    if (!AUTO_BLEND_REVIEW || !rendererReady) return reject(new Error('QA_BLEND_REVIEW_NOT_READY'));
+    const frame = rendererFrame();
+    if (!frame?.contentWindow) return reject(new Error('RENDERER_NOT_READY'));
+    const requestId = 'qab_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    const timer = setTimeout(() => {
+      qaBlendWaiters.delete(requestId);
+      reject(new Error('QA_AUTO_BLEND_TIMEOUT'));
+    }, 15000);
+    qaBlendWaiters.set(requestId, {
+      resolve: (value) => { clearTimeout(timer); resolve(value); },
+      reject: (err) => { clearTimeout(timer); reject(err); }
+    });
+    frame.contentWindow.postMessage({
+      type:'cruvit:garden-design-qa-auto-blend-set',
+      requestId,
+      enabled:enabled === true
+    }, window.location.origin);
+  });
+}
+
 function sendQaAutoBlendState() {
   if (!AUTO_BLEND_REVIEW || !rendererReady) return false;
-  const frame = rendererFrame();
-  if (!frame?.contentWindow) return false;
-  const requestId = 'qab_' + Date.now() + '_' + Math.random().toString(36).slice(2);
-  frame.contentWindow.postMessage({
-    type:'cruvit:garden-design-qa-auto-blend-set',
-    requestId,
-    enabled:qaAutoBlendEnabled === true
-  }, window.location.origin);
   const ui = blendControls();
   if (ui.readout) ui.readout.textContent = qaAutoBlendEnabled ? 'Matching local scene…' : 'Returning to RAW…';
+  requestQaAutoBlend(qaAutoBlendEnabled)
+    .catch((err) => {
+      if (ui.readout) ui.readout.textContent = 'Auto Blend unavailable · ' + String(err?.message || err);
+    });
   return true;
 }
 
@@ -370,6 +394,47 @@ function setQaAutoBlend(enabled) {
   sendQaAutoBlendState();
 }
 
+async function compareRawVsAutoBlend() {
+  if (!AUTO_BLEND_REVIEW || qaBlendCompareRunning || !selectedJobId) return;
+  const ui = blendControls();
+  qaBlendCompareRunning = true;
+  if (ui.compare) {
+    ui.compare.disabled = true;
+    ui.compare.textContent = 'Building comparison…';
+  }
+  if (ui.readout) ui.readout.textContent = 'Capturing RAW and AUTO BLEND from the same production renderer…';
+  try {
+    qaAutoBlendEnabled = false;
+    updateBlendControls();
+    await requestQaAutoBlend(false);
+    await sleep(220);
+    const raw = await requestRendererCapture(selectedJobId);
+    if (!raw?.ok || !raw.imageBase64) throw new Error(raw?.code || 'RAW_CAPTURE_FAILED');
+
+    qaAutoBlendEnabled = true;
+    updateBlendControls();
+    const blendResult = await requestQaAutoBlend(true);
+    qaAutoBlendLastResult = blendResult;
+    await sleep(260);
+    const blended = await requestRendererCapture(selectedJobId);
+    if (!blended?.ok || !blended.imageBase64) throw new Error(blended?.code || 'BLEND_CAPTURE_FAILED');
+
+    if (ui.compareRawImg) ui.compareRawImg.src = 'data:image/jpeg;base64,' + raw.imageBase64;
+    if (ui.compareAutoImg) ui.compareAutoImg.src = 'data:image/jpeg;base64,' + blended.imageBase64;
+    ui.comparePanel?.classList.add('is-visible');
+    if (ui.readout) ui.readout.textContent = formatBlendReadout(blendResult?.blend);
+    updateBlendControls();
+  } catch (err) {
+    if (ui.readout) ui.readout.textContent = 'Comparison failed · ' + String(err?.message || err);
+  } finally {
+    qaBlendCompareRunning = false;
+    if (ui.compare) {
+      ui.compare.disabled = false;
+      ui.compare.textContent = 'Compare RAW vs AUTO BLEND';
+    }
+  }
+}
+
 function wireBlendReviewControls() {
   const ui = blendControls();
   if (!ui.root) return;
@@ -377,6 +442,7 @@ function wireBlendReviewControls() {
   if (!AUTO_BLEND_REVIEW) return;
   ui.raw?.addEventListener('click', () => setQaAutoBlend(false));
   ui.auto?.addEventListener('click', () => setQaAutoBlend(true));
+  ui.compare?.addEventListener('click', compareRawVsAutoBlend);
   updateBlendControls();
 }
 
@@ -490,6 +556,8 @@ function sendRendererPreview() {
 function selectPreview(jobId) {
   if (!rowsById.has(jobId)) return;
   selectedJobId = jobId;
+  const ui = blendControls();
+  ui.comparePanel?.classList.remove('is-visible');
   updateSelectedUi();
   sendRendererPreview();
   const panel = document.getElementById('rendererPanel');
@@ -536,6 +604,12 @@ window.addEventListener('message', (ev) => {
   }
 
   if (frame && ev.source === frame.contentWindow && d?.type === 'cruvit:garden-design-qa-auto-blend-result') {
+    const waiter = qaBlendWaiters.get(d.requestId);
+    if (waiter) {
+      qaBlendWaiters.delete(d.requestId);
+      if (d.ok) waiter.resolve(d);
+      else waiter.reject(new Error(d.code || 'QA_AUTO_BLEND_FAILED'));
+    }
     qaAutoBlendLastResult = d;
     if (d.ok) qaAutoBlendEnabled = d.enabled === true;
     const ui = blendControls();
