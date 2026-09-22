@@ -10,7 +10,7 @@
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   const state = {
     runId,
-    executorVersion: 'v2-status-reconciled',
+    executorVersion: 'v3-skip-uncertain-locks',
     started: true,
     attemptedHttp: 0,
     generatedAtStart: 0,
@@ -107,6 +107,20 @@
           framingQA: row.framingQA || null,
           actualSpendUsd: row.actualSpendUsd ?? null
         });
+        render(state);
+        continue;
+      }
+
+      if (data?.code === 'JOB_ALREADY_CLAIMED') {
+        state.results.push({
+          jobId: job.jobId,
+          action: 'SKIP_UNCERTAIN_LOCK_NO_RETRY',
+          httpStatus: res?.status ?? null,
+          responseWasJson: Boolean(data),
+          code: data.code,
+          noRetryPolicyPreserved: true
+        });
+        state.skippedUncertainLocks = (state.skippedUncertainLocks || 0) + 1;
         render(state);
         continue;
       }
