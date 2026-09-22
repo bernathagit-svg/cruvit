@@ -2842,8 +2842,43 @@ async function gdCaptureQaPreviewPng() {
 
     // Match the production renderer's non-destructive visual integration aids,
     // including Auto Blend when it is active.
-    ctx.save();
     const blend = gdAutoBlendState(layer);
+    if (blend && blend.enabled) {
+      const sh = blend.shadow || {};
+      const shadowOpacity = Number.isFinite(Number(sh.opacity)) ? Math.min(0.38, Math.max(0.12, Number(sh.opacity))) : 0.24;
+      const aoOpacity = Number.isFinite(Number(sh.ambientOcclusionOpacity)) ? Math.min(0.22, Math.max(0.08, Number(sh.ambientOcclusionOpacity))) : 0.14;
+      const shadowBlur = Number.isFinite(Number(sh.blurPx)) ? Number(sh.blurPx) : 10;
+      const widthPct = Number.isFinite(Number(sh.widthPct)) ? Number(sh.widthPct) : 58;
+      ctx.save();
+      ctx.filter = 'blur(' + shadowBlur + 'px)';
+      ctx.fillStyle = 'rgba(0,0,0,' + shadowOpacity + ')';
+      ctx.beginPath();
+      ctx.ellipse(
+        cx + cutoutRect.width / 2,
+        cy + cutoutRect.height * 0.965,
+        cutoutRect.width * (widthPct / 200),
+        Math.max(3, cutoutRect.height * 0.012),
+        0, 0, Math.PI * 2
+      );
+      ctx.fill();
+      ctx.restore();
+
+      ctx.save();
+      ctx.filter = 'blur(4px)';
+      ctx.fillStyle = 'rgba(0,0,0,' + aoOpacity + ')';
+      ctx.beginPath();
+      ctx.ellipse(
+        cx + cutoutRect.width / 2,
+        cy + cutoutRect.height * 0.972,
+        cutoutRect.width * 0.18,
+        Math.max(2, cutoutRect.height * 0.006),
+        0, 0, Math.PI * 2
+      );
+      ctx.fill();
+      ctx.restore();
+    }
+
+    ctx.save();
     if (blend && blend.enabled) {
       const api = gdAutoBlendApi();
       const a = blend.adaptation || {};
@@ -3924,11 +3959,13 @@ function updateLayerToolbar() {
       const sh = blend.shadow || {};
       const fmt = function(v, d) { return Number.isFinite(Number(v)) ? Number(v).toFixed(d) : '—'; };
       blendStatus.textContent =
-        (blend.source === 'local-scene-sample' ? 'Scene matched' : 'Blend active')
+        (blend.version === 'garden-design-auto-blend-v2' ? 'V2 matched' : (blend.source === 'local-scene-sample' ? 'Scene matched' : 'Blend active'))
         + ' · B ' + fmt(a.brightness, 2)
         + ' · C ' + fmt(a.contrast, 2)
         + ' · S ' + fmt(a.saturate, 2)
         + ' · blur ' + fmt(a.blurPx, 2)
+        + ' · temp ' + fmt(a.hueRotateDeg, 1)
+        + '° · edge ' + fmt(a.edgeTintAlpha, 2)
         + ' · shadow ' + fmt(sh.opacity, 2);
       blendStatus.title = blendStatus.textContent;
     }
@@ -3944,11 +3981,11 @@ async function gdEnsureAutoBlendApi() {
   const ready = gdAutoBlendApi();
   if (ready) return ready;
   if (!gdAutoBlendImportPromise) {
-    gdAutoBlendImportPromise = import('./garden-design-auto-blend-v1.js?v=20260922autoblend3')
+    gdAutoBlendImportPromise = import('./garden-design-auto-blend-v2.js?v=20260922autoblendv2a')
       .then(function(mod) {
         const api = {
-          AUTO_BLEND_V1_POLICY: mod.AUTO_BLEND_V1_POLICY,
-          GARDEN_DESIGN_AUTO_BLEND_V1_VERSION: mod.GARDEN_DESIGN_AUTO_BLEND_V1_VERSION,
+          AUTO_BLEND_V2_POLICY: mod.AUTO_BLEND_V2_POLICY,
+          GARDEN_DESIGN_AUTO_BLEND_V2_VERSION: mod.GARDEN_DESIGN_AUTO_BLEND_V2_VERSION,
           applyAutoBlendToLayerElement: mod.applyAutoBlendToLayerElement,
           autoBlendMetadata: mod.autoBlendMetadata,
           blendFilterCss: mod.blendFilterCss,
@@ -6572,17 +6609,17 @@ The plants array MUST match the exact counts specified above.`}]);
     import './garden-design-variant-policy-v1.js?v=20260917a';
     import './garden-design-variant-selection-policy-v1.js?v=20260917a';
     import {
-      AUTO_BLEND_V1_POLICY,
-      GARDEN_DESIGN_AUTO_BLEND_V1_VERSION,
+      AUTO_BLEND_V2_POLICY,
+      GARDEN_DESIGN_AUTO_BLEND_V2_VERSION,
       applyAutoBlendToLayerElement,
       autoBlendMetadata,
       blendFilterCss,
       calculateAutoBlendForLayer,
       disableAutoBlend
-    } from './garden-design-auto-blend-v1.js?v=20260922autoblend2';
+    } from './garden-design-auto-blend-v2.js?v=20260922autoblendv2a';
     window.CruvitGardenDesignAutoBlend = {
-      AUTO_BLEND_V1_POLICY,
-      GARDEN_DESIGN_AUTO_BLEND_V1_VERSION,
+      AUTO_BLEND_V2_POLICY,
+      GARDEN_DESIGN_AUTO_BLEND_V2_VERSION,
       applyAutoBlendToLayerElement,
       autoBlendMetadata,
       blendFilterCss,
