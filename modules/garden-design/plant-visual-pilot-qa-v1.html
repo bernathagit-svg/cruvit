@@ -27,6 +27,12 @@
     .blend-review-controls button{font-weight:700}
     .blend-review-controls button.is-active{background:#153d2c;color:#fff;border-color:#153d2c}
     .blend-review-readout{font-size:12px;color:#345143;min-width:220px;flex:1}
+    .blend-compare{display:none;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+    .blend-compare.is-visible{display:grid}
+    .blend-compare figure{margin:0;border:1px solid #d9ddd9;border-radius:12px;padding:8px;background:#fafbf9}
+    .blend-compare figcaption{font-size:12px;font-weight:700;color:#345143;margin:0 0 6px}
+    .blend-compare img{display:block;width:100%;border-radius:8px;background:#eef3ef}
+    @media(max-width:800px){.blend-compare{grid-template-columns:1fr}}
     #qaRows{display:grid;gap:20px}
     .plant{background:#fff;border:1px solid #d9ddd9;border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(23,42,30,.06)}
     .candidate-grid{display:grid;grid-template-columns:minmax(320px,1fr) minmax(320px,1fr);gap:14px;margin-top:12px}
@@ -62,7 +68,12 @@
     <div id="blendReviewControls" class="blend-review-controls">
       <button type="button" id="blendRawBtn" class="is-active">RAW</button>
       <button type="button" id="blendAutoBtn">✨ AUTO BLEND</button>
+      <button type="button" id="blendCompareBtn">Compare RAW vs AUTO BLEND</button>
       <span id="blendReviewReadout" class="blend-review-readout">RAW candidate · no runtime matching applied.</span>
+    </div>
+    <div id="blendCompare" class="blend-compare">
+      <figure><figcaption>RAW</figcaption><img id="blendCompareRawImg" alt="RAW Garden Design renderer capture"/></figure>
+      <figure><figcaption>AUTO BLEND</figcaption><img id="blendCompareAutoImg" alt="Auto Blend Garden Design renderer capture"/></figure>
     </div>
     <iframe
       id="productionRendererFrame"
