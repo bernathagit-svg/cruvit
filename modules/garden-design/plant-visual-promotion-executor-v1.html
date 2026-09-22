@@ -1,0 +1,20 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CRUVIT one-shot plant visual promotion</title>
+<pre id="out">running…</pre>
+<script>
+(async()=>{
+  const out=document.getElementById('out');
+  try{
+    const res=await fetch('/.netlify/functions/plant-visual-promote-manifest',{
+      method:'POST',
+      headers:{'content-type':'application/json'},
+      body:JSON.stringify({manifestId:'pilot-2026-09-21-v1'})
+    });
+    const data=await res.json();
+    out.textContent=JSON.stringify({status:res.status,...data},null,2);
+  }catch(err){
+    out.textContent=JSON.stringify({error:String(err&&err.message||err)},null,2);
+  }
+})();
+</script>
