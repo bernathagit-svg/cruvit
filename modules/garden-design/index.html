@@ -2841,9 +2841,15 @@ async function gdCaptureQaPreviewPng() {
     ctx.drawImage(cutoutBitmap, cx, cy, cutoutRect.width, cutoutRect.height);
     ctx.restore();
 
-    const pngBlob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
-    if (!pngBlob) return { ok: false, code: 'QA_CAPTURE_PNG_FAILED' };
-    const bytes = new Uint8Array(await pngBlob.arrayBuffer());
+    const captureBlob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.9));
+    if (!captureBlob) return { ok: false, code: 'QA_CAPTURE_JPEG_FAILED' };
+    const bytes = new Uint8Array(await captureBlob.arrayBuffer());
+    let binary = '';
+    const chunk = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunk) {
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+    }
+    const imageBase64 = btoa(binary);
 
     return {
       ok: true,
@@ -2852,7 +2858,9 @@ async function gdCaptureQaPreviewPng() {
       canonicalSlug: layer.canonicalSlug || null,
       width,
       height,
-      bytes: Array.from(bytes),
+      imageBase64,
+      mimeType: 'image/jpeg',
+      byteLength: bytes.length,
       geometry: {
         wrapper: { width: wrapRect.width, height: wrapRect.height },
         base: {
