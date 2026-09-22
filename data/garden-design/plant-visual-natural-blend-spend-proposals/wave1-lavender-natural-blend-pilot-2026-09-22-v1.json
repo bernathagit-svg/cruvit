@@ -1,0 +1,31 @@
+{
+  "contract": "plant-visual-natural-blend-spend-proposal-v1",
+  "runId": "wave1-lavender-natural-blend-pilot-2026-09-22-v1",
+  "createdAt": "2026-09-22",
+  "provider": "openai-images-api",
+  "model": "gpt-image-2.5-sunburst-2026-09-08",
+  "quality": "medium",
+  "jobId": "lavender__mature__shrub__flowering__v1",
+  "maxCalls": 1,
+  "maxRetries": 0,
+  "maxSpendUsd": 0.25,
+  "pricingBasis": {
+    "imageInputUsdPer1MTokens": 8,
+    "imageOutputUsdPer1MTokens": 30,
+    "note": "Token-based image edit pricing; exact per-call cost depends on image token usage."
+  },
+  "allowedActions": [
+    "read exact Lavender candidate PNG from candidate R2",
+    "read bounded local V3 renderer crop and local edit mask",
+    "perform one GPT Image edit call on the local crop",
+    "write crop, mask, edit output and evidence only to candidate R2",
+    "return edited crop for client-side hard-masked comparison"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "sourceGardenMutationAllowed": false,
+  "candidateAssetMutationAllowed": false,
+  "globalPlantAssetReplacementAllowed": false,
+  "approvalRequired": true,
+  "approved": false
+}
