@@ -2840,11 +2840,28 @@ async function gdCaptureQaPreviewPng() {
     const cx = cutoutRect.left - wrapRect.left;
     const cy = cutoutRect.top - wrapRect.top;
 
-    // Match the production renderer's non-destructive visual integration aids.
+    // Match the production renderer's non-destructive visual integration aids,
+    // including Auto Blend when it is active.
     ctx.save();
-    ctx.shadowColor = 'rgba(0,0,0,.26)';
-    ctx.shadowBlur = 10;
-    ctx.shadowOffsetY = 5;
+    const blend = gdAutoBlendState(layer);
+    if (blend && blend.enabled) {
+      const api = gdAutoBlendApi();
+      const a = blend.adaptation || {};
+      const sh = blend.shadow || {};
+      ctx.filter = api && typeof api.blendFilterCss === 'function'
+        ? api.blendFilterCss(blend)
+        : 'none';
+      ctx.globalAlpha = Number.isFinite(Number(a.opacity)) ? Number(a.opacity) : 1;
+      ctx.shadowColor = 'rgba(0,0,0,' + (Number.isFinite(Number(sh.opacity)) ? Math.min(0.36, Math.max(0.08, Number(sh.opacity))) : 0.2) + ')';
+      ctx.shadowBlur = Number.isFinite(Number(sh.blurPx)) ? Number(sh.blurPx) : 10;
+      ctx.shadowOffsetY = 3;
+    } else {
+      ctx.filter = 'none';
+      ctx.globalAlpha = 1;
+      ctx.shadowColor = 'rgba(0,0,0,.26)';
+      ctx.shadowBlur = 10;
+      ctx.shadowOffsetY = 5;
+    }
     ctx.drawImage(cutoutBitmap, cx, cy, cutoutRect.width, cutoutRect.height);
     ctx.restore();
 
@@ -2882,6 +2899,7 @@ async function gdCaptureQaPreviewPng() {
         }
       },
       rendererOwner: 'Garden Design production renderer',
+      autoBlend: gdAutoBlendState(layer),
       independentQaScaleMath: false,
       productionWrites: 0,
       registryWrites: 0
@@ -6479,14 +6497,16 @@ The plants array MUST match the exact counts specified above.`}]);
       GARDEN_DESIGN_AUTO_BLEND_V1_VERSION,
       applyAutoBlendToLayerElement,
       autoBlendMetadata,
+      blendFilterCss,
       calculateAutoBlendForLayer,
       disableAutoBlend
-    } from './garden-design-auto-blend-v1.js?v=20260922autoblend1';
+    } from './garden-design-auto-blend-v1.js?v=20260922autoblend2';
     window.CruvitGardenDesignAutoBlend = {
       AUTO_BLEND_V1_POLICY,
       GARDEN_DESIGN_AUTO_BLEND_V1_VERSION,
       applyAutoBlendToLayerElement,
       autoBlendMetadata,
+      blendFilterCss,
       calculateAutoBlendForLayer,
       disableAutoBlend
     };
