@@ -32,8 +32,18 @@ on:
       - 'data/garden-design/plant-visual-production-wave-spend-approvals/**'
       - 'tests/plant-visual-wave-r2-execution-v1.test.mjs'
       - 'scripts/plant-visual-wave-metadata-qa-v1.mjs'
+      - 'netlify/functions/plant-visual-model-qa-job.mjs'
+      - 'netlify/functions/plant-visual-model-qa-status.mjs'
+      - 'data/garden-design/plant-visual-model-qa-plans/**'
+      - 'data/garden-design/plant-visual-model-qa-spend-approvals/**'
+      - 'tests/plant-visual-model-qa-v1.test.mjs'
       - 'data/garden-design/plant-visual-wave-metadata-qa/**'
       - 'scripts/plant-visual-wave-metadata-qa-v1.mjs'
+      - 'netlify/functions/plant-visual-model-qa-job.mjs'
+      - 'netlify/functions/plant-visual-model-qa-status.mjs'
+      - 'data/garden-design/plant-visual-model-qa-plans/**'
+      - 'data/garden-design/plant-visual-model-qa-spend-approvals/**'
+      - 'tests/plant-visual-model-qa-v1.test.mjs'
       - 'data/garden-design/plant-visual-wave-metadata-qa/**'
       - '.github/workflows/plant-visual-production-ci.yml'
   pull_request:
@@ -92,6 +102,9 @@ jobs:
 
       - name: Test Wave 1 R2 execution safety
         run: node --test tests/plant-visual-wave-r2-execution-v1.test.mjs
+
+      - name: Test bounded vision QA
+        run: node --test tests/plant-visual-model-qa-v1.test.mjs
 
       - name: Run Wave 1 metadata QA
         run: node scripts/plant-visual-wave-metadata-qa-v1.mjs --manifest=wave1-2026-09-22-v1
