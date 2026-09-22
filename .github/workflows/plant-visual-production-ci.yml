@@ -31,6 +31,10 @@ on:
       - 'data/garden-design/plant-visual-production-wave-execution-manifests/**'
       - 'data/garden-design/plant-visual-production-wave-spend-approvals/**'
       - 'tests/plant-visual-wave-r2-execution-v1.test.mjs'
+      - 'scripts/plant-visual-wave-metadata-qa-v1.mjs'
+      - 'data/garden-design/plant-visual-wave-metadata-qa/**'
+      - 'scripts/plant-visual-wave-metadata-qa-v1.mjs'
+      - 'data/garden-design/plant-visual-wave-metadata-qa/**'
       - '.github/workflows/plant-visual-production-ci.yml'
   pull_request:
     paths:
@@ -88,6 +92,12 @@ jobs:
 
       - name: Test Wave 1 R2 execution safety
         run: node --test tests/plant-visual-wave-r2-execution-v1.test.mjs
+
+      - name: Run Wave 1 metadata QA
+        run: node scripts/plant-visual-wave-metadata-qa-v1.mjs --manifest=wave1-2026-09-22-v1
+
+      - name: Prove metadata QA is zero-spend and non-mutating
+        run: node -e "const j=JSON.parse(require('fs').readFileSync('data/garden-design/plant-visual-wave-metadata-qa/wave1-2026-09-22-v1.json','utf8')); if(j.paidCalls!==0||j.networkCalls!==0||j.productionWrites!==0||j.registryWrites!==0) process.exit(1); console.log({pass:j.pass,fail:j.fail,total:j.totalJobs});"
 
       - name: Dry-run production wave planner
         run: node scripts/plant-visual-production-wave-v1.mjs --dry-run --max-jobs-per-wave=24 --max-plants-per-wave=12
