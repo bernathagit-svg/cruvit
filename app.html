@@ -8638,6 +8638,202 @@ function gardenDesignPersistResultType(requestType){
   return null;
 }
 
+
+function gardenDesignPremiumActionResultType(requestType){
+  if(requestType==='cruvit:garden-design-premium-action-status-request') return 'cruvit:garden-design-premium-action-status-result';
+  if(requestType==='cruvit:garden-design-premium-action-consume-request') return 'cruvit:garden-design-premium-action-consume-result';
+  if(requestType==='cruvit:garden-design-premium-action-refund-request') return 'cruvit:garden-design-premium-action-refund-result';
+  return null;
+}
+
+function gardenDesignPremiumActionAuth(){
+  const pd=window.cruvitPersonalDomainV0;
+  const supabase=pd&&typeof pd.getSupabaseClient==='function'?pd.getSupabaseClient():null;
+  const session=pd&&typeof pd.getSession==='function'?pd.getSession():null;
+  const userId=session&&session.user&&session.user.id?session.user.id:null;
+  if(!pd||!supabase||!userId){
+    return {ok:false,code:'AUTH_REQUIRED',supabase:null,userId:null};
+  }
+  return {ok:true,code:'AUTHENTICATED',supabase,userId};
+}
+
+function gardenDesignPremiumActionFeature(value){
+  return String(value||'').trim()==='natural_blend'?'natural_blend':null;
+}
+
+function gardenDesignPremiumIdempotency(value){
+  const key=String(value||'').trim();
+  return /^[a-zA-Z0-9][a-zA-Z0-9._:-]{7,159}$/.test(key)?key:null;
+}
+
+async function gardenDesignPremiumActionStatus(){
+  const auth=gardenDesignPremiumActionAuth();
+  if(!auth.ok){
+    return {
+      ok:false,
+      code:auth.code,
+      feature:'natural_blend',
+      enabled:false,
+      remaining:0,
+      dailyLimit:0,
+      dailyUsed:0,
+      serverAuthoritative:true,
+      localRewardsCreditsUsed:false
+    };
+  }
+
+  const result=await auth.supabase
+    .from('premium_action_entitlements')
+    .select('natural_blend_enabled,natural_blend_remaining,natural_blend_daily_limit,natural_blend_daily_used,natural_blend_daily_date,updated_at')
+    .eq('user_id',auth.userId)
+    .maybeSingle();
+
+  if(result.error){
+    return {
+      ok:false,
+      code:'PREMIUM_ACTION_STATUS_FAILED',
+      error:result.error.message||String(result.error),
+      feature:'natural_blend',
+      enabled:false,
+      remaining:0,
+      serverAuthoritative:true,
+      localRewardsCreditsUsed:false
+    };
+  }
+
+  const row=result.data||null;
+  if(!row){
+    return {
+      ok:true,
+      code:'NOT_ENTITLED',
+      feature:'natural_blend',
+      enabled:false,
+      remaining:0,
+      dailyLimit:0,
+      dailyUsed:0,
+      serverAuthoritative:true,
+      localRewardsCreditsUsed:false
+    };
+  }
+
+  const today=new Date().toISOString().slice(0,10);
+  const dailyUsed=String(row.natural_blend_daily_date||'')===today
+    ? Number(row.natural_blend_daily_used||0)
+    : 0;
+
+  return {
+    ok:true,
+    code:row.natural_blend_enabled===true?'ENTITLED':'FEATURE_DISABLED',
+    feature:'natural_blend',
+    enabled:row.natural_blend_enabled===true,
+    remaining:Math.max(0,Number(row.natural_blend_remaining||0)),
+    dailyLimit:Math.max(0,Number(row.natural_blend_daily_limit||0)),
+    dailyUsed:Math.max(0,dailyUsed),
+    updatedAt:row.updated_at||null,
+    serverAuthoritative:true,
+    localRewardsCreditsUsed:false
+  };
+}
+
+async function gardenDesignConsumePremiumAction(d){
+  const auth=gardenDesignPremiumActionAuth();
+  if(!auth.ok) return {ok:false,code:auth.code,serverAuthoritative:true};
+  const feature=gardenDesignPremiumActionFeature(d&&d.feature);
+  const idempotencyKey=gardenDesignPremiumIdempotency(d&&d.idempotencyKey);
+  if(!feature) return {ok:false,code:'UNSUPPORTED_FEATURE',serverAuthoritative:true};
+  if(!idempotencyKey) return {ok:false,code:'IDEMPOTENCY_KEY_REQUIRED',serverAuthoritative:true};
+
+  const result=await auth.supabase.rpc('consume_premium_action',{
+    p_feature:feature,
+    p_idempotency_key:idempotencyKey
+  });
+  if(result.error){
+    return {
+      ok:false,
+      code:'PREMIUM_ACTION_CONSUME_FAILED',
+      error:result.error.message||String(result.error),
+      feature,
+      serverAuthoritative:true
+    };
+  }
+
+  const payload=result.data&&typeof result.data==='object'?result.data:{ok:false,code:'PREMIUM_ACTION_EMPTY_RESULT'};
+  return Object.assign({
+    feature,
+    serverAuthoritative:true,
+    localRewardsCreditsUsed:false
+  },payload);
+}
+
+async function gardenDesignRefundPremiumAction(d){
+  const auth=gardenDesignPremiumActionAuth();
+  if(!auth.ok) return {ok:false,code:auth.code,serverAuthoritative:true};
+  const feature=gardenDesignPremiumActionFeature(d&&d.feature);
+  const consumeIdempotencyKey=gardenDesignPremiumIdempotency(d&&d.consumeIdempotencyKey);
+  const refundIdempotencyKey=gardenDesignPremiumIdempotency(d&&d.refundIdempotencyKey);
+  if(!feature) return {ok:false,code:'UNSUPPORTED_FEATURE',serverAuthoritative:true};
+  if(!consumeIdempotencyKey||!refundIdempotencyKey){
+    return {ok:false,code:'IDEMPOTENCY_KEY_REQUIRED',serverAuthoritative:true};
+  }
+
+  const result=await auth.supabase.rpc('refund_premium_action',{
+    p_feature:feature,
+    p_consume_idempotency_key:consumeIdempotencyKey,
+    p_refund_idempotency_key:refundIdempotencyKey
+  });
+  if(result.error){
+    return {
+      ok:false,
+      code:'PREMIUM_ACTION_REFUND_FAILED',
+      error:result.error.message||String(result.error),
+      feature,
+      serverAuthoritative:true
+    };
+  }
+
+  const payload=result.data&&typeof result.data==='object'?result.data:{ok:false,code:'PREMIUM_ACTION_EMPTY_RESULT'};
+  return Object.assign({
+    feature,
+    serverAuthoritative:true,
+    localRewardsCreditsUsed:false
+  },payload);
+}
+
+function handleGardenDesignPremiumActionRequest(d){
+  const resultType=gardenDesignPremiumActionResultType(d&&d.type);
+  if(!resultType) return false;
+
+  const reply=function(res){
+    gardenDesignPostToFrame(Object.assign({
+      type:resultType,
+      requestId:d&&d.requestId||null,
+      feature:'natural_blend',
+      serverAuthoritative:true,
+      localRewardsCreditsUsed:false
+    },res||{ok:false,code:'PREMIUM_ACTION_UNAVAILABLE'}));
+  };
+
+  let promise;
+  if(d.type==='cruvit:garden-design-premium-action-status-request'){
+    promise=gardenDesignPremiumActionStatus();
+  }else if(d.type==='cruvit:garden-design-premium-action-consume-request'){
+    promise=gardenDesignConsumePremiumAction(d);
+  }else if(d.type==='cruvit:garden-design-premium-action-refund-request'){
+    promise=gardenDesignRefundPremiumAction(d);
+  }else{
+    return false;
+  }
+
+  Promise.resolve(promise).then(reply).catch(function(err){
+    reply({
+      ok:false,
+      code:'PREMIUM_ACTION_HOST_FAILED',
+      error:err&&err.message?err.message:String(err||'unknown')
+    });
+  });
+  return true;
+}
+
 function handleGardenDesignPersistenceRequest(d){
   const resultType=gardenDesignPersistResultType(d&&d.type);
   if(!resultType) return false;
@@ -8739,6 +8935,7 @@ window.addEventListener('message',function(ev){
     });
     return;
   }
+  if(handleGardenDesignPremiumActionRequest(d)) return;
   if(handleGardenDesignPersistenceRequest(d)) return;
   if(d.type==='cruvit:garden-design-suitability-request'){
     const evaluation=evaluateDesignGardenSuitability(d.canonicalSlug,d.area);
