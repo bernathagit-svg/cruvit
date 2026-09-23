@@ -8643,6 +8643,7 @@ function gardenDesignPremiumActionResultType(requestType){
   if(requestType==='cruvit:garden-design-premium-action-status-request') return 'cruvit:garden-design-premium-action-status-result';
   if(requestType==='cruvit:garden-design-premium-action-consume-request') return 'cruvit:garden-design-premium-action-consume-result';
   if(requestType==='cruvit:garden-design-premium-action-refund-request') return 'cruvit:garden-design-premium-action-refund-result';
+  if(requestType==='cruvit:garden-design-natural-blend-run-request') return 'cruvit:garden-design-natural-blend-run-result';
   return null;
 }
 
@@ -8799,6 +8800,73 @@ async function gardenDesignRefundPremiumAction(d){
   },payload);
 }
 
+async function gardenDesignRunNaturalBlend(d){
+  const auth=gardenDesignPremiumActionAuth();
+  if(!auth.ok) return {ok:false,code:auth.code,feature:'natural_blend',serverAuthoritative:true};
+
+  const session=window.cruvitPersonalDomainV0&&typeof window.cruvitPersonalDomainV0.getSession==='function'
+    ?window.cruvitPersonalDomainV0.getSession():null;
+  const token=session&&session.access_token?session.access_token:null;
+  if(!token) return {ok:false,code:'AUTH_REQUIRED',feature:'natural_blend',serverAuthoritative:true};
+
+  const payload={
+    idempotencyKey:String(d&&d.idempotencyKey||''),
+    gardenDesignId:String(d&&d.gardenDesignId||''),
+    placementClientInstanceId:String(d&&d.placementClientInstanceId||''),
+    placementFingerprint:d&&d.placementFingerprint&&typeof d.placementFingerprint==='object'
+      ?d.placementFingerprint:{},
+    cropBase64:String(d&&d.cropBase64||''),
+    maskBase64:String(d&&d.maskBase64||'')
+  };
+
+  let res;
+  let data=null;
+  try{
+    res=await fetch('/api/garden-design/natural-blend',{
+      method:'POST',
+      headers:{
+        'content-type':'application/json',
+        'authorization':'Bearer '+token
+      },
+      body:JSON.stringify(payload)
+    });
+    const text=await res.text();
+    try{data=text?JSON.parse(text):null;}catch{data={ok:false,code:'NATURAL_BLEND_GATEWAY_INVALID_JSON'};}
+  }catch(err){
+    return {
+      ok:false,
+      code:'NATURAL_BLEND_GATEWAY_NETWORK_FAILED',
+      error:err&&err.message?err.message:String(err||'network'),
+      feature:'natural_blend',
+      serverAuthoritative:true
+    };
+  }
+
+  if(!res.ok||!data||data.ok!==true){
+    return Object.assign({
+      ok:false,
+      feature:'natural_blend',
+      serverAuthoritative:true
+    },data||{code:'NATURAL_BLEND_GATEWAY_FAILED'});
+  }
+
+  let signedUrl=null;
+  const storagePath=data&&data.media&&data.media.storagePath?String(data.media.storagePath):'';
+  if(storagePath){
+    try{
+      const signed=await auth.supabase.storage.from('user-garden-media').createSignedUrl(storagePath,600);
+      signedUrl=signed&&signed.data&&signed.data.signedUrl?signed.data.signedUrl:null;
+    }catch(_){}
+  }
+
+  return Object.assign({},data,{
+    feature:'natural_blend',
+    serverAuthoritative:true,
+    signedUrl,
+    localRewardsCreditsUsed:false
+  });
+}
+
 function handleGardenDesignPremiumActionRequest(d){
   const resultType=gardenDesignPremiumActionResultType(d&&d.type);
   if(!resultType) return false;
@@ -8820,6 +8888,8 @@ function handleGardenDesignPremiumActionRequest(d){
     promise=gardenDesignConsumePremiumAction(d);
   }else if(d.type==='cruvit:garden-design-premium-action-refund-request'){
     promise=gardenDesignRefundPremiumAction(d);
+  }else if(d.type==='cruvit:garden-design-natural-blend-run-request'){
+    promise=gardenDesignRunNaturalBlend(d);
   }else{
     return false;
   }
