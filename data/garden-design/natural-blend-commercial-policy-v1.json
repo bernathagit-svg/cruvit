@@ -1,0 +1,51 @@
+{
+  "contract": "natural-blend-commercial-policy-v1",
+  "measuredPilot": {
+    "runId": "wave1-lavender-natural-blend-pilot-2026-09-22-v1",
+    "actualCostUsd": 0.03465,
+    "model": "gpt-image-2.5-sunburst-2026-09-08",
+    "quality": "medium",
+    "inputTokens": 2760,
+    "outputTokens": 439
+  },
+  "freeLayer": {
+    "feature": "Auto Blend V3",
+    "paidAiCalls": 0,
+    "metered": false
+  },
+  "premiumLayer": {
+    "feature": "Natural Blend+",
+    "metered": true,
+    "unit": "one Natural Blend+ edit",
+    "serverAuthority": "public.premium_action_entitlements",
+    "ledger": "public.premium_action_events",
+    "costLedger": "public.runtime_cost_events",
+    "defaultEnabled": false,
+    "defaultRemaining": 0,
+    "defaultRollout": "OWNER_DISABLED",
+    "recommendedDailyHardCapWhenEnabled": 5,
+    "freeTrialUses": 0,
+    "premiumPlanIncludedUses": "TBD_OWNER_DECISION"
+  },
+  "rewardsCredits": {
+    "existingAuthority": "browser-localStorage",
+    "safeForPaidApiGate": false,
+    "directDebitIntegrationAllowed": false,
+    "futureExchangeAllowedOnlyAfterServerAuthoritativeRewardsMigration": true
+  },
+  "economics": {
+    "measuredDirectApiCostUsdPerPilotUse": 0.03465,
+    "ownerSpendCeilingWasUsd": 0.25,
+    "pricingRule": "Do not expose unlimited Natural Blend+ usage. Every successful provider call must consume one server-authoritative unit and record actual cost."
+  },
+  "governance": {
+    "paidRuntimeDefaultDeny": true,
+    "clientMayNotSelfGrantUnits": true,
+    "anonMayNotConsume": true,
+    "authenticatedConsumeUsesAtomicRpc": true,
+    "idempotencyRequired": true,
+    "sceneSpecificOutput": true,
+    "globalPlantRegistryMutationForbidden": true,
+    "productionAssetMutationForbidden": true
+  }
+}
