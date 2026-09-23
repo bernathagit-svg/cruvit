@@ -50,6 +50,8 @@ on:
       - 'tests/garden-design-auto-blend-v3.test.mjs'
       - 'netlify/functions/plant-visual-natural-blend-job.mjs'
       - 'netlify/functions/plant-visual-natural-blend-status.mjs'
+      - 'netlify/functions/garden-design-natural-blend.mjs'
+      - 'tests/garden-design-natural-blend-gateway-v1.test.mjs'
       - 'data/garden-design/plant-visual-natural-blend-plans/**'
       - 'data/garden-design/plant-visual-natural-blend-spend-approvals/**'
       - 'data/garden-design/plant-visual-natural-blend-spend-proposals/**'
@@ -78,6 +80,8 @@ on:
       - 'tests/garden-design-auto-blend-v3.test.mjs'
       - 'netlify/functions/plant-visual-natural-blend-job.mjs'
       - 'netlify/functions/plant-visual-natural-blend-status.mjs'
+      - 'netlify/functions/garden-design-natural-blend.mjs'
+      - 'tests/garden-design-natural-blend-gateway-v1.test.mjs'
       - 'data/garden-design/plant-visual-natural-blend-plans/**'
       - 'data/garden-design/plant-visual-natural-blend-spend-approvals/**'
       - 'data/garden-design/plant-visual-natural-blend-spend-proposals/**'
@@ -165,6 +169,9 @@ jobs:
 
       - name: Test server-authoritative premium action gate
         run: node --test tests/garden-design-premium-actions-v1.test.mjs
+
+      - name: Test authenticated Natural Blend production gateway
+        run: node --test tests/garden-design-natural-blend-gateway-v1.test.mjs
 
       - name: Run Wave 1 metadata QA
         run: node scripts/plant-visual-wave-metadata-qa-v1.mjs --manifest=wave1-2026-09-22-v1
