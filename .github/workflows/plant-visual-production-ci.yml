@@ -57,6 +57,10 @@ on:
       - 'data/garden-design/plant-visual-natural-blend-spend-proposals/**'
       - 'tests/plant-visual-natural-blend-v1.test.mjs'
       - 'tests/garden-design-natural-blend-lifecycle-v1.test.mjs'
+      - 'modules/garden-design/asset-factory-v1/plant-visual-promotion-readiness-v1.js'
+      - 'scripts/plant-visual-promotion-readiness-v1.mjs'
+      - 'data/garden-design/non-tree-size-evidence-wave-v1/**'
+      - 'tests/plant-visual-promotion-size-authority-v1.test.mjs'
       - 'supabase/migrations/20260923175148_premium_action_entitlements_v1.sql'
       - 'supabase/migrations/20260923175631_premium_action_refund_v1.sql'
       - 'data/garden-design/natural-blend-commercial-policy-v1.json'
@@ -88,6 +92,10 @@ on:
       - 'data/garden-design/plant-visual-natural-blend-spend-proposals/**'
       - 'tests/plant-visual-natural-blend-v1.test.mjs'
       - 'tests/garden-design-natural-blend-lifecycle-v1.test.mjs'
+      - 'modules/garden-design/asset-factory-v1/plant-visual-promotion-readiness-v1.js'
+      - 'scripts/plant-visual-promotion-readiness-v1.mjs'
+      - 'data/garden-design/non-tree-size-evidence-wave-v1/**'
+      - 'tests/plant-visual-promotion-size-authority-v1.test.mjs'
       - 'supabase/migrations/20260923175148_premium_action_entitlements_v1.sql'
       - 'supabase/migrations/20260923175631_premium_action_refund_v1.sql'
       - 'data/garden-design/natural-blend-commercial-policy-v1.json'
@@ -171,6 +179,15 @@ jobs:
 
       - name: Test Natural Blend patch lifecycle
         run: node --test tests/garden-design-natural-blend-lifecycle-v1.test.mjs
+
+      - name: Test size authority promotion gate
+        run: node --test tests/plant-visual-promotion-size-authority-v1.test.mjs
+
+      - name: Dry-run seven-item promotion readiness
+        run: node scripts/plant-visual-promotion-readiness-v1.mjs --manifest=wave1-owner-review-2026-09-22-v1
+
+      - name: Prove promotion dry-run is seven ready but not authorized
+        run: node -e "const j=JSON.parse(require('fs').readFileSync('data/garden-design/plant-visual-promotion-readiness/wave1-owner-review-2026-09-22-v1.json','utf8')); if(j.readyJobs!==7||j.blockedJobs!==0||j.promotionAuthorized!==false||j.executionAllowed!==false||j.productionWrites!==0||j.registryWrites!==0) process.exit(1); console.log({ready:j.readyJobs,blocked:j.blockedJobs,promotionAuthorized:j.promotionAuthorized});"
 
       - name: Test server-authoritative premium action gate
         run: node --test tests/garden-design-premium-actions-v1.test.mjs
