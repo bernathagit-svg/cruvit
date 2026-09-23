@@ -277,6 +277,10 @@ body.gd-qa-preview-mode #plantLayersHost{pointer-events:none}
 .gd-auto-blend-btn{border-color:rgba(61,138,80,.45);color:#2d6a3f;font-weight:600;white-space:nowrap}
 .gd-auto-blend-btn.is-active{background:rgba(61,138,80,.12);border-color:#3d8a50}
 .gd-auto-blend-status{font-size:11px;color:#3d8a50;min-width:0;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gd-natural-blend-premium-btn{border-color:rgba(112,79,145,.30);color:#634477;font-weight:700;white-space:nowrap}
+.gd-natural-blend-premium-btn:not(:disabled):hover{background:rgba(112,79,145,.08);border-color:rgba(112,79,145,.55)}
+.gd-natural-blend-premium-btn:disabled{opacity:.58;cursor:not-allowed;background:rgba(112,79,145,.04)}
+.gd-natural-blend-premium-status{font-size:11px;color:#725787;min-width:0;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .gd-plant-layer.gd-auto-blended .gd-plant-shadow{transition:width .18s ease,height .18s ease,opacity .18s ease,filter .18s ease}
 .gd-plant-layer.gd-auto-blended .gd-plant-cutout{transition:filter .18s ease,opacity .18s ease}
 .gd-layer-scale-slider{flex:1;min-width:72px;max-width:130px;accent-color:#3d8a50}
@@ -1174,6 +1178,8 @@ body.gd-qa-preview-mode #plantLayersHost{pointer-events:none}
         <button type="button" class="gd-layer-btn" onclick="adjustPlantLayerScale(0.1)" aria-label="Larger">+</button>
         <button type="button" class="gd-layer-btn gd-auto-blend-btn" id="gdAutoBlendBtn" onclick="gdToggleAutoBlendSelected()">✨ Auto Blend</button>
         <span class="gd-auto-blend-status" id="gdAutoBlendStatus" aria-live="polite"></span>
+        <button type="button" class="gd-layer-btn gd-natural-blend-premium-btn" id="gdNaturalBlendPremiumBtn" onclick="gdNaturalBlendPremiumClicked()" disabled>✨ Natural Blend+ · Premium</button>
+        <span class="gd-natural-blend-premium-status" id="gdNaturalBlendPremiumStatus" aria-live="polite"></span>
         <button type="button" class="gd-layer-btn danger" onclick="deleteSelectedPlantLayer()">Remove</button>
       </div>
 
@@ -1304,6 +1310,19 @@ let gdServerDesignMeta = null;
 let gdPersistDebounceMs = 600;
 let gdLastLoadKey = null;
 let gdSuitabilityWaiters = {};
+let gdPremiumActionWaiters = {};
+let gdPremiumNaturalBlendState = {
+  loaded:false,
+  ok:false,
+  code:'NOT_LOADED',
+  enabled:false,
+  remaining:0,
+  dailyLimit:0,
+  dailyUsed:0,
+  serverAuthoritative:true,
+  runtimeReady:false
+};
+const GD_NATURAL_BLEND_RUNTIME_ENABLED = false;
 let gdOpenPlantPopupIdx = null;
 let gdDesignAssetIndex = null;
 let gdAssetDiagLastError = null;
@@ -2428,6 +2447,7 @@ function gdIndexDesignAssetRegistry(registry) {
 function gdApplyOwnedGardenContext(ctx) {
   if (!ctx || typeof ctx !== 'object') return;
   gdOwnedGardenContext = Object.assign({}, gdOwnedGardenContext || {}, ctx);
+  gdRequestPremiumNaturalBlendStatus();
   const api = gdOwnedGardenApi();
   if (api && api.designPaidAiForAction) api.designPaidAiForAction('load-context');
   if (ctx.designAssetRegistry) gdIndexDesignAssetRegistry(ctx.designAssetRegistry);
@@ -3113,6 +3133,7 @@ window.addEventListener('message', function(ev) {
     gdRenderAreaSelect();
   }
   if (d.type === 'cruvit:garden-design-asset-registry') gdIndexDesignAssetRegistry(d.designAssetRegistry);
+  if (d.type === 'cruvit:garden-design-premium-action-status-result') gdOnPremiumActionStatusResult(d);
   if (d.type === 'cruvit:garden-design-commit-result') gdOnCommitResult(d);
   if (d.type === 'cruvit:garden-design-suitability-result') gdOnSuitabilityResult(d);
   if (d.type === 'cruvit:garden-design-load-result') gdOnLoadResult(d);
@@ -3982,6 +4003,105 @@ document.addEventListener('pointermove', onPlantLayerPointerMove, { passive: fal
 document.addEventListener('pointerup', onPlantLayerPointerUp);
 document.addEventListener('pointercancel', onPlantLayerPointerUp);
 
+function gdPremiumRequestId(prefix) {
+  return String(prefix || 'gdpa') + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9);
+}
+
+function gdPremiumNaturalBlendAvailable() {
+  const s = gdPremiumNaturalBlendState || {};
+  return s.loaded === true
+    && s.ok === true
+    && s.enabled === true
+    && Number(s.remaining || 0) > 0
+    && GD_NATURAL_BLEND_RUNTIME_ENABLED === true;
+}
+
+function gdRenderPremiumNaturalBlendUi() {
+  const btn = document.getElementById('gdNaturalBlendPremiumBtn');
+  const status = document.getElementById('gdNaturalBlendPremiumStatus');
+  if (!btn) return;
+
+  const s = gdPremiumNaturalBlendState || {};
+  const remaining = Math.max(0, Number(s.remaining || 0));
+  const entitled = s.loaded === true && s.ok === true && s.enabled === true && remaining > 0;
+  const runtimeReady = GD_NATURAL_BLEND_RUNTIME_ENABLED === true;
+
+  if (!s.loaded) {
+    btn.textContent = '✨ Natural Blend+ · Premium';
+    btn.disabled = true;
+    btn.title = 'Checking Premium availability…';
+    if (status) status.textContent = 'Checking…';
+    return;
+  }
+
+  if (!entitled) {
+    btn.textContent = '✨ Natural Blend+ · Premium';
+    btn.disabled = true;
+    btn.title = s.code === 'AUTH_REQUIRED'
+      ? 'Sign in to use Premium rendering'
+      : 'Natural Blend+ is a metered Premium final render';
+    if (status) {
+      status.textContent = s.code === 'AUTH_REQUIRED'
+        ? 'Sign in required'
+        : (s.code === 'QUOTA_EXHAUSTED' ? 'No uses left' : 'Premium');
+    }
+    return;
+  }
+
+  btn.textContent = '✨ Natural Blend+ · ' + remaining + ' left';
+  btn.disabled = !runtimeReady;
+  btn.title = runtimeReady
+    ? 'Create a scene-specific Premium final render'
+    : 'Premium quota is available; secure runtime rollout is not enabled yet';
+  if (status) {
+    status.textContent = runtimeReady
+      ? 'Premium ready'
+      : 'Quota ready · runtime locked';
+  }
+}
+
+function gdRequestPremiumNaturalBlendStatus() {
+  const requestId = gdPremiumRequestId('gdpa_status');
+  gdPostToHost({
+    type:'cruvit:garden-design-premium-action-status-request',
+    requestId,
+    feature:'natural_blend'
+  });
+  return requestId;
+}
+
+function gdOnPremiumActionStatusResult(d) {
+  if (!d || String(d.feature || '') !== 'natural_blend') return;
+  gdPremiumNaturalBlendState = {
+    loaded:true,
+    ok:d.ok === true,
+    code:String(d.code || 'UNKNOWN'),
+    enabled:d.enabled === true,
+    remaining:Math.max(0, Number(d.remaining || 0)),
+    dailyLimit:Math.max(0, Number(d.dailyLimit || 0)),
+    dailyUsed:Math.max(0, Number(d.dailyUsed || 0)),
+    serverAuthoritative:d.serverAuthoritative === true,
+    runtimeReady:GD_NATURAL_BLEND_RUNTIME_ENABLED === true
+  };
+  gdRenderPremiumNaturalBlendUi();
+  updateLayerToolbar();
+}
+
+function gdNaturalBlendPremiumClicked() {
+  gdRenderPremiumNaturalBlendUi();
+  const status = document.getElementById('gdNaturalBlendPremiumStatus');
+  if (!gdPremiumNaturalBlendAvailable()) {
+    if (status) {
+      status.textContent = gdPremiumNaturalBlendState.enabled
+        ? 'Secure runtime rollout is locked'
+        : 'Premium quota required';
+    }
+    return;
+  }
+}
+
+window.gdNaturalBlendPremiumClicked = gdNaturalBlendPremiumClicked;
+
 function updateLayerToolbar() {
   const bar = document.getElementById('gdLayerToolbar');
   const nameEl = document.getElementById('gdLayerToolbarName');
@@ -4027,6 +4147,7 @@ function updateLayerToolbar() {
       blendStatus.title = blendStatus.textContent;
     }
   }
+  gdRenderPremiumNaturalBlendUi();
 }
 
 function gdAutoBlendApi() {
