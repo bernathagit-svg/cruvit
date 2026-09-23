@@ -60,3 +60,30 @@ test('Natural Blend+ does not replace deterministic Auto Blend V3',()=>{
   assert.match(runtime,/requestQaAutoBlend\(true\)/);
   assert.match(runtime,/Preparing bounded local edit crop/);
 });
+
+
+test('Natural Blend+ always fills RAW and V3 comparison before showing AI patch',()=>{
+  const runtime=fs.readFileSync(qaRuntimePath,'utf8');
+  const start=runtime.indexOf('async function runNaturalBlendPilot()');
+  const end=runtime.indexOf('async function compareRawVsAutoBlend()',start);
+  const body=runtime.slice(start,end);
+  const rawIdx=body.indexOf("requestQaAutoBlend(false)");
+  const rawImageIdx=body.indexOf("ui.compareRawImg.src");
+  const v3Idx=body.indexOf("requestQaAutoBlend(true)");
+  const v3ImageIdx=body.indexOf("ui.compareAutoImg.src");
+  const apiIdx=body.indexOf("fetch(NATURAL_BLEND_JOB_URL");
+  assert.ok(rawIdx>=0);
+  assert.ok(rawImageIdx>rawIdx);
+  assert.ok(v3Idx>rawImageIdx);
+  assert.ok(v3ImageIdx>v3Idx);
+  assert.ok(apiIdx>v3ImageIdx);
+});
+
+test('Natural Blend+ status exposes measured token usage and current Sunburst cost rates',()=>{
+  const source=fs.readFileSync(path.join(ROOT,'netlify/functions/plant-visual-natural-blend-status.mjs'),'utf8');
+  assert.match(source,/naturalBlendCostUsd/);
+  assert.match(source,/imageInput \* 8 \/ 1_000_000/);
+  assert.match(source,/textInput \* 5 \/ 1_000_000/);
+  assert.match(source,/imageOutput \* 30 \/ 1_000_000/);
+  assert.match(source,/actualCostUsd:naturalBlendCostUsd\(evidence\.usage\)/);
+});
