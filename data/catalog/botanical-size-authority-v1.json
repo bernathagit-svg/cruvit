@@ -6,7 +6,7 @@
   "universalDefaultPreviewScenario": null,
   "mergeCanonicalSlugsNow": false,
   "provenanceOverlay": "data/garden-design/tree-size-evidence-wave-v1/",
-  "note": "Promoted botanical-size authority. Raw research overlays remain provenance. User resize, mango LOW, photo calibration, and maintained targets are Garden Design state and must not mutate this registry.",
+  "note": "Promoted botanical-size authority. Raw research overlays remain provenance. User resize, saved photo calibration, and maintained targets are Garden Design state and must not mutate this registry.",
   "slugToBotanicalTaxonId": {
     "blue-gum": "taxon:eucalyptus-globulus",
     "cypress": "taxon:cupressus-sempervirens",
@@ -49,15 +49,20 @@
     "sweet-cherry": "taxon:prunus-avium",
     "white-sapote": "taxon:casimiroa-edulis",
     "orange": "taxon:citrus-sinensis",
-    "sweet-orange": "taxon:citrus-sinensis"
+    "sweet-orange": "taxon:citrus-sinensis",
+    "lavender": "taxon:lavandula-angustifolia",
+    "rosemary": "taxon:salvia-rosmarinus",
+    "acerola": "taxon:malpighia-emarginata",
+    "aloe-vera": "taxon:aloe-vera",
+    "areca-palm": "taxon:dypsis-lutescens"
   },
   "expectedAccounting": {
-    "RUNTIME_AUTHORITY_READY": 9,
-    "RUNTIME_AUTHORITY_PARTIAL": 9,
+    "RUNTIME_AUTHORITY_READY": 13,
+    "RUNTIME_AUTHORITY_PARTIAL": 10,
     "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED": 13,
     "RUNTIME_AUTHORITY_CONFLICT_HOLD": 3,
     "RUNTIME_AUTHORITY_EVIDENCE_GAP": 7,
-    "TOTAL": 41
+    "TOTAL": 46
   },
   "records": [
     {
@@ -1832,6 +1837,234 @@
       "runtimeWired": false,
       "botanicalEvidenceRemainsValid": true,
       "mayChooseUniversalPersonalGardenSize": false
+    },
+    {
+      "botanicalTaxonId": "taxon:lavandula-angustifolia",
+      "canonicalSlugAliases": [
+        "lavender"
+      ],
+      "scientificName": "Lavandula angustifolia",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "lavender__ncsu__landscape-mature",
+      "selectedSpreadEvidenceRef": "lavender__ncsu__landscape-mature",
+      "selectedSource": "lavender__ncsu__landscape-mature",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.3048,
+          "max": 0.6096
+        },
+        "spreadM": {
+          "min": 0.6096,
+          "max": 0.9144
+        }
+      },
+      "provenanceEvidenceIds": [
+        "lavender__ncsu__landscape-mature"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:salvia-rosmarinus",
+      "canonicalSlugAliases": [
+        "rosemary"
+      ],
+      "scientificName": "Salvia rosmarinus",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "rosemary__ncsu__landscape-mature",
+      "selectedSpreadEvidenceRef": "rosemary__ncsu__landscape-mature",
+      "selectedSource": "rosemary__ncsu__landscape-mature",
+      "normalizedRange": {
+        "heightM": {
+          "min": 1.2192,
+          "max": 1.524
+        },
+        "spreadM": {
+          "min": 0.9144,
+          "max": 1.2192
+        }
+      },
+      "provenanceEvidenceIds": [
+        "rosemary__ncsu__landscape-mature"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:malpighia-emarginata",
+      "canonicalSlugAliases": [
+        "acerola"
+      ],
+      "scientificName": "Malpighia emarginata",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
+      "defaultPreviewScenario": "NATURAL_MATURE",
+      "selectedHeightEvidenceRef": "acerola__wfo__species-height",
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": {
+        "heightM": {
+          "min": 2,
+          "max": 6
+        },
+        "spreadM": {
+          "min": null,
+          "max": 6
+        }
+      },
+      "provenanceEvidenceIds": [
+        "acerola__wfo__species-height",
+        "acerola__ntbg__max-equal-breadth"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": "HEIGHT_ANCHORED_SPREAD_MAX_ONLY",
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": false,
+      "unknownFields": [
+        "spreadMin"
+      ],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": "Height-authoritative estimate + shrub form heuristic + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:aloe-vera",
+      "canonicalSlugAliases": [
+        "aloe-vera"
+      ],
+      "scientificName": "Aloe vera",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "aloe-vera__ncsu__landscape-mature",
+      "selectedSpreadEvidenceRef": "aloe-vera__ncsu__landscape-mature",
+      "selectedSource": "aloe-vera__ncsu__landscape-mature",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.3048,
+          "max": 0.6096
+        },
+        "spreadM": {
+          "min": 0.3048,
+          "max": 0.762
+        }
+      },
+      "provenanceEvidenceIds": [
+        "aloe-vera__ncsu__landscape-mature"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:dypsis-lutescens",
+      "canonicalSlugAliases": [
+        "areca-palm"
+      ],
+      "scientificName": "Dypsis lutescens",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "areca-palm__uf-ifas-st165__landscape-mature",
+      "selectedSpreadEvidenceRef": "areca-palm__uf-ifas-st165__landscape-mature",
+      "selectedSource": "areca-palm__uf-ifas-st165__landscape-mature",
+      "normalizedRange": {
+        "heightM": {
+          "min": 6.096,
+          "max": 9.144
+        },
+        "spreadM": {
+          "min": 2.4384,
+          "max": 3.048
+        }
+      },
+      "provenanceEvidenceIds": [
+        "areca-palm__uf-ifas-st165__landscape-mature"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false,
+      "youngStateMustRemainSeparate": true
     }
+  ],
+  "provenanceOverlays": [
+    "data/garden-design/tree-size-evidence-wave-v1/",
+    "data/garden-design/non-tree-size-evidence-wave-v1/"
   ]
 }
