@@ -54,7 +54,8 @@ export const GD_HOST_TO_DESIGN = Object.freeze({
   PREMIUM_ACTION_STATUS_RESULT: 'cruvit:garden-design-premium-action-status-result',
   PREMIUM_ACTION_CONSUME_RESULT: 'cruvit:garden-design-premium-action-consume-result',
   PREMIUM_ACTION_REFUND_RESULT: 'cruvit:garden-design-premium-action-refund-result',
-  NATURAL_BLEND_RUN_RESULT: 'cruvit:garden-design-natural-blend-run-result'
+  NATURAL_BLEND_RUN_RESULT: 'cruvit:garden-design-natural-blend-run-result',
+  NATURAL_BLEND_MEDIA_RESULT: 'cruvit:garden-design-natural-blend-media-result'
 });
 
 export const GD_DESIGN_TO_HOST = Object.freeze({
@@ -73,7 +74,8 @@ export const GD_DESIGN_TO_HOST = Object.freeze({
   PREMIUM_ACTION_STATUS_REQUEST: 'cruvit:garden-design-premium-action-status-request',
   PREMIUM_ACTION_CONSUME_REQUEST: 'cruvit:garden-design-premium-action-consume-request',
   PREMIUM_ACTION_REFUND_REQUEST: 'cruvit:garden-design-premium-action-refund-request',
-  NATURAL_BLEND_RUN_REQUEST: 'cruvit:garden-design-natural-blend-run-request'
+  NATURAL_BLEND_RUN_REQUEST: 'cruvit:garden-design-natural-blend-run-request',
+  NATURAL_BLEND_MEDIA_REQUEST: 'cruvit:garden-design-natural-blend-media-request'
 });
 
 export const GD_AUTOSAVE_DEBOUNCE_MS = 600;
