@@ -86,8 +86,9 @@ test('gateway records measured cost into existing runtime cost ledger',()=>{
 });
 
 test('gateway only accepts bounded 1024 PNG crop and mask and fixed server prompt',()=>{
-  assert.match(gateway,/CROP_MUST_BE_1024/);
-  assert.match(gateway,/MASK_MUST_BE_1024/);
+  assert.match(gateway,/label\+'_MUST_BE_1024'/);
+  assert.match(gateway,/pngSize\(cropBytes,'CROP'\)/);
+  assert.match(gateway,/pngSize\(maskBytes,'MASK'\)/);
   assert.match(gateway,/fixedPrompt\(placement\)/);
   assert.doesNotMatch(gateway,/body\.prompt/);
   assert.match(gateway,/Pixels outside the mask are context only/);
