@@ -62,7 +62,14 @@
         "haloPartialPixels": 356
       },
       "sizeAuthorityPlan": {
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "bougainvillea",
+        "growthStage": "mature",
+        "visualForm": "climber",
         "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+        "authoritativeMetersAvailable": false,
+        "explicitEstimateOnly": true,
+        "morphologyFallbackIsAuthority": false,
         "ownerReviewRequired": true,
         "reasonCodes": [
           "CANONICAL_SIZE_RECORD_NOT_FOUND"
@@ -134,7 +141,14 @@
         "haloPartialPixels": 0
       },
       "sizeAuthorityPlan": {
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "bougainvillea",
+        "growthStage": "young",
+        "visualForm": "climber",
         "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+        "authoritativeMetersAvailable": false,
+        "explicitEstimateOnly": true,
+        "morphologyFallbackIsAuthority": false,
         "ownerReviewRequired": true,
         "reasonCodes": [
           "CANONICAL_SIZE_RECORD_NOT_FOUND"
@@ -206,10 +220,20 @@
         "haloPartialPixels": 7
       },
       "sizeAuthorityPlan": {
-        "state": "SIZE_AUTHORITY_CONFLICT_HOLD",
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "cypress",
+        "botanicalTaxonId": "taxon:cupressus-sempervirens",
+        "scientificName": "Cupressus sempervirens",
+        "growthStage": "mature",
+        "visualForm": "tree",
+        "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_CONFLICT_HOLD",
+        "authoritativeMetersAvailable": false,
+        "explicitEstimateOnly": true,
+        "morphologyFallbackIsAuthority": false,
         "ownerReviewRequired": true,
         "reasonCodes": [
-          "CONFLICTING_SIZE_EVIDENCE_HOLD"
+          "SIZE_EVIDENCE_GAP"
         ]
       },
       "ownerReviewRequired": true,
@@ -278,8 +302,31 @@
         "haloPartialPixels": 8
       },
       "sizeAuthorityPlan": {
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "cypress",
+        "botanicalTaxonId": "taxon:cupressus-sempervirens",
+        "scientificName": "Cupressus sempervirens",
+        "growthStage": "young",
+        "visualForm": "tree",
         "state": "SIZE_AUTHORITY_PARTIAL",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_CONFLICT_HOLD",
+        "authoritativeMetersAvailable": false,
+        "heightScaleReady": true,
+        "spreadScaleReady": true,
+        "normalizedRange": null,
+        "sensitivity": {
+          "cultivarSensitive": false,
+          "rootstockSensitive": false,
+          "cultivarVariable": false,
+          "maintainedForm": false,
+          "notFinalPersonalGardenSize": false,
+          "reasons": []
+        },
+        "explicitEstimateOnly": true,
+        "morphologyFallbackIsAuthority": false,
         "ownerReviewRequired": false,
+        "gardenDesignMayUseExplicitEstimate": true,
+        "meterAccuracyClaimAllowed": false,
         "reasonCodes": [
           "GROWTH_STAGE_AUTHORITY_NOT_SUPPORTED"
         ]
@@ -350,11 +397,41 @@
         "haloPartialPixels": 78
       },
       "sizeAuthorityPlan": {
-        "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
-        "ownerReviewRequired": true,
-        "reasonCodes": [
-          "CANONICAL_SIZE_RECORD_NOT_FOUND"
-        ]
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "lavender",
+        "botanicalTaxonId": "taxon:lavandula-angustifolia",
+        "scientificName": "Lavandula angustifolia",
+        "growthStage": "mature",
+        "visualForm": "shrub",
+        "state": "SIZE_AUTHORITY_READY",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+        "authoritativeMetersAvailable": true,
+        "heightScaleReady": true,
+        "spreadScaleReady": true,
+        "normalizedRange": {
+          "heightM": {
+            "min": 0.3048,
+            "max": 0.6096
+          },
+          "spreadM": {
+            "min": 0.6096,
+            "max": 0.9144
+          }
+        },
+        "sensitivity": {
+          "cultivarSensitive": false,
+          "rootstockSensitive": false,
+          "cultivarVariable": false,
+          "maintainedForm": false,
+          "notFinalPersonalGardenSize": false,
+          "reasons": []
+        },
+        "explicitEstimateOnly": false,
+        "morphologyFallbackIsAuthority": false,
+        "ownerReviewRequired": false,
+        "gardenDesignMayUseExplicitEstimate": false,
+        "meterAccuracyClaimAllowed": true,
+        "reasonCodes": []
       },
       "ownerReviewRequired": true,
       "productionApproved": false,
@@ -422,11 +499,41 @@
         "haloPartialPixels": 95
       },
       "sizeAuthorityPlan": {
-        "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
-        "ownerReviewRequired": true,
-        "reasonCodes": [
-          "CANONICAL_SIZE_RECORD_NOT_FOUND"
-        ]
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "lavender",
+        "botanicalTaxonId": "taxon:lavandula-angustifolia",
+        "scientificName": "Lavandula angustifolia",
+        "growthStage": "mature",
+        "visualForm": "shrub",
+        "state": "SIZE_AUTHORITY_READY",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+        "authoritativeMetersAvailable": true,
+        "heightScaleReady": true,
+        "spreadScaleReady": true,
+        "normalizedRange": {
+          "heightM": {
+            "min": 0.3048,
+            "max": 0.6096
+          },
+          "spreadM": {
+            "min": 0.6096,
+            "max": 0.9144
+          }
+        },
+        "sensitivity": {
+          "cultivarSensitive": false,
+          "rootstockSensitive": false,
+          "cultivarVariable": false,
+          "maintainedForm": false,
+          "notFinalPersonalGardenSize": false,
+          "reasons": []
+        },
+        "explicitEstimateOnly": false,
+        "morphologyFallbackIsAuthority": false,
+        "ownerReviewRequired": false,
+        "gardenDesignMayUseExplicitEstimate": false,
+        "meterAccuracyClaimAllowed": true,
+        "reasonCodes": []
       },
       "ownerReviewRequired": true,
       "productionApproved": false,
@@ -494,8 +601,40 @@
         "haloPartialPixels": 261
       },
       "sizeAuthorityPlan": {
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "olive",
+        "botanicalTaxonId": "taxon:olea-europaea",
+        "scientificName": "Olea europaea",
+        "growthStage": "young",
+        "visualForm": "tree",
         "state": "SIZE_AUTHORITY_PARTIAL",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+        "authoritativeMetersAvailable": false,
+        "heightScaleReady": true,
+        "spreadScaleReady": true,
+        "normalizedRange": {
+          "heightM": {
+            "min": 6.096,
+            "max": 9.144
+          },
+          "spreadM": {
+            "min": 4.572,
+            "max": 7.62
+          }
+        },
+        "sensitivity": {
+          "cultivarSensitive": false,
+          "rootstockSensitive": false,
+          "cultivarVariable": false,
+          "maintainedForm": false,
+          "notFinalPersonalGardenSize": false,
+          "reasons": []
+        },
+        "explicitEstimateOnly": true,
+        "morphologyFallbackIsAuthority": false,
         "ownerReviewRequired": false,
+        "gardenDesignMayUseExplicitEstimate": true,
+        "meterAccuracyClaimAllowed": false,
         "reasonCodes": [
           "GROWTH_STAGE_AUTHORITY_NOT_SUPPORTED"
         ]
@@ -566,11 +705,41 @@
         "haloPartialPixels": 451
       },
       "sizeAuthorityPlan": {
-        "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
-        "ownerReviewRequired": true,
-        "reasonCodes": [
-          "CANONICAL_SIZE_RECORD_NOT_FOUND"
-        ]
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "rosemary",
+        "botanicalTaxonId": "taxon:salvia-rosmarinus",
+        "scientificName": "Salvia rosmarinus",
+        "growthStage": "mature",
+        "visualForm": "shrub",
+        "state": "SIZE_AUTHORITY_READY",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+        "authoritativeMetersAvailable": true,
+        "heightScaleReady": true,
+        "spreadScaleReady": true,
+        "normalizedRange": {
+          "heightM": {
+            "min": 1.2192,
+            "max": 1.524
+          },
+          "spreadM": {
+            "min": 0.9144,
+            "max": 1.2192
+          }
+        },
+        "sensitivity": {
+          "cultivarSensitive": false,
+          "rootstockSensitive": false,
+          "cultivarVariable": false,
+          "maintainedForm": false,
+          "notFinalPersonalGardenSize": false,
+          "reasons": []
+        },
+        "explicitEstimateOnly": false,
+        "morphologyFallbackIsAuthority": false,
+        "ownerReviewRequired": false,
+        "gardenDesignMayUseExplicitEstimate": false,
+        "meterAccuracyClaimAllowed": true,
+        "reasonCodes": []
       },
       "ownerReviewRequired": true,
       "productionApproved": false,
@@ -638,10 +807,42 @@
         "haloPartialPixels": 461
       },
       "sizeAuthorityPlan": {
-        "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
-        "ownerReviewRequired": true,
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "acerola",
+        "botanicalTaxonId": "taxon:malpighia-emarginata",
+        "scientificName": "Malpighia emarginata",
+        "growthStage": "mature",
+        "visualForm": "shrub",
+        "state": "SIZE_AUTHORITY_PARTIAL",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
+        "authoritativeMetersAvailable": true,
+        "heightScaleReady": true,
+        "spreadScaleReady": false,
+        "normalizedRange": {
+          "heightM": {
+            "min": 2,
+            "max": 6
+          },
+          "spreadM": {
+            "min": null,
+            "max": 6
+          }
+        },
+        "sensitivity": {
+          "cultivarSensitive": false,
+          "rootstockSensitive": false,
+          "cultivarVariable": false,
+          "maintainedForm": false,
+          "notFinalPersonalGardenSize": false,
+          "reasons": []
+        },
+        "explicitEstimateOnly": false,
+        "morphologyFallbackIsAuthority": false,
+        "ownerReviewRequired": false,
+        "gardenDesignMayUseExplicitEstimate": true,
+        "meterAccuracyClaimAllowed": false,
         "reasonCodes": [
-          "CANONICAL_SIZE_RECORD_NOT_FOUND"
+          "PARTIAL_DIMENSION_AUTHORITY"
         ]
       },
       "ownerReviewRequired": true,
@@ -710,10 +911,42 @@
         "haloPartialPixels": 60
       },
       "sizeAuthorityPlan": {
-        "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
-        "ownerReviewRequired": true,
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "acerola",
+        "botanicalTaxonId": "taxon:malpighia-emarginata",
+        "scientificName": "Malpighia emarginata",
+        "growthStage": "mature",
+        "visualForm": "shrub",
+        "state": "SIZE_AUTHORITY_PARTIAL",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
+        "authoritativeMetersAvailable": true,
+        "heightScaleReady": true,
+        "spreadScaleReady": false,
+        "normalizedRange": {
+          "heightM": {
+            "min": 2,
+            "max": 6
+          },
+          "spreadM": {
+            "min": null,
+            "max": 6
+          }
+        },
+        "sensitivity": {
+          "cultivarSensitive": false,
+          "rootstockSensitive": false,
+          "cultivarVariable": false,
+          "maintainedForm": false,
+          "notFinalPersonalGardenSize": false,
+          "reasons": []
+        },
+        "explicitEstimateOnly": false,
+        "morphologyFallbackIsAuthority": false,
+        "ownerReviewRequired": false,
+        "gardenDesignMayUseExplicitEstimate": true,
+        "meterAccuracyClaimAllowed": false,
         "reasonCodes": [
-          "CANONICAL_SIZE_RECORD_NOT_FOUND"
+          "PARTIAL_DIMENSION_AUTHORITY"
         ]
       },
       "ownerReviewRequired": true,
@@ -782,10 +1015,20 @@
         "haloPartialPixels": 2
       },
       "sizeAuthorityPlan": {
-        "state": "SIZE_AUTHORITY_CONFLICT_HOLD",
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "almond",
+        "botanicalTaxonId": "taxon:prunus-dulcis",
+        "scientificName": "Prunus dulcis",
+        "growthStage": "mature",
+        "visualForm": "tree",
+        "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_CONFLICT_HOLD",
+        "authoritativeMetersAvailable": false,
+        "explicitEstimateOnly": true,
+        "morphologyFallbackIsAuthority": false,
         "ownerReviewRequired": true,
         "reasonCodes": [
-          "CONFLICTING_SIZE_EVIDENCE_HOLD"
+          "SIZE_EVIDENCE_GAP"
         ]
       },
       "ownerReviewRequired": true,
@@ -854,10 +1097,20 @@
         "haloPartialPixels": 1070
       },
       "sizeAuthorityPlan": {
-        "state": "SIZE_AUTHORITY_CONFLICT_HOLD",
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "almond",
+        "botanicalTaxonId": "taxon:prunus-dulcis",
+        "scientificName": "Prunus dulcis",
+        "growthStage": "mature",
+        "visualForm": "tree",
+        "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_CONFLICT_HOLD",
+        "authoritativeMetersAvailable": false,
+        "explicitEstimateOnly": true,
+        "morphologyFallbackIsAuthority": false,
         "ownerReviewRequired": true,
         "reasonCodes": [
-          "CONFLICTING_SIZE_EVIDENCE_HOLD"
+          "SIZE_EVIDENCE_GAP"
         ]
       },
       "ownerReviewRequired": true,
@@ -926,8 +1179,35 @@
         "haloPartialPixels": 13
       },
       "sizeAuthorityPlan": {
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "almond",
+        "botanicalTaxonId": "taxon:prunus-dulcis",
+        "scientificName": "Prunus dulcis",
+        "growthStage": "young",
+        "visualForm": "tree",
         "state": "SIZE_AUTHORITY_PARTIAL",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_CONFLICT_HOLD",
+        "authoritativeMetersAvailable": false,
+        "heightScaleReady": true,
+        "spreadScaleReady": true,
+        "normalizedRange": null,
+        "sensitivity": {
+          "cultivarSensitive": true,
+          "rootstockSensitive": true,
+          "cultivarVariable": false,
+          "maintainedForm": false,
+          "notFinalPersonalGardenSize": true,
+          "reasons": [
+            "cultivar sensitive",
+            "rootstock sensitive",
+            "not final personal garden size"
+          ]
+        },
+        "explicitEstimateOnly": true,
+        "morphologyFallbackIsAuthority": false,
         "ownerReviewRequired": false,
+        "gardenDesignMayUseExplicitEstimate": true,
+        "meterAccuracyClaimAllowed": false,
         "reasonCodes": [
           "GROWTH_STAGE_AUTHORITY_NOT_SUPPORTED"
         ]
@@ -998,11 +1278,41 @@
         "haloPartialPixels": 646
       },
       "sizeAuthorityPlan": {
-        "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
-        "ownerReviewRequired": true,
-        "reasonCodes": [
-          "CANONICAL_SIZE_RECORD_NOT_FOUND"
-        ]
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "aloe-vera",
+        "botanicalTaxonId": "taxon:aloe-vera",
+        "scientificName": "Aloe vera",
+        "growthStage": "mature",
+        "visualForm": "succulent-form",
+        "state": "SIZE_AUTHORITY_READY",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+        "authoritativeMetersAvailable": true,
+        "heightScaleReady": true,
+        "spreadScaleReady": true,
+        "normalizedRange": {
+          "heightM": {
+            "min": 0.3048,
+            "max": 0.6096
+          },
+          "spreadM": {
+            "min": 0.3048,
+            "max": 0.762
+          }
+        },
+        "sensitivity": {
+          "cultivarSensitive": false,
+          "rootstockSensitive": false,
+          "cultivarVariable": false,
+          "maintainedForm": false,
+          "notFinalPersonalGardenSize": false,
+          "reasons": []
+        },
+        "explicitEstimateOnly": false,
+        "morphologyFallbackIsAuthority": false,
+        "ownerReviewRequired": false,
+        "gardenDesignMayUseExplicitEstimate": false,
+        "meterAccuracyClaimAllowed": true,
+        "reasonCodes": []
       },
       "ownerReviewRequired": true,
       "productionApproved": false,
@@ -1070,10 +1380,20 @@
         "haloPartialPixels": 4
       },
       "sizeAuthorityPlan": {
-        "state": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "apple",
+        "botanicalTaxonId": "taxon:malus-domestica",
+        "scientificName": "Malus domestica",
+        "growthStage": "mature",
+        "visualForm": "tree",
+        "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+        "authoritativeMetersAvailable": false,
+        "explicitEstimateOnly": true,
+        "morphologyFallbackIsAuthority": false,
         "ownerReviewRequired": true,
         "reasonCodes": [
-          "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+          "SIZE_EVIDENCE_GAP"
         ]
       },
       "ownerReviewRequired": true,
@@ -1142,10 +1462,20 @@
         "haloPartialPixels": 931
       },
       "sizeAuthorityPlan": {
-        "state": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "apple",
+        "botanicalTaxonId": "taxon:malus-domestica",
+        "scientificName": "Malus domestica",
+        "growthStage": "mature",
+        "visualForm": "tree",
+        "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+        "authoritativeMetersAvailable": false,
+        "explicitEstimateOnly": true,
+        "morphologyFallbackIsAuthority": false,
         "ownerReviewRequired": true,
         "reasonCodes": [
-          "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+          "SIZE_EVIDENCE_GAP"
         ]
       },
       "ownerReviewRequired": true,
@@ -1214,8 +1544,36 @@
         "haloPartialPixels": 70
       },
       "sizeAuthorityPlan": {
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "apple",
+        "botanicalTaxonId": "taxon:malus-domestica",
+        "scientificName": "Malus domestica",
+        "growthStage": "young",
+        "visualForm": "tree",
         "state": "SIZE_AUTHORITY_PARTIAL",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+        "authoritativeMetersAvailable": false,
+        "heightScaleReady": true,
+        "spreadScaleReady": true,
+        "normalizedRange": null,
+        "sensitivity": {
+          "cultivarSensitive": true,
+          "rootstockSensitive": true,
+          "cultivarVariable": false,
+          "maintainedForm": true,
+          "notFinalPersonalGardenSize": true,
+          "reasons": [
+            "cultivar sensitive",
+            "rootstock sensitive",
+            "maintained form",
+            "not final personal garden size"
+          ]
+        },
+        "explicitEstimateOnly": true,
+        "morphologyFallbackIsAuthority": false,
         "ownerReviewRequired": false,
+        "gardenDesignMayUseExplicitEstimate": true,
+        "meterAccuracyClaimAllowed": false,
         "reasonCodes": [
           "GROWTH_STAGE_AUTHORITY_NOT_SUPPORTED"
         ]
@@ -1286,10 +1644,20 @@
         "haloPartialPixels": 4
       },
       "sizeAuthorityPlan": {
-        "state": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "apricot",
+        "botanicalTaxonId": "taxon:prunus-armeniaca",
+        "scientificName": "Prunus armeniaca",
+        "growthStage": "mature",
+        "visualForm": "tree",
+        "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+        "authoritativeMetersAvailable": false,
+        "explicitEstimateOnly": true,
+        "morphologyFallbackIsAuthority": false,
         "ownerReviewRequired": true,
         "reasonCodes": [
-          "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+          "SIZE_EVIDENCE_GAP"
         ]
       },
       "ownerReviewRequired": true,
@@ -1358,10 +1726,20 @@
         "haloPartialPixels": 2777
       },
       "sizeAuthorityPlan": {
-        "state": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "apricot",
+        "botanicalTaxonId": "taxon:prunus-armeniaca",
+        "scientificName": "Prunus armeniaca",
+        "growthStage": "mature",
+        "visualForm": "tree",
+        "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+        "authoritativeMetersAvailable": false,
+        "explicitEstimateOnly": true,
+        "morphologyFallbackIsAuthority": false,
         "ownerReviewRequired": true,
         "reasonCodes": [
-          "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+          "SIZE_EVIDENCE_GAP"
         ]
       },
       "ownerReviewRequired": true,
@@ -1430,10 +1808,20 @@
         "haloPartialPixels": 859
       },
       "sizeAuthorityPlan": {
-        "state": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "apricot",
+        "botanicalTaxonId": "taxon:prunus-armeniaca",
+        "scientificName": "Prunus armeniaca",
+        "growthStage": "mature",
+        "visualForm": "tree",
+        "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+        "authoritativeMetersAvailable": false,
+        "explicitEstimateOnly": true,
+        "morphologyFallbackIsAuthority": false,
         "ownerReviewRequired": true,
         "reasonCodes": [
-          "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+          "SIZE_EVIDENCE_GAP"
         ]
       },
       "ownerReviewRequired": true,
@@ -1502,8 +1890,35 @@
         "haloPartialPixels": 12
       },
       "sizeAuthorityPlan": {
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "apricot",
+        "botanicalTaxonId": "taxon:prunus-armeniaca",
+        "scientificName": "Prunus armeniaca",
+        "growthStage": "young",
+        "visualForm": "tree",
         "state": "SIZE_AUTHORITY_PARTIAL",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+        "authoritativeMetersAvailable": false,
+        "heightScaleReady": true,
+        "spreadScaleReady": true,
+        "normalizedRange": null,
+        "sensitivity": {
+          "cultivarSensitive": true,
+          "rootstockSensitive": true,
+          "cultivarVariable": false,
+          "maintainedForm": false,
+          "notFinalPersonalGardenSize": true,
+          "reasons": [
+            "cultivar sensitive",
+            "rootstock sensitive",
+            "not final personal garden size"
+          ]
+        },
+        "explicitEstimateOnly": true,
+        "morphologyFallbackIsAuthority": false,
         "ownerReviewRequired": false,
+        "gardenDesignMayUseExplicitEstimate": true,
+        "meterAccuracyClaimAllowed": false,
         "reasonCodes": [
           "GROWTH_STAGE_AUTHORITY_NOT_SUPPORTED"
         ]
@@ -1574,11 +1989,41 @@
         "haloPartialPixels": 187
       },
       "sizeAuthorityPlan": {
-        "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
-        "ownerReviewRequired": true,
-        "reasonCodes": [
-          "CANONICAL_SIZE_RECORD_NOT_FOUND"
-        ]
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "areca-palm",
+        "botanicalTaxonId": "taxon:dypsis-lutescens",
+        "scientificName": "Dypsis lutescens",
+        "growthStage": "mature",
+        "visualForm": "palm",
+        "state": "SIZE_AUTHORITY_READY",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+        "authoritativeMetersAvailable": true,
+        "heightScaleReady": true,
+        "spreadScaleReady": true,
+        "normalizedRange": {
+          "heightM": {
+            "min": 6.096,
+            "max": 9.144
+          },
+          "spreadM": {
+            "min": 2.4384,
+            "max": 3.048
+          }
+        },
+        "sensitivity": {
+          "cultivarSensitive": false,
+          "rootstockSensitive": false,
+          "cultivarVariable": false,
+          "maintainedForm": false,
+          "notFinalPersonalGardenSize": false,
+          "reasons": []
+        },
+        "explicitEstimateOnly": false,
+        "morphologyFallbackIsAuthority": false,
+        "ownerReviewRequired": false,
+        "gardenDesignMayUseExplicitEstimate": false,
+        "meterAccuracyClaimAllowed": true,
+        "reasonCodes": []
       },
       "ownerReviewRequired": true,
       "productionApproved": false,
@@ -1646,10 +2091,42 @@
         "haloPartialPixels": 0
       },
       "sizeAuthorityPlan": {
-        "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
-        "ownerReviewRequired": true,
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "areca-palm",
+        "botanicalTaxonId": "taxon:dypsis-lutescens",
+        "scientificName": "Dypsis lutescens",
+        "growthStage": "young",
+        "visualForm": "palm",
+        "state": "SIZE_AUTHORITY_PARTIAL",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+        "authoritativeMetersAvailable": false,
+        "heightScaleReady": true,
+        "spreadScaleReady": true,
+        "normalizedRange": {
+          "heightM": {
+            "min": 6.096,
+            "max": 9.144
+          },
+          "spreadM": {
+            "min": 2.4384,
+            "max": 3.048
+          }
+        },
+        "sensitivity": {
+          "cultivarSensitive": false,
+          "rootstockSensitive": false,
+          "cultivarVariable": false,
+          "maintainedForm": false,
+          "notFinalPersonalGardenSize": false,
+          "reasons": []
+        },
+        "explicitEstimateOnly": true,
+        "morphologyFallbackIsAuthority": false,
+        "ownerReviewRequired": false,
+        "gardenDesignMayUseExplicitEstimate": true,
+        "meterAccuracyClaimAllowed": false,
         "reasonCodes": [
-          "CANONICAL_SIZE_RECORD_NOT_FOUND"
+          "GROWTH_STAGE_AUTHORITY_NOT_SUPPORTED"
         ]
       },
       "ownerReviewRequired": true,
