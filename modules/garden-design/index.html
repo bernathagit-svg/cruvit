@@ -4075,14 +4075,14 @@ function gdRenderPremiumNaturalBlendUi() {
     return;
   }
 
-  btn.textContent = '✨ Natural Blend+ · ' + remaining + ' left';
+  btn.textContent = '✨ Natural Blend+ · 1 Premium render';
   btn.disabled = !runtimeReady || gdNaturalBlendBusy;
   btn.title = runtimeReady
-    ? 'Create a scene-specific Premium final render'
+    ? 'Uses 1 server-authoritative Premium render to create a scene-specific final render'
     : 'Premium quota is available; secure runtime rollout is not enabled yet';
   if (status) {
     status.textContent = runtimeReady
-      ? 'Premium ready'
+      ? (remaining + ' Premium render' + (remaining === 1 ? '' : 's') + ' left')
       : 'Quota ready · runtime locked';
   }
 }
