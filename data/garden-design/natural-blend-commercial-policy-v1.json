@@ -25,7 +25,17 @@
     "defaultRollout": "OWNER_DISABLED",
     "recommendedDailyHardCapWhenEnabled": 5,
     "freeTrialUses": 0,
-    "premiumPlanIncludedUses": "TBD_OWNER_DECISION"
+    "premiumPlanIncludedUses": "TBD_OWNER_DECISION",
+    "unitLabel": "Premium render",
+    "unitsPerSuccessfulNaturalBlend": 1,
+    "restoreConsumesUnits": 0,
+    "duplicateIdempotentRequestConsumesAdditionalUnits": 0,
+    "providerFailureNetUnitsAfterRefund": 0,
+    "persistenceFailureNetUnitsAfterRefund": 0,
+    "moveOrResizeInvalidatesOutput": true,
+    "moveOrResizeRefundsConsumedUnit": false,
+    "rerunAfterMoveOrResizeRequiresNewUnit": true,
+    "serverAuthoritativeRemainingRequired": true
   },
   "rewardsCredits": {
     "existingAuthority": "browser-localStorage",
@@ -36,7 +46,21 @@
   "economics": {
     "measuredDirectApiCostUsdPerPilotUse": 0.03465,
     "ownerSpendCeilingWasUsd": 0.25,
-    "pricingRule": "Do not expose unlimited Natural Blend+ usage. Every successful provider call must consume one server-authoritative unit and record actual cost."
+    "pricingRule": "Do not expose unlimited Natural Blend+ usage. Every successful provider call must consume one server-authoritative unit and record actual cost.",
+    "measuredUsage": {
+      "inputTokens": 2760,
+      "textInputTokens": 200,
+      "imageInputTokens": 2560,
+      "outputTokens": 439,
+      "imageOutputTokens": 439
+    },
+    "scenarioDirectApiMarginOnly": {
+      "$0.10_equivalent_value_per_unit": 0.6535,
+      "$0.20_equivalent_value_per_unit": 0.82675,
+      "$0.25_equivalent_value_per_unit": 0.8614,
+      "$0.50_equivalent_value_per_unit": 0.9307
+    },
+    "note": "Scenario margins are before payment fees, hosting, support, tax, refunds and other operating costs; they are decision support, not final customer pricing."
   },
   "governance": {
     "paidRuntimeDefaultDeny": true,
@@ -47,5 +71,31 @@
     "sceneSpecificOutput": true,
     "globalPlantRegistryMutationForbidden": true,
     "productionAssetMutationForbidden": true
+  },
+  "lifecycle": {
+    "baseAsset": "immutable production plant asset",
+    "freeRuntime": "Auto Blend V3",
+    "premiumRuntime": "Natural Blend+ scene-specific patch",
+    "patchStoredAs": "private Garden Media design_output",
+    "signedUrlPersistenceForbidden": true,
+    "restoreRequiresServerValidation": true,
+    "restoreProviderCalls": 0,
+    "hardMaskStrategy": "plant alpha + bounded halo + ground ellipse",
+    "staleOn": [
+      "move",
+      "resize",
+      "rotation",
+      "design asset change",
+      "Auto Blend disabled"
+    ],
+    "globalPlantRegistryMutation": false
+  },
+  "rollout": {
+    "defaultEntitlement": "DENY",
+    "autoGrantToAllUsers": false,
+    "currentDailyHardCapWhenEnabled": 5,
+    "packagePricing": "TBD_OWNER_DECISION",
+    "subscriptionIncludedUnits": "TBD_OWNER_DECISION",
+    "rewardsExchange": "BLOCKED_UNTIL_SERVER_AUTHORITATIVE_REWARDS"
   }
 }
