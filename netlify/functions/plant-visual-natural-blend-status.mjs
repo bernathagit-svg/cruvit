@@ -47,6 +47,23 @@ async function loadPlan(req,runId){
   return res.json();
 }
 
+function naturalBlendCostUsd(usage){
+  if(!usage||typeof usage!=='object') return null;
+  const input=usage.input_tokens_details||{};
+  const output=usage.output_tokens_details||{};
+  const imageInput=Number(input.image_tokens);
+  const textInput=Number(input.text_tokens);
+  const imageOutput=Number(output.image_tokens ?? usage.output_tokens);
+  if(!Number.isFinite(imageInput)||!Number.isFinite(textInput)||!Number.isFinite(imageOutput)){
+    return null;
+  }
+  return +(
+    imageInput * 8 / 1_000_000
+    + textInput * 5 / 1_000_000
+    + imageOutput * 30 / 1_000_000
+  ).toFixed(6);
+}
+
 export default async(req)=>{
   if(req.method!=='GET')return json(405,{ok:false,code:'METHOD_NOT_ALLOWED'});
   const url=new URL(req.url);
@@ -81,7 +98,9 @@ export default async(req)=>{
       registryWrites:evidence.registryWrites||0,
       recordedAt:evidence.recordedAt||null,
       providerError:evidence.providerError||null,
-      httpStatus:evidence.httpStatus||null
+      httpStatus:evidence.httpStatus||null,
+      usage:evidence.usage||null,
+      actualCostUsd:naturalBlendCostUsd(evidence.usage)
     }:null,
     claimedAt:lock?.claimedAt||null,
     retriesAllowed:lock?.retriesAllowed===true
