@@ -630,6 +630,20 @@ async function runNaturalBlendPilot() {
   if (ui.readout) ui.readout.textContent = 'Preparing bounded local edit crop…';
 
   try {
+    // Always build the complete comparison first so Natural Blend+ never
+    // leaves RAW / Auto Blend columns empty.
+    qaAutoBlendEnabled = false;
+    updateBlendControls();
+    await requestQaAutoBlend(false);
+    await sleep(220);
+    const rawCapture = await requestRendererCapture(selectedJobId);
+    if (!rawCapture?.ok || !rawCapture.imageBase64) {
+      throw new Error(rawCapture?.code || 'RAW_CAPTURE_FAILED');
+    }
+    if (ui.compareRawImg) {
+      ui.compareRawImg.src = 'data:image/jpeg;base64,' + rawCapture.imageBase64;
+    }
+
     qaAutoBlendEnabled = true;
     updateBlendControls();
     const blendResult = await requestQaAutoBlend(true);
@@ -637,6 +651,14 @@ async function runNaturalBlendPilot() {
     await sleep(300);
 
     const capture = await requestRendererCapture(selectedJobId);
+    if (!capture?.ok || !capture.imageBase64) {
+      throw new Error(capture?.code || 'BLEND_CAPTURE_FAILED');
+    }
+    if (ui.compareAutoImg) {
+      ui.compareAutoImg.src = 'data:image/jpeg;base64,' + capture.imageBase64;
+    }
+    ui.comparePanel?.classList.add('is-visible');
+
     const input = await buildNaturalBlendInput(capture);
 
     const res = await fetch(NATURAL_BLEND_JOB_URL, {
