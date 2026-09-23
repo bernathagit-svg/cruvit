@@ -5200,16 +5200,63 @@ function openPlantPopup(idx, scrollToWarn) {
 // ── Add Plant Modal ──
 let apmSelected = new Set();
 
+function gdApmDisplayNameFromSlug(slug) {
+  return String(slug || '')
+    .split('-')
+    .filter(Boolean)
+    .map(function(part){ return part.charAt(0).toUpperCase() + part.slice(1); })
+    .join(' ');
+}
+
+function gdApmRegistryPlants() {
+  const api = window.CruvitGardenDesignAssetRegistry;
+  const registry = gdDesignAssetIndex && gdDesignAssetIndex.registry;
+  const sets = registry && Array.isArray(registry.sets) ? registry.sets : [];
+  const out = [];
+  sets.forEach(function(set) {
+    const variants = Array.isArray(set && set.variants) ? set.variants : [];
+    variants.forEach(function(variant) {
+      const usable = api && typeof api.isUsableDesignVariant === 'function'
+        ? api.isUsableDesignVariant(variant)
+        : Boolean(variant && variant.productionApproved === true && variant.status === 'ready');
+      if (!usable || variant.activeForRole === false || variant.supersededBy) return;
+      const slug = String(set.canonicalSlug || variant.canonicalSlug || '').trim();
+      if (!slug) return;
+      out.push({
+        key: String(variant.assetId || [slug, variant.growthStage, variant.phenology].join('__')),
+        name: gdApmDisplayNameFromSlug(slug),
+        scientific: String(set.scientific || variant.scientific || ''),
+        canonicalSlug: slug,
+        growthStage: String(variant.growthStage || 'unspecified'),
+        phenology: String(variant.phenology || variant.phenologyState || 'vegetative'),
+        season: String(variant.season || 'unknown'),
+        assetId: variant.assetId || null
+      });
+    });
+  });
+  return out;
+}
+
 function openAddPlantModal() {
   gdRefreshOwnedGardenOption();
-  // Build plant list from current style
   const allPlants = [];
   const allStyles = {...(styleData['1']||{}), ...(styleData['2']||{})};
   Object.values(allStyles).forEach(s => {
     const guide = STYLE_PLANT_GUIDE[s.name] || Object.values(STYLE_PLANT_GUIDE).find((v,i)=>Object.keys(STYLE_PLANT_GUIDE)[i].includes(s.name));
     if (guide && guide.mustUse) guide.mustUse.forEach(p => { if (!allPlants.includes(p)) allPlants.push(p); });
   });
-  window._apmPlants = allPlants.length > 0 ? allPlants : ['Lavender','Rosemary','Olive tree','Lemon tree','Bougainvillea','Jasmine','Agapanthus','Salvia','Cypress tree'];
+
+  const registryPlants = gdApmRegistryPlants();
+  window._apmPlantMeta = {};
+  registryPlants.forEach(function(p) { window._apmPlantMeta[p.key] = p; });
+
+  if (registryPlants.length) {
+    window._apmPlants = registryPlants.map(function(p){ return p.key; });
+  } else {
+    window._apmPlants = (allPlants.length > 0 ? allPlants : ['Lavender','Rosemary','Olive tree','Lemon tree','Bougainvillea','Jasmine','Agapanthus','Salvia','Cypress tree']);
+    window._apmPlantMeta = {};
+  }
+
   apmSelected = new Set();
   showApmStep1();
   document.getElementById('addPlantModalOverlay').classList.add('open');
@@ -5229,30 +5276,45 @@ function showApmList() {
   document.getElementById('apmStep1').style.display = 'none';
   document.getElementById('apmStep2List').style.display = '';
   document.getElementById('apmStep2Write').style.display = 'none';
-  // Filter out plants already in the list
-  const existing = new Set(currentPlants.map(p => p.name.toLowerCase()));
-  const available = (window._apmPlants || []).filter(p => {
-    const name = p.split(' (')[0].toLowerCase();
+  const existing = new Set(currentPlants.map(function(p) {
+    return String(p.canonicalSlug || p.name || '').toLowerCase();
+  }));
+  const meta = window._apmPlantMeta || {};
+  const available = (window._apmPlants || []).filter(function(key) {
+    const p = meta[key];
+    if (p) return !existing.has(String(p.canonicalSlug || p.name || '').toLowerCase());
+    const name = String(key).split(' (')[0].toLowerCase();
     return !existing.has(name);
   });
   const list = document.getElementById('apmPlantList');
   if (available.length === 0) {
-    list.innerHTML = '<p style="font-size:13px;color:var(--muted);padding:8px 0">All recommended plants are already in your garden!</p>';
+    list.innerHTML = '<p style="font-size:13px;color:var(--muted);padding:8px 0">All available production plants are already in your garden!</p>';
   } else {
-    list.innerHTML = available.map(p => {
-      const name = p.split(' (')[0];
-      const latin = (p.match(/\(([^)]+)\)/) || [])[1] || '';
-      const ident = gdResolveLayerIdentity({ name: name, latin: latin, species: latin });
-      const chipId = 'apmchip_' + name.replace(/[^a-z0-9]/gi,'_');
+    list.innerHTML = available.map(function(key) {
+      const p = meta[key] || null;
+      const name = p ? p.name : String(key).split(' (')[0];
+      const latin = p ? p.scientific : ((String(key).match(/\(([^)]+)\)/) || [])[1] || '');
+      const ident = gdResolveLayerIdentity({
+        name: name,
+        latin: latin,
+        species: latin,
+        canonicalSlug: p && p.canonicalSlug
+      });
+      const chipId = 'apmchip_' + String(key).replace(/[^a-z0-9]/gi,'_');
       const thumb = gdApmRegistryThumbHtml({
         name: name,
         latin: latin,
         scientific: latin,
-        canonicalSlug: ident.canonicalSlug || null,
-        growthStage: 'mature',
-        phenology: 'vegetative'
+        canonicalSlug: (p && p.canonicalSlug) || ident.canonicalSlug || null,
+        growthStage: (p && p.growthStage) || 'mature',
+        phenology: (p && p.phenology) || 'vegetative',
+        season: (p && p.season) || 'unknown'
       }, chipId + '_ph');
-      return `<div class="apm-plant-chip" id="${chipId}" onclick="toggleApmChip(this,'${name.replace(/'/g,"\'")}')">${thumb}<span class="apm-chip-lbl">${name}</span></div>`;
+      const sub = p && (p.growthStage || p.phenology)
+        ? '<span style="font-size:9px;color:var(--muted);padding:0 6px 5px;text-align:center">' + gdEscAttr([p.growthStage,p.phenology].filter(Boolean).join(' · ')) + '</span>'
+        : '';
+      return '<div class="apm-plant-chip" id="' + chipId + '" onclick="toggleApmChip(this,\'' + String(key).replace(/'/g,"\\'") + '\')">' +
+        thumb + '<span class="apm-chip-lbl">' + gdEscAttr(name) + '</span>' + sub + '</div>';
     }).join('');
   }
   updateApmConfirm();
@@ -5301,25 +5363,50 @@ function confirmApmListWithPin() {
 
 function confirmApmList() {
   if (apmSelected.size === 0) return;
-  const plantList = Array.from(apmSelected);
+  const plantKeys = Array.from(apmSelected);
+  const meta = window._apmPlantMeta || {};
+  const plantList = plantKeys.map(function(key) { return meta[key] || { key:key, name:key, scientific:'' }; });
   closeAddPlantModal();
   if (overlayPlacementActive && isPhotoMode) {
-    plantList.forEach((name, i) => {
-      const spriteType = getPlantSpriteType({ name });
+    plantList.forEach(function(p, i) {
+      const spriteType = getPlantSpriteType({ name:p.name, latin:p.scientific });
       const pos = gdDefaultInitialGroundPosition(spriteType, i);
-      addPlantLayerAt(name, pos.x, pos.y, { name, emoji: '🌿' }, true);
+      addPlantLayerAt(p.name, pos.x, pos.y, {
+        name:p.name,
+        latin:p.scientific || '',
+        scientific:p.scientific || '',
+        canonicalSlug:p.canonicalSlug || null,
+        growthStage:p.growthStage || 'unspecified',
+        phenology:p.phenology || 'vegetative',
+        season:p.season || 'unknown',
+        designAssetId:p.assetId || null,
+        emoji:'🌿'
+      }, true);
     });
-    const fakePlants = plantList.map(name => ({ name, latin: '', emoji: '🌿', role: 'added to preview', warnings: [], cm: 85, cr: '', care: { w: 'low', l: 'full_sun', d: 'easy', t: '' } }));
+    const fakePlants = plantList.map(function(p) { return {
+      name:p.name,
+      latin:p.scientific || '',
+      canonicalSlug:p.canonicalSlug || null,
+      growthStage:p.growthStage || 'unspecified',
+      phenology:p.phenology || 'vegetative',
+      emoji:'🌿',
+      role:'added to preview',
+      warnings:[],
+      cm:85,
+      cr:'',
+      care:{w:'low',l:'full_sun',d:'easy',t:''}
+    }; });
     showPlants(fakePlants);
     return;
   }
+  const plantNames = plantList.map(function(p){ return p.name; });
   if (!lastGeneratedB64) {
     alert('Please generate a garden design first before adding plants.');
     return;
   }
   // Use refineDesign flow — Claude generates proper prompt then Stability adds plants
   const rf = document.getElementById('refineGeneral');
-  if (rf) rf.value = `Add these plants to the garden, each in a different spot: ${plantList.join(', ')}`;
+  if (rf) rf.value = `Add these plants to the garden, each in a different spot: ${plantNames.join(', ')}`;
   refineDesign();
 }
 
