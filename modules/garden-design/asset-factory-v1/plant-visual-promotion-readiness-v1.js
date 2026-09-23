@@ -29,6 +29,31 @@ function qaObject(result, metrics = null) {
   return metrics ? { result, metrics } : { result };
 }
 
+function sizeAuthorityPromotionReady(row = {}) {
+  const plan = row.sizeAuthorityPlan;
+  // Pre-size-authority pilot manifests are grandfathered; all newer batch
+  // manifests carry an explicit plan and are enforced below.
+  if (!plan) return { ok: true, code: 'SIZE_AUTHORITY_LEGACY_MANIFEST' };
+  const state = String(plan.state || '').trim().toUpperCase();
+  if (state === 'SIZE_AUTHORITY_READY') {
+    return { ok: true, code: 'SIZE_AUTHORITY_READY' };
+  }
+  if (state === 'SIZE_AUTHORITY_PARTIAL') {
+    return {
+      ok: true,
+      code: 'SIZE_AUTHORITY_PARTIAL_EXPLICIT',
+      reason: 'Partial botanical size authority is explicit and may be overridden by stronger future evidence; it is not meter-complete truth.'
+    };
+  }
+  return {
+    ok: false,
+    code: 'SIZE_AUTHORITY_PROMOTION_BLOCKED',
+    state: state || 'SIZE_AUTHORITY_NOT_EVALUATED',
+    reasonCodes: Array.isArray(plan.reasonCodes) ? plan.reasonCodes : [],
+    reason: 'Promotion requires explicit READY or PARTIAL size authority for manifests that declare sizeAuthorityPlan.'
+  };
+}
+
 function provenanceReady(row = {}) {
   if (row.evidenceMismatch === true) {
     if (reconciliationMatchesRow(row.provenanceReconciliation, row)) {
@@ -52,6 +77,7 @@ function provenanceReady(row = {}) {
 
 export function evaluateManifestRowPromotionReadiness(row = {}) {
   const provenance = provenanceReady(row);
+  const sizeAuthority = sizeAuthorityPromotionReady(row);
 
   const candidate = {
     assetId:
@@ -101,6 +127,23 @@ export function evaluateManifestRowPromotionReadiness(row = {}) {
     calibratedAutoApproval: false
   });
 
+  if (!sizeAuthority.ok) {
+    return Object.freeze({
+      version: PLANT_VISUAL_PROMOTION_READINESS_VERSION,
+      jobId: row.jobId,
+      canonicalSlug: row.canonicalSlug,
+      ready: false,
+      code: sizeAuthority.code,
+      decision,
+      provenance,
+      sizeAuthority,
+      productionKey: null,
+      registryVariant: null,
+      storageValidation: null,
+      registryValidation: null
+    });
+  }
+
   if (!provenance.ok) {
     return Object.freeze({
       version: PLANT_VISUAL_PROMOTION_READINESS_VERSION,
@@ -110,6 +153,7 @@ export function evaluateManifestRowPromotionReadiness(row = {}) {
       code: provenance.code,
       decision,
       provenance,
+      sizeAuthority,
       productionKey: null,
       registryVariant: null,
       storageValidation: null,
@@ -167,6 +211,7 @@ export function evaluateManifestRowPromotionReadiness(row = {}) {
         : 'PROMOTION_GUARD_BLOCKED',
     decision,
     provenance,
+    sizeAuthority,
     productionKey,
     registryVariant: variant,
     storageValidation,
@@ -193,6 +238,8 @@ export const PROMOTION_READINESS_GOVERNANCE = Object.freeze({
   manifestDriven: true,
   perPlantCodeForbidden: true,
   evidenceMismatchBlocksPromotionUntilReconciled: true,
+  explicitSizeAuthorityRequiredForNewBatchManifests: true,
+  allowedDeclaredSizeAuthorityStates: ['SIZE_AUTHORITY_READY','SIZE_AUTHORITY_PARTIAL'],
   productionWrites: 0,
   registryWrites: 0
 });
