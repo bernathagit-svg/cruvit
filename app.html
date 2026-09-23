@@ -8644,6 +8644,7 @@ function gardenDesignPremiumActionResultType(requestType){
   if(requestType==='cruvit:garden-design-premium-action-consume-request') return 'cruvit:garden-design-premium-action-consume-result';
   if(requestType==='cruvit:garden-design-premium-action-refund-request') return 'cruvit:garden-design-premium-action-refund-result';
   if(requestType==='cruvit:garden-design-natural-blend-run-request') return 'cruvit:garden-design-natural-blend-run-result';
+  if(requestType==='cruvit:garden-design-natural-blend-media-request') return 'cruvit:garden-design-natural-blend-media-result';
   return null;
 }
 
@@ -8867,6 +8868,98 @@ async function gardenDesignRunNaturalBlend(d){
   });
 }
 
+function gardenDesignNaturalBlendSameNum(a,b,tolerance){
+  const x=Number(a),y=Number(b);
+  return Number.isFinite(x)&&Number.isFinite(y)&&Math.abs(x-y)<=Number(tolerance||0.0001);
+}
+
+async function gardenDesignResolveNaturalBlendMedia(d){
+  const auth=gardenDesignPremiumActionAuth();
+  if(!auth.ok) return {ok:false,code:auth.code,feature:'natural_blend',serverAuthoritative:true};
+
+  const pd=window.cruvitPersonalDomainV0;
+  const gardenId=pd&&typeof pd.getActiveGardenId==='function'?pd.getActiveGardenId():null;
+  const mediaId=String(d&&d.mediaId||'').trim();
+  const designId=String(d&&d.gardenDesignId||'').trim();
+  const placementClientInstanceId=String(d&&d.placementClientInstanceId||'').trim();
+  const fp=d&&d.placementFingerprint&&typeof d.placementFingerprint==='object'?d.placementFingerprint:{};
+  if(!gardenId||!mediaId||!designId||!placementClientInstanceId){
+    return {ok:false,code:'NATURAL_BLEND_RESTORE_IDS_REQUIRED',feature:'natural_blend',serverAuthoritative:true};
+  }
+
+  const mediaRes=await auth.supabase
+    .from('garden_media')
+    .select('id,garden_profile_id,storage_bucket,storage_path,purpose,source_module,validation_state,metadata,content_sha256')
+    .eq('id',mediaId)
+    .eq('garden_profile_id',gardenId)
+    .maybeSingle();
+  if(mediaRes.error||!mediaRes.data){
+    return {ok:false,code:'NATURAL_BLEND_MEDIA_NOT_FOUND',feature:'natural_blend',serverAuthoritative:true};
+  }
+  const media=mediaRes.data;
+  const meta=media.metadata&&typeof media.metadata==='object'?media.metadata:{};
+  if(media.validation_state!=='validated'
+    ||media.purpose!=='design_output'
+    ||media.source_module!=='garden_design'
+    ||meta.feature!=='natural_blend'){
+    return {ok:false,code:'NATURAL_BLEND_MEDIA_NOT_ELIGIBLE',feature:'natural_blend',serverAuthoritative:true};
+  }
+  if(String(meta.gardenDesignId||'')!==designId
+    ||String(meta.placementClientInstanceId||'')!==placementClientInstanceId){
+    return {ok:false,code:'NATURAL_BLEND_MEDIA_PLACEMENT_MISMATCH',feature:'natural_blend',serverAuthoritative:true};
+  }
+
+  const placementRes=await auth.supabase
+    .from('garden_design_placements')
+    .select('garden_design_id,garden_profile_id,client_instance_id,design_asset_id,x,y,scale,rotation')
+    .eq('garden_design_id',designId)
+    .eq('client_instance_id',placementClientInstanceId)
+    .eq('garden_profile_id',gardenId)
+    .maybeSingle();
+  if(placementRes.error||!placementRes.data){
+    return {ok:false,code:'NATURAL_BLEND_PLACEMENT_NOT_FOUND',feature:'natural_blend',serverAuthoritative:true};
+  }
+  const placement=placementRes.data;
+  const stored=meta.placementFingerprint&&typeof meta.placementFingerprint==='object'?meta.placementFingerprint:{};
+  const requestedMatches=
+    gardenDesignNaturalBlendSameNum(fp.x,placement.x)
+    &&gardenDesignNaturalBlendSameNum(fp.y,placement.y)
+    &&gardenDesignNaturalBlendSameNum(fp.scale,placement.scale)
+    &&gardenDesignNaturalBlendSameNum(fp.rotation,placement.rotation)
+    &&String(fp.designAssetId||'')===String(placement.design_asset_id||'');
+  const storedMatches=
+    gardenDesignNaturalBlendSameNum(stored.x,placement.x)
+    &&gardenDesignNaturalBlendSameNum(stored.y,placement.y)
+    &&gardenDesignNaturalBlendSameNum(stored.scale,placement.scale)
+    &&gardenDesignNaturalBlendSameNum(stored.rotation,placement.rotation)
+    &&String(meta.designAssetId||'')===String(placement.design_asset_id||'');
+  if(!requestedMatches||!storedMatches){
+    return {ok:false,code:'NATURAL_BLEND_STALE_PLACEMENT',feature:'natural_blend',serverAuthoritative:true};
+  }
+
+  let signedUrl=null;
+  try{
+    const signed=await auth.supabase.storage
+      .from(media.storage_bucket||'user-garden-media')
+      .createSignedUrl(media.storage_path,600);
+    signedUrl=signed&&signed.data&&signed.data.signedUrl?signed.data.signedUrl:null;
+  }catch(_){}
+  if(!signedUrl){
+    return {ok:false,code:'NATURAL_BLEND_SIGNED_URL_FAILED',feature:'natural_blend',serverAuthoritative:true};
+  }
+  return {
+    ok:true,
+    code:'NATURAL_BLEND_MEDIA_READY',
+    feature:'natural_blend',
+    serverAuthoritative:true,
+    mediaId:media.id,
+    contentSha256:media.content_sha256||null,
+    signedUrl:signedUrl,
+    providerCalls:0,
+    quotaConsumed:0
+  };
+}
+
 function handleGardenDesignPremiumActionRequest(d){
   const resultType=gardenDesignPremiumActionResultType(d&&d.type);
   if(!resultType) return false;
@@ -8890,6 +8983,8 @@ function handleGardenDesignPremiumActionRequest(d){
     promise=gardenDesignRefundPremiumAction(d);
   }else if(d.type==='cruvit:garden-design-natural-blend-run-request'){
     promise=gardenDesignRunNaturalBlend(d);
+  }else if(d.type==='cruvit:garden-design-natural-blend-media-request'){
+    promise=gardenDesignResolveNaturalBlendMedia(d);
   }else{
     return false;
   }
