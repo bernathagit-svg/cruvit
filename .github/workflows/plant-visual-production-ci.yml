@@ -54,6 +54,10 @@ on:
       - 'data/garden-design/plant-visual-natural-blend-spend-approvals/**'
       - 'data/garden-design/plant-visual-natural-blend-spend-proposals/**'
       - 'tests/plant-visual-natural-blend-v1.test.mjs'
+      - 'supabase/migrations/20260923175148_premium_action_entitlements_v1.sql'
+      - 'supabase/migrations/20260923175631_premium_action_refund_v1.sql'
+      - 'data/garden-design/natural-blend-commercial-policy-v1.json'
+      - 'tests/garden-design-premium-actions-v1.test.mjs'
       - 'data/garden-design/plant-visual-wave-metadata-qa/**'
       - 'scripts/plant-visual-wave-metadata-qa-v1.mjs'
       - 'netlify/functions/plant-visual-model-qa-job.mjs'
@@ -78,6 +82,10 @@ on:
       - 'data/garden-design/plant-visual-natural-blend-spend-approvals/**'
       - 'data/garden-design/plant-visual-natural-blend-spend-proposals/**'
       - 'tests/plant-visual-natural-blend-v1.test.mjs'
+      - 'supabase/migrations/20260923175148_premium_action_entitlements_v1.sql'
+      - 'supabase/migrations/20260923175631_premium_action_refund_v1.sql'
+      - 'data/garden-design/natural-blend-commercial-policy-v1.json'
+      - 'tests/garden-design-premium-actions-v1.test.mjs'
       - 'data/garden-design/plant-visual-wave-metadata-qa/**'
       - '.github/workflows/plant-visual-production-ci.yml'
   pull_request:
@@ -154,6 +162,9 @@ jobs:
 
       - name: Test bounded Natural Blend+ pilot
         run: node --test tests/plant-visual-natural-blend-v1.test.mjs
+
+      - name: Test server-authoritative premium action gate
+        run: node --test tests/garden-design-premium-actions-v1.test.mjs
 
       - name: Run Wave 1 metadata QA
         run: node scripts/plant-visual-wave-metadata-qa-v1.mjs --manifest=wave1-2026-09-22-v1
