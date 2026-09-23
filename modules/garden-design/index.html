@@ -4696,6 +4696,7 @@ async function gdToggleAutoBlendSelected() {
   }
   const current = gdAutoBlendState(layer);
   if (current.enabled) {
+    gdInvalidateNaturalBlendLayer(layer,'auto_blend_disabled');
     if (typeof api.disableAutoBlend === 'function') api.disableAutoBlend(layer);
     renderPlantLayers();
     gdPersistDesignSnapshot({ clientInstanceId: layer.id, hostAction: 'update', phase: 'auto-blend-toggle' });
@@ -4731,7 +4732,9 @@ function gdMarkAuthorityUserScaleOverride(layer) {
 function gdPreviewPlantLayerScale(scale) {
   const layer = getSelectedPlantLayer();
   if (!layer) return;
-  layer.scale = Math.min(2.2, Math.max(0.35, scale));
+  const nextScale = Math.min(2.2, Math.max(0.35, scale));
+  if (Math.abs(nextScale - Number(layer.scale)) > 0.0001) gdInvalidateNaturalBlendLayer(layer,'resize');
+  layer.scale = nextScale;
   if (window.CruvitGardenSizeAuthority && typeof window.CruvitGardenSizeAuthority.productionGardenSizeAuthorityEnabled === 'function' && window.CruvitGardenSizeAuthority.productionGardenSizeAuthorityEnabled()) {
     gdMarkAuthorityUserScaleOverride(layer);
   }
@@ -4745,7 +4748,9 @@ function gdPreviewPlantLayerScale(scale) {
 function adjustPlantLayerScale(delta) {
   const layer = getSelectedPlantLayer();
   if (!layer) return;
-  layer.scale = Math.min(2.2, Math.max(0.35, layer.scale + delta));
+  const nextScale = Math.min(2.2, Math.max(0.35, layer.scale + delta));
+  if (Math.abs(nextScale - Number(layer.scale)) > 0.0001) gdInvalidateNaturalBlendLayer(layer,'resize');
+  layer.scale = nextScale;
   if (window.CruvitGardenSizeAuthority && typeof window.CruvitGardenSizeAuthority.productionGardenSizeAuthorityEnabled === 'function' && window.CruvitGardenSizeAuthority.productionGardenSizeAuthorityEnabled()) {
     gdMarkAuthorityUserScaleOverride(layer);
   }
@@ -4762,7 +4767,9 @@ function adjustPlantLayerScale(delta) {
 function setPlantLayerScale(scale) {
   const layer = getSelectedPlantLayer();
   if (!layer) return;
-  layer.scale = Math.min(2.2, Math.max(0.35, scale));
+  const nextScale = Math.min(2.2, Math.max(0.35, scale));
+  if (Math.abs(nextScale - Number(layer.scale)) > 0.0001) gdInvalidateNaturalBlendLayer(layer,'resize');
+  layer.scale = nextScale;
   if (window.CruvitGardenSizeAuthority && typeof window.CruvitGardenSizeAuthority.productionGardenSizeAuthorityEnabled === 'function' && window.CruvitGardenSizeAuthority.productionGardenSizeAuthorityEnabled()) {
     gdMarkAuthorityUserScaleOverride(layer);
   }
