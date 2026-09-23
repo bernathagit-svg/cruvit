@@ -1324,6 +1324,8 @@ let gdPremiumNaturalBlendState = {
 };
 const GD_NATURAL_BLEND_RUNTIME_ENABLED = true;
 let gdNaturalBlendRunWaiters = {};
+let gdNaturalBlendMediaWaiters = {};
+let gdNaturalBlendPatchCache = {};
 let gdNaturalBlendBusy = false;
 let gdOpenPlantPopupIdx = null;
 let gdDesignAssetIndex = null;
@@ -3147,6 +3149,14 @@ window.addEventListener('message', function(ev) {
       else waiter.reject(Object.assign(new Error(d.code || 'NATURAL_BLEND_FAILED'),{payload:d}));
     }
   }
+  if (d.type === 'cruvit:garden-design-natural-blend-media-result') {
+    const waiter = gdNaturalBlendMediaWaiters[d.requestId];
+    if (waiter) {
+      delete gdNaturalBlendMediaWaiters[d.requestId];
+      if (d.ok) waiter.resolve(d);
+      else waiter.reject(Object.assign(new Error(d.code || 'NATURAL_BLEND_MEDIA_FAILED'),{payload:d}));
+    }
+  }
   if (d.type === 'cruvit:garden-design-commit-result') gdOnCommitResult(d);
   if (d.type === 'cruvit:garden-design-suitability-result') gdOnSuitabilityResult(d);
   if (d.type === 'cruvit:garden-design-load-result') gdOnLoadResult(d);
@@ -3911,7 +3921,10 @@ function renderPlantLayers() {
   });
   gdUpdatePlacementNote();
   updateLayerToolbar();
-  setTimeout(function(){ gdRenderAssetDiag('layers-rendered'); }, 0);
+  setTimeout(function(){
+    gdRenderAssetDiag('layers-rendered');
+    gdRestoreNaturalBlendPatches();
+  },0);
 }
 
 function gdSafeSetPointerCapture(el, pointerId) {
@@ -3990,6 +4003,7 @@ function onPlantLayerPointerMove(e) {
   if (!layer) return;
   const dx = (e.clientX - gdLayerDrag.startX) / gdLayerDrag.wrapRect.width;
   const dy = (e.clientY - gdLayerDrag.startY) / gdLayerDrag.wrapRect.height;
+  if(Math.abs(dx)>0.0001||Math.abs(dy)>0.0001) gdInvalidateNaturalBlendLayer(layer,'move');
   layer.x = Math.min(0.96, Math.max(0.04, gdLayerDrag.origX + dx));
   layer.y = Math.min(0.96, Math.max(0.04, gdLayerDrag.origY + dy));
   const el = document.querySelector('.gd-plant-layer[data-layer-id="' + layer.id + '"]');
@@ -4125,6 +4139,71 @@ function gdNaturalBlendRoundedRect(ctx,x,y,w,h,radius) {
   ctx.closePath();
 }
 
+async function gdBuildNaturalBlendAllowedMaskCanvas(layer,geometry) {
+  const g = geometry && typeof geometry === 'object' ? geometry : {};
+  const outSize = Math.max(64,Number(g.outSize)||1024);
+  const rect = g.plantRect || {};
+  const ellipse = g.groundEllipse || {};
+  const layerEl = document.querySelector('.gd-plant-layer[data-layer-id="' + layer.id + '"]');
+  const cutoutEl = layerEl && layerEl.querySelector('img.gd-plant-cutout');
+  const src = cutoutEl && (cutoutEl.currentSrc || cutoutEl.src);
+  if (!src) throw new Error('NATURAL_BLEND_CUTOUT_REQUIRED_FOR_MASK');
+  const cutoutImg = await gdNaturalBlendLoadImage(src);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = outSize;
+  canvas.height = outSize;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('NATURAL_BLEND_ALLOWED_MASK_CANVAS_UNAVAILABLE');
+  ctx.clearRect(0,0,outSize,outSize);
+
+  const px = Number(rect.x),py = Number(rect.y),pw = Number(rect.width),ph = Number(rect.height);
+  const dilate = Math.max(4,Math.min(20,Number(g.dilatePx)||10));
+  ctx.save();
+  ctx.filter = 'blur(' + dilate + 'px)';
+  ctx.globalAlpha = 0.98;
+  ctx.drawImage(cutoutImg,px,py,pw,ph);
+  ctx.restore();
+
+  ctx.save();
+  ctx.filter = 'none';
+  ctx.globalAlpha = 1;
+  ctx.drawImage(cutoutImg,px,py,pw,ph);
+  ctx.restore();
+
+  if ([ellipse.cx,ellipse.cy,ellipse.rx,ellipse.ry].every(function(v){return Number.isFinite(Number(v));})) {
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.ellipse(
+      Number(ellipse.cx),Number(ellipse.cy),
+      Math.max(4,Number(ellipse.rx)),Math.max(2,Number(ellipse.ry)),
+      0,0,Math.PI*2
+    );
+    ctx.fill();
+  }
+  return canvas;
+}
+
+async function gdBuildHardMaskedNaturalBlendPatchUrl(layer,signedUrl,editMaskGeometry,cacheKey) {
+  if (cacheKey && gdNaturalBlendPatchCache[cacheKey]) return gdNaturalBlendPatchCache[cacheKey];
+  const editedImg = await gdNaturalBlendLoadImage(signedUrl);
+  const outSize = Math.max(64,Number(editMaskGeometry && editMaskGeometry.outSize)||1024);
+  const allowedMask = await gdBuildNaturalBlendAllowedMaskCanvas(layer,editMaskGeometry);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = outSize;
+  canvas.height = outSize;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('NATURAL_BLEND_HARD_MASK_CANVAS_UNAVAILABLE');
+  ctx.drawImage(editedImg,0,0,outSize,outSize);
+  ctx.globalCompositeOperation = 'destination-in';
+  ctx.drawImage(allowedMask,0,0,outSize,outSize);
+  ctx.globalCompositeOperation = 'source-over';
+  const url = canvas.toDataURL('image/png');
+  if (cacheKey) gdNaturalBlendPatchCache[cacheKey] = url;
+  return url;
+}
+
 async function gdBuildNaturalBlendProductionInput(layer) {
   const capture = await gdCaptureQaPreviewPng(layer.id);
   if (!capture || capture.ok !== true || !capture.imageBase64 || !capture.geometry || !capture.geometry.cutout) {
@@ -4161,13 +4240,19 @@ async function gdBuildNaturalBlendProductionInput(layer) {
   const by = (Number(cut.y)-cropY)*sx;
   const bw = Number(cut.width)*sx;
   const bh = Number(cut.height)*sx;
-  const expandX = Math.max(18,bw*0.12);
-  const expandTop = Math.max(14,bh*0.07);
-  const expandBottom = Math.max(28,bh*0.16);
-  const editX = Math.max(0,Math.min(bx-expandX,outSize));
-  const editY = Math.max(0,Math.min(by-expandTop,outSize));
-  const editW = Math.max(1,Math.min(bw+expandX*2,outSize-editX));
-  const editH = Math.max(1,Math.min(bh+expandTop+expandBottom,outSize-editY));
+  const editMaskGeometry = {
+    version:'plant-alpha-local-mask-v1',
+    outSize:outSize,
+    plantRect:{x:bx,y:by,width:bw,height:bh},
+    dilatePx:Math.max(7,Math.min(16,bw*0.025)),
+    groundEllipse:{
+      cx:bx+bw/2,
+      cy:Math.min(outSize-2,by+bh*0.98),
+      rx:Math.max(24,bw*0.48),
+      ry:Math.max(12,bh*0.10)
+    }
+  };
+  const allowedMask = await gdBuildNaturalBlendAllowedMaskCanvas(layer,editMaskGeometry);
 
   const maskCanvas = document.createElement('canvas');
   maskCanvas.width = outSize;
@@ -4177,23 +4262,14 @@ async function gdBuildNaturalBlendProductionInput(layer) {
   maskCtx.fillStyle = 'rgba(255,255,255,1)';
   maskCtx.fillRect(0,0,outSize,outSize);
   maskCtx.globalCompositeOperation = 'destination-out';
-  gdNaturalBlendRoundedRect(maskCtx,editX,editY,editW,editH,Math.max(24,editW*0.08));
-  maskCtx.fill();
-  maskCtx.beginPath();
-  maskCtx.ellipse(
-    bx+bw/2,
-    Math.min(outSize-2,by+bh*0.98),
-    Math.max(24,bw*0.48),
-    Math.max(12,bh*0.10),
-    0,0,Math.PI*2
-  );
-  maskCtx.fill();
+  maskCtx.drawImage(allowedMask,0,0);
   maskCtx.globalCompositeOperation = 'source-over';
 
   return {
     cropBase64:gdNaturalBlendCanvasBase64(cropCanvas),
     maskBase64:gdNaturalBlendCanvasBase64(maskCanvas),
     cropRect:{x:cropX,y:cropY,side:side,frameW:frameW,frameH:frameH},
+    editMaskGeometry:editMaskGeometry,
     placementFingerprint:{
       x:Number(layer.x),
       y:Number(layer.y),
@@ -4235,22 +4311,110 @@ function gdRequestNaturalBlendRun(payload) {
   });
 }
 
+function gdNaturalBlendPlacementFingerprint(layer) {
+  return {
+    x:Number(layer.x),
+    y:Number(layer.y),
+    scale:Number(layer.scale),
+    rotation:Number(layer.rotation||0),
+    designAssetId:String(layer.designAssetId||layer.variantId||'')
+  };
+}
+
+function gdNaturalBlendFingerprintMatches(layer,fp) {
+  const a=gdNaturalBlendPlacementFingerprint(layer);
+  const b=fp&&typeof fp==='object'?fp:{};
+  const same=function(x,y,t){return Number.isFinite(Number(x))&&Number.isFinite(Number(y))&&Math.abs(Number(x)-Number(y))<=Number(t||0.0001);};
+  return same(a.x,b.x)&&same(a.y,b.y)&&same(a.scale,b.scale)&&same(a.rotation,b.rotation)
+    &&String(a.designAssetId||'')===String(b.designAssetId||'');
+}
+
+function gdInvalidateNaturalBlendLayer(layer,reason) {
+  const metadata=layer&&layer.metadata&&typeof layer.metadata==='object'?{...layer.metadata}:null;
+  const nb=metadata&&metadata.naturalBlendV1&&typeof metadata.naturalBlendV1==='object'
+    ?{...metadata.naturalBlendV1}:null;
+  if(!layer||!nb||nb.enabled!==true) return false;
+  nb.enabled=false;
+  nb.stale=true;
+  nb.staleReason=String(reason||'placement_changed');
+  nb.invalidatedAt=new Date().toISOString();
+  metadata.naturalBlendV1=nb;
+  layer.metadata=metadata;
+  gdClearNaturalBlendPatch(layer.id);
+  const status=document.getElementById('gdNaturalBlendPremiumStatus');
+  if(status&&layer.id===selectedPlantLayerId) status.textContent='Placement changed · Natural Blend+ needs rerun';
+  return true;
+}
+
+function gdRequestNaturalBlendMedia(layer,nb) {
+  return new Promise(function(resolve,reject){
+    const requestId=gdPremiumRequestId('gd_nb_media');
+    const timer=setTimeout(function(){
+      delete gdNaturalBlendMediaWaiters[requestId];
+      reject(new Error('NATURAL_BLEND_MEDIA_TIMEOUT'));
+    },15000);
+    gdNaturalBlendMediaWaiters[requestId]={
+      resolve:function(value){clearTimeout(timer);resolve(value);},
+      reject:function(err){clearTimeout(timer);reject(err);}
+    };
+    gdPostToHost({
+      type:'cruvit:garden-design-natural-blend-media-request',
+      requestId:requestId,
+      feature:'natural_blend',
+      mediaId:nb.mediaId,
+      gardenDesignId:String(gdServerDesignMeta&&gdServerDesignMeta.designId||''),
+      placementClientInstanceId:layer.id,
+      placementFingerprint:gdNaturalBlendPlacementFingerprint(layer)
+    });
+  });
+}
+
+async function gdRestoreNaturalBlendForLayer(layer) {
+  const nb=layer&&layer.metadata&&layer.metadata.naturalBlendV1;
+  if(!nb||nb.enabled!==true||!nb.mediaId||!nb.cropRect||!nb.editMaskGeometry) return false;
+  if(!gdNaturalBlendFingerprintMatches(layer,nb.placementFingerprint)){
+    gdInvalidateNaturalBlendLayer(layer,'fingerprint_mismatch');
+    return false;
+  }
+  try{
+    const result=await gdRequestNaturalBlendMedia(layer,nb);
+    if(!result||result.ok!==true||!result.signedUrl) return false;
+    const cacheKey=String(nb.mediaId||'')+'|'+String(result.contentSha256||nb.contentSha256||'');
+    await gdApplyNaturalBlendPatch(layer,result.signedUrl,nb.cropRect,nb.editMaskGeometry,cacheKey);
+    return true;
+  }catch(err){
+    return false;
+  }
+}
+
+function gdRestoreNaturalBlendPatches() {
+  if(GD_QA_PREVIEW_QUERY) return;
+  plantLayers.forEach(function(layer){
+    const nb=layer&&layer.metadata&&layer.metadata.naturalBlendV1;
+    if(nb&&nb.enabled===true) gdRestoreNaturalBlendForLayer(layer);
+  });
+}
+
 function gdClearNaturalBlendPatch(layerId) {
   const host = document.getElementById('plantLayersHost');
   if (!host) return;
   host.querySelectorAll('.gd-natural-blend-patch[data-layer-id="' + layerId + '"]').forEach(function(el){ el.remove(); });
   const layerEl = document.querySelector('.gd-plant-layer[data-layer-id="' + layerId + '"]');
-  if (layerEl) layerEl.style.visibility = '';
+  if (layerEl) {
+    layerEl.style.opacity = '';
+    layerEl.style.visibility = '';
+  }
 }
 
-function gdApplyNaturalBlendPatch(layer,signedUrl,cropRect) {
+async function gdApplyNaturalBlendPatch(layer,signedUrl,cropRect,editMaskGeometry,cacheKey) {
   const host = document.getElementById('plantLayersHost');
-  if (!host || !signedUrl || !cropRect) return false;
+  if (!host || !signedUrl || !cropRect || !editMaskGeometry) return false;
+  const maskedUrl = await gdBuildHardMaskedNaturalBlendPatchUrl(layer,signedUrl,editMaskGeometry,cacheKey);
   gdClearNaturalBlendPatch(layer.id);
   const patch = document.createElement('img');
   patch.className = 'gd-natural-blend-patch';
   patch.dataset.layerId = layer.id;
-  patch.src = signedUrl;
+  patch.src = maskedUrl;
   patch.alt = '';
   patch.style.position = 'absolute';
   patch.style.pointerEvents = 'none';
@@ -4262,7 +4426,10 @@ function gdApplyNaturalBlendPatch(layer,signedUrl,cropRect) {
   patch.style.zIndex = String((Number(layer.zIndex)||1)+1);
   host.appendChild(patch);
   const layerEl = document.querySelector('.gd-plant-layer[data-layer-id="' + layer.id + '"]');
-  if (layerEl) layerEl.style.visibility = 'hidden';
+  if (layerEl) {
+    layerEl.style.opacity = '0';
+    layerEl.style.visibility = '';
+  }
   return true;
 }
 
@@ -4313,7 +4480,7 @@ async function gdRunNaturalBlendPremium() {
       throw Object.assign(new Error('NATURAL_BLEND_SIGNED_URL_MISSING'),{payload:result});
     }
 
-    gdApplyNaturalBlendPatch(layer,result.signedUrl,input.cropRect);
+    await gdApplyNaturalBlendPatch(layer,result.signedUrl,input.cropRect,input.editMaskGeometry,String(result.media&&result.media.id||''));
 
     const metadata = layer.metadata && typeof layer.metadata === 'object' && !Array.isArray(layer.metadata)
       ? {...layer.metadata}:{};
@@ -4325,6 +4492,7 @@ async function gdRunNaturalBlendPremium() {
       storagePath:result.media && result.media.storagePath || null,
       contentSha256:result.media && result.media.contentSha256 || null,
       cropRect:input.cropRect,
+      editMaskGeometry:input.editMaskGeometry,
       placementFingerprint:input.placementFingerprint,
       idempotencyKey:idempotencyKey,
       actualCostUsd:Number.isFinite(Number(result.actualCostUsd))?Number(result.actualCostUsd):null
