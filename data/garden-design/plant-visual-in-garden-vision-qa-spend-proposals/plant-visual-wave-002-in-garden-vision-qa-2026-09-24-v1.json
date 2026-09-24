@@ -1,0 +1,26 @@
+{
+  "contract": "plant-visual-in-garden-vision-qa-spend-proposal-v1",
+  "runId": "plant-visual-wave-002-in-garden-vision-qa-2026-09-24-v1",
+  "createdAt": "2026-09-24",
+  "provider": "openai-responses-api",
+  "model": "gpt-5.6-luna",
+  "jobCount": 6,
+  "maxCalls": 6,
+  "maxRetries": 0,
+  "perCallReserveUsd": 0.01,
+  "proposedMaxSpendUsd": 0.09,
+  "rationale": [
+    "Wave 1 In-Garden Vision QA used 7 calls with a USD 0.10 cap and actual spend USD 0.004967.",
+    "Wave 2 has 6 geometry-pass jobs only.",
+    "USD 0.09 preserves conservative reserve while remaining bounded."
+  ],
+  "allowedActions": [
+    "read exact in-garden QA capture bytes from candidate R2",
+    "send one renderer capture plus expected plant metadata to vision QA model",
+    "write in-garden vision QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "imageGenerationAllowed": false,
+  "imageMutationAllowed": false
+}
