@@ -6,6 +6,7 @@
  * This adapter never writes registry, placements, or botanical truth.
  */
 import { derivePresentationSizing } from './presentation-sizing-v1.js';
+import { deriveInGardenQaScale, qaScaleBandSpec } from './in-garden-qa-scale-policy-v1.js';
 import { deriveSiblingStateScaleAnchor } from './in-garden-qa-scale-policy-v1.js';
 
 export const PRODUCTION_RENDERER_QA_PREVIEW_VERSION = 'production-renderer-qa-preview-v1';
@@ -64,6 +65,17 @@ export function buildProductionRendererQaPreview(row = {}, options = {}) {
     ? Number(anchor.baseWidthPx)
     : Number(presentation.baseWidthPx);
 
+  const qaScale = deriveInGardenQaScale({
+    jobId: row.jobId,
+    visualForm: form,
+    architectureMode: row.architectureMode,
+    growthStage: row.growthStage,
+    phenology: row.phenology || row.phenologyState
+  }, {
+    calibrationStatus: useAnchor ? 'validated' : 'unvalidated'
+  });
+  const qaBandSpec = qaScaleBandSpec(qaScale.recommendedBand);
+
   if (!(baseWidthPx > 0)) {
     return Object.freeze({
       ok: false,
@@ -90,6 +102,10 @@ export function buildProductionRendererQaPreview(row = {}, options = {}) {
     width: Number(metrics.width || row.width || 0),
     height: Number(metrics.height || row.height || 0),
     baseWidthPx,
+    qaScaleBand: qaScale.recommendedBand,
+    qaMaxHeightPct: qaBandSpec.maxHeightPct,
+    qaMaxWidthPct: qaBandSpec.maxWidthPct,
+    qaScalePolicyVersion: qaScale.policyVersion,
     scale: useAnchor ? Number(anchor.scale) : 1,
     x: Number(pos.x),
     y: Number(pos.y),
@@ -179,6 +195,10 @@ export function attachProductionRendererInputsToManifest(manifest = {}, anchorRe
         code: preview.code,
         source: preview.source,
         baseWidthPx: preview.baseWidthPx,
+        qaScaleBand: preview.qaScaleBand,
+        qaMaxHeightPct: preview.qaMaxHeightPct,
+        qaMaxWidthPct: preview.qaMaxWidthPct,
+        qaScalePolicyVersion: preview.qaScalePolicyVersion,
         scale: preview.scale,
         x: preview.x,
         y: preview.y,
