@@ -1,0 +1,37 @@
+{
+  "contract": "plant-visual-production-wave-spend-proposal-v1",
+  "runId": "plant-visual-wave-003-2026-09-24-v1",
+  "createdAt": "2026-09-24",
+  "provider": "openai-images-api",
+  "model": "gpt-image-2",
+  "maxJobs": 8,
+  "maxCalls": 8,
+  "maxRetries": 0,
+  "proposedMaxSpendUsd": 0.73,
+  "preflightMaximumSpendUsd": 0.728,
+  "quality": "medium",
+  "jobIds": [
+    "blue-gum__mature__tree__vegetative__v1",
+    "blue-gum__young__tree__vegetative__v1",
+    "breadfruit__young__tree__vegetative__v1",
+    "cacao__mature__tree__fruiting__v1",
+    "cacao__mature__tree__vegetative__v1",
+    "cacao__young__tree__vegetative__v1",
+    "carob__mature__tree__vegetative__v1",
+    "carob__young__tree__vegetative__v1"
+  ],
+  "allowedActions": [
+    "generate exact approved wave candidate jobs",
+    "write generated PNGs only to candidate R2",
+    "write generation and technical QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "carryForward": false,
+  "notes": [
+    "No generation occurs from this proposal.",
+    "Wave 3 is capped at owner-review capacity 8.",
+    "All selected jobs are SIZE_AUTHORITY_PARTIAL with no size-authority owner review blocker.",
+    "No CONFLICT_HOLD, EVIDENCE_GAP, CONTEXT_REQUIRED, previously promoted role, or held Lavender job is included."
+  ]
+}
