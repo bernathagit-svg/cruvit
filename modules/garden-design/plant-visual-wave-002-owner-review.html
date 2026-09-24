@@ -50,21 +50,14 @@ function render(){
       : '<div class="meta">Model visual PASS · still requires owner confirmation before promotion.</div>';
     return '<div class="card"><img src="'+imageUrl(r.jobId)+'" alt="'+esc(r.slug)+'"><div class="body"><div class="row"><strong>'+esc(r.slug)+'</strong><span class="badge '+cls+'">'+r.overall+'</span></div><div class="meta">'+esc(r.jobId)+'</div><div class="reason">'+esc(r.reason)+'</div>'+actions+'</div></div>';
   }).join('');
-  log.textContent='Ready for owner review. Decisions write owner-review evidence only; no Production promotion.';
+  log.textContent='Ready for owner review. Buttons mark local choices only. No server write and no Production promotion.';
 }
-async function decide(jobId,decision){
-  log.textContent='Recording '+decision+' for '+jobId+'…';
-  const res=await fetch('/.netlify/functions/plant-visual-owner-review-record',{
-    method:'POST',
-    headers:{'content-type':'application/json'},
-    body:JSON.stringify({
-      manifestId:'wave2-owner-review-2026-09-24-v1',
-      visionRunId:RUN,
-      jobId,decision
-    })
-  });
-  const text=await res.text();
-  log.textContent=text;
+const localDecisions={};
+function decide(jobId,decision){
+  localDecisions[jobId]=decision;
+  const pass=Object.entries(localDecisions).filter(([,v])=>v==='PASS_OWNER_VISUAL_GATES').map(([k])=>k);
+  const hold=Object.entries(localDecisions).filter(([,v])=>v==='HOLD_OWNER_REVIEW').map(([k])=>k);
+  log.textContent='Local review only — no server write.\nPASS: '+pass.join(', ')+'\nHOLD: '+hold.join(', ')+'\n\nWhen finished, tell ChatGPT your final owner decision so it can be recorded explicitly.';
 }
 render();
 </script>
