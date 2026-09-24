@@ -265,6 +265,14 @@ body.gd-qa-preview-mode #plantLayersHost{pointer-events:none}
 .gd-plant-tree .gd-plant-shadow::after{width:58%;height:5px}
 .gd-plant-shrub .gd-plant-shadow{width:42%}
 .gd-plant-herb .gd-plant-shadow,.gd-plant-flower .gd-plant-shadow{width:36%}
+.gd-plant-layer.gd-ground-contact-v2 .gd-plant-cutout{
+  -webkit-mask-image:linear-gradient(to top,transparent 0%,rgba(0,0,0,.42) .65%,#000 1.8%,#000 100%);
+  mask-image:linear-gradient(to top,transparent 0%,rgba(0,0,0,.42) .65%,#000 1.8%,#000 100%);
+  -webkit-mask-size:100% 100%;
+  mask-size:100% 100%;
+  -webkit-mask-repeat:no-repeat;
+  mask-repeat:no-repeat;
+}
 .gd-plant-layer.selected .gd-sprite-svg{filter:drop-shadow(0 5px 10px rgba(0,0,0,.32)) drop-shadow(0 2px 4px rgba(0,0,0,.2)) drop-shadow(0 0 6px rgba(61,138,80,.55))}
 .gd-plant-layer.selected .gd-plant-cutout{filter:drop-shadow(0 5px 10px rgba(0,0,0,.32)) drop-shadow(0 2px 4px rgba(0,0,0,.2)) drop-shadow(0 0 6px rgba(61,138,80,.55))}
 .gd-honest-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;position:relative;box-sizing:border-box}
@@ -2934,6 +2942,27 @@ async function gdCaptureQaPreviewPng(targetLayerId) {
       ctx.restore();
     }
 
+    let gdGroundContactRenderSource = cutoutBitmap;
+    if (isTreeLike) {
+      const gcCanvas = document.createElement('canvas');
+      gcCanvas.width = Math.max(1, Number(cutoutBitmap.width || cutoutBitmap.naturalWidth || 1));
+      gcCanvas.height = Math.max(1, Number(cutoutBitmap.height || cutoutBitmap.naturalHeight || 1));
+      const gcCtx = gcCanvas.getContext('2d');
+      if (gcCtx) {
+        gcCtx.drawImage(cutoutBitmap, 0, 0, gcCanvas.width, gcCanvas.height);
+        gcCtx.globalCompositeOperation = 'destination-out';
+        const fadeStart = gcCanvas.height * 0.978;
+        const fade = gcCtx.createLinearGradient(0, fadeStart, 0, gcCanvas.height);
+        fade.addColorStop(0, 'rgba(0,0,0,0)');
+        fade.addColorStop(0.64, 'rgba(0,0,0,0.58)');
+        fade.addColorStop(1, 'rgba(0,0,0,1)');
+        gcCtx.fillStyle = fade;
+        gcCtx.fillRect(0, fadeStart, gcCanvas.width, gcCanvas.height - fadeStart);
+        gcCtx.globalCompositeOperation = 'source-over';
+        gdGroundContactRenderSource = gcCanvas;
+      }
+    }
+
     ctx.save();
     if (blend && blend.enabled) {
       const api = gdAutoBlendApi();
@@ -2953,7 +2982,7 @@ async function gdCaptureQaPreviewPng(targetLayerId) {
       ctx.shadowBlur = 10;
       ctx.shadowOffsetY = 5;
     }
-    ctx.drawImage(cutoutBitmap, cx, cy, cutoutRect.width, cutoutRect.height);
+    ctx.drawImage(gdGroundContactRenderSource, cx, cy, cutoutRect.width, cutoutRect.height);
     ctx.restore();
 
     if (blend && blend.enabled && blend.version === 'garden-design-auto-blend-v3') {
@@ -2966,7 +2995,7 @@ async function gdCaptureQaPreviewPng(targetLayerId) {
       if (octx) {
         // Directional lighting masked by the plant alpha.
         octx.clearRect(0, 0, width, height);
-        octx.drawImage(cutoutBitmap, cx, cy, cutoutRect.width, cutoutRect.height);
+        octx.drawImage(gdGroundContactRenderSource, cx, cy, cutoutRect.width, cutoutRect.height);
         octx.globalCompositeOperation = 'source-in';
         const angle = ((Number(dl.angleDeg) || 0) + 90) * Math.PI / 180;
         const vx = Math.cos(angle), vy = Math.sin(angle);
@@ -2991,7 +3020,7 @@ async function gdCaptureQaPreviewPng(targetLayerId) {
         // Ground-color spill into the lower part of the cutout.
         octx.clearRect(0, 0, width, height);
         octx.globalCompositeOperation = 'source-over';
-        octx.drawImage(cutoutBitmap, cx, cy, cutoutRect.width, cutoutRect.height);
+        octx.drawImage(gdGroundContactRenderSource, cx, cy, cutoutRect.width, cutoutRect.height);
         octx.globalCompositeOperation = 'source-in';
         const color = gs.color || {};
         const rr = Math.max(0, Math.min(255, Number(color.r) || 128));
@@ -3972,7 +4001,11 @@ function renderPlantLayers() {
   plantLayers.slice().sort((a, b) => a.zIndex - b.zIndex).forEach(layer => {
     gdRepairOwnedLayerIdentityFromContext(layer);
     const el = document.createElement('div');
-    el.className = 'gd-plant-layer' + (layer.id === selectedPlantLayerId ? ' selected' : '');
+    const gdGroundContactForm = String(layer.visualForm || layer.architectureMode || layer.spriteType || '').toLowerCase();
+    const gdGroundContactEligible = gdGroundContactForm === 'tree' || gdGroundContactForm === 'palm' || layer.isTree === true;
+    el.className = 'gd-plant-layer'
+      + (layer.id === selectedPlantLayerId ? ' selected' : '')
+      + (gdGroundContactEligible ? ' gd-ground-contact-v2' : '');
     el.dataset.layerId = layer.id;
     el.innerHTML = gdBuildPlantLayerInnerHtml(layer);
     applyLayerDomTransform(layer, el);
