@@ -17,9 +17,23 @@
     ]
   },
   "flags": {
-    "forceClimateNeedsReview": true,
+    "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Family name differs across sources (UF/IFAS Sterculiaceae vs UCANR Malvaceae); taxonomy.family omitted. Cold-damage temperature thresholds disagree across sources (UF <50°F / UCANR protect ≤60°F) — not averaged."
+    "notes": "Family name differs across sources (UF/IFAS Sterculiaceae vs UCANR Malvaceae); taxonomy.family omitted. Cold-damage temperature thresholds disagree across sources (UF <50°F / UCANR protect ≤60°F) — not averaged. Review resolved 2026-09-24: core catalog/climate readiness accepted; disputed numeric cold threshold and taxonomy family remain explicit non-blocking limitations.",
+    "nonBlockingDisputedFields": [
+      "coldDamageThresholdC",
+      "taxonomy.family"
+    ],
+    "reviewResolution": {
+      "status": "RESOLVED_WITH_LIMITATIONS",
+      "reviewedAt": "2026-09-24",
+      "globalCatalogReady": true,
+      "unresolvedLimitations": [
+        "coldDamageThresholdC remains disputed across authoritative sources and must not be collapsed to one numeric threshold",
+        "taxonomy.family remains disputed in packet sources and is intentionally omitted from canonical climate suitability"
+      ],
+      "rationale": "Core categorical climate traits, canonical identity, flowering and fruiting requirements are source-supported. The disputed numeric cold threshold and taxonomy family remain explicit limitations without blocking global catalog readiness."
+    }
   },
   "sources": [
     {
@@ -49,7 +63,10 @@
       "field": "scientific",
       "status": "asserted",
       "value": "Theobroma cacao",
-      "sourceIds": ["uf-ifas-hs1057", "ucanr-solano-cacao-2024"],
+      "sourceIds": [
+        "uf-ifas-hs1057",
+        "ucanr-solano-cacao-2024"
+      ],
       "shortExcerpt": "Scientific Name: Theobroma cacao subsp. cacao… / known as Theobroma cacao."
     },
     {
@@ -66,7 +83,9 @@
         "kakao",
         "cacau"
       ],
-      "sourceIds": ["uf-ifas-hs1057"],
+      "sourceIds": [
+        "uf-ifas-hs1057"
+      ],
       "shortExcerpt": "Common Names: cocoa and chocolate (English), cacao (Spanish), cacaoyer and cacaotier (French), kakao (German), cacau (Portuguese)."
     },
     {
@@ -74,7 +93,10 @@
       "field": "frostSensitivity",
       "status": "asserted",
       "value": "high",
-      "sourceIds": ["uf-ifas-hs1057", "ucanr-solano-cacao-2024"],
+      "sourceIds": [
+        "uf-ifas-hs1057",
+        "ucanr-solano-cacao-2024"
+      ],
       "shortExcerpt": "plants may be damaged or killed during prolonged cool or brief freezing temperatures. / very fragile to both frost and wind gusts."
     },
     {
@@ -82,7 +104,9 @@
       "field": "coldTolerance",
       "status": "asserted",
       "value": "low",
-      "sourceIds": ["uf-ifas-hs1057"],
+      "sourceIds": [
+        "uf-ifas-hs1057"
+      ],
       "shortExcerpt": "Temperatures below 50°F (10°C) may damage or kill the plant… South Florida’s warm subtropical environment is very marginal for cocoa growing."
     },
     {
@@ -90,7 +114,9 @@
       "field": "heatTolerance",
       "status": "asserted",
       "value": "high",
-      "sourceIds": ["uf-ifas-hs1057"],
+      "sourceIds": [
+        "uf-ifas-hs1057"
+      ],
       "shortExcerpt": "Optimum temperatures for cocoa growth range from 65 to 90°F (18–32°C). Temperatures in excess of 90°F (32°C) may limit plant growth."
     },
     {
@@ -98,7 +124,10 @@
       "field": "humidityTolerance",
       "status": "asserted",
       "value": "high",
-      "sourceIds": ["uf-ifas-hs1057", "ucanr-solano-cacao-2024"],
+      "sourceIds": [
+        "uf-ifas-hs1057",
+        "ucanr-solano-cacao-2024"
+      ],
       "shortExcerpt": "adapted to and grow best in hot, humid tropical areas… / Humidity levels of 80% are considered to be ideal for growing it."
     },
     {
@@ -106,7 +135,9 @@
       "field": "waterNeeds",
       "status": "asserted",
       "value": "high",
-      "sourceIds": ["uf-ifas-hs1057"],
+      "sourceIds": [
+        "uf-ifas-hs1057"
+      ],
       "shortExcerpt": "Cocoa require access to soil moisture (water) nearly year round… Drought stress leads to leaf and flower drop and poor fruit production."
     },
     {
@@ -114,7 +145,10 @@
       "field": "sunNeeds",
       "status": "asserted",
       "value": "partial_shade",
-      "sourceIds": ["uf-ifas-hs1057", "ucanr-solano-cacao-2024"],
+      "sourceIds": [
+        "uf-ifas-hs1057",
+        "ucanr-solano-cacao-2024"
+      ],
       "shortExcerpt": "Cocoa is a shade plant and grows best with about 25% shade. / prefers to have filtered sunlight."
     },
     {
@@ -122,7 +156,10 @@
       "field": "drainageNeeds",
       "status": "asserted",
       "value": "high",
-      "sourceIds": ["uf-ifas-hs1057", "ucanr-solano-cacao-2024"],
+      "sourceIds": [
+        "uf-ifas-hs1057",
+        "ucanr-solano-cacao-2024"
+      ],
       "shortExcerpt": "Cocoa plants require well drained soil… / needs well-draining soil as it does not do well in flooded conditions."
     },
     {
@@ -130,15 +167,21 @@
       "field": "needsWinterChill",
       "status": "asserted",
       "value": false,
-      "sourceIds": ["uf-ifas-hs1057"],
+      "sourceIds": [
+        "uf-ifas-hs1057"
+      ],
       "shortExcerpt": "Truly tropical areas are characterized by year-round temperatures at or above 68°F and no freezing temperatures."
     },
     {
       "claimId": "group-ids-tropical-fruit",
       "field": "groupIds",
       "status": "asserted",
-      "value": ["tropical-frost-sensitive-fruit"],
-      "sourceIds": ["uf-ifas-hs1057"],
+      "value": [
+        "tropical-frost-sensitive-fruit"
+      ],
+      "sourceIds": [
+        "uf-ifas-hs1057"
+      ],
       "shortExcerpt": "Cocoa plants are adapted to and grow best in hot, humid tropical areas… striking pods (fruit)."
     },
     {
@@ -146,7 +189,9 @@
       "field": "floweringRequirements",
       "status": "asserted",
       "value": "Cauliflorous flowering on older wood; flowering only when temperatures are at or above 68°F (20°C). Drought stress causes flower drop.",
-      "sourceIds": ["uf-ifas-hs1057"],
+      "sourceIds": [
+        "uf-ifas-hs1057"
+      ],
       "shortExcerpt": "Flowering only occurs when temperatures are at or above 68°F(20°C). … Drought stress leads to leaf and flower drop…"
     },
     {
@@ -154,7 +199,9 @@
       "field": "fruitingRequirements",
       "status": "asserted",
       "value": "Produces pods (drupes); flower to mature pod typically 5–7 months. Needs near year-round soil moisture; drought causes poor fruit production. Pollination may require compatible varieties or hand pollination where midges are absent.",
-      "sourceIds": ["uf-ifas-hs1057"],
+      "sourceIds": [
+        "uf-ifas-hs1057"
+      ],
       "shortExcerpt": "time from flower pollination to a fully developed pod takes 5 to 7 months or more. … Drought stress leads to … poor fruit production."
     },
     {
@@ -162,7 +209,9 @@
       "field": "survivalVsThriveNotes",
       "status": "asserted",
       "value": "Reliable outdoor survival and productivity need hot, humid, frost-free tropical conditions with steady moisture. Warm subtropical sites can be marginal; brief freezes or prolonged cool periods may damage or kill plants. Frost-free alone is not sufficient without humidity/moisture fit.",
-      "sourceIds": ["uf-ifas-hs1057"],
+      "sourceIds": [
+        "uf-ifas-hs1057"
+      ],
       "shortExcerpt": "South Florida’s warm subtropical environment is very marginal for cocoa growing, and plants may be damaged or killed during prolonged cool or brief freezing temperatures."
     },
     {
@@ -170,7 +219,9 @@
       "field": "climateLabel",
       "status": "asserted",
       "value": "Hot humid tropical; high frost sensitivity",
-      "sourceIds": ["uf-ifas-hs1057"],
+      "sourceIds": [
+        "uf-ifas-hs1057"
+      ],
       "shortExcerpt": "evolved as an understory shade tree in hot, humid, tropical rainforest areas… with well distributed rainfall."
     },
     {
@@ -178,7 +229,9 @@
       "field": "care.sun",
       "status": "asserted",
       "value": "Partial shade (~25% shade); filtered light; avoid deep shade for productivity",
-      "sourceIds": ["uf-ifas-hs1057"],
+      "sourceIds": [
+        "uf-ifas-hs1057"
+      ],
       "shortExcerpt": "Cocoa is a shade plant and grows best with about 25% shade. … cocoa planted in deep shade tends to be spindly and non-productive."
     },
     {
@@ -186,7 +239,9 @@
       "field": "care.water",
       "status": "asserted",
       "value": "High; keep soil moisture nearly year-round with good drainage; avoid drought and waterlogging",
-      "sourceIds": ["uf-ifas-hs1057"],
+      "sourceIds": [
+        "uf-ifas-hs1057"
+      ],
       "shortExcerpt": "Cocoa require access to soil moisture (water) nearly year round… Plants growing in sandy or rocky soils … should be watered every other day or every day during hot, dry conditions."
     },
     {
@@ -194,7 +249,9 @@
       "field": "care.growth",
       "status": "asserted",
       "value": "Small to medium tropical understory tree",
-      "sourceIds": ["uf-ifas-hs1057"],
+      "sourceIds": [
+        "uf-ifas-hs1057"
+      ],
       "shortExcerpt": "Cocoa are small to medium sized trees (25–30 ft; 7.6–9.1 m) with few branches under tropical environments."
     },
     {
@@ -202,7 +259,9 @@
       "field": "care.size",
       "status": "asserted",
       "value": "About 7.6–9.1 m in tropical conditions; often kept lower (6–8 ft) in home landscapes",
-      "sourceIds": ["uf-ifas-hs1057"],
+      "sourceIds": [
+        "uf-ifas-hs1057"
+      ],
       "shortExcerpt": "Cocoa are small to medium sized trees (25–30 ft; 7.6–9.1 m)… Plant height should be limited to 6 to 8 ft…"
     },
     {
@@ -210,7 +269,9 @@
       "field": "care.guide",
       "status": "asserted",
       "value": "Understory tropical tree needing heat, high humidity, frost-free conditions, partial shade, wind protection, and steady soil moisture with drainage. Sensitive to freezes and prolonged cool weather.",
-      "sourceIds": ["uf-ifas-hs1057"],
+      "sourceIds": [
+        "uf-ifas-hs1057"
+      ],
       "shortExcerpt": "Cocoa does not tolerate windy conditions… Temperatures below 50°F (10°C) may damage or kill the plant."
     },
     {
@@ -223,15 +284,27 @@
         "Does not tolerate windy exposure",
         "Drought stress drops flowers and reduces fruit"
       ],
-      "sourceIds": ["uf-ifas-hs1057", "ucanr-solano-cacao-2024"],
+      "sourceIds": [
+        "uf-ifas-hs1057",
+        "ucanr-solano-cacao-2024"
+      ],
       "shortExcerpt": "very fragile to both frost and wind gusts. / Drought stress leads to leaf and flower drop and poor fruit production."
     },
     {
       "claimId": "tags",
       "field": "tags",
       "status": "asserted",
-      "value": ["tropical", "fruit", "shade", "humid", "cacao", "cocoa"],
-      "sourceIds": ["uf-ifas-hs1057"],
+      "value": [
+        "tropical",
+        "fruit",
+        "shade",
+        "humid",
+        "cacao",
+        "cocoa"
+      ],
+      "sourceIds": [
+        "uf-ifas-hs1057"
+      ],
       "shortExcerpt": "grow best in hot, humid tropical areas… striking pods (fruit)."
     },
     {
@@ -239,7 +312,9 @@
       "field": "gardenCompatibility.spacing.matureSize",
       "status": "asserted",
       "value": "Small–medium tree; ~7–9 m tropical; often pruned lower in gardens",
-      "sourceIds": ["uf-ifas-hs1057"],
+      "sourceIds": [
+        "uf-ifas-hs1057"
+      ],
       "shortExcerpt": "Cocoa are small to medium sized trees (25–30 ft; 7.6–9.1 m)."
     },
     {
@@ -247,7 +322,10 @@
       "field": "coldDamageThresholdC",
       "status": "disputed",
       "value": null,
-      "sourceIds": ["uf-ifas-hs1057", "ucanr-solano-cacao-2024"],
+      "sourceIds": [
+        "uf-ifas-hs1057",
+        "ucanr-solano-cacao-2024"
+      ],
       "shortExcerpt": "UF: below 50°F (10°C) may damage or kill. UCANR: protect from temperatures of 60°F and lower. Not averaged.",
       "reason": "Authoritative sources disagree on cold-injury threshold; no single confident numeric trait emitted."
     },
@@ -256,7 +334,9 @@
       "field": "rainfallMmAnnual",
       "status": "unknown",
       "value": null,
-      "sourceIds": ["uf-ifas-hs1057"],
+      "sourceIds": [
+        "uf-ifas-hs1057"
+      ],
       "shortExcerpt": "UF describes well-distributed rainfall and year-round soil moisture need but does not state a numeric annual mm range in the captured HS1057 text used here.",
       "reason": "No numeric annual rainfall claim taken from primary packet sources; left UNKNOWN."
     },
@@ -265,7 +345,10 @@
       "field": "taxonomy.family",
       "status": "disputed",
       "value": null,
-      "sourceIds": ["uf-ifas-hs1057", "ucanr-solano-cacao-2024"],
+      "sourceIds": [
+        "uf-ifas-hs1057",
+        "ucanr-solano-cacao-2024"
+      ],
       "shortExcerpt": "UF lists Family: Sterculiaceae. UCANR lists Malvaceae. Family omitted from seed row.",
       "reason": "Do not silently choose one family name."
     }
