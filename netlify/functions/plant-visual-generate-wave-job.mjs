@@ -20,6 +20,7 @@ import {
 import {
   actualSpendUsdFromUsage
 } from '../../modules/garden-design/asset-factory-v1/total-api-cost-v1.js';
+import { evaluateLiveFullPlantOnboarding } from './_plant-full-onboarding-gate-v1.mjs';
 
 const MANIFEST_CONTRACT = 'plant-visual-production-wave-execution-manifest-v1';
 const APPROVAL_CONTRACT = 'plant-visual-production-wave-spend-approval-v1';
@@ -258,6 +259,36 @@ export default async (req) => {
     });
   }
 
+  let onboarding;
+  try {
+    onboarding = await evaluateLiveFullPlantOnboarding([{
+      canonicalSlug: job.canonicalSlug,
+      scientific: job.scientific || null,
+      phenology: job.phenology || 'vegetative'
+    }]);
+  } catch (err) {
+    return json(503, {
+      ok: false,
+      code: 'FULL_PLANT_ONBOARDING_CHECK_UNAVAILABLE',
+      runId,
+      jobId,
+      paidCallsStarted: 0,
+      errorName: err?.message || null
+    });
+  }
+
+  const onboardingEvaluation = onboarding.evaluations?.[0] || null;
+  if (!onboardingEvaluation?.ready) {
+    return json(409, {
+      ok: false,
+      code: 'FULL_PLANT_ONBOARDING_REQUIRED',
+      runId,
+      jobId,
+      paidCallsStarted: 0,
+      onboarding: onboardingEvaluation
+    });
+  }
+
   const requiredEnv = [
     'PLANT_VISUAL_R2_ACCOUNT_ID',
     'PLANT_VISUAL_R2_ACCESS_KEY_ID',
@@ -483,6 +514,11 @@ export default async (req) => {
     framingQA: evidence.framingQA,
     projectedUsd,
     actualSpendUsd,
+    fullPlantOnboarding: {
+      version: onboarding.version,
+      ready: true,
+      code: onboardingEvaluation.code
+    },
     productionWrites: 0,
     registryWrites: 0
   });
