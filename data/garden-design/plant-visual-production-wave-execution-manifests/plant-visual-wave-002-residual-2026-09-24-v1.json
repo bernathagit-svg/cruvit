@@ -1,0 +1,112 @@
+{
+  "contract": "plant-visual-production-wave-execution-manifest-v1",
+  "runId": "plant-visual-wave-002-residual-2026-09-24-v1",
+  "createdAt": "2026-09-24",
+  "source": {
+    "parentRunId": "plant-visual-wave-002-2026-09-24-v1",
+    "reason": "three jobs remained PENDING after single approved no-retry attempt; residual run isolates them to prevent duplicate generation of successful jobs",
+    "sourceCommit": "de7eb4c53eaca1bed40a95807a6bdea729fee12b",
+    "plannerVersion": "plant-visual-production-wave-v1"
+  },
+  "bounded": true,
+  "jobCount": 3,
+  "plantCount": 3,
+  "canonicalSlugs": [
+    "lavender",
+    "almond",
+    "apple"
+  ],
+  "candidateStorage": {
+    "backend": "cloudflare-r2",
+    "bucketEnv": "PLANT_VISUAL_R2_CANDIDATES_BUCKET",
+    "immutableKeyPattern": "candidates/{runId}/{canonicalSlug}/{assetId}__{sha256}.png"
+  },
+  "executionPolicy": {
+    "provider": "openai-images-api",
+    "model": "gpt-image-2",
+    "maxJobs": 3,
+    "maxCalls": 3,
+    "maxRetries": 0,
+    "registryWritesAllowed": false,
+    "productionWritesAllowed": false,
+    "ownerSpendApprovalRequired": true,
+    "approvalArtifactContract": "plant-visual-production-wave-spend-approval-v1"
+  },
+  "spendPreflight": {
+    "mediumJobs": 3,
+    "highJobs": 0,
+    "projectedMediumCallUsd": 0.091,
+    "projectedHighCallUsd": 0.364,
+    "projectedMaximumSpendUsd": 0.273,
+    "label": "PREAPPROVAL_ESTIMATE_NOT_LIVE_QUOTE"
+  },
+  "selectionPolicy": {
+    "purpose": "residual completion of Wave 2 after transport timeouts under no-retry policy",
+    "noDuplicateSuccessfulJobs": true,
+    "parentGeneratedJobs": [
+      "cypress__young__tree__vegetative__v1",
+      "olive__young__tree__vegetative__v1",
+      "apricot__young__tree__vegetative__v1",
+      "avocado__young__tree__vegetative__v1"
+    ],
+    "selectedJobs": 3,
+    "noPaidCallsAtManifestCreation": true
+  },
+  "jobs": [
+    {
+      "jobId": "lavender__mature__shrub__vegetative__v1",
+      "canonicalSlug": "lavender",
+      "scientific": "Lavandula angustifolia",
+      "identityScope": "species",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "SHRUB_FINE_FOLIAGE",
+      "sizeAuthorityState": "SIZE_AUTHORITY_READY",
+      "sizeAuthorityOwnerReviewRequired": false,
+      "sizeAuthorityReasonCodes": []
+    },
+    {
+      "jobId": "almond__young__tree__vegetative__v1",
+      "canonicalSlug": "almond",
+      "scientific": "Prunus dulcis",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "young",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "sizeAuthorityState": "SIZE_AUTHORITY_PARTIAL",
+      "sizeAuthorityOwnerReviewRequired": false,
+      "sizeAuthorityReasonCodes": [
+        "GROWTH_STAGE_AUTHORITY_NOT_SUPPORTED"
+      ]
+    },
+    {
+      "jobId": "apple__young__tree__vegetative__v1",
+      "canonicalSlug": "apple",
+      "scientific": "Malus domestica",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "young",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "WOODY_DENSE_SMALL_LEAF",
+      "sizeAuthorityState": "SIZE_AUTHORITY_PARTIAL",
+      "sizeAuthorityOwnerReviewRequired": false,
+      "sizeAuthorityReasonCodes": [
+        "GROWTH_STAGE_AUTHORITY_NOT_SUPPORTED"
+      ]
+    }
+  ]
+}
