@@ -195,6 +195,17 @@ jobs:
       - name: Prove Wave 2 has six ready, Lavender blocked, and no authorization
         run: node -e "const j=JSON.parse(require('fs').readFileSync('data/garden-design/plant-visual-promotion-readiness/wave2-owner-review-2026-09-24-v1.json','utf8')); const blocked=j.evaluations.filter(x=>!x.ready); if(j.readyJobs!==6||j.blockedJobs!==1||blocked[0]?.canonicalSlug!=='lavender'||j.promotionAuthorized!==false||j.executionAllowed!==false||j.productionWrites!==0||j.registryWrites!==0) { console.error(j); process.exit(1); } console.log({ready:j.readyJobs,blocked:j.blockedJobs,blockedSlug:blocked[0].canonicalSlug,promotionAuthorized:j.promotionAuthorized});"
 
+      - name: Plan approved catalog packet backfill
+        run: node scripts/catalog-approved-packet-backfill-plan-v1.mjs --catalog-snapshot=data/catalog/backfill-snapshots/catalog-plants-slugs-2026-09-24.json --out=data/catalog/backfill-plans/catalog-approved-packet-backfill-2026-09-24-v1.json
+
+      - name: Upload catalog backfill plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: catalog-approved-packet-backfill-2026-09-24-v1
+          path: data/catalog/backfill-plans/catalog-approved-packet-backfill-2026-09-24-v1.json
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Upload Wave 2 promotion readiness audit
         uses: actions/upload-artifact@v4
         with:
