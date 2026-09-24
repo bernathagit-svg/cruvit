@@ -1,0 +1,47 @@
+{
+  "contract": "plant-visual-in-garden-vision-qa-spend-proposal-v1",
+  "runId": "plant-visual-wave-003-in-garden-vision-qa-2026-09-24-v1",
+  "createdAt": "2026-09-24",
+  "provider": "openai-responses-api",
+  "model": "gpt-5.6-luna",
+  "jobCount": 5,
+  "maxCalls": 5,
+  "maxRetries": 0,
+  "perCallReserveUsd": 0.01,
+  "proposedMaxSpendUsd": 0.08,
+  "rationale": [
+    "Wave 2 In-Garden Vision QA used 6 calls with USD 0.09 cap and actual spend USD 0.004398.",
+    "Wave 3 has 5 geometry-pass jobs only.",
+    "USD 0.08 preserves conservative reserve while remaining tightly bounded."
+  ],
+  "jobIds": [
+    "breadfruit__young__tree__vegetative__v1",
+    "cacao__mature__tree__fruiting__v1",
+    "cacao__mature__tree__vegetative__v1",
+    "cacao__young__tree__vegetative__v1",
+    "carob__mature__tree__vegetative__v1"
+  ],
+  "excludedJobs": [
+    {
+      "jobId": "blue-gum__mature__tree__vegetative__v1",
+      "reason": "FRAMING_QA_FAIL"
+    },
+    {
+      "jobId": "blue-gum__young__tree__vegetative__v1",
+      "reason": "FRAMING_QA_FAIL"
+    },
+    {
+      "jobId": "carob__young__tree__vegetative__v1",
+      "reason": "MODEL_QA_INVALID_JSON"
+    }
+  ],
+  "allowedActions": [
+    "read exact in-garden QA capture bytes from candidate R2",
+    "send one renderer capture plus expected plant metadata to vision QA model",
+    "write in-garden vision QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "imageGenerationAllowed": false,
+  "imageMutationAllowed": false
+}
