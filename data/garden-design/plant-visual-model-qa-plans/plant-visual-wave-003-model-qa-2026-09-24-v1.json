@@ -1,0 +1,116 @@
+{
+  "contract": "plant-visual-model-qa-plan-v1",
+  "runId": "plant-visual-wave-003-model-qa-2026-09-24-v1",
+  "sourceManifestId": "wave3-owner-review-2026-09-24-v1",
+  "createdAt": "2026-09-24",
+  "provider": "openai-responses-api",
+  "model": "gpt-5.6-luna",
+  "reasoningEffort": "low",
+  "purpose": "candidate-pixel-botanical-state-qa",
+  "jobCount": 6,
+  "jobs": [
+    {
+      "jobId": "breadfruit__young__tree__vegetative__v1",
+      "canonicalSlug": "breadfruit",
+      "scientific": "Artocarpus altilis",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "young",
+      "phenology": "vegetative",
+      "objectKey": "candidates/plant-visual-wave-003-2026-09-24-v1/breadfruit/breadfruit__young__tree__vegetative__v1__a6f34c7cef12c9d26fed9ed8863639da93432eff14da0a236f72c0674f79624a.png",
+      "sha256": "a6f34c7cef12c9d26fed9ed8863639da93432eff14da0a236f72c0674f79624a",
+      "bytes": 2013194
+    },
+    {
+      "jobId": "cacao__mature__tree__fruiting__v1",
+      "canonicalSlug": "cacao",
+      "scientific": "Theobroma cacao",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "fruiting",
+      "objectKey": "candidates/plant-visual-wave-003-2026-09-24-v1/cacao/cacao__mature__tree__fruiting__v1__8ac383ad52dac62440b0ca57eebd1a7dfabe52654a871d34626d6ebc0878bddb.png",
+      "sha256": "8ac383ad52dac62440b0ca57eebd1a7dfabe52654a871d34626d6ebc0878bddb",
+      "bytes": 2595957
+    },
+    {
+      "jobId": "cacao__mature__tree__vegetative__v1",
+      "canonicalSlug": "cacao",
+      "scientific": "Theobroma cacao",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "objectKey": "candidates/plant-visual-wave-003-2026-09-24-v1/cacao/cacao__mature__tree__vegetative__v1__89d6e03468491dc8b0232fa87f90992b39a8220db9771da08d0b8e45f2523025.png",
+      "sha256": "89d6e03468491dc8b0232fa87f90992b39a8220db9771da08d0b8e45f2523025",
+      "bytes": 2568115
+    },
+    {
+      "jobId": "cacao__young__tree__vegetative__v1",
+      "canonicalSlug": "cacao",
+      "scientific": "Theobroma cacao",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "young",
+      "phenology": "vegetative",
+      "objectKey": "candidates/plant-visual-wave-003-2026-09-24-v1/cacao/cacao__young__tree__vegetative__v1__cec9927c0369cd68440b23bc6a22d95c3485e9337cfa6479c172bd53e5b7d716.png",
+      "sha256": "cec9927c0369cd68440b23bc6a22d95c3485e9337cfa6479c172bd53e5b7d716",
+      "bytes": 2056177
+    },
+    {
+      "jobId": "carob__mature__tree__vegetative__v1",
+      "canonicalSlug": "carob",
+      "scientific": "Ceratonia siliqua",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "objectKey": "candidates/plant-visual-wave-003-2026-09-24-v1/carob/carob__mature__tree__vegetative__v1__ebbd3eb6d9caad6c51d3b52d1a29b914847b1d2666daaca70de830d0598f22e3.png",
+      "sha256": "ebbd3eb6d9caad6c51d3b52d1a29b914847b1d2666daaca70de830d0598f22e3",
+      "bytes": 2722035
+    },
+    {
+      "jobId": "carob__young__tree__vegetative__v1",
+      "canonicalSlug": "carob",
+      "scientific": "Ceratonia siliqua",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "young",
+      "phenology": "vegetative",
+      "objectKey": "candidates/plant-visual-wave-003-2026-09-24-v1/carob/carob__young__tree__vegetative__v1__bac74f2563cef6ef9c6e3f8a68539bc26e51b91d20151a0d0885d1ec51a47e8f.png",
+      "sha256": "bac74f2563cef6ef9c6e3f8a68539bc26e51b91d20151a0d0885d1ec51a47e8f",
+      "bytes": 1952533
+    }
+  ],
+  "requiredChecks": [
+    "botanicalIdentity",
+    "architecture",
+    "growthStage",
+    "phenologyState"
+  ],
+  "outputPolicy": {
+    "allowedVerdicts": [
+      "PASS",
+      "FAIL",
+      "UNCERTAIN"
+    ],
+    "lowConfidenceNeverAutoPass": true,
+    "uncertainRoutesToOwnerReview": true,
+    "failRoutesToHold": true
+  },
+  "executionPolicy": {
+    "ownerSpendApprovalRequired": true,
+    "maxCalls": 6,
+    "maxRetries": 0,
+    "candidateR2EvidenceOnly": true,
+    "productionWritesAllowed": false,
+    "registryWritesAllowed": false
+  },
+  "safety": {
+    "sourceImageMustMatchManifestSha": true,
+    "noGeneration": true,
+    "noImageMutation": true,
+    "noProductionPromotion": true,
+    "noRegistryMutation": true
+  }
+}
