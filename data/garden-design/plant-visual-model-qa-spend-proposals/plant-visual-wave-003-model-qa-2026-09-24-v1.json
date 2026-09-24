@@ -1,0 +1,38 @@
+{
+  "contract": "plant-visual-model-qa-spend-proposal-v1",
+  "runId": "plant-visual-wave-003-model-qa-2026-09-24-v1",
+  "createdAt": "2026-09-24",
+  "provider": "openai-responses-api",
+  "model": "gpt-5.6-luna",
+  "maxCalls": 6,
+  "maxRetries": 0,
+  "perCallReserveUsd": 0.01,
+  "proposedMaxSpendUsd": 0.09,
+  "jobIds": [
+    "breadfruit__young__tree__vegetative__v1",
+    "cacao__mature__tree__fruiting__v1",
+    "cacao__mature__tree__vegetative__v1",
+    "cacao__young__tree__vegetative__v1",
+    "carob__mature__tree__vegetative__v1",
+    "carob__young__tree__vegetative__v1"
+  ],
+  "excludedJobs": [
+    {
+      "jobId": "blue-gum__mature__tree__vegetative__v1",
+      "reason": "FRAMING_QA_FAIL"
+    },
+    {
+      "jobId": "blue-gum__young__tree__vegetative__v1",
+      "reason": "FRAMING_QA_FAIL"
+    }
+  ],
+  "allowedActions": [
+    "read exact candidate PNG bytes from candidate R2",
+    "send one candidate image plus expected metadata to vision QA model",
+    "write model QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "imageGenerationAllowed": false,
+  "imageMutationAllowed": false
+}
