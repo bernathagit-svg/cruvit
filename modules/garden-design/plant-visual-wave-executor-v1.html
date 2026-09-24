@@ -1,0 +1,154 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CRUVIT Plant Visual Wave Executor v1</title>
+<pre id="out">starting…</pre>
+<script>
+(async () => {
+  const out = document.getElementById('out');
+  const params = new URLSearchParams(location.search);
+  const runId = String(params.get('runId') || '').trim();
+  const safeRunId = /^[A-Za-z0-9][A-Za-z0-9._-]{7,159}$/.test(runId) ? runId : '';
+  const render = (state) => { out.textContent = JSON.stringify(state, null, 2); };
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  const state = {
+    runId: safeRunId || null,
+    executorVersion: 'plant-visual-wave-executor-v1',
+    started: true,
+    attemptedHttp: 0,
+    generatedAtStart: 0,
+    completedThisSession: 0,
+    skippedExisting: 0,
+    stopped: false,
+    results: []
+  };
+  render(state);
+
+  if (!safeRunId) {
+    state.stopped = true;
+    state.stopReason = 'SAFE_RUN_ID_REQUIRED';
+    state.finished = true;
+    render(state);
+    return;
+  }
+
+  async function getStatus() {
+    const res = await fetch(
+      '/.netlify/functions/plant-visual-wave-status?runId=' + encodeURIComponent(safeRunId) + '&t=' + Date.now(),
+      { cache: 'no-store' }
+    );
+    const text = await res.text();
+    let data = null;
+    try { data = JSON.parse(text); } catch {}
+    return { res, text, data };
+  }
+
+  function statusRow(status, jobId) {
+    return status?.rows?.find((row) => row.jobId === jobId) || null;
+  }
+
+  try {
+    const manifestRes = await fetch(
+      '/data/garden-design/plant-visual-production-wave-execution-manifests/' + encodeURIComponent(safeRunId) + '.json?t=' + Date.now(),
+      { cache: 'no-store' }
+    );
+    if (!manifestRes.ok) throw new Error('manifest-load-' + manifestRes.status);
+    const manifest = await manifestRes.json();
+    if (manifest.runId !== safeRunId) throw new Error('manifest-run-id-mismatch');
+
+    let initial = await getStatus();
+    if (!initial.data?.ok) throw new Error('status-load-failed');
+    state.generatedAtStart = initial.data.generated || 0;
+    state.status = initial.data;
+    state.policy = manifest.executionPolicy || null;
+    render(state);
+
+    for (const job of manifest.jobs || []) {
+      const before = statusRow(state.status, job.jobId);
+      if (before && before.status !== 'PENDING') {
+        state.skippedExisting += 1;
+        state.results.push({
+          jobId: job.jobId,
+          action: 'SKIP_EXISTING_EVIDENCE',
+          status: before.status,
+          code: before.code || null
+        });
+        render(state);
+        continue;
+      }
+
+      state.attemptedHttp += 1;
+      state.currentJobId = job.jobId;
+      render(state);
+
+      let res = null;
+      let responseText = '';
+      let data = null;
+      try {
+        res = await fetch('/.netlify/functions/plant-visual-generate-wave-job', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ runId: safeRunId, jobId: job.jobId })
+        });
+        responseText = await res.text();
+        try { data = JSON.parse(responseText); } catch {}
+      } catch (err) {
+        responseText = String(err && err.message || err);
+      }
+
+      await sleep(1200);
+      let after = await getStatus();
+      if (!after.data?.ok) {
+        await sleep(1800);
+        after = await getStatus();
+      }
+      state.status = after.data || state.status;
+      const row = statusRow(state.status, job.jobId);
+
+      if (row && row.status !== 'PENDING') {
+        state.completedThisSession += row.generated === true ? 1 : 0;
+        state.results.push({
+          jobId: job.jobId,
+          action: 'STATUS_RECONCILED',
+          httpStatus: res?.status ?? null,
+          responseWasJson: Boolean(data),
+          status: row.status,
+          code: row.code || data?.code || null,
+          technicalQA: row.technicalQA || null,
+          framingQA: row.framingQA || null,
+          actualSpendUsd: row.actualSpendUsd ?? null
+        });
+        render(state);
+        continue;
+      }
+
+      state.results.push({
+        jobId: job.jobId,
+        action: data?.code === 'JOB_ALREADY_CLAIMED'
+          ? 'SKIP_UNCERTAIN_LOCK_NO_RETRY'
+          : 'CONTINUE_AFTER_TRANSPORT_TIMEOUT_NO_RETRY',
+        httpStatus: res?.status ?? null,
+        responseWasJson: Boolean(data),
+        code: data?.code || null,
+        responsePreview: responseText.slice(0, 160),
+        noRetryPolicyPreserved: true
+      });
+      state.skippedUncertain = (state.skippedUncertain || 0) + 1;
+      render(state);
+      await sleep(1500);
+    }
+
+    delete state.currentJobId;
+    const finalStatus = await getStatus();
+    state.status = finalStatus.data || state.status;
+    state.finished = true;
+    render(state);
+  } catch (err) {
+    state.stopped = true;
+    state.stopReason = 'EXECUTOR_EXCEPTION';
+    state.error = String(err && err.message || err);
+    state.finished = true;
+    render(state);
+  }
+})();
+</script>
