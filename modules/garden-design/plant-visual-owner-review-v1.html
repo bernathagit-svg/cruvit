@@ -51,4 +51,5 @@ pre{background:#0b0f0d;padding:12px;border-radius:10px;overflow:auto;margin-top:
  window.decide=(id,val)=>{local[id]=val;log.textContent=JSON.stringify(local,null,2)+'\n\nTell ChatGPT your final decision to record it explicitly.';};
  render();
 })().catch(err=>document.getElementById('log').textContent=String(err&&err.message||err));
+// deploy-refresh: wave3-owner-review-2026-09-24
 </script>
