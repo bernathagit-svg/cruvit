@@ -189,6 +189,20 @@ jobs:
       - name: Prove promotion dry-run is seven ready but not authorized
         run: node -e "const j=JSON.parse(require('fs').readFileSync('data/garden-design/plant-visual-promotion-readiness/wave1-owner-review-2026-09-22-v1.json','utf8')); if(j.readyJobs!==7||j.blockedJobs!==0||j.promotionAuthorized!==false||j.executionAllowed!==false||j.productionWrites!==0||j.registryWrites!==0) process.exit(1); console.log({ready:j.readyJobs,blocked:j.blockedJobs,promotionAuthorized:j.promotionAuthorized});"
 
+      - name: Dry-run Wave 2 promotion readiness
+        run: node scripts/plant-visual-promotion-readiness-v1.mjs --manifest=wave2-owner-review-2026-09-24-v1
+
+      - name: Prove Wave 2 has six ready, Lavender blocked, and no authorization
+        run: node -e "const j=JSON.parse(require('fs').readFileSync('data/garden-design/plant-visual-promotion-readiness/wave2-owner-review-2026-09-24-v1.json','utf8')); const blocked=j.evaluations.filter(x=>!x.ready); if(j.readyJobs!==6||j.blockedJobs!==1||blocked[0]?.canonicalSlug!=='lavender'||j.promotionAuthorized!==false||j.executionAllowed!==false||j.productionWrites!==0||j.registryWrites!==0) { console.error(j); process.exit(1); } console.log({ready:j.readyJobs,blocked:j.blockedJobs,blockedSlug:blocked[0].canonicalSlug,promotionAuthorized:j.promotionAuthorized});"
+
+      - name: Upload Wave 2 promotion readiness audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: plant-visual-wave2-promotion-readiness
+          path: data/garden-design/plant-visual-promotion-readiness/wave2-owner-review-2026-09-24-v1.json
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Test server-authoritative premium action gate
         run: node --test tests/garden-design-premium-actions-v1.test.mjs
 
