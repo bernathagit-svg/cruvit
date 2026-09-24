@@ -1,0 +1,33 @@
+{
+  "contract": "plant-visual-production-wave-spend-approval-v1",
+  "runId": "plant-visual-wave-002-residual-2026-09-24-v1",
+  "approved": true,
+  "approvedAt": "2026-09-24",
+  "approvalSource": "owner explicitly approved Residual Wave 2 up to USD 0.28, 3 calls, no retries",
+  "provider": "openai-images-api",
+  "model": "gpt-image-2",
+  "maxJobs": 3,
+  "maxCalls": 3,
+  "maxRetries": 0,
+  "maxSpendUsd": 0.28,
+  "jobIds": [
+    "lavender__mature__shrub__vegetative__v1",
+    "almond__young__tree__vegetative__v1",
+    "apple__young__tree__vegetative__v1"
+  ],
+  "allowedActions": [
+    "generate exact approved wave candidate jobs",
+    "write generated PNGs only to candidate R2",
+    "write generation and technical QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "carryForward": false,
+  "previousApprovalReuse": false,
+  "notes": [
+    "Approval applies only to plant-visual-wave-002-residual-2026-09-24-v1.",
+    "No retry calls are authorized.",
+    "No Production R2 promotion is authorized by this artifact.",
+    "No design asset registry mutation is authorized by this artifact."
+  ]
+}
