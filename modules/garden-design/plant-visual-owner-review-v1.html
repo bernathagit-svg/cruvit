@@ -1,0 +1,54 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CRUVIT · Plant Visual Owner Review</title>
+<style>
+body{font-family:Inter,system-ui,sans-serif;background:#0f1412;color:#eef5ef;margin:0;padding:24px}
+h1{font-size:24px;margin:0 0 8px} p{color:#aab8ae}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;margin-top:24px}
+.card{background:#17201b;border:1px solid #2b3a31;border-radius:16px;overflow:hidden}
+.card img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#0a0d0b}
+.body{padding:14px}.row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.badge{padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700;background:#6a5319;color:#fff1b8}
+.meta{font-size:12px;color:#aab8ae;margin:8px 0}.reason{font-size:13px;line-height:1.45;color:#d7e3da}
+.actions{display:flex;gap:8px;margin-top:12px}button{border:1px solid #3c4a40;background:#223029;color:#fff;padding:8px 10px;border-radius:9px;cursor:pointer}
+button.primary{background:#2e7d50}button.warn{background:#6b3030}
+pre{background:#0b0f0d;padding:12px;border-radius:10px;overflow:auto;margin-top:18px}
+</style>
+<h1>CRUVIT · Owner Visual Review</h1>
+<p id="subtitle">Loading…</p>
+<div class="grid" id="grid"></div>
+<pre id="log">loading…</pre>
+<script>
+(async()=>{
+ const p=new URLSearchParams(location.search);
+ const visionRunId=String(p.get('visionRunId')||'').trim();
+ const safe=/^[A-Za-z0-9][A-Za-z0-9._-]{7,159}$/.test(visionRunId)?visionRunId:'';
+ const grid=document.getElementById('grid'),log=document.getElementById('log'),subtitle=document.getElementById('subtitle');
+ if(!safe){log.textContent='SAFE_VISION_RUN_ID_REQUIRED';return;}
+ const planRes=await fetch('/data/garden-design/plant-visual-in-garden-vision-qa-plans/'+safe+'.json?t='+Date.now(),{cache:'no-store'});
+ if(!planRes.ok){log.textContent='PLAN_LOAD_'+planRes.status;return;}
+ const plan=await planRes.json();
+ const captureRunId=String(plan.sourceCaptureRunId||'');
+ const statusRes=await fetch('/.netlify/functions/plant-visual-in-garden-vision-qa-status?runId='+encodeURIComponent(safe)+'&t='+Date.now(),{cache:'no-store'});
+ const status=await statusRes.json();
+ const rows=Array.isArray(status.rows)?status.rows:[];
+ subtitle.textContent=rows.length+' in-garden captures · real saved Garden Design photo · production renderer · local decisions only';
+ const local={};
+ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ function imageUrl(id){return '/.netlify/functions/plant-visual-in-garden-current-capture-image?runId='+encodeURIComponent(captureRunId)+'&jobId='+encodeURIComponent(id)+'&t='+Date.now();}
+ function summary(row){
+   const checks=row.checks||{};
+   const parts=[];
+   for(const k of ['perspective','groundContact','stickerLook','halo','sharpnessMatch','colorTonalMatch','scaleRealism','silhouette']){
+     const v=checks[k]; if(v) parts.push(k+': '+v.verdict+(v.reason?' — '+v.reason:''));
+   }
+   return parts.join('\n');
+ }
+ function render(){
+   grid.innerHTML=rows.map(r=>'<div class="card"><img src="'+imageUrl(r.jobId)+'" alt="'+esc(r.canonicalSlug||r.jobId)+'"><div class="body"><div class="row"><strong>'+esc(r.canonicalSlug||r.jobId)+'</strong><span class="badge">'+esc(r.overall||'UNCERTAIN')+'</span></div><div class="meta">'+esc(r.jobId)+'</div><div class="reason" style="white-space:pre-line">'+esc(summary(r))+'</div><div class="actions"><button class="primary" onclick="decide(\''+r.jobId+'\',\'PASS\')">Owner PASS</button><button class="warn" onclick="decide(\''+r.jobId+'\',\'HOLD\')">HOLD</button></div></div></div>').join('');
+   log.textContent='Ready. Buttons are local only; no server write and no promotion.';
+ }
+ window.decide=(id,val)=>{local[id]=val;log.textContent=JSON.stringify(local,null,2)+'\n\nTell ChatGPT your final decision to record it explicitly.';};
+ render();
+})().catch(err=>document.getElementById('log').textContent=String(err&&err.message||err));
+</script>
