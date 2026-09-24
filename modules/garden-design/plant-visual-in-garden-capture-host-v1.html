@@ -1,0 +1,178 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CRUVIT In-Garden Capture Host v1</title>
+<style>
+  html,body{margin:0;background:#111;color:#eee;font:13px/1.4 ui-monospace,monospace}
+  #out{white-space:pre-wrap;padding:12px;max-height:30vh;overflow:auto}
+  iframe{width:100%;height:70vh;border:0;background:#fff}
+</style>
+<pre id="out">starting…</pre>
+<iframe id="gd" src="./index.html?gdQaPreview=1"></iframe>
+<script>
+(async () => {
+  const params = new URLSearchParams(location.search);
+  const SAFE_RUN_ID = String(params.get('runId') || '').trim();
+  const SAFE_RUN_ID = /^[A-Za-z0-9][A-Za-z0-9._-]{7,159}$/.test(SAFE_RUN_ID) ? SAFE_RUN_ID : '';
+  let MANIFEST_ID = '';
+  const SOURCE_ENDPOINT = 'https://saiuscqbszafszpdmzfl.supabase.co/functions/v1/cruvit-qa-garden-source-v1';
+  const out = document.getElementById('out');
+  const iframe = document.getElementById('gd');
+  const state = { runId:SAFE_RUN_ID || null, started:true, captured:0, failed:0, results:[] };
+  const render = () => out.textContent = JSON.stringify(state,null,2);
+  const sleep = ms => new Promise(r=>setTimeout(r,ms));
+  render();
+
+  function capability(){
+    const hashParams = new URLSearchParams(location.hash.replace(/^#/,''));
+    const queryParams = new URLSearchParams(location.search);
+    return String(hashParams.get('cap') || queryParams.get('cap') || '').trim();
+  }
+
+  function waitMessage(type, requestId, timeoutMs=12000){
+    return new Promise((resolve,reject)=>{
+      const timer=setTimeout(()=>{ cleanup(); reject(new Error(type+'_TIMEOUT')); },timeoutMs);
+      function onMessage(ev){
+        if(ev.source!==iframe.contentWindow) return;
+        const d=ev.data||{};
+        if(d.type!==type) return;
+        if(requestId && d.requestId!==requestId) return;
+        cleanup(); resolve(d);
+      }
+      function cleanup(){ clearTimeout(timer); window.removeEventListener('message',onMessage); }
+      window.addEventListener('message',onMessage);
+    });
+  }
+
+  async function waitIframe(){
+    if(iframe.contentDocument && iframe.contentDocument.readyState==='complete') return;
+    await new Promise(resolve=>iframe.addEventListener('load',resolve,{once:true}));
+  }
+
+  async function sourceBlobUrl(cap){
+    const res=await fetch(SOURCE_ENDPOINT+'?runId='+encodeURIComponent(SAFE_SAFE_RUN_ID),{
+      method:'GET',
+      headers:{authorization:'Bearer '+cap},
+      cache:'no-store'
+    });
+    if(!res.ok) throw new Error('SOURCE_FETCH_'+res.status+'_'+(await res.text()).slice(0,120));
+    return URL.createObjectURL(await res.blob());
+  }
+
+  async function candidateBlobUrl(jobId){
+    const url='/.netlify/functions/plant-visual-qa-candidate?manifest='
+      +encodeURIComponent(MANIFEST_ID)+'&job='+encodeURIComponent(jobId)+'&t='+Date.now();
+    const res=await fetch(url,{cache:'no-store'});
+    if(!res.ok) throw new Error('CANDIDATE_FETCH_'+res.status);
+    return URL.createObjectURL(await res.blob());
+  }
+
+  async function storeCapture(jobId, capResult){
+    const res=await fetch('/.netlify/functions/plant-visual-in-garden-capture-store',{
+      method:'POST',
+      headers:{'content-type':'application/json'},
+      body:JSON.stringify({
+        runId:SAFE_SAFE_RUN_ID,
+        jobId,
+        imageBase64:capResult.imageBase64,
+        geometry:capResult.geometry||null,
+        realSavedGardenPhotoUsed:true
+      })
+    });
+    const text=await res.text();
+    let data=null; try{data=JSON.parse(text);}catch{}
+    if(!res.ok||!data?.ok) throw new Error('CAPTURE_STORE_'+res.status+'_'+text.slice(0,160));
+    return data;
+  }
+
+  try {
+    if (!SAFE_SAFE_RUN_ID) throw new Error('SAFE_SAFE_RUN_ID_REQUIRED');
+    const cap=capability();
+    if(!cap) throw new Error('QA_CAPABILITY_FRAGMENT_REQUIRED');
+
+    const planRes=await fetch('/data/garden-design/plant-visual-in-garden-model-qa-plans/'+SAFE_SAFE_RUN_ID+'.json?t='+Date.now(),{cache:'no-store'});
+    if(!planRes.ok) throw new Error('PLAN_LOAD_'+planRes.status);
+    const plan=await planRes.json();
+    if (plan.runId !== SAFE_SAFE_RUN_ID) throw new Error('PLAN_SAFE_RUN_ID_MISMATCH');
+    MANIFEST_ID = String(plan.sourceManifestId || '').trim();
+    if (!MANIFEST_ID) throw new Error('SOURCE_MANIFEST_REQUIRED');
+
+    await waitIframe();
+    const sourceUrl=await sourceBlobUrl(cap);
+    state.sourceReady=true;
+    state.jobCount=plan.jobs.length;
+    render();
+
+    for(const job of plan.jobs){
+      state.currentJobId=job.jobId; render();
+      let candidateUrl=null;
+      try{
+        candidateUrl=await candidateBlobUrl(job.jobId);
+        const q=job.qaRendererInput||{};
+        iframe.contentWindow.postMessage({
+          type:'cruvit:garden-design-qa-preview',
+          sourceMediaUrl:sourceUrl,
+          imageUrl:candidateUrl,
+          label:job.canonicalSlug,
+          jobId:job.jobId,
+          canonicalSlug:job.canonicalSlug,
+          scientific:job.scientific,
+          visualForm:job.visualForm,
+          architectureMode:job.architectureMode,
+          growthStage:job.growthStage,
+          phenology:job.phenology,
+          baseWidthPx:q.baseWidthPx,
+          qaScaleBand:q.qaScaleBand,
+          qaMaxHeightPct:q.qaMaxHeightPct,
+          qaMaxWidthPct:q.qaMaxWidthPct,
+          qaScalePolicyVersion:q.qaScalePolicyVersion,
+          scale:q.scale,
+          x:q.x,
+          y:q.y,
+          rotation:q.rotation,
+          authorityUserResized:q.authorityUserResized===true
+        },location.origin);
+
+        await sleep(1400);
+        const requestId='cap_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+        const pending=waitMessage('cruvit:garden-design-qa-capture-result',requestId,15000);
+        iframe.contentWindow.postMessage({
+          type:'cruvit:garden-design-qa-capture-request',
+          requestId
+        },location.origin);
+        const captured=await pending;
+        if(!captured?.ok) throw new Error(captured?.code||'QA_CAPTURE_FAILED');
+        const stored=await storeCapture(job.jobId,captured);
+        state.captured++;
+        state.results.push({
+          jobId:job.jobId,
+          ok:true,
+          code:stored.code,
+          captureObjectKey:stored.evidence?.captureObjectKey||null,
+          sha256:stored.evidence?.sha256||null,
+          bytes:stored.evidence?.bytes||null,
+          geometry:stored.evidence?.geometry||null
+        });
+      }catch(err){
+        state.failed++;
+        state.results.push({jobId:job.jobId,ok:false,error:String(err?.message||err)});
+      }finally{
+        if(candidateUrl) URL.revokeObjectURL(candidateUrl);
+        render();
+        await sleep(350);
+      }
+    }
+
+    delete state.currentJobId;
+    const statusRes=await fetch('/.netlify/functions/plant-visual-in-garden-capture-status?runId='+encodeURIComponent(SAFE_RUN_ID)+'&t='+Date.now(),{cache:'no-store'});
+    state.status=await statusRes.json();
+    state.finished=true;
+    render();
+    URL.revokeObjectURL(sourceUrl);
+  }catch(err){
+    state.finished=true;
+    state.stopped=true;
+    state.error=String(err?.message||err);
+    render();
+  }
+})();
+</script>
