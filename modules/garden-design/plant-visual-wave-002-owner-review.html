@@ -1,0 +1,70 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CRUVIT · Wave 2 Owner Review</title>
+<style>
+body{font-family:Inter,system-ui,sans-serif;background:#0f1412;color:#eef5ef;margin:0;padding:24px}
+h1{font-size:24px;margin:0 0 8px}
+p{color:#aab8ae}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;margin-top:24px}
+.card{background:#17201b;border:1px solid #2b3a31;border-radius:16px;overflow:hidden}
+.card img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#0a0d0b}
+.body{padding:14px}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.badge{padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700}
+.pass{background:#1e5d39;color:#d9ffe8}
+.uncertain{background:#6a5319;color:#fff1b8}
+.hold{background:#6a2424;color:#ffd8d8}
+.meta{font-size:12px;color:#aab8ae;margin:8px 0}
+.reason{font-size:13px;line-height:1.45;color:#d7e3da}
+.actions{display:flex;gap:8px;margin-top:12px}
+button{border:1px solid #3c4a40;background:#223029;color:#fff;padding:8px 10px;border-radius:9px;cursor:pointer}
+button.primary{background:#2e7d50}
+button.warn{background:#6b3030}
+pre{background:#0b0f0d;padding:12px;border-radius:10px;overflow:auto}
+</style>
+<h1>CRUVIT · Wave 2 Owner Visual Review</h1>
+<p>6 in-garden captures · real saved Garden Design photo · production renderer · no Production/Registry writes.</p>
+<div id="summary"></div>
+<div class="grid" id="grid"></div>
+<pre id="log">loading…</pre>
+<script>
+const RUN='plant-visual-wave-002-in-garden-vision-qa-2026-09-24-v1';
+const rows=[
+  {jobId:'cypress__young__tree__vegetative__v1',slug:'cypress',overall:'UNCERTAIN',reason:'Model found no clear visual contradiction, but stayed conservative on integration and identity confidence.'},
+  {jobId:'olive__young__tree__vegetative__v1',slug:'olive',overall:'PASS',reason:'All 8 in-garden checks passed.'},
+  {jobId:'apricot__young__tree__vegetative__v1',slug:'apricot',overall:'PASS',reason:'All 8 in-garden checks passed.'},
+  {jobId:'avocado__young__tree__vegetative__v1',slug:'avocado',overall:'UNCERTAIN',reason:'No clear contradiction; model described perspective, ground contact, scale and silhouette as plausible.'},
+  {jobId:'almond__young__tree__vegetative__v1',slug:'almond',overall:'UNCERTAIN',reason:'No clear contradiction; model remained conservative despite plausible scale and integration.'},
+  {jobId:'apple__young__tree__vegetative__v1',slug:'apple',overall:'UNCERTAIN',reason:'No clear contradiction; model found plausible scale, ground contact and silhouette but did not auto-pass.'}
+];
+const log=document.getElementById('log');
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function imageUrl(jobId){return '/.netlify/functions/plant-visual-in-garden-capture-image?runId='+encodeURIComponent(RUN)+'&jobId='+encodeURIComponent(jobId);}
+function render(){
+  document.getElementById('summary').textContent='PASS: 2 · UNCERTAIN: 4 · FAIL: 0';
+  const grid=document.getElementById('grid');
+  grid.innerHTML=rows.map(r=>{
+    const cls=r.overall==='PASS'?'pass':'uncertain';
+    const actions=r.overall==='UNCERTAIN'
+      ? '<div class="actions"><button class="primary" onclick="decide(\''+r.jobId+'\',\'PASS_OWNER_VISUAL_GATES\')">Owner PASS</button><button class="warn" onclick="decide(\''+r.jobId+'\',\'HOLD_OWNER_REVIEW\')">HOLD</button></div>'
+      : '<div class="meta">Model visual PASS · still requires owner confirmation before promotion.</div>';
+    return '<div class="card"><img src="'+imageUrl(r.jobId)+'" alt="'+esc(r.slug)+'"><div class="body"><div class="row"><strong>'+esc(r.slug)+'</strong><span class="badge '+cls+'">'+r.overall+'</span></div><div class="meta">'+esc(r.jobId)+'</div><div class="reason">'+esc(r.reason)+'</div>'+actions+'</div></div>';
+  }).join('');
+  log.textContent='Ready for owner review. Decisions write owner-review evidence only; no Production promotion.';
+}
+async function decide(jobId,decision){
+  log.textContent='Recording '+decision+' for '+jobId+'…';
+  const res=await fetch('/.netlify/functions/plant-visual-owner-review-record',{
+    method:'POST',
+    headers:{'content-type':'application/json'},
+    body:JSON.stringify({
+      manifestId:'wave2-owner-review-2026-09-24-v1',
+      visionRunId:RUN,
+      jobId,decision
+    })
+  });
+  const text=await res.text();
+  log.textContent=text;
+}
+render();
+</script>
