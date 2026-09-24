@@ -52,9 +52,11 @@ export default async (req) => {
   }
 
   const visual=evaluateQaManifestPromotionReadiness(manifest);
-  const onboardingBySlug=new Map(onboarding.evaluations.map(x=>[String(x.canonicalSlug||'').toLowerCase(),x]));
-  const evaluations=visual.evaluations.map(v=>{
-    const o=onboardingBySlug.get(String(v.canonicalSlug||'').toLowerCase())||null;
+  const evaluations=visual.evaluations.map((v,index)=>{
+    // evaluateLiveFullPlantOnboarding preserves the exact manifest row order.
+    // Merge by index, not canonicalSlug, because one plant may have multiple
+    // growth-stage / phenology variants in the same manifest.
+    const o=onboarding.evaluations[index]||null;
     const ready=Boolean(v.ready && o?.ready===true);
     return {
       jobId:v.jobId,
