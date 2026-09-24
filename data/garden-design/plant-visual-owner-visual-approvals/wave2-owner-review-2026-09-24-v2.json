@@ -1,0 +1,38 @@
+{
+  "contract": "plant-visual-owner-visual-approval-v1",
+  "manifestId": "wave2-owner-review-2026-09-24-v1",
+  "approvedAt": "2026-09-24",
+  "approvalSource": "owner reviewed Ground Contact V3 captures and explicitly chose to continue to promotion readiness",
+  "supersedes": "data/garden-design/plant-visual-owner-visual-approvals/wave2-owner-review-2026-09-24-v1.json",
+  "ownerDecision": "PASS_OWNER_VISUAL_GATES",
+  "scope": {
+    "exactJobIds": [
+      "cypress__young__tree__vegetative__v1",
+      "olive__young__tree__vegetative__v1",
+      "apricot__young__tree__vegetative__v1",
+      "avocado__young__tree__vegetative__v1",
+      "almond__young__tree__vegetative__v1",
+      "apple__young__tree__vegetative__v1"
+    ],
+    "jobCount": 6
+  },
+  "visualAssessment": {
+    "plantIdentityFormSizeSilhouette": "PASS",
+    "groundContact": "PASS",
+    "groundContactVersion": "Ground Contact V3",
+    "assetBytesRequireChange": false
+  },
+  "heldJobs": [
+    {
+      "jobId": "lavender__mature__shrub__vegetative__v1",
+      "reason": "MODEL_QA_BOTANICAL_IDENTITY_FAIL"
+    }
+  ],
+  "promotionAuthorized": false,
+  "allowedNextActions": [
+    "run zero-write promotion readiness dry run for the six approved trees"
+  ],
+  "prohibitedNextActions": [
+    "promote assets to Production R2 without separate explicit owner authorization"
+  ]
+}
