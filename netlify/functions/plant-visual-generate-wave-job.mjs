@@ -160,8 +160,12 @@ function approvalAuthorizesManifest(approval, manifest) {
   if (!manifestJobs.every((jobId) => set.has(jobId))) return false;
 
   const actions = new Set(Array.isArray(approval.allowedActions) ? approval.allowedActions : []);
+  const generationActionAllowed =
+    actions.has('generate exact approved wave candidate jobs')
+    || actions.has('generate exact approved Wave 1 candidate jobs');
+  if (!generationActionAllowed) return false;
+
   const required = [
-    'generate exact approved Wave 1 candidate jobs',
     'write generated PNGs only to candidate R2',
     'write generation and technical QA evidence only to candidate R2'
   ];
