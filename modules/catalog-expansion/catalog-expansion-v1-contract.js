@@ -235,7 +235,16 @@ export function validateCatalogExpansionPacket(packet) {
         );
       }
       if (status === 'disputed') {
-        warnings.push(`claim ${c.claimId}: disputed — will force needsReview on materialization`);
+        {
+        const nonBlocking = Array.isArray(packet.flags?.nonBlockingDisputedFields)
+          && packet.flags.nonBlockingDisputedFields.includes(c.field)
+          && packet.flags?.reviewResolution?.globalCatalogReady === true;
+        warnings.push(
+          nonBlocking
+            ? `claim ${c.claimId}: disputed — retained as non-blocking reviewed limitation`
+            : `claim ${c.claimId}: disputed — will force needsReview on materialization`
+        );
+      }
       }
       if (
         ['frostSensitivity', 'heatTolerance', 'coldTolerance'].includes(c.field) &&
@@ -377,11 +386,25 @@ export function materializePlantCatalogItemFromPacket(packet, options = {}) {
       continue;
     }
     if (status === 'needsReview' || status === 'disputed') {
-      needsReviewFields.push(c.field);
-      forceNeedsReview = true;
+      const nonBlockingDisputedFields = new Set(
+        Array.isArray(packet.flags?.nonBlockingDisputedFields)
+          ? packet.flags.nonBlockingDisputedFields.map((x) => String(x))
+          : []
+      );
+      const resolvedNonBlocking =
+        status === 'disputed'
+        && nonBlockingDisputedFields.has(String(c.field || ''))
+        && packet.flags?.reviewResolution?.globalCatalogReady === true;
+
+      if (!resolvedNonBlocking) {
+        needsReviewFields.push(c.field);
+        forceNeedsReview = true;
+      }
+
       if (c.value !== undefined && c.value !== null && c.value !== '') {
-        // Keep disputed/needsReview values only when explicitly provided for audit;
-        // still mark review so outcomes cannot become confident positives.
+        // Keep disputed/needsReview values only when explicitly provided for audit.
+        // A documented non-blocking disputed field remains visible but does not
+        // silently become an asserted fact.
         if (TRAIT_FIELDS.has(c.field)) climateTraits[c.field] = c.value;
         else if (CLAIM_FIELDS.includes(c.field)) {
           /* applied below via care paths when asserted-like value present */
@@ -395,10 +418,20 @@ export function materializePlantCatalogItemFromPacket(packet, options = {}) {
     }
   }
 
-  // Always mark climateTraits needsReview when any claim is disputed/needsReview
-  // or when packet.flags.forceClimateNeedsReview is set.
+  // Mark climateTraits needsReview for unresolved disputed/needsReview claims or
+  // an explicit force flag. A reviewResolution may close only explicitly named
+  // non-blocking disputes; it never turns them into asserted facts.
   if (packet.flags?.forceClimateNeedsReview === true) forceNeedsReview = true;
   climateTraits.needsReview = forceNeedsReview || climateTraits.needsReview === true;
+
+  if (packet.flags?.reviewResolution && typeof packet.flags.reviewResolution === 'object') {
+    climateTraits.reviewResolution = {
+      ...packet.flags.reviewResolution,
+      nonBlockingDisputedFields: Array.isArray(packet.flags?.nonBlockingDisputedFields)
+        ? [...packet.flags.nonBlockingDisputedFields]
+        : []
+    };
+  }
 
   const { quantitativeEvidence, quantitativeProvenance } =
     materializeQuantitativeEvidenceFromClaims(packet.claims);
