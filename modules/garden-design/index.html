@@ -2797,6 +2797,10 @@ function gdApplyQaPreview(msg) {
     visualForm: msg.visualForm || null,
     qaPreviewImageUrl: String(msg.imageUrl),
     qaBaseWidthPx: Number(msg.baseWidthPx || 0) || null,
+    qaScaleBand: msg.qaScaleBand || null,
+    qaMaxHeightPct: Number(msg.qaMaxHeightPct || 0) || null,
+    qaMaxWidthPct: Number(msg.qaMaxWidthPct || 0) || null,
+    qaScalePolicyVersion: msg.qaScalePolicyVersion || null,
     qaWidth: Number(msg.width || 0) || null,
     qaHeight: Number(msg.height || 0) || null,
     authorityUserResized: msg.authorityUserResized === true,
@@ -3014,7 +3018,11 @@ async function gdCaptureQaPreviewPng(targetLayerId) {
         },
         layer: {
           x: layer.x, y: layer.y, scale: layer.scale, rotation: layer.rotation,
-          qaBaseWidthPx: layer.qaBaseWidthPx || null
+          qaBaseWidthPx: layer.qaBaseWidthPx || null,
+          qaEffectiveBaseWidthPx: layer.qaEffectiveBaseWidthPx || null,
+          qaScaleBand: layer.qaScaleBand || null,
+          qaMaxHeightPct: layer.qaMaxHeightPct || null,
+          qaEffectiveMaxHeightPct: layer.qaEffectiveMaxHeightPct || null
         }
       },
       rendererOwner: 'Garden Design production renderer',
@@ -3846,8 +3854,36 @@ function gdBuildPlantLayerInnerHtml(layer) {
     const qaAspect = Number(layer.qaHeight) > 0 && Number(layer.qaWidth) > 0
       ? Number(layer.qaHeight) / Number(layer.qaWidth)
       : 1.5;
-    const qaWrapH = Math.round(Number(layer.qaBaseWidthPx) * qaAspect);
-    wrapStyle = ' style="width:' + Number(layer.qaBaseWidthPx) + 'px;height:' + qaWrapH + 'px"';
+    const qaWrap = document.getElementById('imgAfterWrap');
+    const qaBase = document.getElementById('imgAfter');
+    const qaSceneH = Number((qaWrap && qaWrap.clientHeight) || (qaBase && qaBase.clientHeight) || 0);
+    const qaSceneW = Number((qaWrap && qaWrap.clientWidth) || (qaBase && qaBase.clientWidth) || 0);
+    const qaScale = Math.max(0.01, Number(layer.scale || 1));
+    let qaEffectiveWidth = Number(layer.qaBaseWidthPx);
+
+    // In-Garden QA scale policy is a visual-review bound, not botanical meter truth.
+    // It must never permit the candidate to crop outside the real scene.
+    const configuredMaxHeightPct = Number(layer.qaMaxHeightPct || 0);
+    const configuredMaxWidthPct = Number(layer.qaMaxWidthPct || 0);
+    const groundLimitedHeightPct = Math.max(10, Math.min(96, Number(layer.y || 0.86) * 100 - 4));
+    const effectiveMaxHeightPct = configuredMaxHeightPct > 0
+      ? Math.min(configuredMaxHeightPct, groundLimitedHeightPct)
+      : groundLimitedHeightPct;
+
+    if (qaSceneH > 0 && qaAspect > 0) {
+      const heightBoundWidth = (qaSceneH * (effectiveMaxHeightPct / 100)) / (qaAspect * qaScale);
+      qaEffectiveWidth = Math.min(qaEffectiveWidth, heightBoundWidth);
+    }
+    if (qaSceneW > 0 && configuredMaxWidthPct > 0) {
+      const widthBound = (qaSceneW * (configuredMaxWidthPct / 100)) / qaScale;
+      qaEffectiveWidth = Math.min(qaEffectiveWidth, widthBound);
+    }
+
+    qaEffectiveWidth = Math.max(1, Math.round(qaEffectiveWidth));
+    layer.qaEffectiveBaseWidthPx = qaEffectiveWidth;
+    layer.qaEffectiveMaxHeightPct = effectiveMaxHeightPct;
+    const qaWrapH = Math.round(qaEffectiveWidth * qaAspect);
+    wrapStyle = ' style="width:' + qaEffectiveWidth + 'px;height:' + qaWrapH + 'px"';
     wrapClass += ' gd-plant-sprite-wrap--asset';
   } else if (resolved && resolved.baseWidthPx && resolved.urlCandidates && resolved.urlCandidates.length && resolved.visualReady) {
     const entry = resolved.assetKey && gdPlantAssetsManifest && gdPlantAssetsManifest.plants[resolved.assetKey];
