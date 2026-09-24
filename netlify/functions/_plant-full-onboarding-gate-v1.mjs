@@ -8,7 +8,7 @@ function eq(value) {
   return encodeURIComponent(String(value));
 }
 
-async function fetchCatalogRow(slug) {
+export async function fetchCanonicalCatalogRow(slug) {
   const base = String(env('SUPABASE_URL') || '').replace(/\/$/, '');
   const anon = String(env('SUPABASE_ANON_KEY') || '');
   if (!base || !anon) throw new Error('SUPABASE_CATALOG_CONFIG_MISSING');
@@ -45,7 +45,7 @@ export async function evaluateLiveFullPlantOnboarding(expectedRows = []) {
   )];
   const rows = [];
   for (const slug of uniqueSlugs) {
-    rows.push(await fetchCatalogRow(slug));
+    rows.push(await fetchCanonicalCatalogRow(slug));
   }
   return evaluateFullPlantOnboardingBatch(rows.filter(Boolean), expectedRows);
 }
