@@ -1,0 +1,32 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CRUVIT · Wave 2 Ground Contact Review</title>
+<style>
+body{font-family:Inter,system-ui,sans-serif;background:#0f1412;color:#eef5ef;margin:0;padding:24px}
+h1{font-size:24px;margin:0 0 8px}
+p{color:#aab8ae}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;margin-top:24px}
+.card{background:#17201b;border:1px solid #2b3a31;border-radius:16px;overflow:hidden}
+.card img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#0a0d0b}
+.body{padding:14px}
+.meta{font-size:12px;color:#aab8ae;margin-top:6px}
+strong{font-size:15px}
+.note{background:#15241b;border:1px solid #2a4734;padding:12px 14px;border-radius:12px;margin-top:14px;color:#d7e3da}
+</style>
+<h1>CRUVIT · Wave 2 Ground Contact V1 Review</h1>
+<p>6 young trees · post-fix captures · real saved Garden Design photo · production renderer · no AI.</p>
+<div class="note">בדקי בעיקר את בסיס הגזע: האם הוא מרגיש נטוע בקרקע ולא “מונח” עליה.</div>
+<div class="grid" id="grid"></div>
+<script>
+const RUN='plant-visual-wave-002-in-garden-qa-2026-09-24-v1';
+const rows=[
+ ['Cypress','cypress__young__tree__vegetative__v1'],
+ ['Olive','olive__young__tree__vegetative__v1'],
+ ['Apricot','apricot__young__tree__vegetative__v1'],
+ ['Avocado','avocado__young__tree__vegetative__v1'],
+ ['Almond','almond__young__tree__vegetative__v1'],
+ ['Apple','apple__young__tree__vegetative__v1']
+];
+function url(jobId){return '/.netlify/functions/plant-visual-in-garden-current-capture-image?runId='+encodeURIComponent(RUN)+'&jobId='+encodeURIComponent(jobId)+'&t='+Date.now();}
+document.getElementById('grid').innerHTML=rows.map(([name,id])=>'<div class="card"><img src="'+url(id)+'" alt="'+name+'"><div class="body"><strong>'+name+'</strong><div class="meta">'+id+'</div></div></div>').join('');
+</script>
