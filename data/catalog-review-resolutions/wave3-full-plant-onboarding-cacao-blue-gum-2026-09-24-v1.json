@@ -1,0 +1,50 @@
+{
+  "contract": "catalog-review-resolution-v1",
+  "reviewId": "wave3-full-plant-onboarding-cacao-blue-gum-2026-09-24-v1",
+  "reviewedAt": "2026-09-24",
+  "purpose": "Close Full Plant Onboarding blockers discovered during Wave 3 without weakening regional or disputed-field safeguards.",
+  "decisions": [
+    {
+      "canonicalSlug": "cacao",
+      "acceptedScientificName": "Theobroma cacao",
+      "decision": "GLOBAL_CATALOG_READY_WITH_EXPLICIT_LIMITATIONS",
+      "canonicalCatalogAction": "UPSERT_VERIFIED",
+      "sourcePacket": "cacao-theobroma-cacao-v1",
+      "resolvedBlockingCause": "Canonical catalog row was missing.",
+      "nonBlockingDisputedFields": [
+        "coldDamageThresholdC",
+        "taxonomy.family"
+      ],
+      "preservedLimitations": [
+        "Do not collapse conflicting cold-damage thresholds into one numeric threshold.",
+        "Do not silently choose a taxonomy family from conflicting packet sources."
+      ],
+      "coreClimateReady": true,
+      "floweringRequirementsReady": true,
+      "fruitingRequirementsReady": true,
+      "plantKnowledgeReady": true
+    },
+    {
+      "canonicalSlug": "blue-gum",
+      "acceptedScientificName": "Eucalyptus globulus",
+      "decision": "GLOBAL_CATALOG_READY_WITH_REGIONAL_GUARDRAILS",
+      "canonicalCatalogAction": "MARK_VERIFIED_PRESERVE_REGION_WARNINGS",
+      "sourcePacket": "blue-gum-bulk-batch-1-v1",
+      "resolvedBlockingCause": "Global needsReview was being used for a location-specific invasive/regional restriction issue.",
+      "regionalRestrictionReviewRequired": true,
+      "preservedGuardrails": [
+        "Region-scoped invasive/weed warning remains active.",
+        "Regional restrictions remain in plantKnowledge.",
+        "User-location evaluation remains required before recommendation/landscape suitability."
+      ],
+      "coreClimateReady": true,
+      "plantKnowledgeReady": true
+    }
+  ],
+  "productionAssetPolicy": {
+    "fullPlantOnboardingGateVersion": "full-plant-onboarding-gate-v1",
+    "promotionFailClosed": true,
+    "regionalWarningsDoNotDisappearWhenGlobalCatalogReady": true,
+    "disputedNonBlockingFieldsRemainDisputed": true
+  }
+}
