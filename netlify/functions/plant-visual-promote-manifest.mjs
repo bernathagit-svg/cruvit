@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import { evaluateLiveFullPlantOnboarding } from './_plant-full-onboarding-gate-v1.mjs';
 import {
   S3Client,
   GetObjectCommand,
@@ -284,6 +285,40 @@ export default async (req) => {
   const rows = manifest.rows || [];
   if (!rows.length) return json(422, { ok: false, code: 'QA_MANIFEST_EMPTY' });
 
+  let onboarding;
+  try {
+    onboarding = await evaluateLiveFullPlantOnboarding(
+      rows.map((row) => ({
+        canonicalSlug: row.canonicalSlug,
+        scientific: row.scientific || null,
+        phenology: row.phenology || 'vegetative'
+      }))
+    );
+  } catch (err) {
+    return json(503, {
+      ok: false,
+      code: 'FULL_PLANT_ONBOARDING_CHECK_UNAVAILABLE',
+      manifestId,
+      productionWrites: 0,
+      registryWrites: 0,
+      errorName: err?.message || null
+    });
+  }
+
+  if (!onboarding.allReady) {
+    return json(409, {
+      ok: false,
+      code: 'FULL_PLANT_ONBOARDING_REQUIRED',
+      manifestId,
+      productionWrites: 0,
+      registryWrites: 0,
+      onboardingVersion: onboarding.version,
+      readyPlants: onboarding.ready,
+      blockedPlants: onboarding.blocked,
+      evaluations: onboarding.evaluations
+    });
+  }
+
   const client = s3Client();
   const results = [];
   for (const row of rows) {
@@ -309,6 +344,12 @@ export default async (req) => {
     productionWrites: results.filter((row) => row.wrote === true).length,
     registryWrites: 0,
     authorization: artifactAuthorized ? 'OWNER_APPROVAL_ARTIFACT' : 'NONCE',
+    fullPlantOnboarding: {
+      version: onboarding.version,
+      allReady: onboarding.allReady,
+      ready: onboarding.ready,
+      blocked: onboarding.blocked
+    },
     results
   });
 };
