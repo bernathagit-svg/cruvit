@@ -1,0 +1,48 @@
+{
+  "contract": "plant-visual-owner-visual-approval-v1",
+  "manifestId": "wave3-owner-review-2026-09-24-v1",
+  "approvedAt": "2026-09-24",
+  "approvalSource": "owner explicitly approved Owner PASS for all five Wave 3 owner-review assets",
+  "ownerDecision": "PASS_OWNER_VISUAL_GATES",
+  "scope": {
+    "exactJobIds": [
+      "breadfruit__young__tree__vegetative__v1",
+      "cacao__mature__tree__fruiting__v1",
+      "cacao__mature__tree__vegetative__v1",
+      "cacao__young__tree__vegetative__v1",
+      "carob__mature__tree__vegetative__v1"
+    ],
+    "jobCount": 5
+  },
+  "heldJobs": [
+    {
+      "jobId": "blue-gum__mature__tree__vegetative__v1",
+      "reason": "FRAMING_QA_FAIL"
+    },
+    {
+      "jobId": "blue-gum__young__tree__vegetative__v1",
+      "reason": "FRAMING_QA_FAIL"
+    },
+    {
+      "jobId": "carob__young__tree__vegetative__v1",
+      "reason": "MODEL_QA_INVALID_JSON"
+    }
+  ],
+  "visualAssessment": {
+    "ownerReviewedProductionRendererCaptures": true,
+    "groundContact": "PASS",
+    "groundContactVersion": "Ground Contact V3",
+    "assetBytesChanged": false
+  },
+  "fullPlantOnboarding": {
+    "gateVersion": "full-plant-onboarding-gate-v1",
+    "allWave3PlantFamiliesReady": true
+  },
+  "promotionAuthorized": false,
+  "allowedNextActions": [
+    "run zero-write live promotion readiness"
+  ],
+  "prohibitedNextActions": [
+    "promote assets to Production R2 without separate explicit owner authorization"
+  ]
+}
