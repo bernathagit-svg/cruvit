@@ -1,0 +1,74 @@
+name: Owner Approved Plant Visual Execution 2026-09-25
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/plant-visual-owner-approved-execution-2026-09-25.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  execute-approved-plant-visual-actions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BASE_URL: https://friendly-taiyaki-64aacb.netlify.app
+      PROMOTION_MANIFEST: wave3-production-promotion-2026-09-24-v1
+      CAROB_RUN_ID: plant-visual-wave-003-carob-young-model-qa-repair-2026-09-25-v1
+      VARIANT_RUN_ID: plant-visual-variant-completion-wave-001-2026-09-25-v1
+    steps:
+      - name: Promote five Wave 3 assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error \
+            -X POST "$BASE_URL/.netlify/functions/plant-visual-promote-manifest" \
+            -H 'content-type: application/json' \
+            --data "{\"manifestId\":\"$PROMOTION_MANIFEST\"}" \
+            | tee execution-results/01-wave3-promotion.json
+
+      - name: Repair Carob young Model QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error \
+            -X POST "$BASE_URL/.netlify/functions/plant-visual-model-qa-job" \
+            -H 'content-type: application/json' \
+            --data "{\"runId\":\"$CAROB_RUN_ID\",\"jobId\":\"carob__young__tree__vegetative__v1\"}" \
+            | tee execution-results/02-carob-young-model-qa-repair.json
+
+      - name: Generate Variant Completion Wave 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          jobs=(
+            apple__mature__tree__vegetative__v1
+            apple__mature__tree__fruiting__v1
+            apple__mature__tree__dormant__v1
+            apricot__mature__tree__vegetative__v1
+            apricot__mature__tree__fruiting__v1
+            apricot__mature__tree__dormant__v1
+            breadfruit__mature__tree__vegetative__v1
+            breadfruit__mature__tree__fruiting__v1
+          )
+          i=0
+          for job in "${jobs[@]}"; do
+            i=$((i+1))
+            curl --fail-with-body --silent --show-error \
+              -X POST "$BASE_URL/.netlify/functions/plant-visual-generate-wave-job" \
+              -H 'content-type: application/json' \
+              --data "{\"runId\":\"$VARIANT_RUN_ID\",\"jobId\":\"$job\"}" \
+              | tee "execution-results/variant-${i}-${job}.json"
+          done
+
+      - name: Upload execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: owner-approved-plant-visual-execution-2026-09-25
+          path: execution-results/
+          if-no-files-found: warn
+          retention-days: 30
