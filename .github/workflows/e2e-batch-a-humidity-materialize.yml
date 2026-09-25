@@ -1,0 +1,26 @@
+name: E2E Batch A Humidity Materialize
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/e2e-batch-a-humidity-materialize.yml'
+permissions:
+  contents: write
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/e2e-batch-a-humidity-materialize-v1.mjs
+      - run: |
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add data/catalog/end-to-end-batch-a/humidity-materialization-2026-09-25-v1.json
+          git commit -m "catalog: record Batch A humidity materialization proof"
+          git push origin HEAD:main
