@@ -1,0 +1,35 @@
+name: Materialize Batch A Promotion Manifest
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/materialize-batch-a-promotion-manifest.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Build promotion manifest
+        run: |
+          set -euo pipefail
+          mkdir -p data/garden-design/plant-visual-qa-manifests
+          curl --fail-with-body --silent --show-error             "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/cruvit-e2e-batch-a-promotion-manifest-builder"             -o data/garden-design/plant-visual-qa-manifests/cruvit-e2e-batch-a-production-promotion-2026-09-25-v1.json
+          test "$(jq -r '.contract' data/garden-design/plant-visual-qa-manifests/cruvit-e2e-batch-a-production-promotion-2026-09-25-v1.json)" = "plant-visual-qa-manifest-v1"
+          test "$(jq -r '.totalJobs' data/garden-design/plant-visual-qa-manifests/cruvit-e2e-batch-a-production-promotion-2026-09-25-v1.json)" = "12"
+          test "$(jq -r '.ownerApprovedJobs' data/garden-design/plant-visual-qa-manifests/cruvit-e2e-batch-a-production-promotion-2026-09-25-v1.json)" = "12"
+          test "$(jq -r '.heldJobs' data/garden-design/plant-visual-qa-manifests/cruvit-e2e-batch-a-production-promotion-2026-09-25-v1.json)" = "0"
+      - name: Commit manifest
+        run: |
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add data/garden-design/plant-visual-qa-manifests/cruvit-e2e-batch-a-production-promotion-2026-09-25-v1.json
+          git commit -m "garden-design: materialize Batch A production promotion manifest"
+          git push origin HEAD:main
