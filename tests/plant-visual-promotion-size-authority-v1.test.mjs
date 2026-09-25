@@ -41,11 +41,22 @@ test('declared READY and PARTIAL size authority may proceed to normal promotion 
   }
 });
 
-test('evidence gap, conflict, context-required and not-evaluated block promotion',()=>{
+test('context-required may promote visual bytes only when placement scale remains explicitly held',()=>{
+  const held=row('SIZE_AUTHORITY_CONTEXT_REQUIRED');
+  held.sizeAuthorityPlan.placementScaleHold=true;
+  held.sizeAuthorityPlan.reasonCodes=['CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED'];
+  const result=evaluateManifestRowPromotionReadiness(held);
+  assert.notEqual(result.code,'SIZE_AUTHORITY_PROMOTION_BLOCKED');
+  assert.equal(result.sizeAuthority.ok,true);
+  assert.equal(result.sizeAuthority.placementScaleHold,true);
+  assert.equal(result.registryVariant.sizeAuthority.meterAccuratePlacementReady,false);
+});
+
+test('context-required without placement hold, evidence gap, conflict and not-evaluated still block promotion',()=>{
   for(const state of [
+    'SIZE_AUTHORITY_CONTEXT_REQUIRED',
     'SIZE_AUTHORITY_EVIDENCE_GAP',
     'SIZE_AUTHORITY_CONFLICT_HOLD',
-    'SIZE_AUTHORITY_CONTEXT_REQUIRED',
     'SIZE_AUTHORITY_NOT_EVALUATED'
   ]){
     const result=evaluateManifestRowPromotionReadiness(row(state));
