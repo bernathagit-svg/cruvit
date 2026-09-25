@@ -1,0 +1,56 @@
+{
+  "contract": "plant-visual-model-qa-plan-v1",
+  "runId": "cruvit-e2e-batch-b-lavender-vegetative-model-qa-repair-2026-09-25-v1",
+  "sourceManifestId": "cruvit-e2e-batch-b-lavender-vegetative-repair-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "provider": "openai-responses-api",
+  "model": "gpt-5.6-luna",
+  "reasoningEffort": "low",
+  "purpose": "candidate-pixel-botanical-state-qa",
+  "jobCount": 1,
+  "jobs": [
+    {
+      "jobId": "english-lavender__mature__shrub__vegetative__v1",
+      "canonicalSlug": "english-lavender",
+      "scientific": "Lavandula angustifolia",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "objectKey": "candidates/cruvit-e2e-batch-b-lavender-vegetative-repair-2026-09-25-v1/english-lavender/english-lavender__mature__shrub__vegetative__v1__3101619f62b85a521d005fc526165709ad81a9a750ce1cc6ae0db27d8360ea47.png",
+      "sha256": "3101619f62b85a521d005fc526165709ad81a9a750ce1cc6ae0db27d8360ea47",
+      "bytes": 2553439
+    }
+  ],
+  "requiredChecks": [
+    "botanicalIdentity",
+    "architecture",
+    "growthStage",
+    "phenologyState"
+  ],
+  "outputPolicy": {
+    "allowedVerdicts": [
+      "PASS",
+      "FAIL",
+      "UNCERTAIN"
+    ],
+    "lowConfidenceNeverAutoPass": true,
+    "uncertainRoutesToOwnerReview": true,
+    "failRoutesToHold": true
+  },
+  "executionPolicy": {
+    "ownerSpendApprovalRequired": true,
+    "maxCalls": 1,
+    "maxRetries": 0,
+    "candidateR2EvidenceOnly": true,
+    "productionWritesAllowed": false,
+    "registryWritesAllowed": false
+  },
+  "safety": {
+    "sourceImageMustMatchManifestSha": true,
+    "noGeneration": true,
+    "noImageMutation": true,
+    "noProductionPromotion": true,
+    "noRegistryMutation": true
+  }
+}
