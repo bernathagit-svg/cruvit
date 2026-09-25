@@ -1,0 +1,121 @@
+name: Activate Wave 3 Production Registry 2026-09-25
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/plant-visual-wave3-registry-activation-2026-09-25.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  activate-registry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Activate verified Wave 3 promotion results in registry
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import { activateVerifiedPromotionResults } from './modules/garden-design/asset-factory-v1/plant-visual-registry-activation-v1.js';
+
+          const registryPath = './modules/garden-design/assets/plants/design-asset-registry-v1.json';
+          const manifestPath = './data/garden-design/plant-visual-qa-manifests/wave3-production-promotion-2026-09-24-v1.json';
+
+          const registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+          const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+
+          const promotionResult = {
+            manifestId: 'wave3-production-promotion-2026-09-24-v1',
+            results: [
+              {
+                jobId:'breadfruit__young__tree__vegetative__v1',
+                ok:true,
+                code:'PROMOTED_AND_VERIFIED',
+                productionKey:'production/breadfruit/young__tree__vegetative/breadfruit__young__tree__vegetative__v1__a6f34c7cef12__a6f34c7cef12c9d26fed9ed8863639da93432eff14da0a236f72c0674f79624a.png',
+                sha256:'a6f34c7cef12c9d26fed9ed8863639da93432eff14da0a236f72c0674f79624a',
+                bytes:2013194
+              },
+              {
+                jobId:'cacao__mature__tree__fruiting__v1',
+                ok:true,
+                code:'PROMOTED_AND_VERIFIED',
+                productionKey:'production/cacao/mature__tree__fruiting/cacao__mature__tree__fruiting__v1__8ac383ad52da__8ac383ad52dac62440b0ca57eebd1a7dfabe52654a871d34626d6ebc0878bddb.png',
+                sha256:'8ac383ad52dac62440b0ca57eebd1a7dfabe52654a871d34626d6ebc0878bddb',
+                bytes:2595957
+              },
+              {
+                jobId:'cacao__mature__tree__vegetative__v1',
+                ok:true,
+                code:'PROMOTED_AND_VERIFIED',
+                productionKey:'production/cacao/mature__tree__vegetative/cacao__mature__tree__vegetative__v1__89d6e0346849__89d6e03468491dc8b0232fa87f90992b39a8220db9771da08d0b8e45f2523025.png',
+                sha256:'89d6e03468491dc8b0232fa87f90992b39a8220db9771da08d0b8e45f2523025',
+                bytes:2568115
+              },
+              {
+                jobId:'cacao__young__tree__vegetative__v1',
+                ok:true,
+                code:'PROMOTED_AND_VERIFIED',
+                productionKey:'production/cacao/young__tree__vegetative/cacao__young__tree__vegetative__v1__cec9927c0369__cec9927c0369cd68440b23bc6a22d95c3485e9337cfa6479c172bd53e5b7d716.png',
+                sha256:'cec9927c0369cd68440b23bc6a22d95c3485e9337cfa6479c172bd53e5b7d716',
+                bytes:2056177
+              },
+              {
+                jobId:'carob__mature__tree__vegetative__v1',
+                ok:true,
+                code:'PROMOTED_AND_VERIFIED',
+                productionKey:'production/carob/mature__tree__vegetative/carob__mature__tree__vegetative__v1__ebbd3eb6d9ca__ebbd3eb6d9caad6c51d3b52d1a29b914847b1d2666daaca70de830d0598f22e3.png',
+                sha256:'ebbd3eb6d9caad6c51d3b52d1a29b914847b1d2666daaca70de830d0598f22e3',
+                bytes:2722035
+              }
+            ]
+          };
+
+          const activation = activateVerifiedPromotionResults(registry, manifest, promotionResult);
+          if (activation.skippedJobs !== 0 || activation.activatedJobs !== 5) {
+            console.error(JSON.stringify(activation, null, 2));
+            process.exit(1);
+          }
+
+          fs.writeFileSync(registryPath, JSON.stringify(activation.registry, null, 2) + '\n');
+          fs.mkdirSync('./data/garden-design/plant-visual-registry-activation-results', { recursive: true });
+          fs.writeFileSync(
+            './data/garden-design/plant-visual-registry-activation-results/wave3-production-promotion-2026-09-24-v1.json',
+            JSON.stringify({
+              version: activation.version,
+              manifestId: activation.manifestId,
+              activatedJobs: activation.activatedJobs,
+              skippedJobs: activation.skippedJobs,
+              activated: activation.activated,
+              networkCalls: activation.networkCalls,
+              r2Writes: activation.r2Writes,
+              activatedAt: '2026-09-25'
+            }, null, 2) + '\n'
+          );
+          console.log(JSON.stringify({
+            activatedJobs:activation.activatedJobs,
+            skippedJobs:activation.skippedJobs,
+            activated:activation.activated
+          }, null, 2));
+          NODE
+
+      - name: Commit registry activation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add modules/garden-design/assets/plants/design-asset-registry-v1.json data/garden-design/plant-visual-registry-activation-results/wave3-production-promotion-2026-09-24-v1.json
+          if git diff --cached --quiet; then
+            echo "No registry changes required"
+            exit 0
+          fi
+          git commit -m "garden-design: activate five Wave 3 production assets"
+          git push origin HEAD:main
