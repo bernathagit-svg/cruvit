@@ -1,0 +1,90 @@
+{
+  "contract": "plant-visual-owner-review-routing-v1",
+  "reviewId": "cruvit-e2e-batch-a-citrus-owner-review-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "sourceRunId": "cruvit-e2e-batch-a-citrus-model-qa-2026-09-25-v1",
+  "batchId": "cruvit-e2e-batch-a-2026-09-25-v1",
+  "reason": "CITRUS_SPECIES_LEVEL_PIXEL_DISCRIMINATION_UNCERTAIN",
+  "jobCount": 6,
+  "jobs": [
+    {
+      "jobId": "grapefruit__mature__tree__vegetative__v1",
+      "canonicalSlug": "grapefruit",
+      "scientific": "Citrus × paradisi",
+      "ownerQuestion": "Does this candidate look like a credible mature vegetative grapefruit tree rather than a generic/incorrect non-citrus tree?",
+      "modelQaSummary": {
+        "identity": "UNCERTAIN",
+        "architecture": "PASS",
+        "growthStage": "PASS",
+        "phenology": "PASS"
+      }
+    },
+    {
+      "jobId": "grapefruit__young__tree__vegetative__v1",
+      "canonicalSlug": "grapefruit",
+      "scientific": "Citrus × paradisi",
+      "ownerQuestion": "Does this candidate look like a credible young vegetative grapefruit tree?",
+      "modelQaSummary": {
+        "identity": "UNCERTAIN",
+        "architecture": "PASS",
+        "growthStage": "UNCERTAIN",
+        "phenology": "PASS"
+      }
+    },
+    {
+      "jobId": "grapefruit__mature__tree__fruiting__v1",
+      "canonicalSlug": "grapefruit",
+      "scientific": "Citrus × paradisi",
+      "ownerQuestion": "Does this candidate look like a credible mature fruiting grapefruit tree with believable grapefruit fruiting?",
+      "modelQaSummary": {
+        "identity": "UNCERTAIN",
+        "architecture": "PASS",
+        "growthStage": "PASS",
+        "phenology": "PASS"
+      }
+    },
+    {
+      "jobId": "sweet-orange__mature__tree__vegetative__v1",
+      "canonicalSlug": "sweet-orange",
+      "scientific": "Citrus × sinensis",
+      "ownerQuestion": "Does this candidate look like a credible mature vegetative sweet-orange tree rather than a generic/incorrect non-citrus tree?",
+      "modelQaSummary": {
+        "identity": "UNCERTAIN",
+        "architecture": "PASS",
+        "growthStage": "PASS",
+        "phenology": "PASS"
+      }
+    },
+    {
+      "jobId": "sweet-orange__young__tree__vegetative__v1",
+      "canonicalSlug": "sweet-orange",
+      "scientific": "Citrus × sinensis",
+      "ownerQuestion": "Does this candidate look like a credible young vegetative sweet-orange tree?",
+      "modelQaSummary": {
+        "identity": "UNCERTAIN",
+        "architecture": "PASS",
+        "growthStage": "UNCERTAIN",
+        "phenology": "PASS"
+      }
+    },
+    {
+      "jobId": "sweet-orange__mature__tree__fruiting__v1",
+      "canonicalSlug": "sweet-orange",
+      "scientific": "Citrus × sinensis",
+      "ownerQuestion": "Does this candidate look like a credible mature fruiting sweet-orange tree with believable orange fruiting?",
+      "modelQaSummary": {
+        "identity": "UNCERTAIN",
+        "architecture": "PASS",
+        "growthStage": "PASS",
+        "phenology": "PASS"
+      }
+    }
+  ],
+  "allowedOwnerDecisions": [
+    "PASS",
+    "HOLD"
+  ],
+  "regenerationOnUncertaintyForbidden": true,
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false
+}
