@@ -1,0 +1,385 @@
+{
+  "contract": "plant-visual-production-wave-execution-manifest-v1",
+  "runId": "cruvit-e2e-batch-b-visual-wave-001-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "source": {
+    "planner": "cruvit-e2e-plant-batch-planner-v1",
+    "selectionRule": "Six plants already all-modules-ready except required visual variants; zero candidate reuse found.",
+    "canonicalSlugs": [
+      "bigleaf-hydrangea",
+      "english-lavender",
+      "fig",
+      "lettuce",
+      "pomegranate",
+      "zinnia"
+    ]
+  },
+  "bounded": true,
+  "jobCount": 18,
+  "plantCount": 6,
+  "canonicalSlugs": [
+    "bigleaf-hydrangea",
+    "english-lavender",
+    "fig",
+    "lettuce",
+    "pomegranate",
+    "zinnia"
+  ],
+  "candidateStorage": {
+    "backend": "cloudflare-r2",
+    "bucketEnv": "PLANT_VISUAL_R2_CANDIDATES_BUCKET",
+    "immutableKeyPattern": "candidates/{runId}/{canonicalSlug}/{assetId}__{sha256}.png"
+  },
+  "executionPolicy": {
+    "provider": "openai-images-api",
+    "model": "gpt-image-2",
+    "maxJobs": 18,
+    "maxCalls": 18,
+    "maxRetries": 0,
+    "registryWritesAllowed": false,
+    "productionWritesAllowed": false,
+    "ownerSpendApprovalRequired": true,
+    "approvalArtifactContract": "plant-visual-production-wave-spend-approval-v1",
+    "fullPlantOnboardingRequiredBeforePaidGeneration": true
+  },
+  "spendPreflight": {
+    "mediumJobs": 18,
+    "highJobs": 0,
+    "projectedMediumCallUsd": 0.091,
+    "projectedMaximumSpendUsd": 1.638,
+    "label": "PREAPPROVAL_ESTIMATE_NOT_LIVE_QUOTE"
+  },
+  "jobs": [
+    {
+      "jobId": "bigleaf-hydrangea__mature__shrub__vegetative__v1",
+      "canonicalSlug": "bigleaf-hydrangea",
+      "scientific": "Hydrangea macrophylla",
+      "identityScope": "species",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "bigleaf-hydrangea__mature__shrub__flowering__v1",
+      "canonicalSlug": "bigleaf-hydrangea",
+      "scientific": "Hydrangea macrophylla",
+      "identityScope": "species",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "flowering",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "FLOWERING_VISUALLY_SIGNIFICANT"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "bigleaf-hydrangea__mature__shrub__dormant__v1",
+      "canonicalSlug": "bigleaf-hydrangea",
+      "scientific": "Hydrangea macrophylla",
+      "identityScope": "species",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "dormant",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "DECIDUOUS_LEAF_OFF"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "english-lavender__mature__shrub__vegetative__v1",
+      "canonicalSlug": "english-lavender",
+      "scientific": "Lavandula angustifolia",
+      "identityScope": "species",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "english-lavender__mature__shrub__flowering__v1",
+      "canonicalSlug": "english-lavender",
+      "scientific": "Lavandula angustifolia",
+      "identityScope": "species",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "flowering",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "FLOWERING_VISUALLY_SIGNIFICANT"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "fig__mature__tree__vegetative__v1",
+      "canonicalSlug": "fig",
+      "scientific": "Ficus carica",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "fig__mature__shrub__vegetative__v1",
+      "canonicalSlug": "fig",
+      "scientific": "Ficus carica",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "MULTI_FORM_ARCHITECTURE"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "fig__young__tree__vegetative__v1",
+      "canonicalSlug": "fig",
+      "scientific": "Ficus carica",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "young",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "GROWTH_ARCHITECTURE_CHANGE"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "fig__mature__tree__fruiting__v1",
+      "canonicalSlug": "fig",
+      "scientific": "Ficus carica",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "fruiting",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "FRUITING_VISUALLY_SIGNIFICANT"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "fig__mature__tree__dormant__v1",
+      "canonicalSlug": "fig",
+      "scientific": "Ficus carica",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "dormant",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "DECIDUOUS_LEAF_OFF"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "lettuce__mature__default__vegetative__v1",
+      "canonicalSlug": "lettuce",
+      "scientific": "Lactuca sativa",
+      "identityScope": "species",
+      "visualForm": "rosette",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "pomegranate__mature__tree__vegetative__v1",
+      "canonicalSlug": "pomegranate",
+      "scientific": "Punica granatum",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "pomegranate__mature__shrub__vegetative__v1",
+      "canonicalSlug": "pomegranate",
+      "scientific": "Punica granatum",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "MULTI_FORM_ARCHITECTURE"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "pomegranate__young__tree__vegetative__v1",
+      "canonicalSlug": "pomegranate",
+      "scientific": "Punica granatum",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "young",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "GROWTH_ARCHITECTURE_CHANGE"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "pomegranate__mature__tree__fruiting__v1",
+      "canonicalSlug": "pomegranate",
+      "scientific": "Punica granatum",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "fruiting",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "FRUITING_VISUALLY_SIGNIFICANT"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "pomegranate__mature__tree__dormant__v1",
+      "canonicalSlug": "pomegranate",
+      "scientific": "Punica granatum",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "dormant",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "DECIDUOUS_LEAF_OFF"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "zinnia__mature__default__vegetative__v1",
+      "canonicalSlug": "zinnia",
+      "scientific": "Zinnia elegans",
+      "identityScope": "species",
+      "visualForm": "herbaceous-upright",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "zinnia__mature__default__flowering__v1",
+      "canonicalSlug": "zinnia",
+      "scientific": "Zinnia elegans",
+      "identityScope": "species",
+      "visualForm": "herbaceous-upright",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenology": "flowering",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "FLOWERING_VISUALLY_SIGNIFICANT"
+      ],
+      "placementScaleHold": false
+    }
+  ],
+  "excludedJobs": [],
+  "safety": {
+    "noDuplicateGeneration": true,
+    "noFakeSeasonVariants": true,
+    "evergreenDormantGenerationForbidden": true,
+    "fullPlantOnboardingRequired": true
+  }
+}
