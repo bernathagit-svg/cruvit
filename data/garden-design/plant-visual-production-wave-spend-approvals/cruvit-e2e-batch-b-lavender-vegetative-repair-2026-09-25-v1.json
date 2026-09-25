@@ -1,0 +1,30 @@
+{
+  "contract": "plant-visual-production-wave-spend-approval-v1",
+  "runId": "cruvit-e2e-batch-b-lavender-vegetative-repair-2026-09-25-v1",
+  "approved": true,
+  "approvedAt": "2026-09-25",
+  "approvalSource": "owner explicitly approved Lavender vegetative repair up to USD 0.10, one call, no retries",
+  "provider": "openai-images-api",
+  "model": "gpt-image-2",
+  "maxJobs": 1,
+  "maxCalls": 1,
+  "maxRetries": 0,
+  "maxSpendUsd": 0.1,
+  "jobIds": [
+    "english-lavender__mature__shrub__vegetative__v1"
+  ],
+  "allowedActions": [
+    "generate exact approved wave candidate jobs",
+    "write generated PNGs only to candidate R2",
+    "write generation and technical QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "carryForward": false,
+  "previousApprovalReuse": false,
+  "notes": [
+    "Approval applies only to the English Lavender mature vegetative botanical-identity repair.",
+    "No retries are authorized.",
+    "No Production or registry writes are authorized."
+  ]
+}
