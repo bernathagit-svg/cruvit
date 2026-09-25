@@ -1,0 +1,28 @@
+{
+  "contract": "plant-visual-natural-blend-spend-proposal-v1",
+  "runId": "cruvit-e2e-batch-b-lettuce-natural-blend-repair-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "provider": "openai-images-api",
+  "model": "gpt-image-2.5-sunburst-2026-09-08",
+  "quality": "medium",
+  "jobId": "lettuce__mature__default__vegetative__v1",
+  "maxCalls": 1,
+  "maxRetries": 0,
+  "maxSpendUsd": 0.1,
+  "pricingBasis": {
+    "measuredPriorPilotUsd": 0.03465,
+    "note": "USD 0.10 is a conservative bounded ceiling for one medium Natural Blend edit."
+  },
+  "allowedActions": [
+    "read exact candidate PNG from candidate R2",
+    "use bounded local renderer crop and local edit mask",
+    "perform one GPT Image edit call on the local crop",
+    "write crop, mask, edit output and evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "sourceGardenMutationAllowed": false,
+  "candidateAssetMutationAllowed": false,
+  "approvalRequired": true,
+  "approved": false
+}
