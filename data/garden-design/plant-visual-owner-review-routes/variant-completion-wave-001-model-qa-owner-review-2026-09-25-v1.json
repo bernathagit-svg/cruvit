@@ -1,0 +1,56 @@
+{
+  "contract": "plant-visual-owner-review-routing-v1",
+  "reviewId": "variant-completion-wave-001-model-qa-owner-review-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "sourceRunId": "plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1",
+  "reason": "MODEL_QA_BOTANICAL_IDENTITY_UNCERTAIN",
+  "jobCount": 6,
+  "jobs": [
+    {
+      "jobId": "apple__mature__tree__vegetative__v1",
+      "canonicalSlug": "apple",
+      "scientific": "Malus domestica",
+      "reason": "Pixels alone cannot safely distinguish Malus domestica from similar woody species."
+    },
+    {
+      "jobId": "apple__mature__tree__dormant__v1",
+      "canonicalSlug": "apple",
+      "scientific": "Malus domestica",
+      "reason": "Leafless branching is compatible with apple but not species-diagnostic."
+    },
+    {
+      "jobId": "apricot__mature__tree__vegetative__v1",
+      "canonicalSlug": "apricot",
+      "scientific": "Prunus armeniaca",
+      "reason": "Leafy Prunus-like tree cannot be safely distinguished from related species from pixels alone."
+    },
+    {
+      "jobId": "apricot__mature__tree__fruiting__v1",
+      "canonicalSlug": "apricot",
+      "scientific": "Prunus armeniaca",
+      "reason": "Apricot-like fruit and foliage are visible but exact species remains conservatively uncertain."
+    },
+    {
+      "jobId": "apricot__mature__tree__dormant__v1",
+      "canonicalSlug": "apricot",
+      "scientific": "Prunus armeniaca",
+      "reason": "Dormant deciduous form is not species-diagnostic."
+    },
+    {
+      "jobId": "breadfruit__mature__tree__vegetative__v1",
+      "canonicalSlug": "breadfruit",
+      "scientific": "Artocarpus altilis",
+      "reason": "Lobed foliage is consistent with breadfruit but not safely species-diagnostic by pixels alone."
+    }
+  ],
+  "ownerDecisionRequired": true,
+  "allowedOwnerDecisions": [
+    "PASS",
+    "HOLD"
+  ],
+  "autoPromotionAllowed": false,
+  "imageGenerationAllowed": false,
+  "imageMutationAllowed": false,
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false
+}
