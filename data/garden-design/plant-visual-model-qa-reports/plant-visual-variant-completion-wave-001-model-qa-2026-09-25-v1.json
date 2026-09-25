@@ -1,0 +1,32 @@
+{
+  "contract": "plant-visual-model-qa-summary-v1",
+  "runId": "plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "reviewed": 8,
+  "pass": 2,
+  "uncertain": 6,
+  "fail": 0,
+  "autoPassEligible": 0,
+  "actualSpendUsd": 0.005892,
+  "productionWrites": 0,
+  "registryWrites": 0,
+  "passJobs": [
+    "apple__mature__tree__fruiting__v1",
+    "breadfruit__mature__tree__fruiting__v1"
+  ],
+  "uncertainJobs": [
+    "apple__mature__tree__vegetative__v1",
+    "apple__mature__tree__dormant__v1",
+    "apricot__mature__tree__vegetative__v1",
+    "apricot__mature__tree__fruiting__v1",
+    "apricot__mature__tree__dormant__v1",
+    "breadfruit__mature__tree__vegetative__v1"
+  ],
+  "failJobs": [],
+  "notes": [
+    "All six UNCERTAIN outcomes were driven by conservative species-level botanical identity uncertainty from pixels alone.",
+    "Architecture and growth stage passed for all eight jobs.",
+    "Phenology passed for all eight jobs.",
+    "No candidate image was mutated and no Production/registry write occurred."
+  ]
+}
