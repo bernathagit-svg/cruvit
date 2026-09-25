@@ -2,12 +2,13 @@
  * Production framing QA for Garden Design cutouts.
  * Pure/local. No network, no paid calls, no mutation.
  */
-export const PRODUCTION_FRAMING_QA_VERSION = 'production-framing-qa-v1';
+export const PRODUCTION_FRAMING_QA_VERSION = 'production-framing-qa-v1.1';
 
 export const FRAMING_QA_DEFAULTS = Object.freeze({
   minTopPaddingRatio: 0.025,
   minSidePaddingRatio: 0.0125,
   minBottomPaddingRatio: 0.005,
+  edgePaddingTolerancePx: 3,
   minVisibleHeightRatio: 0.45,
   minVisibleAreaRatio: 0.08
 });
@@ -62,10 +63,15 @@ export function assessProductionFramingQa(technicalQa = {}, options = {}) {
     };
   }
   const reasons = [];
-  if (derived.topPaddingRatio < cfg.minTopPaddingRatio) reasons.push('top-padding-too-small');
-  if (derived.leftPaddingRatio < cfg.minSidePaddingRatio) reasons.push('left-padding-too-small');
-  if (derived.rightPaddingRatio < cfg.minSidePaddingRatio) reasons.push('right-padding-too-small');
-  if (derived.bottomPaddingRatio < cfg.minBottomPaddingRatio) reasons.push('bottom-padding-too-small');
+  const tolerancePx = Math.max(0, Number(cfg.edgePaddingTolerancePx || 0));
+  const topPaddingPx = derived.bbox.minY;
+  const leftPaddingPx = derived.bbox.minX;
+  const rightPaddingPx = Math.max(0, derived.width - 1 - derived.bbox.maxX);
+  const bottomPaddingPx = Math.max(0, derived.height - 1 - derived.bbox.maxY);
+  if (topPaddingPx + tolerancePx < cfg.minTopPaddingRatio * derived.height) reasons.push('top-padding-too-small');
+  if (leftPaddingPx + tolerancePx < cfg.minSidePaddingRatio * derived.width) reasons.push('left-padding-too-small');
+  if (rightPaddingPx + tolerancePx < cfg.minSidePaddingRatio * derived.width) reasons.push('right-padding-too-small');
+  if (bottomPaddingPx + tolerancePx < cfg.minBottomPaddingRatio * derived.height) reasons.push('bottom-padding-too-small');
   if (derived.visibleHeightRatio < cfg.minVisibleHeightRatio) reasons.push('subject-too-small-in-canvas');
   if (derived.visibleAreaRatio < cfg.minVisibleAreaRatio) reasons.push('subject-area-too-small-in-canvas');
   return {
