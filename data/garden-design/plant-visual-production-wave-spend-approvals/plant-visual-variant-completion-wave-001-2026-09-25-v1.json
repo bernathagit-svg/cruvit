@@ -1,0 +1,38 @@
+{
+  "contract": "plant-visual-production-wave-spend-approval-v1",
+  "runId": "plant-visual-variant-completion-wave-001-2026-09-25-v1",
+  "approved": true,
+  "approvedAt": "2026-09-25",
+  "approvalSource": "owner explicitly approved Variant Completion Wave 1 up to USD 0.73, 8 calls, no retries",
+  "provider": "openai-images-api",
+  "model": "gpt-image-2",
+  "maxJobs": 8,
+  "maxCalls": 8,
+  "maxRetries": 0,
+  "maxSpendUsd": 0.73,
+  "jobIds": [
+    "apple__mature__tree__vegetative__v1",
+    "apple__mature__tree__fruiting__v1",
+    "apple__mature__tree__dormant__v1",
+    "apricot__mature__tree__vegetative__v1",
+    "apricot__mature__tree__fruiting__v1",
+    "apricot__mature__tree__dormant__v1",
+    "breadfruit__mature__tree__vegetative__v1",
+    "breadfruit__mature__tree__fruiting__v1"
+  ],
+  "allowedActions": [
+    "generate exact approved wave candidate jobs",
+    "write generated PNGs only to candidate R2",
+    "write generation and technical QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "carryForward": false,
+  "previousApprovalReuse": false,
+  "notes": [
+    "Approval applies only to plant-visual-variant-completion-wave-001-2026-09-25-v1.",
+    "No retry calls are authorized.",
+    "No Production R2 promotion is authorized by this artifact.",
+    "No design asset registry mutation is authorized by this artifact."
+  ]
+}
