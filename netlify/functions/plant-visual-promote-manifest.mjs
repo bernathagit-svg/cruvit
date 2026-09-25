@@ -26,6 +26,11 @@ function safeManifestId(value) {
   return /^[a-z0-9][a-z0-9._-]{0,95}$/.test(id) ? id : '';
 }
 
+function safeJobId(value) {
+  const id = String(value || '').trim();
+  return /^[A-Za-z0-9][A-Za-z0-9._-]{0,180}$/.test(id) ? id : '';
+}
+
 function safe(value) {
   return String(value == null ? '' : value)
     .trim()
@@ -282,8 +287,28 @@ export default async (req) => {
     });
   }
 
-  const rows = manifest.rows || [];
-  if (!rows.length) return json(422, { ok: false, code: 'QA_MANIFEST_EMPTY' });
+  const requestedJobId = body.jobId == null ? '' : safeJobId(body.jobId);
+  if (body.jobId != null && !requestedJobId) {
+    return json(400, { ok: false, code: 'JOB_ID_INVALID' });
+  }
+
+  const allRows = manifest.rows || [];
+  if (!allRows.length) return json(422, { ok: false, code: 'QA_MANIFEST_EMPTY' });
+
+  const rows = requestedJobId
+    ? allRows.filter((row) => row.jobId === requestedJobId)
+    : allRows;
+
+  if (requestedJobId && rows.length !== 1) {
+    return json(404, { ok: false, code: 'JOB_NOT_IN_MANIFEST', jobId: requestedJobId });
+  }
+
+  const approvedJobs = new Set(Array.isArray(approval?.scope?.candidateJobs)
+    ? approval.scope.candidateJobs
+    : []);
+  if (requestedJobId && !approvedJobs.has(requestedJobId)) {
+    return json(403, { ok: false, code: 'JOB_NOT_OWNER_APPROVED', jobId: requestedJobId });
+  }
 
   let onboarding;
   try {
@@ -338,6 +363,7 @@ export default async (req) => {
   return json(failed.length ? 409 : 200, {
     ok: failed.length === 0,
     manifestId,
+    jobId: requestedJobId || null,
     totalJobs: results.length,
     promotedOrVerified: results.filter((row) => row.ok).length,
     failed: failed.length,
