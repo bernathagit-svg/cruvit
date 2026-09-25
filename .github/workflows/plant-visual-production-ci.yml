@@ -156,6 +156,9 @@ jobs:
       - name: Test production framing QA tolerance
         run: node --test tests/production-framing-qa-v1.test.mjs
 
+      - name: Test evidence-informed preview scaling
+        run: node --test tests/relative-preview-scale-v1.test.mjs
+
       - name: Test Garden Design persistence
         run: node --test tests/garden-design-server-persistence-v1.test.mjs
 
