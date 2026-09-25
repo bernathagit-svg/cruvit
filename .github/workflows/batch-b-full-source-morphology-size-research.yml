@@ -1,0 +1,62 @@
+name: Batch B Full-Source Morphology Size Research
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/batch-b-full-source-morphology-size-research.yml'
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Fetch authoritative morphology and size evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/catalog/end-to-end-batch-b/morphology-size/live
+          slugs=(bigleaf-hydrangea borage english-lavender fig lettuce pomegranate zinnia)
+          for slug in "${slugs[@]}"; do
+            curl --fail-with-body --silent --show-error               "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/morphology-size-research?slug=$slug"               -o "data/catalog/end-to-end-batch-b/morphology-size/live/$slug.json"
+          done
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const dir='data/catalog/end-to-end-batch-b/morphology-size/live';
+          const files=fs.readdirSync(dir).filter(f=>f.endsWith('.json')&&f!=='summary.json');
+          const docs=files.map(f=>JSON.parse(fs.readFileSync(dir+'/'+f,'utf8')));
+          const rows=docs.map(d=>({
+            canonicalSlug:d.canonicalSlug,
+            scientific:d.scientific,
+            sourceId:d.selectedSource?.sourceId||null,
+            sourceUrl:d.selectedSource?.url||null,
+            visualForm:d.result?.visualForm||'unknown',
+            architectureModes:d.result?.architectureModes||[],
+            morphologyReady:d.result?.morphologyReady===true,
+            morphologyEvidenceClass:d.result?.morphologyEvidenceClass||'UNKNOWN',
+            morphologyCode:d.result?.morphologyCode||null,
+            matureSize:d.result?.matureSize||null
+          })).sort((a,b)=>a.canonicalSlug.localeCompare(b.canonicalSlug));
+          const summary={
+            contract:'cruvit-e2e-batch-b-full-source-morphology-size-summary-v1',
+            createdAt:'2026-09-25',
+            total:rows.length,
+            morphologyReady:rows.filter(x=>x.morphologyReady).length,
+            sizeReady:rows.filter(x=>x.matureSize?.ready===true).length,
+            bothReady:rows.filter(x=>x.morphologyReady&&x.matureSize?.ready===true).length,
+            paidCalls:0,catalogWrites:0,
+            rows
+          };
+          fs.writeFileSync(dir+'/summary.json',JSON.stringify(summary,null,2)+'\n');
+          console.log(JSON.stringify(summary,null,2));
+          NODE
+      - name: Commit evidence
+        run: |
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add data/catalog/end-to-end-batch-b/morphology-size/live
+          git commit -m "catalog: record Batch B full-source morphology and size evidence"
+          git push origin HEAD:main
