@@ -1,0 +1,35 @@
+{
+  "contract": "plant-visual-production-wave-spend-proposal-v1",
+  "runId": "cruvit-e2e-batch-a-citrus-visual-wave-001-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "provider": "openai-images-api",
+  "model": "gpt-image-2",
+  "maxJobs": 6,
+  "maxCalls": 6,
+  "maxRetries": 0,
+  "proposedMaxSpendUsd": 0.55,
+  "preflightMaximumSpendUsd": 0.546,
+  "quality": "medium",
+  "jobIds": [
+    "grapefruit__mature__tree__vegetative__v1",
+    "grapefruit__young__tree__vegetative__v1",
+    "grapefruit__mature__tree__fruiting__v1",
+    "sweet-orange__mature__tree__vegetative__v1",
+    "sweet-orange__young__tree__vegetative__v1",
+    "sweet-orange__mature__tree__fruiting__v1"
+  ],
+  "allowedActions": [
+    "generate exact approved wave candidate jobs",
+    "write generated PNGs only to candidate R2",
+    "write generation and technical QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "carryForward": false,
+  "notes": [
+    "Apple and Apricot existing Variant Completion candidates are forbidden from regeneration.",
+    "No dormant variants for evergreen grapefruit or sweet orange.",
+    "Full Plant Onboarding is enforced before every paid call.",
+    "No retries are proposed."
+  ]
+}
