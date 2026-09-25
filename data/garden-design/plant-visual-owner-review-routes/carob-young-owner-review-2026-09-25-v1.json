@@ -1,0 +1,54 @@
+{
+  "contract": "plant-visual-owner-review-routing-v1",
+  "reviewId": "carob-young-owner-review-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "sourceRunId": "plant-visual-wave-003-carob-young-model-qa-repair-2026-09-25-v1",
+  "sourceManifestId": "wave3-owner-review-2026-09-24-v1",
+  "jobId": "carob__young__tree__vegetative__v1",
+  "canonicalSlug": "carob",
+  "scientific": "Ceratonia siliqua",
+  "candidate": {
+    "objectKey": "candidates/plant-visual-wave-003-2026-09-24-v1/carob/carob__young__tree__vegetative__v1__bac74f2563cef6ef9c6e3f8a68539bc26e51b91d20151a0d0885d1ec51a47e8f.png",
+    "sha256": "bac74f2563cef6ef9c6e3f8a68539bc26e51b91d20151a0d0885d1ec51a47e8f",
+    "bytes": 1952533,
+    "technicalQA": "PASS",
+    "framingQA": "PASS"
+  },
+  "modelQA": {
+    "overall": "UNCERTAIN",
+    "actualSpendUsd": 0.00075,
+    "checks": {
+      "botanicalIdentity": {
+        "verdict": "UNCERTAIN",
+        "confidence": "medium",
+        "reason": "Visible pinnate foliage and woody branching are compatible with carob, but pixels alone cannot safely confirm Ceratonia siliqua."
+      },
+      "architecture": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "reason": "Single woody trunk with branching canopy matches tree architecture."
+      },
+      "growthStage": {
+        "verdict": "UNCERTAIN",
+        "confidence": "medium",
+        "reason": "Slender trunk and compact branching suggest a young tree, but age cannot be established reliably from the cutout."
+      },
+      "phenologyState": {
+        "verdict": "PASS",
+        "confidence": "high",
+        "reason": "Only green foliage is visible; no flowers, fruits, or other reproductive structures are apparent."
+      }
+    }
+  },
+  "ownerDecisionRequired": true,
+  "allowedOwnerDecisions": [
+    "PASS",
+    "HOLD"
+  ],
+  "autoPromotionAllowed": false,
+  "imageGenerationAllowed": false,
+  "imageMutationAllowed": false,
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "qaCandidateUrl": "/.netlify/functions/plant-visual-qa-candidate?manifest=wave3-owner-review-2026-09-24-v1&job=carob__young__tree__vegetative__v1"
+}
