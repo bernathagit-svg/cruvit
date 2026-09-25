@@ -22,8 +22,13 @@ export default async(req)=>{
   const runId=safeId(u.searchParams.get('runId'));
   if(!bundleId||!runId) return json(400,{ok:false,code:'BUNDLE_ID_AND_RUN_ID_REQUIRED'});
 
-  const bundle=await staticJson(req,'/data/garden-design/plant-visual-owner-review-bundles/'+bundleId+'.json');
-  if(!bundle||bundle.contract!=='cruvit-e2e-owner-review-bundle-v1') return json(404,{ok:false,code:'OWNER_REVIEW_BUNDLE_NOT_FOUND'});
+  let bundle=await staticJson(req,'/data/garden-design/plant-visual-in-garden-source-bundles/'+bundleId+'.json');
+  if(!bundle){
+    bundle=await staticJson(req,'/data/garden-design/plant-visual-owner-review-bundles/'+bundleId+'.json');
+  }
+  if(!bundle||!['cruvit-e2e-in-garden-source-bundle-v1','cruvit-e2e-owner-review-bundle-v1'].includes(bundle.contract)) {
+    return json(404,{ok:false,code:'E2E_SOURCE_BUNDLE_NOT_FOUND'});
+  }
 
   const required=['PLANT_VISUAL_R2_ACCOUNT_ID','PLANT_VISUAL_R2_ACCESS_KEY_ID','PLANT_VISUAL_R2_SECRET_ACCESS_KEY','PLANT_VISUAL_R2_CANDIDATES_BUCKET'];
   const missing=required.filter(k=>!env(k)); if(missing.length)return json(500,{ok:false,code:'ENV_MISSING',missing});
@@ -90,7 +95,7 @@ export default async(req)=>{
     contract:'plant-visual-in-garden-model-qa-plan-v1',
     runId,
     sourceManifestId:bundleId,
-    sourceAssuranceReport:'cruvit-e2e-owner-review-bundle-v1',
+    sourceAssuranceReport:bundle.contract,
     createdAt:'2026-09-25',
     rendererOwner:'Garden Design production renderer',
     sourceGardenRequirement:'real saved Garden Design source photo only',
