@@ -1,0 +1,91 @@
+name: CRUVIT E2E Batch A Registry Activation From Verified Production
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cruvit-e2e-batch-a-registry-activation-from-status.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  activate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      BASE_URL: https://friendly-taiyaki-64aacb.netlify.app
+      MANIFEST_ID: cruvit-e2e-batch-a-production-promotion-2026-09-25-v1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Read verified Production status
+        run: |
+          set -euo pipefail
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error             "$BASE_URL/.netlify/functions/plant-visual-production-promotion-status?manifest=$MANIFEST_ID"             -o execution-results/production-status.json
+          test "$(jq -r '.verified' execution-results/production-status.json)" = "12"
+          test "$(jq -r '.missing' execution-results/production-status.json)" = "0"
+          test "$(jq -r '.mismatch' execution-results/production-status.json)" = "0"
+
+      - name: Activate registry from verified status
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import { activateVerifiedPromotionResults } from './modules/garden-design/asset-factory-v1/plant-visual-registry-activation-v1.js';
+
+          const registryPath='./modules/garden-design/assets/plants/design-asset-registry-v1.json';
+          const manifestPath='./data/garden-design/plant-visual-qa-manifests/cruvit-e2e-batch-a-production-promotion-2026-09-25-v1.json';
+          const statusPath='./execution-results/production-status.json';
+
+          const registry=JSON.parse(fs.readFileSync(registryPath,'utf8'));
+          const manifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));
+          const status=JSON.parse(fs.readFileSync(statusPath,'utf8'));
+
+          const promotionResult={
+            manifestId:manifest.manifestId,
+            results:(status.rows||[]).map(r=>({
+              jobId:r.jobId,
+              ok:r.status==='VERIFIED',
+              code:r.status==='VERIFIED'?'ALREADY_PROMOTED_IDENTICAL':r.status,
+              productionKey:r.productionKey,
+              sha256:r.sha256,
+              bytes:r.bytes,
+              wrote:false
+            }))
+          };
+
+          const activation=activateVerifiedPromotionResults(registry,manifest,promotionResult);
+          if(activation.activatedJobs!==12 || activation.skippedJobs!==0){
+            console.error(JSON.stringify(activation,null,2));
+            throw new Error('REGISTRY_ACTIVATION_NOT_12_OF_12');
+          }
+
+          fs.writeFileSync(registryPath,JSON.stringify(activation.registry,null,2)+'\n');
+          fs.mkdirSync('./data/garden-design/plant-visual-registry-activation-results',{recursive:true});
+          fs.writeFileSync(
+            './data/garden-design/plant-visual-registry-activation-results/cruvit-e2e-batch-a-production-promotion-2026-09-25-v1.json',
+            JSON.stringify({
+              version:activation.version,
+              manifestId:activation.manifestId,
+              activatedJobs:activation.activatedJobs,
+              skippedJobs:activation.skippedJobs,
+              activated:activation.activated,
+              activatedAt:'2026-09-25',
+              source:'read-only production status after verified promotion'
+            },null,2)+'\n'
+          );
+          NODE
+
+      - name: Commit activation
+        run: |
+          set -euo pipefail
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add             modules/garden-design/assets/plants/design-asset-registry-v1.json             data/garden-design/plant-visual-registry-activation-results/cruvit-e2e-batch-a-production-promotion-2026-09-25-v1.json
+          git commit -m "garden-design: activate 12 verified Batch A production assets"
+          git push origin HEAD:main
