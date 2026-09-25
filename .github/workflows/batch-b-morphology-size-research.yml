@@ -1,0 +1,26 @@
+name: Batch B Morphology Size Research
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/batch-b-morphology-size-research.yml'
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/e2e-batch-b-morphology-size-research-v1.mjs
+      - run: |
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add data/catalog/end-to-end-batch-b/morphology-size/summary.json
+          git commit -m "catalog: record Batch B morphology and size evidence"
+          git push origin HEAD:main
