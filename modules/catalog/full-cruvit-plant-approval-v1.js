@@ -38,11 +38,21 @@ function identityRecord(registry, slug){
   )||null;
 }
 
-function catalogMediaReady(row={}){
+function catalogMediaReady(row={}, coverageRecord=null){
+  const coverageStatus=text(coverageRecord?.imageStatus).toUpperCase();
+  if(coverageStatus==='IMAGE_READY' && coverageRecord?.approved===true){
+    return {
+      ready:true,
+      status:'IMAGE_READY',
+      authority:'active-canonical-image-coverage-v1',
+      canonicalSlug:coverageRecord.slug||null
+    };
+  }
   const status=text(row.media_status || row.mediaStatus || row.media?.imageStatus).toUpperCase();
   return {
     ready: status === 'IMAGE_READY',
-    status: status || 'IMAGE_UNKNOWN'
+    status: status || coverageStatus || 'IMAGE_UNKNOWN',
+    authority:'catalog_plants.media'
   };
 }
 
@@ -102,7 +112,8 @@ export function evaluateFullCruvitPlantApproval({
   catalogRow=null,
   identityRegistry=null,
   designAssetRegistry=null,
-  sizeAuthorityRegistry=null
+  sizeAuthorityRegistry=null,
+  catalogMediaCoverageRecord=null
 }={}) {
   const runtimePlant=catalogRowToRuntimePlant(catalogRow);
   const slug=runtimePlant?.canonicalSlug || text(catalogRow?.slug).toLowerCase() || null;
@@ -139,7 +150,7 @@ export function evaluateFullCruvitPlantApproval({
   const suitabilityReady=data.readinessShort==='A' && data.gate==='PASS';
 
   const knowledge=knowledgeState(runtimePlant);
-  const media=catalogMediaReady(catalogRow);
+  const media=catalogMediaReady(catalogRow,catalogMediaCoverageRecord);
 
   const variantPlan=buildPlantVisualVariantPlan({
     catalogRow,
