@@ -1,0 +1,19 @@
+name: CRUVIT Plant Intake Engine Acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cruvit-plant-intake-engine-acceptance.yml'
+permissions:
+  contents: read
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          node --test             tests/cruvit-plant-intake-engine-v1.test.mjs             tests/cruvit-plant-intake-acceptance-contract-v1.test.mjs             tests/full-cruvit-plant-approval-v1.test.mjs             tests/cruvit-e2e-plant-batch-planner-v1.test.mjs             tests/plant-visual-candidate-reuse-index-v1.test.mjs
