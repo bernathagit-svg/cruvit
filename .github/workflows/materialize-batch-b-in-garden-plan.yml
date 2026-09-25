@@ -1,0 +1,38 @@
+name: Materialize Batch B In-Garden Plan
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/materialize-batch-b-in-garden-plan.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Build Batch B 17-asset In-Garden plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/garden-design/plant-visual-in-garden-model-qa-plans
+          curl --fail-with-body --silent --show-error             "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/cruvit-e2e-in-garden-plan-builder?bundleId=cruvit-e2e-batch-b-in-garden-source-2026-09-25-v1&runId=cruvit-e2e-batch-b-in-garden-qa-2026-09-25-v1"             -o data/garden-design/plant-visual-in-garden-model-qa-plans/cruvit-e2e-batch-b-in-garden-qa-2026-09-25-v1.json
+          test "$(jq -r '.contract' data/garden-design/plant-visual-in-garden-model-qa-plans/cruvit-e2e-batch-b-in-garden-qa-2026-09-25-v1.json)" = "plant-visual-in-garden-model-qa-plan-v1"
+          test "$(jq -r '.jobCount' data/garden-design/plant-visual-in-garden-model-qa-plans/cruvit-e2e-batch-b-in-garden-qa-2026-09-25-v1.json)" = "17"
+          test "$(jq '[.jobs[]|select(.admission=="OWNER_PASS_REQUIRED")]|length' data/garden-design/plant-visual-in-garden-model-qa-plans/cruvit-e2e-batch-b-in-garden-qa-2026-09-25-v1.json)" = "9"
+          test "$(jq '[.jobs[]|select(.admission=="MODEL_QA_PASS")]|length' data/garden-design/plant-visual-in-garden-model-qa-plans/cruvit-e2e-batch-b-in-garden-qa-2026-09-25-v1.json)" = "8"
+      - name: Commit Batch B In-Garden plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add data/garden-design/plant-visual-in-garden-model-qa-plans/cruvit-e2e-batch-b-in-garden-qa-2026-09-25-v1.json
+          git commit -m "garden-design: materialize Batch B 17-asset in-garden plan"
+          git push origin HEAD:main
