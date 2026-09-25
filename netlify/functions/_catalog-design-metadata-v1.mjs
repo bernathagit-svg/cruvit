@@ -24,7 +24,14 @@ export function packetPathForCatalogRow(row){
 export async function hydrateDesignMetadataFromApprovedPacket(req,row){
   if(!row) return {row:null,hydrated:false,code:'CATALOG_ROW_MISSING'};
   const existing=row?.climate_traits?.designMetadata;
-  if(existing && typeof existing==='object'){
+  const existingComplete =
+    existing
+    && typeof existing==='object'
+    && (
+      (Array.isArray(existing.tags) && existing.tags.length>0)
+      || String(existing.growth||'').trim()
+    );
+  if(existingComplete){
     return {row,hydrated:false,code:'DESIGN_METADATA_ALREADY_PRESENT'};
   }
   const packetPath=packetPathForCatalogRow(row);
@@ -48,12 +55,41 @@ export async function hydrateDesignMetadataFromApprovedPacket(req,row){
     };
   }
 
+  const mergedDesignMetadata={
+    ...dm,
+    ...(existing && typeof existing==='object' ? existing : {}),
+    tags:
+      Array.isArray(existing?.tags) && existing.tags.length
+        ? existing.tags
+        : (Array.isArray(dm.tags) ? dm.tags : []),
+    growth:
+      String(existing?.growth||'').trim()
+        ? existing.growth
+        : (dm.growth||null),
+    matureSize:
+      String(existing?.matureSize||'').trim()
+        ? existing.matureSize
+        : (dm.matureSize||null),
+    leafHabit:
+      existing?.leafHabit
+      && typeof existing.leafHabit==='object'
+      && String(existing.leafHabit.evidenceClass||'').toUpperCase()==='SOURCE_SUPPORTED'
+        ? existing.leafHabit
+        : dm.leafHabit,
+    seasonalityResearchRequired:
+      existing?.leafHabit
+      && typeof existing.leafHabit==='object'
+      && String(existing.leafHabit.evidenceClass||'').toUpperCase()==='SOURCE_SUPPORTED'
+        ? false
+        : dm.seasonalityResearchRequired===true
+  };
+
   return {
     row:{
       ...row,
       climate_traits:{
         ...(row.climate_traits||{}),
-        designMetadata:dm
+        designMetadata:mergedDesignMetadata
       }
     },
     hydrated:true,
