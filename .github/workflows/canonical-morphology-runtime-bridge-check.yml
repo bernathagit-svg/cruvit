@@ -1,0 +1,18 @@
+name: Canonical Morphology Runtime Bridge Check
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/canonical-morphology-runtime-bridge-check.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/canonical-catalog-growth-habit-runtime-v1.test.mjs tests/morphology-size-evidence-gate-v1.test.mjs
