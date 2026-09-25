@@ -1,0 +1,117 @@
+{
+  "contract": "cruvit-e2e-owner-review-bundle-v1",
+  "reviewId": "cruvit-e2e-batch-a-owner-review-2026-09-25-v1",
+  "batchId": "cruvit-e2e-batch-a-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "finalDecisionPolicy": {
+    "allowed": [
+      "PASS",
+      "HOLD"
+    ],
+    "passAllAllowed": true,
+    "localUiOnly": true,
+    "serverWriteOnButtonClick": false,
+    "explicitOwnerDecisionRequiredBeforePromotion": true
+  },
+  "jobs": [
+    {
+      "sourceModelQaRunId": "plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1",
+      "jobId": "apple__mature__tree__vegetative__v1",
+      "canonicalSlug": "apple",
+      "scientific": "Malus domestica",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "reason": "Model QA uncertain only on exact species-from-pixels; architecture/growth/phenology passed."
+    },
+    {
+      "sourceModelQaRunId": "plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1",
+      "jobId": "apple__mature__tree__dormant__v1",
+      "canonicalSlug": "apple",
+      "scientific": "Malus domestica",
+      "growthStage": "mature",
+      "phenology": "dormant",
+      "reason": "Model QA uncertain only on exact species-from-leafless-pixels; architecture/growth/phenology passed."
+    },
+    {
+      "sourceModelQaRunId": "plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1",
+      "jobId": "apricot__mature__tree__vegetative__v1",
+      "canonicalSlug": "apricot",
+      "scientific": "Prunus armeniaca",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "reason": "Model QA uncertain only on species-level Prunus discrimination; architecture/growth/phenology passed."
+    },
+    {
+      "sourceModelQaRunId": "plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1",
+      "jobId": "apricot__mature__tree__fruiting__v1",
+      "canonicalSlug": "apricot",
+      "scientific": "Prunus armeniaca",
+      "growthStage": "mature",
+      "phenology": "fruiting",
+      "reason": "Apricot-like fruit/foliage visible; exact species remained conservative UNCERTAIN."
+    },
+    {
+      "sourceModelQaRunId": "plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1",
+      "jobId": "apricot__mature__tree__dormant__v1",
+      "canonicalSlug": "apricot",
+      "scientific": "Prunus armeniaca",
+      "growthStage": "mature",
+      "phenology": "dormant",
+      "reason": "Dormant deciduous form passed state/architecture; exact species not pixel-diagnostic."
+    },
+    {
+      "sourceModelQaRunId": "cruvit-e2e-batch-a-citrus-model-qa-2026-09-25-v1",
+      "jobId": "grapefruit__mature__tree__vegetative__v1",
+      "canonicalSlug": "grapefruit",
+      "scientific": "Citrus × paradisi",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "reason": "Citrus-like mature tree; model cannot safely distinguish grapefruit from other Citrus species."
+    },
+    {
+      "sourceModelQaRunId": "cruvit-e2e-batch-a-citrus-model-qa-2026-09-25-v1",
+      "jobId": "grapefruit__young__tree__vegetative__v1",
+      "canonicalSlug": "grapefruit",
+      "scientific": "Citrus × paradisi",
+      "growthStage": "young",
+      "phenology": "vegetative",
+      "reason": "Citrus-like tree; exact species and young-vs-mature stage remained conservative UNCERTAIN."
+    },
+    {
+      "sourceModelQaRunId": "cruvit-e2e-batch-a-citrus-model-qa-2026-09-25-v1",
+      "jobId": "grapefruit__mature__tree__fruiting__v1",
+      "canonicalSlug": "grapefruit",
+      "scientific": "Citrus × paradisi",
+      "growthStage": "mature",
+      "phenology": "fruiting",
+      "reason": "Fruiting citrus tree with visible fruit; exact grapefruit species not safely distinguishable from pixels."
+    },
+    {
+      "sourceModelQaRunId": "cruvit-e2e-batch-a-citrus-model-qa-2026-09-25-v1",
+      "jobId": "sweet-orange__mature__tree__vegetative__v1",
+      "canonicalSlug": "sweet-orange",
+      "scientific": "Citrus × sinensis",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "reason": "Citrus-like mature evergreen tree; exact sweet-orange species not pixel-diagnostic."
+    },
+    {
+      "sourceModelQaRunId": "cruvit-e2e-batch-a-citrus-model-qa-2026-09-25-v1",
+      "jobId": "sweet-orange__young__tree__vegetative__v1",
+      "canonicalSlug": "sweet-orange",
+      "scientific": "Citrus × sinensis",
+      "growthStage": "young",
+      "phenology": "vegetative",
+      "reason": "Citrus-like tree; exact species and young-vs-mature stage remained conservative UNCERTAIN."
+    },
+    {
+      "sourceModelQaRunId": "cruvit-e2e-batch-a-citrus-model-qa-2026-09-25-v1",
+      "jobId": "sweet-orange__mature__tree__fruiting__v1",
+      "canonicalSlug": "sweet-orange",
+      "scientific": "Citrus × sinensis",
+      "growthStage": "mature",
+      "phenology": "fruiting",
+      "reason": "Fruiting citrus tree with orange fruit; exact species not safely distinguishable from pixels."
+    }
+  ]
+}
