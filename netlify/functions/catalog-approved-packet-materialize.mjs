@@ -19,7 +19,7 @@ function json(status, body) {
 
 function safePacketPath(value) {
   const p=String(value||'').trim().replace(/^\/+/, '');
-  if (!p || p.includes('..') || !p.endsWith('.packet.json')) return '';
+  if (!p || p.includes('..') || !(p.endsWith('.packet.json') || p.endsWith('/packet.json'))) return '';
   if (
     !p.startsWith('data/catalog-expansion/batches/')
     && !p.startsWith('data/catalog-expansion/packets/')
