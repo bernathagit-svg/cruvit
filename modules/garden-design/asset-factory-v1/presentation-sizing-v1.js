@@ -12,7 +12,7 @@ export const PRESENTATION_SIZE_PROFILES = Object.freeze({
   shrub: Object.freeze({ targetVisibleWidthRatio: 0.23, minBaseWidthPx: 160, maxBaseWidthPx: 360 }),
   subshrub: Object.freeze({ targetVisibleWidthRatio: 0.18, minBaseWidthPx: 130, maxBaseWidthPx: 300 }),
   'herbaceous-upright': Object.freeze({ targetVisibleWidthRatio: 0.14, minBaseWidthPx: 100, maxBaseWidthPx: 240 }),
-  'herbaceous-clump': Object.freeze({ targetVisibleWidthRatio: 0.20, minBaseWidthPx: 140, maxBaseWidthPx: 320 }),
+  'herbaceous-clump': Object.freeze({ targetVisibleWidthRatio: 0.32, minBaseWidthPx: 220, maxBaseWidthPx: 460 }),
   rosette: Object.freeze({ targetVisibleWidthRatio: 0.15, minBaseWidthPx: 110, maxBaseWidthPx: 260 }),
   flower: Object.freeze({ targetVisibleWidthRatio: 0.12, minBaseWidthPx: 90, maxBaseWidthPx: 220 }),
   herb: Object.freeze({ targetVisibleWidthRatio: 0.12, minBaseWidthPx: 90, maxBaseWidthPx: 220 }),
