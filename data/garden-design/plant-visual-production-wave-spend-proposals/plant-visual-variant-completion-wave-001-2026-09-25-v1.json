@@ -1,0 +1,39 @@
+{
+  "contract": "plant-visual-production-wave-spend-proposal-v1",
+  "runId": "plant-visual-variant-completion-wave-001-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "provider": "openai-images-api",
+  "model": "gpt-image-2",
+  "maxJobs": 8,
+  "maxCalls": 8,
+  "maxRetries": 0,
+  "proposedMaxSpendUsd": 0.73,
+  "preflightMaximumSpendUsd": 0.728,
+  "quality": "medium",
+  "jobIds": [
+    "apple__mature__tree__vegetative__v1",
+    "apple__mature__tree__fruiting__v1",
+    "apple__mature__tree__dormant__v1",
+    "apricot__mature__tree__vegetative__v1",
+    "apricot__mature__tree__fruiting__v1",
+    "apricot__mature__tree__dormant__v1",
+    "breadfruit__mature__tree__vegetative__v1",
+    "breadfruit__mature__tree__fruiting__v1"
+  ],
+  "allowedActions": [
+    "generate exact approved wave candidate jobs",
+    "write generated PNGs only to candidate R2",
+    "write generation and technical QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "carryForward": false,
+  "notes": [
+    "This is the first bounded visual-variant completion wave.",
+    "Dormant assets are generated only for source-supported deciduous Apple and Apricot.",
+    "No dormant/winter asset is generated for evergreen Cacao, Breadfruit or Carob.",
+    "Carob young is excluded because an existing Technical+Framing PASS candidate is routed to QA_REPAIR instead of regeneration.",
+    "Full Plant Onboarding is enforced before any paid image call.",
+    "Scale-context/size-evidence holds apply to meter-accurate placement, not to visual generation itself."
+  ]
+}
