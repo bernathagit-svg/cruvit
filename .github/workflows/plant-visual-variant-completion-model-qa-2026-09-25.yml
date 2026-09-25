@@ -1,0 +1,60 @@
+name: Variant Completion Wave 1 Model QA 2026-09-25
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/plant-visual-variant-completion-model-qa-2026-09-25.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  run-model-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BASE_URL: https://friendly-taiyaki-64aacb.netlify.app
+      RUN_ID: plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1
+    steps:
+      - name: Apple vegetative
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-model-qa-job" -H 'content-type: application/json' --data '{"runId":"plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1","jobId":"apple__mature__tree__vegetative__v1"}' | tee execution-results/01-apple-vegetative.json
+      - name: Apple fruiting
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-model-qa-job" -H 'content-type: application/json' --data '{"runId":"plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1","jobId":"apple__mature__tree__fruiting__v1"}' | tee execution-results/02-apple-fruiting.json
+      - name: Apple dormant
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-model-qa-job" -H 'content-type: application/json' --data '{"runId":"plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1","jobId":"apple__mature__tree__dormant__v1"}' | tee execution-results/03-apple-dormant.json
+      - name: Apricot vegetative
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-model-qa-job" -H 'content-type: application/json' --data '{"runId":"plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1","jobId":"apricot__mature__tree__vegetative__v1"}' | tee execution-results/04-apricot-vegetative.json
+      - name: Apricot fruiting
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-model-qa-job" -H 'content-type: application/json' --data '{"runId":"plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1","jobId":"apricot__mature__tree__fruiting__v1"}' | tee execution-results/05-apricot-fruiting.json
+      - name: Apricot dormant
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-model-qa-job" -H 'content-type: application/json' --data '{"runId":"plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1","jobId":"apricot__mature__tree__dormant__v1"}' | tee execution-results/06-apricot-dormant.json
+      - name: Breadfruit vegetative
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-model-qa-job" -H 'content-type: application/json' --data '{"runId":"plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1","jobId":"breadfruit__mature__tree__vegetative__v1"}' | tee execution-results/07-breadfruit-vegetative.json
+      - name: Breadfruit fruiting
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-model-qa-job" -H 'content-type: application/json' --data '{"runId":"plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1","jobId":"breadfruit__mature__tree__fruiting__v1"}' | tee execution-results/08-breadfruit-fruiting.json
+      - name: Upload Model QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: variant-completion-wave1-model-qa-2026-09-25
+          path: execution-results/
+          if-no-files-found: warn
+          retention-days: 30
