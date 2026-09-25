@@ -153,6 +153,9 @@ jobs:
       - name: Test plant visual pipeline
         run: node --test tests/plant-visual-production-pipeline-v1.test.mjs
 
+      - name: Test production framing QA tolerance
+        run: node --test tests/production-framing-qa-v1.test.mjs
+
       - name: Test Garden Design persistence
         run: node --test tests/garden-design-server-persistence-v1.test.mjs
 
