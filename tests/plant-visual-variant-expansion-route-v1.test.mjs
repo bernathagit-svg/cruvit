@@ -49,7 +49,7 @@ test('existing technical+framing pass candidate routes to QA repair instead of r
   assert.equal(out.qaRepairReady,1);
 });
 
-test('user context size authority blocks paid generation',()=>{
+test('user context size authority allows visual generation but holds meter-accurate scale',()=>{
   const out=routeVariantExpansion({
     gapPlan:{
       canonicalSlug:'apple',
@@ -64,8 +64,10 @@ test('user context size authority blocks paid generation',()=>{
     sizeAuthorityRegistry:registry('RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED'),
     candidateRows:[]
   });
-  assert.equal(out.rows[0].action,VARIANT_EXPANSION_ACTION.SIZE_CONTEXT_REQUIRED);
-  assert.equal(out.paidGenerationReady,0);
+  assert.equal(out.rows[0].action,VARIANT_EXPANSION_ACTION.GENERATE_READY_SCALE_CONTEXT_REQUIRED);
+  assert.equal(out.paidGenerationReady,1);
+  assert.equal(out.placementScaleHold,1);
+  assert.equal(out.blockedBeforeGeneration,0);
 });
 
 test('ready size authority routes genuine missing variant to generation',()=>{
@@ -85,4 +87,26 @@ test('ready size authority routes genuine missing variant to generation',()=>{
   });
   assert.equal(out.rows[0].action,VARIANT_EXPANSION_ACTION.GENERATE_READY);
   assert.equal(out.paidGenerationReady,1);
+});
+
+
+test('size evidence gap allows visual generation but holds in-garden scale authority',()=>{
+  const out=routeVariantExpansion({
+    gapPlan:{
+      canonicalSlug:'apple',
+      missingRequired:[{
+        variantKey:'mature__tree__vegetative',
+        growthStage:'mature',
+        architectureMode:'tree',
+        visualForm:'tree',
+        phenology:'vegetative'
+      }]
+    },
+    sizeAuthorityRegistry:registry('RUNTIME_AUTHORITY_EVIDENCE_GAP'),
+    candidateRows:[]
+  });
+  assert.equal(out.rows[0].action,VARIANT_EXPANSION_ACTION.GENERATE_READY_SCALE_RESEARCH_REQUIRED);
+  assert.equal(out.paidGenerationReady,1);
+  assert.equal(out.placementScaleHold,1);
+  assert.equal(out.blockedBeforeGeneration,0);
 });
