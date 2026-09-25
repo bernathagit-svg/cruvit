@@ -192,10 +192,19 @@ export function catalogRowToRuntimePlant(row) {
     climateTraits.designMetadata && typeof climateTraits.designMetadata === 'object'
       ? climateTraits.designMetadata
       : {};
-  const leafHabit =
+  const designLeafHabit =
     designMetadata.leafHabit && typeof designMetadata.leafHabit === 'object'
       ? designMetadata.leafHabit
       : {};
+  const canonicalSeasonalityEvidence =
+    climateTraits.seasonalityEvidence && typeof climateTraits.seasonalityEvidence === 'object'
+      ? climateTraits.seasonalityEvidence
+      : {};
+  const leafHabit =
+    String(canonicalSeasonalityEvidence.evidenceClass || '').toUpperCase() === 'SOURCE_SUPPORTED'
+      && ['DECIDUOUS', 'EVERGREEN'].includes(String(canonicalSeasonalityEvidence.state || '').toUpperCase())
+      ? canonicalSeasonalityEvidence
+      : designLeafHabit;
   const sourceSupportedLeafHabit =
     String(leafHabit.evidenceClass || '').toUpperCase() === 'SOURCE_SUPPORTED'
       && ['DECIDUOUS', 'EVERGREEN'].includes(String(leafHabit.state || '').toUpperCase())
