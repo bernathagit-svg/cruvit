@@ -1,0 +1,129 @@
+{
+  "contract": "cruvit-e2e-batch-b-fast6-supplemental-evidence-v1",
+  "createdAt": "2026-09-25",
+  "batchId": "cruvit-e2e-batch-b-fast6-2026-09-25-v1",
+  "plants": [
+    {
+      "canonicalSlug": "bigleaf-hydrangea",
+      "scientific": "Hydrangea macrophylla",
+      "humidity": {
+        "value": "medium",
+        "evidenceClass": "HEURISTIC_ASSERTION",
+        "transformRef": "humidity-disease-pressure-to-tolerance-v1@1.0.0",
+        "sourceId": "umd-hydrangea-macrophylla-humidity",
+        "institution": "University of Maryland Extension",
+        "title": "How to prevent Anthracnose on Hydrangea Macrophylla",
+        "url": "https://ask.extension.org/kb/faq.php?id=792040",
+        "excerpt": "Prolonged or repeated leaf wetness allows fungal and bacterial spores to infect; stagnant and humid conditions slow leaf drying.",
+        "rationale": "Source-supported humidity/wetness disease pressure -> conservative medium atmospheric humidity tolerance."
+      }
+    },
+    {
+      "canonicalSlug": "english-lavender",
+      "scientific": "Lavandula angustifolia",
+      "humidity": {
+        "value": "low",
+        "evidenceClass": "HEURISTIC_ASSERTION",
+        "transformRef": "humidity-disease-pressure-to-tolerance-v1@1.0.0",
+        "sourceId": "uiuc-lavandula-angustifolia-humidity",
+        "institution": "University of Illinois Extension",
+        "title": "Lavender",
+        "url": "https://extension.illinois.edu/herbs/lavender",
+        "excerpt": "Wet, poorly drained soil and high humidity and poor air circulation between plants in the summer lead to the decline of plants.",
+        "rationale": "Source-supported high-humidity decline -> conservative low atmospheric humidity tolerance."
+      }
+    },
+    {
+      "canonicalSlug": "fig",
+      "scientific": "Ficus carica",
+      "humidity": {
+        "value": "medium",
+        "evidenceClass": "HEURISTIC_ASSERTION",
+        "transformRef": "humidity-disease-pressure-to-tolerance-v1@1.0.0",
+        "sourceId": "ufifas-ficus-carica-humidity",
+        "institution": "University of Florida IFAS Extension",
+        "title": "Fact sheet: Fig",
+        "url": "https://blogs.ifas.ufl.edu/nassauco/2017/06/03/fact-sheet-fig/",
+        "excerpt": "The humid growing season in Florida is associated with enhanced insect and disease pressure, and rain can cause fruit to split.",
+        "rationale": "Species grows in humid regions but humidity increases disease/fruit pressure -> conservative medium."
+      }
+    },
+    {
+      "canonicalSlug": "lettuce",
+      "scientific": "Lactuca sativa",
+      "humidity": {
+        "value": "medium",
+        "evidenceClass": "HEURISTIC_ASSERTION",
+        "transformRef": "humidity-disease-pressure-to-tolerance-v1@1.0.0",
+        "sourceId": "tamu-lactuca-sativa-humidity",
+        "institution": "Texas A&M AgriLife Extension / Texas Plant Disease Handbook",
+        "title": "Lettuce",
+        "url": "https://plantdiseasehandbook.tamu.edu/food-crops/vegetable-crops/lettuce/",
+        "excerpt": "Cool, humid weather with rain, heavy dew or fog favors downy mildew disease development.",
+        "rationale": "Source-supported humid-weather disease pressure -> conservative medium."
+      },
+      "morphology": {
+        "growthHabit": "rosette",
+        "visualForm": "rosette",
+        "evidenceClass": "SOURCE_SUPPORTED",
+        "sourceId": "uark-lactuca-sativa-rosette",
+        "institution": "University of Arkansas System Division of Agriculture",
+        "title": "Leaf Lettuce",
+        "url": "https://www.uaex.uada.edu/yard-garden/resource-library/plant-week/lettuce-leaf-3-24-06.aspx",
+        "excerpt": "Lactuca sativa is a fast growing annual that produces broad, succulent leaves in a rosette around a short stem."
+      }
+    },
+    {
+      "canonicalSlug": "pomegranate",
+      "scientific": "Punica granatum",
+      "humidity": {
+        "value": "medium",
+        "evidenceClass": "HEURISTIC_ASSERTION",
+        "transformRef": "humidity-disease-pressure-to-tolerance-v1@1.0.0",
+        "sourceId": "ufifas-punica-granatum-humidity",
+        "institution": "University of Florida IFAS Extension",
+        "title": "Diseases of Pomegranate (Punica granatum) in Florida",
+        "url": "https://ask.ifas.ufl.edu/publication/PP349",
+        "excerpt": "Florida's humid subtropical to tropical climate is favorable for pomegranate establishment but also several diseases; wet and humid periods favor anthracnose.",
+        "rationale": "Establishment in humid climate plus substantial humidity/wetness disease pressure -> conservative medium."
+      }
+    },
+    {
+      "canonicalSlug": "zinnia",
+      "scientific": "Zinnia elegans",
+      "humidity": {
+        "value": "medium",
+        "evidenceClass": "HEURISTIC_ASSERTION",
+        "transformRef": "humidity-disease-pressure-to-tolerance-v1@1.0.0",
+        "sourceId": "uiuc-zinnia-elegans-humidity",
+        "institution": "University of Illinois Extension",
+        "title": "Prevent, protect zinnias from powdery mildew",
+        "url": "https://extension.illinois.edu/news-releases/prevent-protect-zinnias-powdery-mildew",
+        "excerpt": "As summer temperatures rise and humidity increases, growers may see powdery mildew; the fungus can compromise photosynthesis and plant development.",
+        "rationale": "Species-level humidity-associated disease pressure -> conservative medium."
+      },
+      "morphology": {
+        "growthHabit": "herbaceous-upright",
+        "visualForm": "herbaceous-upright",
+        "evidenceClass": "SOURCE_SUPPORTED",
+        "sourceId": "ufifas-zinnia-elegans-morphology",
+        "institution": "University of Florida IFAS",
+        "title": "Zinnia Plant Identification Learning Module",
+        "url": "https://gardeningsolutions.ifas.ufl.edu/mastergardener/resources/plantid/flowers-and-foliage/zinnia/",
+        "excerpt": "Zinnias are an erect, stiff-stemmed, herbaceous annual."
+      }
+    }
+  ],
+  "excluded": [
+    {
+      "canonicalSlug": "borage",
+      "reason": "HUMIDITY_EVIDENCE_AND_MORPHOLOGY_NOT_YET_STRONG_ENOUGH_FOR_SPECIES_LEVEL_CANONICAL_ENRICHMENT"
+    }
+  ],
+  "policy": {
+    "noSilentGuessing": true,
+    "supplementalSourceMustBeAuthoritative": true,
+    "heuristicHumidityMustRetainTransform": true,
+    "morphologyRequiresExplicitStructure": true
+  }
+}
