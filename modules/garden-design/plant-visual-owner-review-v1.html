@@ -22,7 +22,9 @@ pre{background:#0b0f0d;padding:12px;border-radius:10px;overflow:auto;margin-top:
 (async()=>{
  const p=new URLSearchParams(location.search);
  const visionRunId=String(p.get('visionRunId')||'').trim();
+ const requestedJobId=String(p.get('jobId')||'').trim();
  const safe=/^[A-Za-z0-9][A-Za-z0-9._-]{7,159}$/.test(visionRunId)?visionRunId:'';
+ const safeJobId=!requestedJobId || /^[A-Za-z0-9][A-Za-z0-9._-]{7,180}$/.test(requestedJobId) ? requestedJobId : '';
  const grid=document.getElementById('grid'),log=document.getElementById('log'),subtitle=document.getElementById('subtitle');
  if(!safe){log.textContent='SAFE_VISION_RUN_ID_REQUIRED';return;}
  const planRes=await fetch('/data/garden-design/plant-visual-in-garden-vision-qa-plans/'+safe+'.json?t='+Date.now(),{cache:'no-store'});
@@ -31,8 +33,10 @@ pre{background:#0b0f0d;padding:12px;border-radius:10px;overflow:auto;margin-top:
  const captureRunId=String(plan.sourceCaptureRunId||'');
  const statusRes=await fetch('/.netlify/functions/plant-visual-in-garden-vision-qa-status?runId='+encodeURIComponent(safe)+'&t='+Date.now(),{cache:'no-store'});
  const status=await statusRes.json();
- const rows=Array.isArray(status.rows)?status.rows:[];
- subtitle.textContent=rows.length+' in-garden captures · real saved Garden Design photo · production renderer · local decisions only';
+ let rows=Array.isArray(status.rows)?status.rows:[];
+ if(requestedJobId && !safeJobId){log.textContent='SAFE_JOB_ID_REQUIRED';return;}
+ if(safeJobId) rows=rows.filter(r=>r.jobId===safeJobId);
+ subtitle.textContent=rows.length+' in-garden capture'+(rows.length===1?'':'s')+' · real saved Garden Design photo · production renderer · local decisions only';
  const local={};
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  function imageUrl(id){return '/.netlify/functions/plant-visual-in-garden-current-capture-image?runId='+encodeURIComponent(captureRunId)+'&jobId='+encodeURIComponent(id)+'&t='+Date.now();}
