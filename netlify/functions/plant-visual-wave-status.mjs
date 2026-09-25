@@ -136,6 +136,9 @@ export default async (req) => {
       bytes: evidence.bytes || null,
       technicalQA: evidence.technicalQA?.result || null,
       framingQA: evidence.framingQA?.result || null,
+      framingReasons: evidence.framingQA?.reasons || [],
+      framingMetrics: evidence.framingQA?.metrics || null,
+      technicalMetrics: evidence.technicalQA?.metrics || null,
       quality: evidence.quality || job.quality,
       actualSpendUsd: Number.isFinite(spend) ? spend : null
     });
