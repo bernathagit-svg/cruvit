@@ -343,7 +343,11 @@ export default async (req) => {
     return json(409, { ok: false, ...evidence });
   }
 
-  const prompt = String(qualityPlan.promptRecord?.prompt || '');
+  const basePrompt = String(qualityPlan.promptRecord?.prompt || '');
+  const repairAddendum = String(job.repairPromptAddendum || '').trim();
+  const prompt = repairAddendum
+    ? basePrompt + '\n\nCRUVIT bounded repair constraints:\n' + repairAddendum
+    : basePrompt;
   if (!prompt) {
     const evidence = {
       contract: 'plant-visual-wave-job-evidence-v1',
@@ -488,6 +492,8 @@ export default async (req) => {
     bytes: bytes.length,
     sha256: digest,
     promptTemplateVersion: qualityPlan.promptTemplateVersion,
+    repairPromptApplied: Boolean(repairAddendum),
+    repairPromptSha256: repairAddendum ? sha256(Buffer.from(repairAddendum)) : null,
     promptSha256: sha256(Buffer.from(prompt)),
     provider: manifest.executionPolicy.provider,
     model: manifest.executionPolicy.model,
