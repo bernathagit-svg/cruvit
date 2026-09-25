@@ -1,0 +1,34 @@
+{
+  "contract": "plant-visual-regeneration-repair-proposal-v1",
+  "proposalId": "cruvit-e2e-batch-b-lavender-vegetative-repair-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "sourceRunId": "cruvit-e2e-batch-b-visual-wave-001-2026-09-25-v1",
+  "sourceModelQaRunId": "cruvit-e2e-batch-b-model-qa-2026-09-25-v1",
+  "jobId": "english-lavender__mature__shrub__vegetative__v1",
+  "canonicalSlug": "english-lavender",
+  "scientific": "Lavandula angustifolia",
+  "reason": "BOTANICAL_IDENTITY_FAIL_ROSEMARY_LIKE_FOLIAGE",
+  "repairStrategy": {
+    "type": "REGENERATE_EXACT_VARIANT_WITH_STRONGER_BOTANICAL_NEGATIVE_CONSTRAINT",
+    "requiredState": {
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "vegetative"
+    },
+    "negativeConstraints": [
+      "must not resemble rosemary",
+      "avoid needle-like rosemary foliage",
+      "use narrow linear grey-green lavender leaves with lavender shrub habit",
+      "non-flowering vegetative state"
+    ]
+  },
+  "provider": "openai-images-api",
+  "model": "gpt-image-2",
+  "maxCalls": 1,
+  "maxRetries": 0,
+  "proposedMaxSpendUsd": 0.1,
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "requiresOwnerSpendApproval": true
+}
