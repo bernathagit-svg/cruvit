@@ -71,6 +71,7 @@ export default async(req)=>{
       sha256:src.sha256,
       bytes:Number(src.bytes),
       sourceModelQaRunId:item.sourceModelQaRunId,
+      admission:item.admission||'MODEL_QA_PASS',
       qaRendererInput:{
         ok:true,
         code:'QA_PREVIEW_PRESENTATION_BASELINE',
@@ -96,6 +97,7 @@ export default async(req)=>{
     runId,
     sourceManifestId:bundleId,
     sourceAssuranceReport:bundle.contract,
+    ownerApprovalId:bundle.ownerApprovalId||null,
     createdAt:'2026-09-25',
     rendererOwner:'Garden Design production renderer',
     sourceGardenRequirement:'real saved Garden Design source photo only',
