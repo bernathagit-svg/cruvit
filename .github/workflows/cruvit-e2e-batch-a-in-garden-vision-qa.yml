@@ -1,0 +1,76 @@
+name: CRUVIT E2E Batch A In-Garden Vision QA
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cruvit-e2e-batch-a-in-garden-vision-qa.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      BASE_URL: https://friendly-taiyaki-64aacb.netlify.app
+      RUN_ID: cruvit-e2e-batch-a-in-garden-vision-qa-2026-09-25-v1
+    steps:
+      - name: Apple mature vegetative
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-a-in-garden-vision-qa-2026-09-25-v1","jobId":"apple__mature__tree__vegetative__v1"}' | tee execution-results/01.json
+      - name: Apple mature fruiting
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-a-in-garden-vision-qa-2026-09-25-v1","jobId":"apple__mature__tree__fruiting__v1"}' | tee execution-results/02.json
+      - name: Apple mature dormant
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-a-in-garden-vision-qa-2026-09-25-v1","jobId":"apple__mature__tree__dormant__v1"}' | tee execution-results/03.json
+      - name: Apricot mature vegetative
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-a-in-garden-vision-qa-2026-09-25-v1","jobId":"apricot__mature__tree__vegetative__v1"}' | tee execution-results/04.json
+      - name: Apricot mature fruiting
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-a-in-garden-vision-qa-2026-09-25-v1","jobId":"apricot__mature__tree__fruiting__v1"}' | tee execution-results/05.json
+      - name: Apricot mature dormant
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-a-in-garden-vision-qa-2026-09-25-v1","jobId":"apricot__mature__tree__dormant__v1"}' | tee execution-results/06.json
+      - name: Grapefruit mature vegetative
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-a-in-garden-vision-qa-2026-09-25-v1","jobId":"grapefruit__mature__tree__vegetative__v1"}' | tee execution-results/07.json
+      - name: Grapefruit young vegetative
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-a-in-garden-vision-qa-2026-09-25-v1","jobId":"grapefruit__young__tree__vegetative__v1"}' | tee execution-results/08.json
+      - name: Grapefruit mature fruiting
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-a-in-garden-vision-qa-2026-09-25-v1","jobId":"grapefruit__mature__tree__fruiting__v1"}' | tee execution-results/09.json
+      - name: Sweet orange mature vegetative
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-a-in-garden-vision-qa-2026-09-25-v1","jobId":"sweet-orange__mature__tree__vegetative__v1"}' | tee execution-results/10.json
+      - name: Sweet orange young vegetative
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-a-in-garden-vision-qa-2026-09-25-v1","jobId":"sweet-orange__young__tree__vegetative__v1"}' | tee execution-results/11.json
+      - name: Sweet orange mature fruiting
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-a-in-garden-vision-qa-2026-09-25-v1","jobId":"sweet-orange__mature__tree__fruiting__v1"}' | tee execution-results/12.json
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cruvit-e2e-batch-a-in-garden-vision-qa
+          path: execution-results/
+          if-no-files-found: warn
+          retention-days: 30
