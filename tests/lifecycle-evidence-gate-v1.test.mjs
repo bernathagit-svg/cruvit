@@ -19,3 +19,14 @@ test('conflicting eligible lifecycle evidence holds',()=>{
   ]);
   assert.equal(r.ready,false); assert.equal(r.code,'CONFLICTING_LIFECYCLE_EVIDENCE');
 });
+
+
+test('structured Annual + Perennial source block is held as conflict',()=>{
+  const r=extractExplicitLifecycle(
+    'Bougainvillea glabra Whole Plant Traits: Plant Type: Annual Perennial Shrub Vine Woody Plant Leaf Characteristics: Broadleaf Evergreen',
+    'Bougainvillea glabra'
+  );
+  assert.equal(r.ok,false);
+  assert.equal(r.state,'UNKNOWN');
+  assert.equal(r.code,'STRUCTURED_LIFECYCLE_CONFLICT');
+});
