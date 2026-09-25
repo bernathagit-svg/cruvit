@@ -1,0 +1,35 @@
+name: Batch B Scale V2 Geometry and Vision Plan
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/batch-b-scale-v2-geometry-and-vision-plan.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Fetch Scale V2 capture status
+        run: |
+          curl --fail-with-body --silent --show-error             "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/plant-visual-in-garden-capture-status?runId=cruvit-e2e-batch-b-in-garden-scale-v2-2026-09-25-v1"             -o /tmp/batch-b-scale-v2-capture-status.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build geometry report and vision plan
+        run: |
+          node scripts/e2e-batch-b-scale-v2-geometry-and-vision-plan.mjs             /tmp/batch-b-scale-v2-capture-status.json             data/garden-design/plant-visual-in-garden-geometry-qa/cruvit-e2e-batch-b-in-garden-scale-v2-2026-09-25-v1.json             data/garden-design/plant-visual-in-garden-vision-qa-plans/cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2.json             data/garden-design/plant-visual-in-garden-vision-qa-spend-proposals/cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2.json
+      - name: Commit artifacts
+        run: |
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add             data/garden-design/plant-visual-in-garden-geometry-qa/cruvit-e2e-batch-b-in-garden-scale-v2-2026-09-25-v1.json             data/garden-design/plant-visual-in-garden-vision-qa-plans/cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2.json             data/garden-design/plant-visual-in-garden-vision-qa-spend-proposals/cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2.json
+          git commit -m "garden-design: record Batch B Scale V2 geometry QA and prepare vision QA"
+          git push origin HEAD:main
