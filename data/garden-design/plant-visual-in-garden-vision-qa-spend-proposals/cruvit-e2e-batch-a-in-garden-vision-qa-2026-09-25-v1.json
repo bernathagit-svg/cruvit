@@ -1,0 +1,40 @@
+{
+  "contract": "plant-visual-in-garden-vision-qa-spend-proposal-v1",
+  "runId": "cruvit-e2e-batch-a-in-garden-vision-qa-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "provider": "openai-responses-api",
+  "model": "gpt-5.6-luna",
+  "jobCount": 12,
+  "maxCalls": 12,
+  "maxRetries": 0,
+  "perCallReserveUsd": 0.01,
+  "proposedMaxSpendUsd": 0.18,
+  "rationale": [
+    "Batch A has 12 geometry-pass in-garden captures.",
+    "Prior Wave 2 used 6 calls with actual spend about USD 0.0044; Wave 3 used similarly low actual spend.",
+    "USD 0.18 preserves conservative bounded headroom for 12 high-detail calls."
+  ],
+  "jobIds": [
+    "apple__mature__tree__vegetative__v1",
+    "apple__mature__tree__fruiting__v1",
+    "apple__mature__tree__dormant__v1",
+    "apricot__mature__tree__vegetative__v1",
+    "apricot__mature__tree__fruiting__v1",
+    "apricot__mature__tree__dormant__v1",
+    "grapefruit__mature__tree__vegetative__v1",
+    "grapefruit__young__tree__vegetative__v1",
+    "grapefruit__mature__tree__fruiting__v1",
+    "sweet-orange__mature__tree__vegetative__v1",
+    "sweet-orange__young__tree__vegetative__v1",
+    "sweet-orange__mature__tree__fruiting__v1"
+  ],
+  "allowedActions": [
+    "read exact in-garden QA capture bytes from candidate R2",
+    "send one renderer capture plus expected plant metadata to vision QA model",
+    "write in-garden vision QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "imageGenerationAllowed": false,
+  "imageMutationAllowed": false
+}
