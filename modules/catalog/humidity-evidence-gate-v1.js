@@ -18,6 +18,22 @@ function clean(v){
 function excerpt(raw,index,r=220){
   return raw.slice(Math.max(0,index-r),Math.min(raw.length,index+r)).replace(/\s+/g,' ').trim();
 }
+function contextSpecificityRisk(excerptText=''){
+  const s=String(excerptText||'').toLowerCase();
+  return /\bseries\b|\bcultivar\b|\bcultivars\b|\bhybrid\b|\bcross between\b|\bvariety\b|\bvarieties\b/.test(s);
+}
+function evidence(kind, excerptText, confidence){
+  if(contextSpecificityRisk(excerptText)){
+    return {
+      ok:false,
+      kind:'CONTEXT_SPECIFIC_CULTIVAR_OR_HYBRID',
+      excerpt:excerptText,
+      confidence,
+      scopeRisk:true
+    };
+  }
+  return {ok:true,kind,excerpt:excerptText,confidence,scopeRisk:false};
+}
 
 export function extractHumidityEvidence(raw=''){
   const text=clean(raw), lower=text.toLowerCase();
@@ -28,7 +44,7 @@ export function extractHumidityEvidence(raw=''){
   ];
   for(const re of directHigh){
     const m=re.exec(lower);
-    if(m) return {ok:true,kind:'DIRECT_HIGH_TOLERANCE',excerpt:excerpt(text,m.index),confidence:'HIGH'};
+    if(m) return evidence('DIRECT_HIGH_TOLERANCE',excerpt(text,m.index),'HIGH');
   }
 
   const directLow=[
@@ -39,7 +55,7 @@ export function extractHumidityEvidence(raw=''){
   ];
   for(const re of directLow){
     const m=re.exec(lower);
-    if(m) return {ok:true,kind:'DIRECT_LOW_TOLERANCE',excerpt:excerpt(text,m.index),confidence:'HIGH'};
+    if(m) return evidence('DIRECT_LOW_TOLERANCE',excerpt(text,m.index),'HIGH');
   }
 
   const humidityTerms=[
@@ -51,12 +67,7 @@ export function extractHumidityEvidence(raw=''){
     for(const m of lower.matchAll(re)){
       const ex=excerpt(text,m.index,260);
       if(diseaseTerms.test(ex)){
-        return {
-          ok:true,
-          kind:'HUMIDITY_OR_WETNESS_DISEASE_PRESSURE',
-          excerpt:ex,
-          confidence:'MEDIUM'
-        };
+        return evidence('HUMIDITY_OR_WETNESS_DISEASE_PRESSURE',ex,'MEDIUM');
       }
     }
   }
