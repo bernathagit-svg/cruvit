@@ -1,0 +1,27 @@
+{
+  "contract": "plant-visual-model-qa-summary-v1",
+  "runId": "cruvit-e2e-batch-a-citrus-model-qa-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "reviewed": 6,
+  "pass": 0,
+  "uncertain": 6,
+  "fail": 0,
+  "actualSpendUsd": 0.004473,
+  "passJobs": [],
+  "uncertainJobs": [
+    "grapefruit__mature__tree__vegetative__v1",
+    "grapefruit__young__tree__vegetative__v1",
+    "grapefruit__mature__tree__fruiting__v1",
+    "sweet-orange__mature__tree__vegetative__v1",
+    "sweet-orange__young__tree__vegetative__v1",
+    "sweet-orange__mature__tree__fruiting__v1"
+  ],
+  "failJobs": [],
+  "notes": [
+    "All six UNCERTAIN outcomes are driven by conservative species-level citrus discrimination from pixels alone.",
+    "Architecture passed for all six.",
+    "Phenology passed for all six.",
+    "Growth stage passed for both mature variants of each species and was UNCERTAIN only for the two young variants.",
+    "No generation, mutation, Production, or registry writes occurred."
+  ]
+}
