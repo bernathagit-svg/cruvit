@@ -84,13 +84,14 @@ export default async(req)=>{
   if(!items.length) return json(400,{ok:false,code:'ITEMS_REQUIRED'});
   if(items.length>100) return json(400,{ok:false,code:'TOO_MANY_ITEMS',maxItems:100});
 
-  const [identityRegistry,designAssetRegistry,sizeAuthorityRegistry,catalogMediaCoverage]=await Promise.all([
+  const [identityRegistry,designAssetRegistry,sizeAuthorityRegistry,catalogMediaCoverage,candidateReuseIndex]=await Promise.all([
     staticJson(req,'data/plant-identity.registry.json'),
     staticJson(req,'modules/garden-design/assets/plants/design-asset-registry-v1.json'),
     staticJson(req,'data/catalog/botanical-size-authority-v1.json'),
-    staticJson(req,'data/catalog-media/active-canonical-image-coverage-v1.json')
+    staticJson(req,'data/catalog-media/active-canonical-image-coverage-v1.json'),
+    staticJson(req,'data/garden-design/plant-visual-candidate-reuse-index-v1.json')
   ]);
-  if(!identityRegistry||!designAssetRegistry||!sizeAuthorityRegistry||!catalogMediaCoverage){
+  if(!identityRegistry||!designAssetRegistry||!sizeAuthorityRegistry||!catalogMediaCoverage||!candidateReuseIndex){
     return json(503,{ok:false,code:'INTAKE_STATIC_AUTHORITY_UNAVAILABLE'});
   }
 
@@ -163,13 +164,30 @@ export default async(req)=>{
           variantPlan:plan,
           registry:designAssetRegistry
         });
-        let candidateRows=[];
+        let candidateRows=(candidateReuseIndex.entries||[]).filter(row=>
+          row.reusable===true && String(row.canonicalSlug||'').toLowerCase()===slug
+        ).map(row=>({
+          jobId:row.jobId,
+          canonicalSlug:row.canonicalSlug,
+          scientific:row.scientific,
+          visualForm:row.visualForm,
+          architectureMode:row.architectureMode,
+          growthStage:row.growthStage,
+          phenology:row.phenology,
+          objectKey:row.objectKey,
+          sha256:row.sha256,
+          bytes:row.bytes,
+          technicalQA:row.technicalQA,
+          framingQA:row.framingQA,
+          modelQA:row.modelQA,
+          ownerReviewRequired:row.ownerReviewRequired===true
+        }));
         if(item.candidateManifest){
           const doc=await staticJson(
             req,
             'data/garden-design/plant-visual-qa-manifests/'+item.candidateManifest+'.json'
           );
-          candidateRows=candidateRowsForSlug(doc,slug);
+          candidateRows=[...candidateRows,...candidateRowsForSlug(doc,slug)];
         }
         const route=routeVariantExpansion({
           gapPlan:gaps,
@@ -182,7 +200,7 @@ export default async(req)=>{
           missingGenerationCount:route.paidGenerationReady,
           existingCandidateReuseCount:route.qaRepairReady,
           qaPendingCount:route.qaRepairReady,
-          ownerVisualReviewCount:0,
+          ownerVisualReviewCount:candidateRows.filter(x=>x.ownerReviewRequired===true).length,
           promotionReadyCount:0,
           candidateManifest:item.candidateManifest||null,
           routeCounts:route.counts,
