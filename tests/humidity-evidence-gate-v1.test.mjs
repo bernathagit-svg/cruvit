@@ -22,3 +22,15 @@ test('no evidence stays unknown',()=>{
   assert.equal(r.value,null);
   assert.equal(r.evidenceClass,'UNKNOWN');
 });
+
+
+test('cultivar-specific humidity evidence cannot become species trait',()=>{
+  const e=extractHumidityEvidence(
+    'The Profusion Series is a hybrid cross between species and is tolerant of heat and humidity.'
+  );
+  assert.equal(e.ok,false);
+  assert.equal(e.kind,'CONTEXT_SPECIFIC_CULTIVAR_OR_HYBRID');
+  const r=deriveHumidityTrait(e);
+  assert.equal(r.value,null);
+  assert.equal(r.evidenceClass,'UNKNOWN');
+});
