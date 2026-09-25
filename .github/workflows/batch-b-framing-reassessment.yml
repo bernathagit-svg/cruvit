@@ -1,0 +1,35 @@
+name: Batch B Framing Reassessment
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/batch-b-framing-reassessment.yml'
+permissions:
+  contents: write
+jobs:
+  reassess:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Fetch exact original evidence
+        run: |
+          set -euo pipefail
+          for id in             english-lavender__mature__shrub__vegetative__v1             fig__mature__tree__vegetative__v1             pomegranate__young__tree__vegetative__v1
+          do
+            curl --fail-with-body --silent --show-error               "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/plant-visual-wave-evidence?runId=cruvit-e2e-batch-b-visual-wave-001-2026-09-25-v1&jobId=$id"               -o "/tmp/$id.json"
+          done
+      - name: Reassess and expand Model QA plan
+        run: node scripts/e2e-batch-b-framing-reassess-v1.mjs
+      - name: Commit reassessment
+        run: |
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add             data/garden-design/plant-visual-framing-reassessments/cruvit-e2e-batch-b-framing-reassessment-2026-09-25-v1.json             data/garden-design/plant-visual-model-qa-plans/cruvit-e2e-batch-b-model-qa-2026-09-25-v1.json             data/garden-design/plant-visual-model-qa-spend-proposals/cruvit-e2e-batch-b-model-qa-2026-09-25-v1.json
+          git commit -m "garden-design: admit three near-threshold Batch B candidates without regeneration"
+          git push origin HEAD:main
