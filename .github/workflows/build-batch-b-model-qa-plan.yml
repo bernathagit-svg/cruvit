@@ -1,0 +1,28 @@
+name: Build Batch B Model QA Plan
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-batch-b-model-qa-plan.yml'
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          curl --fail-with-body --silent --show-error             "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/plant-visual-wave-status?runId=cruvit-e2e-batch-b-visual-wave-001-2026-09-25-v1"             -o /tmp/batch-b-wave-status.json
+          node scripts/e2e-batch-b-build-model-qa-plan.mjs /tmp/batch-b-wave-status.json
+      - run: |
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add             data/garden-design/plant-visual-model-qa-plans/cruvit-e2e-batch-b-model-qa-2026-09-25-v1.json             data/garden-design/plant-visual-model-qa-spend-proposals/cruvit-e2e-batch-b-model-qa-2026-09-25-v1.json             data/garden-design/plant-visual-framing-failure-routes/cruvit-e2e-batch-b-framing-failures-2026-09-25-v1.json
+          git commit -m "garden-design: prepare Batch B Model QA for 15 framing-pass candidates"
+          git push origin HEAD:main
