@@ -188,13 +188,31 @@ export function catalogRowToRuntimePlant(row) {
   if (!slug) return null;
   const names = row.common_names || row.names || {};
   const climateTraits = row.climate_traits || row.climateTraits || {};
+  const designMetadata =
+    climateTraits.designMetadata && typeof climateTraits.designMetadata === 'object'
+      ? climateTraits.designMetadata
+      : {};
+  const leafHabit =
+    designMetadata.leafHabit && typeof designMetadata.leafHabit === 'object'
+      ? designMetadata.leafHabit
+      : {};
+  const sourceSupportedLeafHabit =
+    String(leafHabit.evidenceClass || '').toUpperCase() === 'SOURCE_SUPPORTED'
+      && ['DECIDUOUS', 'EVERGREEN'].includes(String(leafHabit.state || '').toUpperCase())
+      ? String(leafHabit.state).toLowerCase()
+      : '';
   const media = row.media && typeof row.media === 'object' ? row.media : {};
   return {
     slug,
+    canonicalSlug: slug,
     name: names.en || slug,
     names,
     scientific: row.scientific_name || row.scientific || '',
     aliases: Array.isArray(row.aliases) ? row.aliases : [],
+    tags: Array.isArray(designMetadata.tags) ? [...designMetadata.tags] : [],
+    growth: designMetadata.growth || '',
+    care: designMetadata.growth ? { growth: designMetadata.growth } : {},
+    growthHabit: sourceSupportedLeafHabit || null,
     climateTraits,
     floweringRequirements: row.flowering_requirements ?? climateTraits.floweringRequirements,
     fruitingRequirements: row.fruiting_requirements ?? climateTraits.fruitingRequirements,
@@ -206,7 +224,10 @@ export function catalogRowToRuntimePlant(row) {
     mediaStatus: row.media_status || media.imageStatus || 'IMAGE_PENDING',
     catalogVersion: row.catalog_version || CANONICAL_CATALOG_PERSISTENCE_VERSION,
     source: 'canonical-catalog',
-    sourcePacket: row.source_packet || null
+    sourcePacket: row.source_packet || null,
+    designMetadata,
+    seasonalityEvidence: leafHabit,
+    seasonalityResearchRequired: designMetadata.seasonalityResearchRequired === true
   };
 }
 
