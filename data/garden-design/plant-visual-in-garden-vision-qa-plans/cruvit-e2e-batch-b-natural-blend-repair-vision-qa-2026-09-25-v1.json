@@ -1,0 +1,77 @@
+{
+  "contract": "plant-visual-in-garden-vision-qa-plan-v1",
+  "runId": "cruvit-e2e-batch-b-natural-blend-repair-vision-qa-2026-09-25-v1",
+  "sourceCaptureRunId": "cruvit-e2e-batch-b-natural-blend-repair-composites-2026-09-25-v1",
+  "sourceManifestId": "cruvit-e2e-batch-b-in-garden-scale-v2-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "provider": "openai-responses-api",
+  "model": "gpt-5.6-luna",
+  "reasoningEffort": "low",
+  "imageDetail": "high",
+  "jobCount": 2,
+  "jobs": [
+    {
+      "jobId": "fig__young__tree__vegetative__v1",
+      "canonicalSlug": "fig",
+      "scientific": "Ficus carica",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "young",
+      "phenology": "vegetative",
+      "objectKey": "candidates/cruvit-e2e-batch-b-visual-wave-001-2026-09-25-v1/fig/fig__young__tree__vegetative__v1__5c19755c29b60319a6fad5b8e9b1b86ed64e684a40765fec3d408d7e098d3c8d.png",
+      "sha256": "5c19755c29b60319a6fad5b8e9b1b86ed64e684a40765fec3d408d7e098d3c8d",
+      "captureObjectKey": "candidates/cruvit-e2e-batch-b-in-garden-scale-v2-2026-09-25-v1/natural-blend/cruvit-e2e-batch-b-fig-young-natural-blend-repair-2026-09-25-v1/final-composite__c2e465f735dfe9e54ad67fc69c7af36d88a298fea63bdf97e6f66cfe8f1248f9.jpg",
+      "captureSha256": "c2e465f735dfe9e54ad67fc69c7af36d88a298fea63bdf97e6f66cfe8f1248f9",
+      "repairEvidenceRunId": "cruvit-e2e-batch-b-fig-young-natural-blend-repair-2026-09-25-v1"
+    },
+    {
+      "jobId": "lettuce__mature__default__vegetative__v1",
+      "canonicalSlug": "lettuce",
+      "scientific": "Lactuca sativa",
+      "visualForm": "rosette",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "objectKey": "candidates/cruvit-e2e-batch-b-visual-wave-001-2026-09-25-v1/lettuce/lettuce__mature__default__vegetative__v1__eee0f7e8708b39013a151b9a3bf2689a483c742669b2351a4a738e8b6be46f24.png",
+      "sha256": "eee0f7e8708b39013a151b9a3bf2689a483c742669b2351a4a738e8b6be46f24",
+      "captureObjectKey": "candidates/cruvit-e2e-batch-b-in-garden-scale-v2-2026-09-25-v1/natural-blend/cruvit-e2e-batch-b-lettuce-natural-blend-repair-2026-09-25-v1/final-composite__25b7811d775459b76d23ce08fc07f9d649a8f09c828e98ecb598a58c543ba61a.jpg",
+      "captureSha256": "25b7811d775459b76d23ce08fc07f9d649a8f09c828e98ecb598a58c543ba61a",
+      "repairEvidenceRunId": "cruvit-e2e-batch-b-lettuce-natural-blend-repair-2026-09-25-v1"
+    }
+  ],
+  "requiredChecks": [
+    "perspective",
+    "groundContact",
+    "stickerLook",
+    "halo",
+    "sharpnessMatch",
+    "colorTonalMatch",
+    "scaleRealism",
+    "silhouette"
+  ],
+  "outputPolicy": {
+    "allowedVerdicts": [
+      "PASS",
+      "FAIL",
+      "UNCERTAIN"
+    ],
+    "failRoutesToHold": true,
+    "uncertainRoutesToOwnerReview": true,
+    "allPassRequiredForAutomaticInGardenPass": true
+  },
+  "executionPolicy": {
+    "ownerSpendApprovalRequired": true,
+    "maxCalls": 2,
+    "maxRetries": 0,
+    "candidateEvidenceOnly": true,
+    "productionWritesAllowed": false,
+    "registryWritesAllowed": false
+  },
+  "safety": {
+    "sourceCaptureShaMustMatch": true,
+    "naturalBlendCompositeRequired": true,
+    "noGeneration": true,
+    "noImageMutation": true,
+    "noProductionPromotion": true
+  }
+}
