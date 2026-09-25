@@ -186,6 +186,9 @@ jobs:
       - name: Test bounded Natural Blend+ pilot
         run: node --test tests/plant-visual-natural-blend-v1.test.mjs
 
+      - name: Test generic Natural Blend repair
+        run: node --test tests/plant-visual-natural-blend-generic-v1.test.mjs
+
       - name: Test Natural Blend patch lifecycle
         run: node --test tests/garden-design-natural-blend-lifecycle-v1.test.mjs
 
