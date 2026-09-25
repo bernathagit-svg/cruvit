@@ -162,6 +162,9 @@ jobs:
       - name: Test Wave 1 R2 execution safety
         run: node --test tests/plant-visual-wave-r2-execution-v1.test.mjs
 
+      - name: Test bounded repair prompt
+        run: node --test tests/plant-visual-repair-prompt-v1.test.mjs
+
       - name: Test bounded vision QA
         run: node --test tests/plant-visual-model-qa-v1.test.mjs
 
