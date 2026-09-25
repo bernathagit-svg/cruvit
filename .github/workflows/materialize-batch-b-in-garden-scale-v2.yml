@@ -1,0 +1,85 @@
+name: Materialize Batch B In-Garden Scale V2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/materialize-batch-b-in-garden-scale-v2.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Build Scale V2 plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/garden-design/plant-visual-in-garden-model-qa-plans
+          curl --fail-with-body --silent --show-error             "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/cruvit-e2e-in-garden-plan-builder?bundleId=cruvit-e2e-batch-b-in-garden-source-2026-09-25-v1&runId=cruvit-e2e-batch-b-in-garden-scale-v2-2026-09-25-v1"             -o data/garden-design/plant-visual-in-garden-model-qa-plans/cruvit-e2e-batch-b-in-garden-scale-v2-2026-09-25-v1.json
+          test "$(jq -r '.jobCount' data/garden-design/plant-visual-in-garden-model-qa-plans/cruvit-e2e-batch-b-in-garden-scale-v2-2026-09-25-v1.json)" = "17"
+
+      - name: Build V1 vs V2 comparison
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+
+          const v1=JSON.parse(fs.readFileSync(
+            'data/garden-design/plant-visual-in-garden-model-qa-plans/cruvit-e2e-batch-b-in-garden-qa-2026-09-25-v1.json','utf8'
+          ));
+          const v2=JSON.parse(fs.readFileSync(
+            'data/garden-design/plant-visual-in-garden-model-qa-plans/cruvit-e2e-batch-b-in-garden-scale-v2-2026-09-25-v1.json','utf8'
+          ));
+
+          const by1=new Map(v1.jobs.map(x=>[x.jobId,x]));
+          const rows=v2.jobs.map(x=>{
+            const a=by1.get(x.jobId);
+            const oldW=a?.qaRendererInput?.baseWidthPx ?? null;
+            const newW=x?.qaRendererInput?.baseWidthPx ?? null;
+            return {
+              jobId:x.jobId,
+              canonicalSlug:x.canonicalSlug,
+              visualForm:x.visualForm,
+              architectureMode:x.architectureMode,
+              oldBaseWidthPx:oldW,
+              newBaseWidthPx:newW,
+              changePct:oldW&&newW?+(((newW/oldW)-1)*100).toFixed(1):null,
+              effectivePresentationForm:x?.qaRendererInput?.effectivePresentationForm||null,
+              relativePreviewScaleFactor:x?.qaRendererInput?.relativePreviewScaleFactor||1,
+              spreadMidpointM:x?.qaRendererInput?.relativePreviewSpreadMidpointM||null,
+              referenceSpreadM:x?.qaRendererInput?.relativePreviewReferenceSpreadM||null,
+              qaScaleBand:x?.qaRendererInput?.qaScaleBand||null
+            };
+          });
+
+          const out={
+            contract:'cruvit-e2e-batch-b-scale-v2-comparison-v1',
+            createdAt:'2026-09-25',
+            oldRunId:v1.runId,
+            newRunId:v2.runId,
+            rows
+          };
+          fs.mkdirSync('data/garden-design/plant-visual-scale-calibration',{recursive:true});
+          fs.writeFileSync(
+            'data/garden-design/plant-visual-scale-calibration/cruvit-e2e-batch-b-scale-v2-comparison-2026-09-25-v1.json',
+            JSON.stringify(out,null,2)+'\n'
+          );
+          console.log(JSON.stringify(rows,null,2));
+          NODE
+
+      - name: Commit Scale V2 artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add             data/garden-design/plant-visual-in-garden-model-qa-plans/cruvit-e2e-batch-b-in-garden-scale-v2-2026-09-25-v1.json             data/garden-design/plant-visual-scale-calibration/cruvit-e2e-batch-b-scale-v2-comparison-2026-09-25-v1.json
+          git commit -m "garden-design: materialize Batch B evidence-informed Scale V2"
+          git push origin HEAD:main
