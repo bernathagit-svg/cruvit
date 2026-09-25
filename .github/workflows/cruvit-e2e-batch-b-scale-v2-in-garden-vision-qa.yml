@@ -1,0 +1,112 @@
+name: CRUVIT E2E Batch B Scale V2 In-Garden Vision QA
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cruvit-e2e-batch-b-scale-v2-in-garden-vision-qa.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      BASE_URL: https://friendly-taiyaki-64aacb.netlify.app
+      RUN_ID: cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2
+    steps:
+      - name: Fig mature shrub vegetative
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2","jobId":"fig__mature__shrub__vegetative__v1"}' | tee execution-results/01.json
+      - name: Fig mature tree fruiting
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2","jobId":"fig__mature__tree__fruiting__v1"}' | tee execution-results/02.json
+      - name: Fig mature tree vegetative
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2","jobId":"fig__mature__tree__vegetative__v1"}' | tee execution-results/03.json
+      - name: Fig young tree vegetative
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2","jobId":"fig__young__tree__vegetative__v1"}' | tee execution-results/04.json
+      - name: Lettuce mature vegetative
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2","jobId":"lettuce__mature__default__vegetative__v1"}' | tee execution-results/05.json
+      - name: Pomegranate mature tree dormant
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2","jobId":"pomegranate__mature__tree__dormant__v1"}' | tee execution-results/06.json
+      - name: Pomegranate mature tree fruiting
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2","jobId":"pomegranate__mature__tree__fruiting__v1"}' | tee execution-results/07.json
+      - name: Zinnia mature flowering
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2","jobId":"zinnia__mature__default__flowering__v1"}' | tee execution-results/08.json
+      - name: Bigleaf hydrangea mature vegetative
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2","jobId":"bigleaf-hydrangea__mature__shrub__vegetative__v1"}' | tee execution-results/09.json
+      - name: Bigleaf hydrangea mature flowering
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2","jobId":"bigleaf-hydrangea__mature__shrub__flowering__v1"}' | tee execution-results/10.json
+      - name: Bigleaf hydrangea mature dormant
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2","jobId":"bigleaf-hydrangea__mature__shrub__dormant__v1"}' | tee execution-results/11.json
+      - name: English lavender mature flowering
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2","jobId":"english-lavender__mature__shrub__flowering__v1"}' | tee execution-results/12.json
+      - name: Fig mature tree dormant
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2","jobId":"fig__mature__tree__dormant__v1"}' | tee execution-results/13.json
+      - name: Pomegranate mature shrub vegetative
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2","jobId":"pomegranate__mature__shrub__vegetative__v1"}' | tee execution-results/14.json
+      - name: Pomegranate mature tree vegetative
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2","jobId":"pomegranate__mature__tree__vegetative__v1"}' | tee execution-results/15.json
+      - name: Pomegranate young tree vegetative
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2","jobId":"pomegranate__young__tree__vegetative__v1"}' | tee execution-results/16.json
+      - name: Zinnia mature vegetative
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2","jobId":"zinnia__mature__default__vegetative__v1"}' | tee execution-results/17.json
+      - name: Upload Vision QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cruvit-e2e-batch-b-scale-v2-in-garden-vision-qa
+          path: execution-results/
+          if-no-files-found: warn
+          retention-days: 30
