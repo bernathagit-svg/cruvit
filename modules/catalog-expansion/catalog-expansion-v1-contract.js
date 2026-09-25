@@ -542,6 +542,146 @@ export function materializePlantCatalogItemFromPacket(packet, options = {}) {
 
   const botanicalProvenance = buildBotanicalProvenanceFromPacket(packet);
 
+  // Plant Knowledge baseline comes only from the already approved packet sources.
+  // This does not invent safety facts; absent warnings remain an honest empty list.
+  const packetWarningClaims = (packet.claims || []).filter(
+    (claim) =>
+      claim?.field === 'warnings'
+      && claim?.status === 'asserted'
+      && Array.isArray(claim?.value)
+  );
+  const plantKnowledgeWarnings = [];
+  let warningIndex = 0;
+  for (const claim of packetWarningClaims) {
+    const evidenceClass =
+      claim.evidenceClass || classifyClaimFieldProvenance(claim).evidenceClass;
+    for (const value of claim.value || []) {
+      const summary = String(value || '').trim();
+      if (!summary) continue;
+      warningIndex += 1;
+      plantKnowledgeWarnings.push({
+        warningId: `${identity.canonicalSlug}-packet-warning-${warningIndex}`,
+        category: 'general',
+        canonicalTitle: `${identity.commonNameEn} — catalog warning`,
+        summary,
+        severity: 'CAUTION',
+        evidenceClass,
+        regionScope: { level: 'GLOBAL', codes: [], label: null },
+        sourceIds: Array.isArray(claim.sourceIds) ? [...claim.sourceIds] : [],
+        status: 'asserted'
+      });
+    }
+  }
+
+  const plantKnowledgeSources = (packet.sources || []).map((source) => ({
+    sourceId: source.sourceId || null,
+    institution: source.institution || null,
+    publisher: source.publisher || source.institution || null,
+    title: source.title || null,
+    url: source.url || null,
+    authorityTier: source.authorityTier || null,
+    verifiedAt: source.verifiedAt || null
+  }));
+
+  climateTraits.plantKnowledge = {
+    plantKnowledgeContractVersion: '1.0.0',
+    sources: plantKnowledgeSources,
+    warnings: plantKnowledgeWarnings,
+    importantNotes: packet.flags?.reviewResolution
+      ? [{
+          noteId: `${identity.canonicalSlug}-catalog-review-resolution`,
+          value: String(
+            packet.flags.reviewResolution.rationale
+            || packet.flags.reviewResolution.status
+            || 'Catalog review resolution recorded.'
+          ),
+          evidenceClass: FIELD_PROVENANCE_EVIDENCE_CLASSES.SOURCE_SUPPORTED,
+          sourceIds: plantKnowledgeSources.map((source) => source.sourceId).filter(Boolean),
+          status: 'asserted'
+        }]
+      : [],
+    regionalRestrictions: [],
+    invasiveness: {},
+    plantingRequirements: {},
+    soilRequirements: {},
+    maintenance: {},
+    pestsAndDiseases: [],
+    cultivarCaveats: {},
+    toxicity: {},
+    physicalHazards: {},
+    allergenicity: {},
+    harvestUseWarnings: {}
+  };
+
+  // Design metadata is evidence-preserving input for visual variant planning.
+  // Calendar season is not inferred here. Leaf habit is recorded only when
+  // explicit wording exists in approved packet claims/excerpts.
+  const habitEvidence = [];
+  for (const claim of packet.claims || []) {
+    if (claim?.status !== 'asserted') continue;
+    const values = [];
+    if (typeof claim.value === 'string') values.push(claim.value);
+    else if (Array.isArray(claim.value)) values.push(...claim.value.map(String));
+    if (claim.shortExcerpt) values.push(String(claim.shortExcerpt));
+    const blob = values.join(' ').toLowerCase();
+    const hasDeciduous = /\bdeciduous\b|\bsemi-deciduous\b|\bsemideciduous\b/.test(blob);
+    const hasEvergreen = /\bevergreen\b|\bsemi-evergreen\b|\bsemievergreen\b/.test(blob);
+    if (!hasDeciduous && !hasEvergreen) continue;
+    habitEvidence.push({
+      field: claim.field || null,
+      state: hasDeciduous && hasEvergreen
+        ? 'CONFLICT'
+        : hasDeciduous
+          ? 'DECIDUOUS'
+          : 'EVERGREEN',
+      evidenceClass:
+        claim.evidenceClass || classifyClaimFieldProvenance(claim).evidenceClass,
+      sourceIds: Array.isArray(claim.sourceIds) ? [...claim.sourceIds] : [],
+      shortExcerpt: claim.shortExcerpt || null
+    });
+  }
+
+  const sourceSupportedHabitStates = [
+    ...new Set(
+      habitEvidence
+        .filter((row) => row.evidenceClass === FIELD_PROVENANCE_EVIDENCE_CLASSES.SOURCE_SUPPORTED)
+        .map((row) => row.state)
+        .filter((state) => state === 'DECIDUOUS' || state === 'EVERGREEN')
+    )
+  ];
+  const leafHabit =
+    sourceSupportedHabitStates.length === 1
+      ? {
+          state: sourceSupportedHabitStates[0],
+          evidenceClass: FIELD_PROVENANCE_EVIDENCE_CLASSES.SOURCE_SUPPORTED,
+          evidence: habitEvidence.filter(
+            (row) =>
+              row.evidenceClass === FIELD_PROVENANCE_EVIDENCE_CLASSES.SOURCE_SUPPORTED
+              && row.state === sourceSupportedHabitStates[0]
+          )
+        }
+      : sourceSupportedHabitStates.length > 1
+        ? {
+            state: 'CONFLICT',
+            evidenceClass: FIELD_PROVENANCE_EVIDENCE_CLASSES.UNKNOWN,
+            evidence: habitEvidence
+          }
+        : {
+            state: 'UNKNOWN',
+            evidenceClass: FIELD_PROVENANCE_EVIDENCE_CLASSES.UNKNOWN,
+            evidence: habitEvidence
+          };
+
+  climateTraits.designMetadata = {
+    contractVersion: 'design-metadata-v1',
+    tags: tags.length ? [...new Set(tags)] : [],
+    growth: care.growth ? String(care.growth) : null,
+    matureSize: matureSize || null,
+    leafHabit,
+    seasonalityResearchRequired: leafHabit.state === 'UNKNOWN',
+    sourcePacket: packet.packetId
+  };
+
   const item = {
     schemaVersion: 1,
     slug: identity.canonicalSlug,
