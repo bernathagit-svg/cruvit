@@ -1,0 +1,84 @@
+{
+  "contract": "cruvit-e2e-batch-a-visual-completion-plan-v1",
+  "batchId": "cruvit-e2e-batch-a-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "plants": [
+    "apple",
+    "apricot",
+    "grapefruit",
+    "sweet-orange"
+  ],
+  "prerequisite": {
+    "fullCruvitClimateClass": "A",
+    "verified": true,
+    "note": "All four verified live as Class A; only required visual production coverage remains."
+  },
+  "reuseExistingCandidates": [
+    {
+      "jobId": "apple__mature__tree__vegetative__v1",
+      "sourceRunId": "plant-visual-variant-completion-wave-001-2026-09-25-v1",
+      "sourceSha256": "231002b6c0ccc58a8f823d43b361b7e1a9b45e5dd7b81186d5dca789d5f1190e",
+      "technicalQA": "PASS",
+      "framingQA": "PASS",
+      "modelQA": "UNCERTAIN",
+      "action": "CONTINUE_QA_NO_REGENERATION"
+    },
+    {
+      "jobId": "apple__mature__tree__fruiting__v1",
+      "sourceRunId": "plant-visual-variant-completion-wave-001-2026-09-25-v1",
+      "sourceSha256": "b801f00dc24d60ae2f4f55a76eb24754f5cbe530b34d21dc6e00d40ff15c846a",
+      "technicalQA": "PASS",
+      "framingQA": "PASS",
+      "modelQA": "PASS",
+      "action": "CONTINUE_IN_GARDEN_QA"
+    },
+    {
+      "jobId": "apple__mature__tree__dormant__v1",
+      "sourceRunId": "plant-visual-variant-completion-wave-001-2026-09-25-v1",
+      "sourceSha256": "9ae64d63dd14d88eabf99507d3864c7a579989069ecf623ee7b3a6b183d036cb",
+      "technicalQA": "PASS",
+      "framingQA": "PASS",
+      "modelQA": "UNCERTAIN",
+      "action": "CONTINUE_QA_NO_REGENERATION"
+    },
+    {
+      "jobId": "apricot__mature__tree__vegetative__v1",
+      "sourceRunId": "plant-visual-variant-completion-wave-001-2026-09-25-v1",
+      "sourceSha256": "d5e1bbce7f787f320ce7e7efeb2550bdb2d9d29a73c113d110296a8364a2d2ed",
+      "technicalQA": "PASS",
+      "framingQA": "PASS",
+      "modelQA": "UNCERTAIN",
+      "action": "CONTINUE_QA_NO_REGENERATION"
+    },
+    {
+      "jobId": "apricot__mature__tree__fruiting__v1",
+      "sourceRunId": "plant-visual-variant-completion-wave-001-2026-09-25-v1",
+      "sourceSha256": "c61a45dd926c15fe4c7dcac6c347b6b4d0e44419e9836210807197b16f887232",
+      "technicalQA": "PASS",
+      "framingQA": "PASS",
+      "modelQA": "UNCERTAIN",
+      "action": "CONTINUE_QA_NO_REGENERATION"
+    },
+    {
+      "jobId": "apricot__mature__tree__dormant__v1",
+      "sourceRunId": "plant-visual-variant-completion-wave-001-2026-09-25-v1",
+      "sourceSha256": "a8aaf0e898d8cddeaf68f63adf36434e2cf2d5f57b04c561712d2ca2cae7f5b8",
+      "technicalQA": "PASS",
+      "framingQA": "PASS",
+      "modelQA": "UNCERTAIN",
+      "action": "CONTINUE_QA_NO_REGENERATION"
+    }
+  ],
+  "newGenerationRequired": [
+    "grapefruit__mature__tree__vegetative__v1",
+    "grapefruit__young__tree__vegetative__v1",
+    "grapefruit__mature__tree__fruiting__v1",
+    "sweet-orange__mature__tree__vegetative__v1",
+    "sweet-orange__young__tree__vegetative__v1",
+    "sweet-orange__mature__tree__fruiting__v1"
+  ],
+  "generationCallsRequired": 6,
+  "duplicateGenerationForbidden": true,
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false
+}
