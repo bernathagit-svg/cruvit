@@ -210,6 +210,15 @@ export function catalogRowToRuntimePlant(row) {
       && ['DECIDUOUS', 'EVERGREEN'].includes(String(leafHabit.state || '').toUpperCase())
       ? String(leafHabit.state).toLowerCase()
       : '';
+
+  const growthHabitEvidenceClass = String(
+    climateTraits?.traitEvidenceClasses?.growthHabit || ''
+  ).toUpperCase();
+  const sourceSupportedGrowthHabit =
+    growthHabitEvidenceClass === 'SOURCE_SUPPORTED'
+      ? String(climateTraits.growthHabit || '').trim().toLowerCase()
+      : '';
+
   const media = row.media && typeof row.media === 'object' ? row.media : {};
   return {
     slug,
@@ -221,7 +230,7 @@ export function catalogRowToRuntimePlant(row) {
     tags: Array.isArray(designMetadata.tags) ? [...designMetadata.tags] : [],
     growth: designMetadata.growth || '',
     care: designMetadata.growth ? { growth: designMetadata.growth } : {},
-    growthHabit: sourceSupportedLeafHabit || null,
+    growthHabit: sourceSupportedGrowthHabit || null,
     climateTraits,
     floweringRequirements: row.flowering_requirements ?? climateTraits.floweringRequirements,
     fruitingRequirements: row.fruiting_requirements ?? climateTraits.fruitingRequirements,
