@@ -17,7 +17,7 @@
     "batch3": true,
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1). Humidity enrichment 2026-09-25 uses explicit HEURISTIC_ASSERTION with registered transformation; no silent guess.",
     "acceptedInfraspecificTaxaAllowed": true
   },
   "sources": [
@@ -29,6 +29,15 @@
       "url": "https://plants.ces.ncsu.edu/plants/citrus-paradisi/",
       "authorityTier": "university_extension",
       "verifiedAt": "2026-08-31"
+    },
+    {
+      "sourceId": "ufifas-citrus-greasy-spot-humidity",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida Institute of Food and Agricultural Sciences",
+      "title": "Field Identification and Management of Greasy Spot Disease",
+      "url": "https://edis.ifas.ufl.edu/publication/HS263",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-09-25"
     }
   ],
   "claims": [
@@ -185,13 +194,14 @@
     {
       "claimId": "humidityTolerance",
       "field": "humidityTolerance",
-      "status": "unknown",
-      "value": null,
+      "status": "asserted",
+      "value": "medium",
       "sourceIds": [
-        "ncsu-citrus-paradisi"
+        "ufifas-citrus-greasy-spot-humidity"
       ],
-      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
-      "evidenceClass": "UNKNOWN"
+      "shortExcerpt": "UF/IFAS reports greasy spot infection is enhanced by long leaf wetness/high summer conditions and that grapefruit leaves are among the most severely affected citrus types.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "humidity-disease-pressure-to-tolerance-v1@1.0.0: citrus performs in humid Florida production while humidity/wetness increases disease pressure -> conservative medium."
     },
     {
       "claimId": "waterNeeds",
