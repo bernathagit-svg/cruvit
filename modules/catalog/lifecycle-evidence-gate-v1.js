@@ -36,17 +36,26 @@ export function extractExplicitLifecycle(raw,scientific){
   if(!hits.length) return {ok:false,state:'UNKNOWN',code:'NO_EXPLICIT_LIFECYCLE',excerpt:null};
   hits.sort((a,b)=>a.index-b.index);
 
-  const structured=[
-    {state:'ANNUAL',re:/Plant Type:\s*Annual\b/i},
-    {state:'BIENNIAL',re:/Plant Type:\s*Biennial\b/i},
-    {state:'PERENNIAL',re:/Plant Type:[^\n]{0,80}\bPerennial\b/i}
-  ];
-  for(const p of structured){
-    const m=p.re.exec(text);
-    if(m){
+  const plantTypeMatch=/Plant Type:\s*([^:]{1,180}?)(?:Leaf Characteristics:|Habit\/Form:|Growth Rate:|Maintenance:|Texture:|Cultural Conditions:)/i.exec(text);
+  if(plantTypeMatch){
+    const block=plantTypeMatch[1];
+    const structuredStates=[
+      /\bAnnual\b/i.test(block)?'ANNUAL':null,
+      /\bBiennial\b/i.test(block)?'BIENNIAL':null,
+      /\bPerennial\b/i.test(block)?'PERENNIAL':null
+    ].filter(Boolean);
+    const distinct=[...new Set(structuredStates)];
+    if(distinct.length===1){
       return {
-        ok:true,state:p.state,code:'EXPLICIT_LIFECYCLE_FOUND',
-        excerpt:text.slice(Math.max(0,m.index-90),Math.min(text.length,m.index+220))
+        ok:true,state:distinct[0],code:'EXPLICIT_LIFECYCLE_FOUND',
+        excerpt:text.slice(Math.max(0,plantTypeMatch.index-90),Math.min(text.length,plantTypeMatch.index+280))
+      };
+    }
+    if(distinct.length>1){
+      return {
+        ok:false,state:'UNKNOWN',code:'STRUCTURED_LIFECYCLE_CONFLICT',
+        excerpt:text.slice(Math.max(0,plantTypeMatch.index-90),Math.min(text.length,plantTypeMatch.index+320)),
+        conflictingStates:distinct
       };
     }
   }
