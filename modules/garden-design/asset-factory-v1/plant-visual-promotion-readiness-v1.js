@@ -42,7 +42,22 @@ function sizeAuthorityPromotionReady(row = {}) {
     return {
       ok: true,
       code: 'SIZE_AUTHORITY_PARTIAL_EXPLICIT',
+      meterAccuratePlacementReady: false,
       reason: 'Partial botanical size authority is explicit and may be overridden by stronger future evidence; it is not meter-complete truth.'
+    };
+  }
+  if (
+    state === 'SIZE_AUTHORITY_CONTEXT_REQUIRED'
+    && plan.placementScaleHold === true
+  ) {
+    return {
+      ok: true,
+      code: 'SIZE_AUTHORITY_CONTEXT_REQUIRED_VISUAL_PROMOTION_ONLY',
+      meterAccuratePlacementReady: false,
+      placementScaleHold: true,
+      reasonCodes: Array.isArray(plan.reasonCodes) ? plan.reasonCodes : [],
+      reason:
+        'Visual asset promotion is allowed, but meter-accurate placement remains blocked until cultivar/rootstock/maintained-context is resolved.'
     };
   }
   return {
@@ -188,11 +203,23 @@ export function evaluateManifestRowPromotionReadiness(row = {}) {
     sha256: row.sha256
   });
 
-  const variant = buildApprovedRegistryVariant({
-    ...candidate,
-    file: productionKey,
-    url: null
-  }, decision);
+  const variant = {
+    ...buildApprovedRegistryVariant({
+      ...candidate,
+      file: productionKey,
+      url: null
+    }, decision),
+    sizeAuthority: {
+      state: row.sizeAuthorityPlan?.state || null,
+      meterAccuratePlacementReady:
+        sizeAuthority.meterAccuratePlacementReady === true,
+      placementScaleHold:
+        sizeAuthority.placementScaleHold === true,
+      reasonCodes: Array.isArray(row.sizeAuthorityPlan?.reasonCodes)
+        ? row.sizeAuthorityPlan.reasonCodes
+        : []
+    }
+  };
 
   const storageValidation = validatePlantVisualPromotionStorageInput({
     ...variant,
@@ -239,7 +266,11 @@ export const PROMOTION_READINESS_GOVERNANCE = Object.freeze({
   perPlantCodeForbidden: true,
   evidenceMismatchBlocksPromotionUntilReconciled: true,
   explicitSizeAuthorityRequiredForNewBatchManifests: true,
-  allowedDeclaredSizeAuthorityStates: ['SIZE_AUTHORITY_READY','SIZE_AUTHORITY_PARTIAL'],
+  allowedDeclaredSizeAuthorityStates: [
+    'SIZE_AUTHORITY_READY',
+    'SIZE_AUTHORITY_PARTIAL',
+    'SIZE_AUTHORITY_CONTEXT_REQUIRED_WITH_PLACEMENT_SCALE_HOLD'
+  ],
   productionWrites: 0,
   registryWrites: 0
 });
