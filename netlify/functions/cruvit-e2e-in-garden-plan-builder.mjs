@@ -6,6 +6,9 @@ import {
   deriveInGardenQaScale,
   qaScaleBandSpec
 } from '../../modules/garden-design/asset-factory-v1/in-garden-qa-scale-policy-v1.js';
+import {
+  deriveRelativePreviewScale
+} from '../../modules/garden-design/asset-factory-v1/relative-preview-scale-v1.js';
 
 function env(name){try{const v=globalThis.Netlify?.env?.get?.(name);if(v)return v;}catch{}return process.env[name]||'';}
 function json(status,body){return new Response(JSON.stringify(body),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'private, no-store','x-robots-tag':'noindex, nofollow'}});}
@@ -30,6 +33,9 @@ export default async(req)=>{
     return json(404,{ok:false,code:'E2E_SOURCE_BUNDLE_NOT_FOUND'});
   }
 
+  const sizeAuthorityRegistry=await staticJson(req,'/data/catalog/botanical-size-authority-v1.json');
+  if(!sizeAuthorityRegistry) return json(503,{ok:false,code:'SIZE_AUTHORITY_REGISTRY_UNAVAILABLE'});
+
   const required=['PLANT_VISUAL_R2_ACCOUNT_ID','PLANT_VISUAL_R2_ACCESS_KEY_ID','PLANT_VISUAL_R2_SECRET_ACCESS_KEY','PLANT_VISUAL_R2_CANDIDATES_BUCKET'];
   const missing=required.filter(k=>!env(k)); if(missing.length)return json(500,{ok:false,code:'ENV_MISSING',missing});
 
@@ -44,17 +50,26 @@ export default async(req)=>{
     if(bytes.length!==Number(src.bytes)||sha256(bytes)!==String(src.sha256).toLowerCase()) return json(409,{ok:false,code:'SOURCE_CANDIDATE_INTEGRITY_MISMATCH',jobId:item.jobId});
     const technical=inspectTechnicalQa(bytes);
     if(technical.result!=='PASS') return json(409,{ok:false,code:'SOURCE_CANDIDATE_TECHNICAL_QA_NOT_PASS',jobId:item.jobId,reasons:technical.reasons});
+    const relativePreview=deriveRelativePreviewScale(sizeAuthorityRegistry,{
+      canonicalSlug:item.canonicalSlug,
+      visualForm:src.visualForm,
+      architectureMode:src.architectureMode,
+      growthStage:src.growthStage
+    });
     const presentation=derivePresentationSizing({
       visualForm:src.visualForm,
       architectureMode:src.architectureMode,
       width:technical.metrics.width,
       height:technical.metrics.height,
       alphaBBox:technical.metrics.bbox
+    },{
+      relativeScaleFactor:relativePreview.scaleFactor
     });
     if(presentation.status!=='CALIBRATED_BASELINE') return json(409,{ok:false,code:'PRESENTATION_SIZING_BLOCKED',jobId:item.jobId});
     const scale=deriveInGardenQaScale({
       jobId:item.jobId,
       visualForm:src.visualForm,
+      architectureMode:src.architectureMode,
       growthStage:src.growthStage,
       phenology:src.phenology
     },{calibrationStatus:'validated'});
@@ -75,8 +90,15 @@ export default async(req)=>{
       qaRendererInput:{
         ok:true,
         code:'QA_PREVIEW_PRESENTATION_BASELINE',
-        source:'presentation-sizing-v1+in-garden-qa-scale-policy-v1',
+        source:'presentation-sizing-v1.1+relative-preview-scale-v1+in-garden-qa-scale-policy-v1.1',
         baseWidthPx:presentation.baseWidthPx,
+        effectivePresentationForm:presentation.visualForm,
+        relativePreviewScaleFactor:relativePreview.scaleFactor,
+        relativePreviewScaleReady:relativePreview.ready===true,
+        relativePreviewScaleSource:relativePreview.source||null,
+        relativePreviewSpreadMidpointM:relativePreview.midpointSpreadM||null,
+        relativePreviewReferenceSpreadM:relativePreview.referenceSpreadM||null,
+        relativePreviewEvidenceRef:relativePreview.evidenceRef||null,
         qaScaleBand:scale.recommendedBand,
         qaMaxHeightPct:band.maxHeightPct,
         qaMaxWidthPct:band.maxWidthPct,
