@@ -1,0 +1,46 @@
+{
+  "contract": "plant-visual-owner-visual-approval-v1",
+  "manifestId": "cruvit-e2e-batch-a-in-garden-owner-review-2026-09-25-v1",
+  "approvedAt": "2026-09-25",
+  "approvalSource": "owner explicitly approved Owner PASS for all 12 CRUVIT E2E Batch A In-Garden assets after reviewing the real-garden production-renderer captures",
+  "ownerDecision": "PASS_OWNER_VISUAL_GATES",
+  "scope": {
+    "exactJobIds": [
+      "apple__mature__tree__vegetative__v1",
+      "apple__mature__tree__fruiting__v1",
+      "apple__mature__tree__dormant__v1",
+      "apricot__mature__tree__vegetative__v1",
+      "apricot__mature__tree__fruiting__v1",
+      "apricot__mature__tree__dormant__v1",
+      "grapefruit__mature__tree__vegetative__v1",
+      "grapefruit__young__tree__vegetative__v1",
+      "grapefruit__mature__tree__fruiting__v1",
+      "sweet-orange__mature__tree__vegetative__v1",
+      "sweet-orange__young__tree__vegetative__v1",
+      "sweet-orange__mature__tree__fruiting__v1"
+    ],
+    "jobCount": 12
+  },
+  "visualAssessment": {
+    "ownerReviewedProductionRendererCaptures": true,
+    "realSavedGardenPhotoUsed": true,
+    "allTwelvePassed": true,
+    "assetBytesChanged": false
+  },
+  "priorGates": {
+    "geometryQa": "PASS_12_OF_12",
+    "inGardenVisionQa": "UNCERTAIN_12_OF_12_NO_FAIL",
+    "technicalQa": "PASS",
+    "framingQa": "PASS"
+  },
+  "promotionAuthorized": false,
+  "allowedNextActions": [
+    "build zero-write production promotion manifest",
+    "run live full-plant onboarding and visual promotion readiness",
+    "run candidate readback/checksum preflight"
+  ],
+  "prohibitedNextActions": [
+    "promote assets to Production R2 without separate explicit owner authorization",
+    "mutate design asset registry before verified Production readback"
+  ]
+}
