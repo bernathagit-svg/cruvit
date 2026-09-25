@@ -166,15 +166,26 @@ export default async(req)=>{
     throw err;
   }
 
-  const manifest=await loadStaticJson(req,'/data/garden-design/plant-visual-qa-manifests/'+plan.sourceManifestId+'.json');
-  const row=manifest?.rows?.find(r=>r.jobId===jobId);
-  if(!row||!row.objectKey||!row.sha256){
-    return json(409,{ok:false,code:'SOURCE_CANDIDATE_MANIFEST_EVIDENCE_MISSING'});
+  let sourceCandidate=null;
+  if(plan.sourceCandidate?.objectKey && plan.sourceCandidate?.sha256){
+    sourceCandidate={
+      objectKey:String(plan.sourceCandidate.objectKey),
+      sha256:String(plan.sourceCandidate.sha256).toLowerCase()
+    };
+  }else{
+    const manifest=await loadStaticJson(req,'/data/garden-design/plant-visual-qa-manifests/'+plan.sourceManifestId+'.json');
+    const row=manifest?.rows?.find(r=>r.jobId===jobId);
+    if(row?.objectKey && row?.sha256){
+      sourceCandidate={objectKey:row.objectKey,sha256:String(row.sha256).toLowerCase()};
+    }
+  }
+  if(!sourceCandidate){
+    return json(409,{ok:false,code:'SOURCE_CANDIDATE_EVIDENCE_MISSING'});
   }
 
-  const candidateBytes=await readBytes(c,bucket,row.objectKey);
+  const candidateBytes=await readBytes(c,bucket,sourceCandidate.objectKey);
   if(!candidateBytes)return json(409,{ok:false,code:'SOURCE_CANDIDATE_NOT_FOUND'});
-  if(sha256(candidateBytes)!==String(row.sha256).toLowerCase()){
+  if(sha256(candidateBytes)!==sourceCandidate.sha256){
     return json(409,{ok:false,code:'SOURCE_CANDIDATE_INTEGRITY_MISMATCH'});
   }
 
@@ -190,12 +201,14 @@ export default async(req)=>{
     'cruvit-run-id':runId,'cruvit-job-id':jobId,'cruvit-sha256':maskSha
   });
 
+  const commonName=String(plan.canonicalSlug||'plant').replace(/-/g,' ');
+  const scientific=String(plan.scientific||'').trim();
   const prompt=[
-    'Edit the first image only to make the existing lavender plant look naturally integrated into the photographed garden.',
-    'The second image is the exact plant cutout reference. Preserve that same plant identity, overall silhouette, branching structure, flower spikes, and botanical appearance.',
+    'Edit the first image only to make the existing '+commonName+' plant look naturally integrated into the photographed garden.',
+    'The second image is the exact plant cutout reference. Preserve that same plant identity, overall silhouette, branching structure, leaf/flower/fruit state, and botanical appearance.',
     'Do not redesign the garden. Do not add or remove plants, paths, walls, windows, irrigation, stones, or architecture.',
     'Within the editable mask only: harmonize local exposure, white balance, color temperature, edge softness, atmospheric sharpness, contact shadow, soil contact, subtle reflected ground color, and ambient light so the plant no longer looks pasted on.',
-    'Keep the plant recognizable as the same Lavender (Lavandula angustifolia).',
+    scientific ? 'Keep the plant recognizable as the same '+commonName+' ('+scientific+').' : 'Keep the plant recognizable as the same '+commonName+'.',
     'Make only restrained photorealistic integration changes. No stylization, no new objects, no composition changes.',
     'Pixels outside the mask are context only and must be treated as fixed.'
   ].join(' ');
@@ -263,8 +276,8 @@ export default async(req)=>{
     code:'NATURAL_BLEND_EDIT_RECORDED',
     model:plan.model,
     quality:plan.quality,
-    sourceCandidateObjectKey:row.objectKey,
-    sourceCandidateSha256:row.sha256,
+    sourceCandidateObjectKey:sourceCandidate.objectKey,
+    sourceCandidateSha256:sourceCandidate.sha256,
     inputObjectKey:cropKey,
     cropSha256:cropSha,
     maskObjectKey:maskKey,
