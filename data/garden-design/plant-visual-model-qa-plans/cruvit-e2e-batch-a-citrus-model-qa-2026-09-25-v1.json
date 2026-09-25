@@ -1,0 +1,116 @@
+{
+  "contract": "plant-visual-model-qa-plan-v1",
+  "runId": "cruvit-e2e-batch-a-citrus-model-qa-2026-09-25-v1",
+  "sourceManifestId": "cruvit-e2e-batch-a-citrus-visual-wave-001-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "provider": "openai-responses-api",
+  "model": "gpt-5.6-luna",
+  "reasoningEffort": "low",
+  "purpose": "candidate-pixel-botanical-state-qa",
+  "jobCount": 6,
+  "jobs": [
+    {
+      "jobId": "grapefruit__mature__tree__vegetative__v1",
+      "canonicalSlug": "grapefruit",
+      "scientific": "Citrus × paradisi",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "objectKey": "candidates/cruvit-e2e-batch-a-citrus-visual-wave-001-2026-09-25-v1/grapefruit/grapefruit__mature__tree__vegetative__v1__206d843ab35c50e271f8b192fbd3e9502c91c27267e9737c8230351318fa6cb3.png",
+      "sha256": "206d843ab35c50e271f8b192fbd3e9502c91c27267e9737c8230351318fa6cb3",
+      "bytes": 2619267,
+      "visualForm": "tree",
+      "architectureMode": "tree"
+    },
+    {
+      "jobId": "grapefruit__young__tree__vegetative__v1",
+      "canonicalSlug": "grapefruit",
+      "scientific": "Citrus × paradisi",
+      "growthStage": "young",
+      "phenology": "vegetative",
+      "objectKey": "candidates/cruvit-e2e-batch-a-citrus-visual-wave-001-2026-09-25-v1/grapefruit/grapefruit__young__tree__vegetative__v1__d48cb236f08748740dbd681442826c93c732dd24617a7d5d6d450c525d5ec40f.png",
+      "sha256": "d48cb236f08748740dbd681442826c93c732dd24617a7d5d6d450c525d5ec40f",
+      "bytes": 1928278,
+      "visualForm": "tree",
+      "architectureMode": "tree"
+    },
+    {
+      "jobId": "grapefruit__mature__tree__fruiting__v1",
+      "canonicalSlug": "grapefruit",
+      "scientific": "Citrus × paradisi",
+      "growthStage": "mature",
+      "phenology": "fruiting",
+      "objectKey": "candidates/cruvit-e2e-batch-a-citrus-visual-wave-001-2026-09-25-v1/grapefruit/grapefruit__mature__tree__fruiting__v1__07438ab717f6d66bce5a0554c36715728b7f004cc26b57884be0c1bd4ec97eb9.png",
+      "sha256": "07438ab717f6d66bce5a0554c36715728b7f004cc26b57884be0c1bd4ec97eb9",
+      "bytes": 2658881,
+      "visualForm": "tree",
+      "architectureMode": "tree"
+    },
+    {
+      "jobId": "sweet-orange__mature__tree__vegetative__v1",
+      "canonicalSlug": "sweet-orange",
+      "scientific": "Citrus × sinensis",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "objectKey": "candidates/cruvit-e2e-batch-a-citrus-visual-wave-001-2026-09-25-v1/sweet-orange/sweet-orange__mature__tree__vegetative__v1__c2daeaee502316c2003121d8c88e74816c4b8c634f77b309afe2a5f77ec196a5.png",
+      "sha256": "c2daeaee502316c2003121d8c88e74816c4b8c634f77b309afe2a5f77ec196a5",
+      "bytes": 2589329,
+      "visualForm": "tree",
+      "architectureMode": "tree"
+    },
+    {
+      "jobId": "sweet-orange__young__tree__vegetative__v1",
+      "canonicalSlug": "sweet-orange",
+      "scientific": "Citrus × sinensis",
+      "growthStage": "young",
+      "phenology": "vegetative",
+      "objectKey": "candidates/cruvit-e2e-batch-a-citrus-visual-wave-001-2026-09-25-v1/sweet-orange/sweet-orange__young__tree__vegetative__v1__887edbdbe6fd5c01905ddc02cba5b66296ea4bb7b6bbbf625bc26dc023031e05.png",
+      "sha256": "887edbdbe6fd5c01905ddc02cba5b66296ea4bb7b6bbbf625bc26dc023031e05",
+      "bytes": 2033046,
+      "visualForm": "tree",
+      "architectureMode": "tree"
+    },
+    {
+      "jobId": "sweet-orange__mature__tree__fruiting__v1",
+      "canonicalSlug": "sweet-orange",
+      "scientific": "Citrus × sinensis",
+      "growthStage": "mature",
+      "phenology": "fruiting",
+      "objectKey": "candidates/cruvit-e2e-batch-a-citrus-visual-wave-001-2026-09-25-v1/sweet-orange/sweet-orange__mature__tree__fruiting__v1__37ea608da9d4e8276dd60de46129d757ecc9ed77aadbaf90691cb79b18dfed4c.png",
+      "sha256": "37ea608da9d4e8276dd60de46129d757ecc9ed77aadbaf90691cb79b18dfed4c",
+      "bytes": 2441384,
+      "visualForm": "tree",
+      "architectureMode": "tree"
+    }
+  ],
+  "requiredChecks": [
+    "botanicalIdentity",
+    "architecture",
+    "growthStage",
+    "phenologyState"
+  ],
+  "outputPolicy": {
+    "allowedVerdicts": [
+      "PASS",
+      "FAIL",
+      "UNCERTAIN"
+    ],
+    "lowConfidenceNeverAutoPass": true,
+    "uncertainRoutesToOwnerReview": true,
+    "failRoutesToHold": true
+  },
+  "executionPolicy": {
+    "ownerSpendApprovalRequired": true,
+    "maxCalls": 6,
+    "maxRetries": 0,
+    "candidateR2EvidenceOnly": true,
+    "productionWritesAllowed": false,
+    "registryWritesAllowed": false
+  },
+  "safety": {
+    "sourceImageMustMatchManifestSha": true,
+    "noGeneration": true,
+    "noImageMutation": true,
+    "noProductionPromotion": true,
+    "noRegistryMutation": true
+  }
+}
