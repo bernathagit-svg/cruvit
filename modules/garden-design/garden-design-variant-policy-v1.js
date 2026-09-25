@@ -306,10 +306,30 @@ export function isBroadPlantIdentity(plant = {}) {
   return /\bspp\.?\b/.test(sci) || /^various\b/.test(sci);
 }
 
+function sourceSupportedSeasonalityState(plant = {}) {
+  const traits = plant.climateTraits && typeof plant.climateTraits === 'object'
+    ? plant.climateTraits
+    : {};
+  const candidates = [
+    plant.seasonalityEvidence,
+    traits.seasonalityEvidence,
+    plant.designMetadata?.leafHabit,
+    traits.designMetadata?.leafHabit
+  ];
+  for (const evidence of candidates) {
+    if (!evidence || typeof evidence !== 'object') continue;
+    if (String(evidence.evidenceClass || '').toUpperCase() !== 'SOURCE_SUPPORTED') continue;
+    const state = String(evidence.state || '').toUpperCase();
+    if (state === 'DECIDUOUS' || state === 'EVERGREEN') return state.toLowerCase();
+  }
+  return '';
+}
+
 function habitLeafText(plant = {}) {
   const traits = plant.climateTraits && typeof plant.climateTraits === 'object' ? plant.climateTraits : {};
   return lower(
     [
+      sourceSupportedSeasonalityState(plant),
       morphologyTraitBlob(plant),
       traits.floweringRequirements,
       plant.floweringRequirements
