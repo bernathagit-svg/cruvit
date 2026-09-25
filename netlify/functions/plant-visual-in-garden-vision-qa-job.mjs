@@ -44,16 +44,55 @@ export default async(req)=>{
   const img=await readBytes(c,bucket,job.captureObjectKey);if(!img)return json(409,{ok:false,code:'IN_GARDEN_CAPTURE_NOT_FOUND'});
   if(sha256(img)!==String(job.captureSha256).toLowerCase())return json(409,{ok:false,code:'IN_GARDEN_CAPTURE_INTEGRITY_MISMATCH'});
   const prompt=[
-    'You are a conservative visual QA reviewer for a plant cutout composited by the real production Garden Design renderer onto a real saved garden photo.',
-    'Evaluate ONLY the visible integration of the plant into the scene.',
+    'You are a visual QA reviewer for a plant cutout composited by the real production Garden Design renderer onto a real saved garden photo.',
+    'Evaluate ONLY visible integration defects in the rendered scene. Do not re-identify the botanical species.',
     'Expected plant: '+job.canonicalSlug+' ('+job.scientific+').',
     'Expected stage/state: '+job.growthStage+' / '+job.phenology+'.',
     'Checks: perspective, groundContact, stickerLook, halo, sharpnessMatch, colorTonalMatch, scaleRealism, silhouette.',
-    'For each check return PASS, FAIL, or UNCERTAIN; confidence high, medium, or low; and a short reason.',
-    'Use FAIL for obvious crop, floating, implausible scale, or integration artifact. Use UNCERTAIN when not safely judgeable.',
-    'Return JSON only with exactly those eight top-level keys.'
+    'Verdict calibration is strict:',
+    '- PASS = the check is visibly acceptable in this image and there is no visible defect that would justify HOLD. PASS does not require proof of perfection.',
+    '- FAIL = a visible, material defect is present, such as crop, floating, implausible scale, obvious pasted-on look, halo, tonal mismatch, malformed silhouette, or perspective mismatch.',
+    '- UNCERTAIN = the image itself does not contain enough visible information to judge the check because of occlusion, insufficient resolution, ambiguous framing, or another concrete observability limit.',
+    'Do NOT use UNCERTAIN merely because a visual judgment is probabilistic. If the feature is visible and looks plausible/natural with no defect, use PASS.',
+    'Give confidence high, medium, or low and a short reason grounded only in the image.'
   ].join('\n');
-  const res=await fetch(RESPONSES_URL,{method:'POST',headers:{authorization:'Bearer '+apiKey,'content-type':'application/json'},body:JSON.stringify({model:plan.model,reasoning:{effort:plan.reasoningEffort||'low'},max_output_tokens:500,input:[{role:'user',content:[{type:'input_text',text:prompt},{type:'input_image',image_url:'data:image/jpeg;base64,'+img.toString('base64'),detail:plan.imageDetail||'high'}]}]})});
+
+  const checkSchema={
+    type:'object',
+    additionalProperties:false,
+    required:['verdict','confidence','reason'],
+    properties:{
+      verdict:{type:'string',enum:['PASS','FAIL','UNCERTAIN']},
+      confidence:{type:'string',enum:['high','medium','low']},
+      reason:{type:'string',minLength:1,maxLength:400}
+    }
+  };
+  const outputSchema={
+    type:'object',
+    additionalProperties:false,
+    required:['perspective','groundContact','stickerLook','halo','sharpnessMatch','colorTonalMatch','scaleRealism','silhouette'],
+    properties:{
+      perspective:checkSchema,
+      groundContact:checkSchema,
+      stickerLook:checkSchema,
+      halo:checkSchema,
+      sharpnessMatch:checkSchema,
+      colorTonalMatch:checkSchema,
+      scaleRealism:checkSchema,
+      silhouette:checkSchema
+    }
+  };
+
+  const res=await fetch(RESPONSES_URL,{method:'POST',headers:{authorization:'Bearer '+apiKey,'content-type':'application/json'},body:JSON.stringify({
+    model:plan.model,
+    reasoning:{effort:plan.reasoningEffort||'low'},
+    max_output_tokens:700,
+    text:{format:{type:'json_schema',name:'cruvit_in_garden_vision_qa',strict:true,schema:outputSchema}},
+    input:[{role:'user',content:[
+      {type:'input_text',text:prompt},
+      {type:'input_image',image_url:'data:image/jpeg;base64,'+img.toString('base64'),detail:plan.imageDetail||'high'}
+    ]}]
+  })});
   const pb=await res.json();
   if(!res.ok){const evidence={contract:'plant-visual-in-garden-vision-qa-evidence-v1',runId,jobId,code:'PROVIDER_FAILURE',overall:'UNCERTAIN',httpStatus:res.status,actualSpendUsd:spendFromUsage(pb.usage),productionWrites:0,registryWrites:0,recordedAt:new Date().toISOString()};await putJson(c,bucket,evidenceKey(plan,jobId),evidence);return json(502,{ok:false,...evidence});}
   let parsed=null;const raw=outputText(pb);try{parsed=JSON.parse(cleanJsonText(raw));}catch{}
