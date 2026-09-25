@@ -1,0 +1,214 @@
+{
+  "contract": "plant-visual-production-wave-execution-manifest-v1",
+  "runId": "cruvit-e2e-batch-a-citrus-visual-wave-001-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "source": {
+    "planner": "cruvit-e2e-plant-batch-planner-v1",
+    "batchPlan": "cruvit-e2e-batch-a-2026-09-25-v1",
+    "selectionRule": "Only missing required grapefruit and sweet-orange visual variants; Apple/Apricot existing candidates explicitly excluded from regeneration."
+  },
+  "bounded": true,
+  "jobCount": 6,
+  "plantCount": 2,
+  "canonicalSlugs": [
+    "grapefruit",
+    "sweet-orange"
+  ],
+  "candidateStorage": {
+    "backend": "cloudflare-r2",
+    "bucketEnv": "PLANT_VISUAL_R2_CANDIDATES_BUCKET",
+    "immutableKeyPattern": "candidates/{runId}/{canonicalSlug}/{assetId}__{sha256}.png"
+  },
+  "executionPolicy": {
+    "provider": "openai-images-api",
+    "model": "gpt-image-2",
+    "maxJobs": 6,
+    "maxCalls": 6,
+    "maxRetries": 0,
+    "registryWritesAllowed": false,
+    "productionWritesAllowed": false,
+    "ownerSpendApprovalRequired": true,
+    "approvalArtifactContract": "plant-visual-production-wave-spend-approval-v1",
+    "fullPlantOnboardingRequiredBeforePaidGeneration": true
+  },
+  "spendPreflight": {
+    "mediumJobs": 6,
+    "highJobs": 0,
+    "projectedMediumCallUsd": 0.091,
+    "projectedHighCallUsd": 0.364,
+    "projectedMaximumSpendUsd": 0.546,
+    "label": "PREAPPROVAL_ESTIMATE_NOT_LIVE_QUOTE"
+  },
+  "jobs": [
+    {
+      "jobId": "grapefruit__mature__tree__vegetative__v1",
+      "canonicalSlug": "grapefruit",
+      "scientific": "Citrus × paradisi",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "sizeAuthorityState": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+      "sizeAuthorityOwnerReviewRequired": false,
+      "sizeAuthorityReasonCodes": [
+        "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+      ],
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "placementScaleHold": true
+    },
+    {
+      "jobId": "grapefruit__young__tree__vegetative__v1",
+      "canonicalSlug": "grapefruit",
+      "scientific": "Citrus × paradisi",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "young",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "sizeAuthorityState": "SIZE_AUTHORITY_PARTIAL",
+      "sizeAuthorityOwnerReviewRequired": false,
+      "sizeAuthorityReasonCodes": [
+        "GROWTH_STAGE_AUTHORITY_NOT_SUPPORTED"
+      ],
+      "variantReasonCodes": [
+        "GROWTH_ARCHITECTURE_CHANGE"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "grapefruit__mature__tree__fruiting__v1",
+      "canonicalSlug": "grapefruit",
+      "scientific": "Citrus × paradisi",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "fruiting",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "sizeAuthorityState": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+      "sizeAuthorityOwnerReviewRequired": false,
+      "sizeAuthorityReasonCodes": [
+        "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+      ],
+      "variantReasonCodes": [
+        "FRUITING_VISUALLY_SIGNIFICANT"
+      ],
+      "placementScaleHold": true
+    },
+    {
+      "jobId": "sweet-orange__mature__tree__vegetative__v1",
+      "canonicalSlug": "sweet-orange",
+      "scientific": "Citrus × sinensis",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "sizeAuthorityState": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+      "sizeAuthorityOwnerReviewRequired": false,
+      "sizeAuthorityReasonCodes": [
+        "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+      ],
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "placementScaleHold": true
+    },
+    {
+      "jobId": "sweet-orange__young__tree__vegetative__v1",
+      "canonicalSlug": "sweet-orange",
+      "scientific": "Citrus × sinensis",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "young",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "sizeAuthorityState": "SIZE_AUTHORITY_PARTIAL",
+      "sizeAuthorityOwnerReviewRequired": false,
+      "sizeAuthorityReasonCodes": [
+        "GROWTH_STAGE_AUTHORITY_NOT_SUPPORTED"
+      ],
+      "variantReasonCodes": [
+        "GROWTH_ARCHITECTURE_CHANGE"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "sweet-orange__mature__tree__fruiting__v1",
+      "canonicalSlug": "sweet-orange",
+      "scientific": "Citrus × sinensis",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "fruiting",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "sizeAuthorityState": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+      "sizeAuthorityOwnerReviewRequired": false,
+      "sizeAuthorityReasonCodes": [
+        "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+      ],
+      "variantReasonCodes": [
+        "FRUITING_VISUALLY_SIGNIFICANT"
+      ],
+      "placementScaleHold": true
+    }
+  ],
+  "excludedJobs": [
+    {
+      "jobId": "apple__mature__tree__vegetative__v1",
+      "reason": "EXISTING_VERIFIED_CANDIDATE_REUSE_NO_REGENERATION"
+    },
+    {
+      "jobId": "apple__mature__tree__fruiting__v1",
+      "reason": "EXISTING_VERIFIED_CANDIDATE_REUSE_NO_REGENERATION"
+    },
+    {
+      "jobId": "apple__mature__tree__dormant__v1",
+      "reason": "EXISTING_VERIFIED_CANDIDATE_REUSE_NO_REGENERATION"
+    },
+    {
+      "jobId": "apricot__mature__tree__vegetative__v1",
+      "reason": "EXISTING_VERIFIED_CANDIDATE_REUSE_NO_REGENERATION"
+    },
+    {
+      "jobId": "apricot__mature__tree__fruiting__v1",
+      "reason": "EXISTING_VERIFIED_CANDIDATE_REUSE_NO_REGENERATION"
+    },
+    {
+      "jobId": "apricot__mature__tree__dormant__v1",
+      "reason": "EXISTING_VERIFIED_CANDIDATE_REUSE_NO_REGENERATION"
+    }
+  ],
+  "safety": {
+    "noDuplicateGeneration": true,
+    "noFakeSeasonVariants": true,
+    "evergreenDormantGenerationForbidden": true,
+    "fullPlantOnboardingRequired": true
+  }
+}
