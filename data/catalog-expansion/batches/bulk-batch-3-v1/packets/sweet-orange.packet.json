@@ -18,7 +18,7 @@
     "batch3": true,
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1). Humidity enrichment 2026-09-25 uses explicit HEURISTIC_ASSERTION with registered transformation; no silent guess.",
     "acceptedInfraspecificTaxaAllowed": true
   },
   "sources": [
@@ -30,6 +30,15 @@
       "url": "https://plants.ces.ncsu.edu/plants/citrus-sinensis/",
       "authorityTier": "university_extension",
       "verifiedAt": "2026-08-31"
+    },
+    {
+      "sourceId": "ufifas-citrus-greasy-spot-orange",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida Institute of Food and Agricultural Sciences",
+      "title": "Field Identification and Management of Greasy Spot Disease",
+      "url": "https://edis.ifas.ufl.edu/publication/HS263",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-09-25"
     }
   ],
   "claims": [
@@ -186,13 +195,14 @@
     {
       "claimId": "humidityTolerance",
       "field": "humidityTolerance",
-      "status": "unknown",
-      "value": null,
+      "status": "asserted",
+      "value": "medium",
       "sourceIds": [
-        "ncsu-citrus-sinensis"
+        "ufifas-citrus-greasy-spot-orange"
       ],
-      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
-      "evidenceClass": "UNKNOWN"
+      "shortExcerpt": "UF/IFAS states citrus greasy spot infection is enhanced by long leaf wetness/high summer conditions and affects commercial orange varieties to varying degrees.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "humidity-disease-pressure-to-tolerance-v1@1.0.0: humid-climate citrus production with documented moisture-driven disease pressure -> conservative medium."
     },
     {
       "claimId": "waterNeeds",
