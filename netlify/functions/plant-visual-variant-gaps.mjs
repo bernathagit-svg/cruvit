@@ -27,10 +27,54 @@ async function loadRegistry(req){
   if(!res.ok) throw new Error('REGISTRY_LOAD_FAILED');
   return res.json();
 }
+async function loadPendingPromotionManifest(req,manifestId){
+  if(!manifestId) return null;
+  if(!/^[a-z0-9][a-z0-9._-]{0,95}$/.test(manifestId)) return null;
+  const res=await fetch(
+    new URL('/data/garden-design/plant-visual-qa-manifests/'+manifestId+'.json?t='+Date.now(),req.url),
+    {cache:'no-store'}
+  );
+  if(!res.ok) return null;
+  const doc=await res.json();
+  if(doc?.contract!=='plant-visual-qa-manifest-v1'||doc?.manifestId!==manifestId||!Array.isArray(doc.rows)) return null;
+  return doc;
+}
+
+function registryWithPending(registry,pendingManifest){
+  if(!pendingManifest) return registry;
+  const next=structuredClone(registry||{sets:[]});
+  if(!Array.isArray(next.sets)) next.sets=[];
+  for(const row of pendingManifest.rows||[]){
+    if(row.productionApproved!==true) continue;
+    let set=next.sets.find(s=>String(s.canonicalSlug||'').toLowerCase()===String(row.canonicalSlug||'').toLowerCase());
+    if(!set){
+      set={canonicalSlug:row.canonicalSlug,variants:[]};
+      next.sets.push(set);
+    }
+    if(!Array.isArray(set.variants)) set.variants=[];
+    set.variants.push({
+      canonicalSlug:row.canonicalSlug,
+      growthStage:row.growthStage,
+      architectureMode:row.architectureMode||row.visualForm||'default',
+      visualForm:row.visualForm||null,
+      phenology:row.phenology||row.phenologyState||'vegetative',
+      phenologyState:row.phenologyState||row.phenology||'vegetative',
+      productionApproved:true,
+      approvalState:'APPROVED',
+      approvalStatus:'approved',
+      status:'ready',
+      transparencyReady:true,
+      pendingPromotion:true,
+      pendingManifestId:pendingManifest.manifestId
+    });
+  }
+  return next;
+}
 
 export default async(req)=>{
   if(req.method!=='GET') return json(405,{ok:false,code:'METHOD_NOT_ALLOWED'});
   const url=new URL(req.url);
+  const pendingManifestId=String(url.searchParams.get('pendingManifest')||'').trim().toLowerCase();
   const slugs=String(url.searchParams.get('slugs')||'')
     .split(',').map(safeSlug).filter(Boolean);
   if(!slugs.length) return json(400,{ok:false,code:'SLUGS_REQUIRED'});
@@ -39,6 +83,9 @@ export default async(req)=>{
   let registry=null;
   try{registry=await loadRegistry(req);}
   catch(err){return json(503,{ok:false,code:'REGISTRY_LOAD_FAILED',errorName:err?.message||null});}
+
+  const pendingManifest=await loadPendingPromotionManifest(req,pendingManifestId);
+  const effectiveRegistry=registryWithPending(registry,pendingManifest);
 
   const results=[];
   for(const canonicalSlug of slugs){
@@ -53,7 +100,7 @@ export default async(req)=>{
     const full=evaluateFullPlantOnboarding(effectiveRow,{canonicalSlug,phenology:'vegetative'});
     const variantPlan=buildPlantVisualVariantPlan({catalogRow:effectiveRow,fullOnboarding:full});
     results.push({
-      ...buildPlantVisualVariantGapPlan({variantPlan,registry}),
+      ...buildPlantVisualVariantGapPlan({variantPlan,registry:effectiveRegistry}),
       designMetadataHydration:{
         hydrated:hydrated.hydrated===true,
         code:hydrated.code,
@@ -73,6 +120,9 @@ export default async(req)=>{
     paidCalls:0,
     productionWrites:0,
     registryWrites:0,
+    coverageBasis:pendingManifest
+      ? {productionRegistry:true,pendingPromotionManifest:pendingManifest.manifestId}
+      : {productionRegistry:true,pendingPromotionManifest:null},
     results
   });
 };
