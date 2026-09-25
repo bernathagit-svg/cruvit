@@ -1,0 +1,245 @@
+{
+  "contract": "plant-visual-production-wave-execution-manifest-v1",
+  "runId": "plant-visual-variant-completion-wave-001-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "source": {
+    "planner": "plant-visual-variant-expansion-route-v1",
+    "pendingPromotionManifest": "wave3-production-promotion-2026-09-24-v1",
+    "candidateManifest": "wave3-owner-review-2026-09-24-v1",
+    "selectionRule": "first bounded 8 GENERATE_READY variant-completion jobs; QA_REPAIR candidates excluded from generation"
+  },
+  "bounded": true,
+  "jobCount": 8,
+  "plantCount": 3,
+  "canonicalSlugs": [
+    "apple",
+    "apricot",
+    "breadfruit"
+  ],
+  "candidateStorage": {
+    "backend": "cloudflare-r2",
+    "bucketEnv": "PLANT_VISUAL_R2_CANDIDATES_BUCKET",
+    "immutableKeyPattern": "candidates/{runId}/{canonicalSlug}/{assetId}__{sha256}.png"
+  },
+  "executionPolicy": {
+    "provider": "openai-images-api",
+    "model": "gpt-image-2",
+    "maxJobs": 8,
+    "maxCalls": 8,
+    "maxRetries": 0,
+    "registryWritesAllowed": false,
+    "productionWritesAllowed": false,
+    "ownerSpendApprovalRequired": true,
+    "approvalArtifactContract": "plant-visual-production-wave-spend-approval-v1",
+    "fullPlantOnboardingRequiredBeforePaidGeneration": true
+  },
+  "spendPreflight": {
+    "mediumJobs": 8,
+    "highJobs": 0,
+    "projectedMediumCallUsd": 0.091,
+    "projectedHighCallUsd": 0.364,
+    "projectedMaximumSpendUsd": 0.728,
+    "label": "PREAPPROVAL_ESTIMATE_NOT_LIVE_QUOTE"
+  },
+  "jobs": [
+    {
+      "jobId": "apple__mature__tree__vegetative__v1",
+      "canonicalSlug": "apple",
+      "scientific": "Malus domestica",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "sizeAuthorityState": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+      "sizeAuthorityOwnerReviewRequired": true,
+      "sizeAuthorityReasonCodes": [
+        "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+      ],
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "placementScaleHold": true
+    },
+    {
+      "jobId": "apple__mature__tree__fruiting__v1",
+      "canonicalSlug": "apple",
+      "scientific": "Malus domestica",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "fruiting",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "sizeAuthorityState": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+      "sizeAuthorityOwnerReviewRequired": true,
+      "sizeAuthorityReasonCodes": [
+        "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+      ],
+      "variantReasonCodes": [
+        "FRUITING_VISUALLY_SIGNIFICANT"
+      ],
+      "placementScaleHold": true
+    },
+    {
+      "jobId": "apple__mature__tree__dormant__v1",
+      "canonicalSlug": "apple",
+      "scientific": "Malus domestica",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "dormant",
+      "season": "winter",
+      "formView": "leaf-off",
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "sizeAuthorityState": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+      "sizeAuthorityOwnerReviewRequired": true,
+      "sizeAuthorityReasonCodes": [
+        "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+      ],
+      "variantReasonCodes": [
+        "DECIDUOUS_LEAF_OFF"
+      ],
+      "seasonalityEvidence": "SOURCE_SUPPORTED_DECIDUOUS",
+      "placementScaleHold": true
+    },
+    {
+      "jobId": "apricot__mature__tree__vegetative__v1",
+      "canonicalSlug": "apricot",
+      "scientific": "Prunus armeniaca",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "sizeAuthorityState": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+      "sizeAuthorityOwnerReviewRequired": true,
+      "sizeAuthorityReasonCodes": [
+        "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+      ],
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "placementScaleHold": true
+    },
+    {
+      "jobId": "apricot__mature__tree__fruiting__v1",
+      "canonicalSlug": "apricot",
+      "scientific": "Prunus armeniaca",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "fruiting",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "sizeAuthorityState": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+      "sizeAuthorityOwnerReviewRequired": true,
+      "sizeAuthorityReasonCodes": [
+        "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+      ],
+      "variantReasonCodes": [
+        "FRUITING_VISUALLY_SIGNIFICANT"
+      ],
+      "placementScaleHold": true
+    },
+    {
+      "jobId": "apricot__mature__tree__dormant__v1",
+      "canonicalSlug": "apricot",
+      "scientific": "Prunus armeniaca",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "dormant",
+      "season": "winter",
+      "formView": "leaf-off",
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "sizeAuthorityState": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+      "sizeAuthorityOwnerReviewRequired": true,
+      "sizeAuthorityReasonCodes": [
+        "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+      ],
+      "variantReasonCodes": [
+        "DECIDUOUS_LEAF_OFF"
+      ],
+      "seasonalityEvidence": "SOURCE_SUPPORTED_DECIDUOUS",
+      "placementScaleHold": true
+    },
+    {
+      "jobId": "breadfruit__mature__tree__vegetative__v1",
+      "canonicalSlug": "breadfruit",
+      "scientific": "Artocarpus altilis",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "sizeAuthorityState": "SIZE_AUTHORITY_EVIDENCE_GAP",
+      "sizeAuthorityOwnerReviewRequired": true,
+      "sizeAuthorityReasonCodes": [
+        "SIZE_EVIDENCE_GAP"
+      ],
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "placementScaleHold": true
+    },
+    {
+      "jobId": "breadfruit__mature__tree__fruiting__v1",
+      "canonicalSlug": "breadfruit",
+      "scientific": "Artocarpus altilis",
+      "identityScope": "species",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "fruiting",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "sizeAuthorityState": "SIZE_AUTHORITY_EVIDENCE_GAP",
+      "sizeAuthorityOwnerReviewRequired": true,
+      "sizeAuthorityReasonCodes": [
+        "SIZE_EVIDENCE_GAP"
+      ],
+      "variantReasonCodes": [
+        "FRUITING_VISUALLY_SIGNIFICANT"
+      ],
+      "placementScaleHold": true
+    }
+  ],
+  "excludedJobs": [
+    {
+      "jobId": "carob__young__tree__vegetative__v1",
+      "reason": "QA_REPAIR_EXISTING_TECHNICAL_AND_FRAMING_PASS_CANDIDATE",
+      "sourceCandidateManifest": "wave3-owner-review-2026-09-24-v1"
+    }
+  ],
+  "safety": {
+    "noFakeSeasonVariants": true,
+    "evergreenDormantGenerationForbidden": true,
+    "sourceSupportedSeasonalityRequiredForDormant": true,
+    "sizeContextMayBlockMeterAccuratePlacementWithoutBlockingVisualGeneration": true
+  }
+}
