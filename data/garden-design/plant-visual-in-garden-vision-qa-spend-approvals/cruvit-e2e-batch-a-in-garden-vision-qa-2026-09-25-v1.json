@@ -1,0 +1,45 @@
+{
+  "contract": "plant-visual-in-garden-vision-qa-spend-approval-v1",
+  "runId": "cruvit-e2e-batch-a-in-garden-vision-qa-2026-09-25-v1",
+  "approved": true,
+  "approvedAt": "2026-09-25",
+  "approvalSource": "owner explicitly approved CRUVIT E2E Batch A In-Garden Vision QA up to USD 0.18, 12 calls, no retries",
+  "provider": "openai-responses-api",
+  "model": "gpt-5.6-luna",
+  "maxCalls": 12,
+  "maxRetries": 0,
+  "perCallReserveUsd": 0.01,
+  "maxSpendUsd": 0.18,
+  "jobIds": [
+    "apple__mature__tree__vegetative__v1",
+    "apple__mature__tree__fruiting__v1",
+    "apple__mature__tree__dormant__v1",
+    "apricot__mature__tree__vegetative__v1",
+    "apricot__mature__tree__fruiting__v1",
+    "apricot__mature__tree__dormant__v1",
+    "grapefruit__mature__tree__vegetative__v1",
+    "grapefruit__young__tree__vegetative__v1",
+    "grapefruit__mature__tree__fruiting__v1",
+    "sweet-orange__mature__tree__vegetative__v1",
+    "sweet-orange__young__tree__vegetative__v1",
+    "sweet-orange__mature__tree__fruiting__v1"
+  ],
+  "allowedActions": [
+    "read exact in-garden QA capture bytes from candidate R2",
+    "send one renderer capture plus expected plant metadata to vision QA model",
+    "write in-garden vision QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "imageGenerationAllowed": false,
+  "imageMutationAllowed": false,
+  "carryForward": false,
+  "previousApprovalReuse": false,
+  "notes": [
+    "Approval applies only to CRUVIT E2E Batch A In-Garden Vision QA.",
+    "No retry calls are authorized.",
+    "No image generation or mutation is authorized.",
+    "No Production R2 promotion is authorized.",
+    "No design asset registry mutation is authorized."
+  ]
+}
