@@ -1,0 +1,41 @@
+{
+  "contract": "plant-visual-model-qa-spend-approval-v1",
+  "runId": "plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1",
+  "approved": true,
+  "approvedAt": "2026-09-25",
+  "approvalSource": "owner explicitly approved Variant Completion Wave 1 Model QA up to USD 0.12, 8 calls, no retries",
+  "provider": "openai-responses-api",
+  "model": "gpt-5.6-luna",
+  "maxCalls": 8,
+  "maxRetries": 0,
+  "perCallReserveUsd": 0.01,
+  "maxSpendUsd": 0.12,
+  "jobIds": [
+    "apple__mature__tree__vegetative__v1",
+    "apple__mature__tree__fruiting__v1",
+    "apple__mature__tree__dormant__v1",
+    "apricot__mature__tree__vegetative__v1",
+    "apricot__mature__tree__fruiting__v1",
+    "apricot__mature__tree__dormant__v1",
+    "breadfruit__mature__tree__vegetative__v1",
+    "breadfruit__mature__tree__fruiting__v1"
+  ],
+  "allowedActions": [
+    "read exact candidate PNG bytes from candidate R2",
+    "send one candidate image plus expected metadata to vision QA model",
+    "write model QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "imageGenerationAllowed": false,
+  "imageMutationAllowed": false,
+  "carryForward": false,
+  "previousApprovalReuse": false,
+  "notes": [
+    "Approval applies only to plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1.",
+    "No retry calls are authorized.",
+    "No image generation or mutation is authorized.",
+    "No Production R2 promotion is authorized.",
+    "No design asset registry mutation is authorized."
+  ]
+}
