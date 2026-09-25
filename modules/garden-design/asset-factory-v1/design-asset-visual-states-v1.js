@@ -74,6 +74,7 @@ export const VARIANT_REASON = Object.freeze({
   HERBACEOUS_DIEBACK: 'HERBACEOUS_DIEBACK',
   EVERGREEN_NO_DORMANCY_ASSET: 'EVERGREEN_NO_DORMANCY_ASSET',
   LIFECYCLE_EVIDENCE_UNKNOWN: 'LIFECYCLE_EVIDENCE_UNKNOWN',
+  ANNUAL_OR_BIENNIAL_NO_DORMANT_ASSET: 'ANNUAL_OR_BIENNIAL_NO_DORMANT_ASSET',
   GROWTH_STAGE_EVIDENCE_UNKNOWN: 'GROWTH_STAGE_EVIDENCE_UNKNOWN',
   MULTI_FORM_ARCHITECTURE: 'MULTI_FORM_ARCHITECTURE',
   NO_DISTINCT_VARIANT_REQUIRED: 'NO_DISTINCT_VARIANT_REQUIRED',
@@ -383,6 +384,21 @@ export function classifyFruitingState(plant, visualForm, purpose) {
 
 export function classifyDormantState(plant, visualForm) {
   const slug = slugify(plant.canonicalSlug || plant.slug);
+  const lifecycle = lower(
+    plant?.designMetadata?.lifecycle
+    || plant?.lifecycle
+    || ''
+  );
+
+  if (lifecycle === 'annual' || lifecycle === 'biennial') {
+    return decision(
+      REQUIREMENT.NOT_REQUIRED,
+      VARIANT_REASON.ANNUAL_OR_BIENNIAL_NO_DORMANT_ASSET,
+      'annual/biennial lifecycle ends or renews rather than requiring a persistent dormant presentation asset',
+      CONFIDENCE.HIGH
+    );
+  }
+
   if (slug === PAPAYA_FORM_DECISION.canonicalSlug) {
     return decision(
       REQUIREMENT.NOT_REQUIRED,
