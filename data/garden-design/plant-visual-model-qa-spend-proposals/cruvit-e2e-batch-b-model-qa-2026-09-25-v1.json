@@ -4,26 +4,29 @@
   "createdAt": "2026-09-25",
   "provider": "openai-responses-api",
   "model": "gpt-5.6-luna",
-  "maxCalls": 15,
+  "maxCalls": 18,
   "maxRetries": 0,
   "perCallReserveUsd": 0.01,
-  "proposedMaxSpendUsd": 0.23,
+  "proposedMaxSpendUsd": 0.27,
   "jobIds": [
-    "bigleaf-hydrangea__mature__shrub__vegetative__v1",
-    "bigleaf-hydrangea__mature__shrub__flowering__v1",
     "bigleaf-hydrangea__mature__shrub__dormant__v1",
+    "bigleaf-hydrangea__mature__shrub__flowering__v1",
+    "bigleaf-hydrangea__mature__shrub__vegetative__v1",
     "english-lavender__mature__shrub__flowering__v1",
+    "english-lavender__mature__shrub__vegetative__v1",
     "fig__mature__shrub__vegetative__v1",
-    "fig__young__tree__vegetative__v1",
-    "fig__mature__tree__fruiting__v1",
     "fig__mature__tree__dormant__v1",
+    "fig__mature__tree__fruiting__v1",
+    "fig__mature__tree__vegetative__v1",
+    "fig__young__tree__vegetative__v1",
     "lettuce__mature__default__vegetative__v1",
-    "pomegranate__mature__tree__vegetative__v1",
     "pomegranate__mature__shrub__vegetative__v1",
-    "pomegranate__mature__tree__fruiting__v1",
     "pomegranate__mature__tree__dormant__v1",
-    "zinnia__mature__default__vegetative__v1",
-    "zinnia__mature__default__flowering__v1"
+    "pomegranate__mature__tree__fruiting__v1",
+    "pomegranate__mature__tree__vegetative__v1",
+    "pomegranate__young__tree__vegetative__v1",
+    "zinnia__mature__default__flowering__v1",
+    "zinnia__mature__default__vegetative__v1"
   ],
   "allowedActions": [
     "read exact candidate PNG bytes from candidate R2",
@@ -35,8 +38,9 @@
   "imageGenerationAllowed": false,
   "imageMutationAllowed": false,
   "notes": [
-    "Only the 15 Batch B candidates with Technical PASS + Framing PASS are admitted.",
-    "The three Framing FAIL candidates are excluded pending framing-failure diagnosis.",
+    "All 18 Batch B candidates now have Technical PASS and effective Framing PASS.",
+    "Three candidates use zero-mutation production-framing-qa-v1.1 reassessment after original sub-3px threshold-only failures.",
+    "No image regeneration occurred for framing reassessment.",
     "No retries are proposed."
   ]
 }

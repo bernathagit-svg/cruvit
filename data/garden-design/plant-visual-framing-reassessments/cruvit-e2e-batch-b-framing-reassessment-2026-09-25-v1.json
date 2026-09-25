@@ -1,0 +1,245 @@
+{
+  "contract": "plant-visual-framing-reassessment-v1",
+  "version": "production-framing-qa-v1.1",
+  "runId": "cruvit-e2e-batch-b-visual-wave-001-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "reassessedCount": 3,
+  "pass": 3,
+  "fail": 0,
+  "rationale": "Original failures were within the tested 3px edge-padding tolerance and had no actual canvas-edge clipping.",
+  "rows": [
+    {
+      "jobId": "english-lavender__mature__shrub__vegetative__v1",
+      "canonicalSlug": "english-lavender",
+      "objectKey": "candidates/cruvit-e2e-batch-b-visual-wave-001-2026-09-25-v1/english-lavender/english-lavender__mature__shrub__vegetative__v1__1e85ce28e58064fb48d871cc53eb40cd957b9da7608652195f4990d12f57e1f0.png",
+      "sha256": "1e85ce28e58064fb48d871cc53eb40cd957b9da7608652195f4990d12f57e1f0",
+      "bytes": 2772137,
+      "originalFramingQA": {
+        "version": "production-framing-qa-v1",
+        "result": "FAIL",
+        "reasons": [
+          "right-padding-too-small"
+        ],
+        "retryable": true,
+        "thresholds": {
+          "minTopPaddingRatio": 0.025,
+          "minSidePaddingRatio": 0.0125,
+          "minBottomPaddingRatio": 0.005,
+          "minVisibleHeightRatio": 0.45,
+          "minVisibleAreaRatio": 0.08
+        },
+        "metrics": {
+          "ok": true,
+          "width": 1024,
+          "height": 1536,
+          "bbox": {
+            "exists": true,
+            "minX": 23,
+            "minY": 163,
+            "maxX": 1012,
+            "maxY": 1397
+          },
+          "topPaddingRatio": 0.10611979166666667,
+          "leftPaddingRatio": 0.0224609375,
+          "rightPaddingRatio": 0.0107421875,
+          "bottomPaddingRatio": 0.08984375,
+          "visibleWidthRatio": 0.966796875,
+          "visibleHeightRatio": 0.8040364583333334,
+          "visibleAreaRatio": 0.7773399353027344
+        }
+      },
+      "reassessedFramingQA": {
+        "version": "production-framing-qa-v1.1",
+        "result": "PASS",
+        "reasons": [],
+        "retryable": false,
+        "thresholds": {
+          "minTopPaddingRatio": 0.025,
+          "minSidePaddingRatio": 0.0125,
+          "minBottomPaddingRatio": 0.005,
+          "edgePaddingTolerancePx": 3,
+          "minVisibleHeightRatio": 0.45,
+          "minVisibleAreaRatio": 0.08
+        },
+        "metrics": {
+          "ok": true,
+          "width": 1024,
+          "height": 1536,
+          "bbox": {
+            "exists": true,
+            "minX": 23,
+            "minY": 163,
+            "maxX": 1012,
+            "maxY": 1397
+          },
+          "topPaddingRatio": 0.10611979166666667,
+          "leftPaddingRatio": 0.0224609375,
+          "rightPaddingRatio": 0.0107421875,
+          "bottomPaddingRatio": 0.08984375,
+          "visibleWidthRatio": 0.966796875,
+          "visibleHeightRatio": 0.8040364583333334,
+          "visibleAreaRatio": 0.7773399353027344
+        }
+      },
+      "assetBytesChanged": false,
+      "regenerationRequired": false
+    },
+    {
+      "jobId": "fig__mature__tree__vegetative__v1",
+      "canonicalSlug": "fig",
+      "objectKey": "candidates/cruvit-e2e-batch-b-visual-wave-001-2026-09-25-v1/fig/fig__mature__tree__vegetative__v1__cf875e44e40345b0d16f2baadf8a2bad36e41dad47255c95143cea87947d8ecd.png",
+      "sha256": "cf875e44e40345b0d16f2baadf8a2bad36e41dad47255c95143cea87947d8ecd",
+      "bytes": 2694156,
+      "originalFramingQA": {
+        "version": "production-framing-qa-v1",
+        "result": "FAIL",
+        "reasons": [
+          "left-padding-too-small"
+        ],
+        "retryable": true,
+        "thresholds": {
+          "minTopPaddingRatio": 0.025,
+          "minSidePaddingRatio": 0.0125,
+          "minBottomPaddingRatio": 0.005,
+          "minVisibleHeightRatio": 0.45,
+          "minVisibleAreaRatio": 0.08
+        },
+        "metrics": {
+          "ok": true,
+          "width": 1024,
+          "height": 1536,
+          "bbox": {
+            "exists": true,
+            "minX": 11,
+            "minY": 67,
+            "maxX": 1008,
+            "maxY": 1480
+          },
+          "topPaddingRatio": 0.043619791666666664,
+          "leftPaddingRatio": 0.0107421875,
+          "rightPaddingRatio": 0.0146484375,
+          "bottomPaddingRatio": 0.035807291666666664,
+          "visibleWidthRatio": 0.974609375,
+          "visibleHeightRatio": 0.9205729166666666,
+          "visibleAreaRatio": 0.8971989949544271
+        }
+      },
+      "reassessedFramingQA": {
+        "version": "production-framing-qa-v1.1",
+        "result": "PASS",
+        "reasons": [],
+        "retryable": false,
+        "thresholds": {
+          "minTopPaddingRatio": 0.025,
+          "minSidePaddingRatio": 0.0125,
+          "minBottomPaddingRatio": 0.005,
+          "edgePaddingTolerancePx": 3,
+          "minVisibleHeightRatio": 0.45,
+          "minVisibleAreaRatio": 0.08
+        },
+        "metrics": {
+          "ok": true,
+          "width": 1024,
+          "height": 1536,
+          "bbox": {
+            "exists": true,
+            "minX": 11,
+            "minY": 67,
+            "maxX": 1008,
+            "maxY": 1480
+          },
+          "topPaddingRatio": 0.043619791666666664,
+          "leftPaddingRatio": 0.0107421875,
+          "rightPaddingRatio": 0.0146484375,
+          "bottomPaddingRatio": 0.035807291666666664,
+          "visibleWidthRatio": 0.974609375,
+          "visibleHeightRatio": 0.9205729166666666,
+          "visibleAreaRatio": 0.8971989949544271
+        }
+      },
+      "assetBytesChanged": false,
+      "regenerationRequired": false
+    },
+    {
+      "jobId": "pomegranate__young__tree__vegetative__v1",
+      "canonicalSlug": "pomegranate",
+      "objectKey": "candidates/cruvit-e2e-batch-b-visual-wave-001-2026-09-25-v1/pomegranate/pomegranate__young__tree__vegetative__v1__8cb5b5720432468ff03d4ee83f8fccb3448530299b3397479f2d8b2d77297fa6.png",
+      "sha256": "8cb5b5720432468ff03d4ee83f8fccb3448530299b3397479f2d8b2d77297fa6",
+      "bytes": 2234203,
+      "originalFramingQA": {
+        "version": "production-framing-qa-v1",
+        "result": "FAIL",
+        "reasons": [
+          "top-padding-too-small"
+        ],
+        "retryable": true,
+        "thresholds": {
+          "minTopPaddingRatio": 0.025,
+          "minSidePaddingRatio": 0.0125,
+          "minBottomPaddingRatio": 0.005,
+          "minVisibleHeightRatio": 0.45,
+          "minVisibleAreaRatio": 0.08
+        },
+        "metrics": {
+          "ok": true,
+          "width": 1024,
+          "height": 1536,
+          "bbox": {
+            "exists": true,
+            "minX": 41,
+            "minY": 36,
+            "maxX": 981,
+            "maxY": 1497
+          },
+          "topPaddingRatio": 0.0234375,
+          "leftPaddingRatio": 0.0400390625,
+          "rightPaddingRatio": 0.041015625,
+          "bottomPaddingRatio": 0.024739583333333332,
+          "visibleWidthRatio": 0.9189453125,
+          "visibleHeightRatio": 0.9518229166666666,
+          "visibleAreaRatio": 0.8746732076009115
+        }
+      },
+      "reassessedFramingQA": {
+        "version": "production-framing-qa-v1.1",
+        "result": "PASS",
+        "reasons": [],
+        "retryable": false,
+        "thresholds": {
+          "minTopPaddingRatio": 0.025,
+          "minSidePaddingRatio": 0.0125,
+          "minBottomPaddingRatio": 0.005,
+          "edgePaddingTolerancePx": 3,
+          "minVisibleHeightRatio": 0.45,
+          "minVisibleAreaRatio": 0.08
+        },
+        "metrics": {
+          "ok": true,
+          "width": 1024,
+          "height": 1536,
+          "bbox": {
+            "exists": true,
+            "minX": 41,
+            "minY": 36,
+            "maxX": 981,
+            "maxY": 1497
+          },
+          "topPaddingRatio": 0.0234375,
+          "leftPaddingRatio": 0.0400390625,
+          "rightPaddingRatio": 0.041015625,
+          "bottomPaddingRatio": 0.024739583333333332,
+          "visibleWidthRatio": 0.9189453125,
+          "visibleHeightRatio": 0.9518229166666666,
+          "visibleAreaRatio": 0.8746732076009115
+        }
+      },
+      "assetBytesChanged": false,
+      "regenerationRequired": false
+    }
+  ],
+  "paidCalls": 0,
+  "imageMutation": false,
+  "regenerationCalls": 0,
+  "productionWrites": 0,
+  "registryWrites": 0
+}
