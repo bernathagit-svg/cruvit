@@ -17,7 +17,7 @@
     "batch3": true,
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1). Humidity enrichment 2026-09-25 uses explicit HEURISTIC_ASSERTION with registered transformation; no silent guess.",
     "acceptedInfraspecificTaxaAllowed": true
   },
   "sources": [
@@ -29,6 +29,15 @@
       "url": "https://plants.ces.ncsu.edu/plants/malus-domestica/",
       "authorityTier": "university_extension",
       "verifiedAt": "2026-08-31"
+    },
+    {
+      "sourceId": "ucipm-apple-scab-humidity",
+      "institution": "University of California Statewide Integrated Pest Management Program",
+      "publisher": "University of California Agriculture and Natural Resources",
+      "title": "Apple Scab / Apple / Agriculture: Pest Management Guidelines",
+      "url": "https://ipm.ucanr.edu/agriculture/apple/apple-scab/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-09-25"
     }
   ],
   "claims": [
@@ -184,13 +193,14 @@
     {
       "claimId": "humidityTolerance",
       "field": "humidityTolerance",
-      "status": "unknown",
-      "value": null,
+      "status": "asserted",
+      "value": "medium",
       "sourceIds": [
-        "ncsu-malus-domestica"
+        "ucipm-apple-scab-humidity"
       ],
-      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
-      "evidenceClass": "UNKNOWN"
+      "shortExcerpt": "UC IPM identifies wet periods, temperature and relative humidity as important drivers of apple scab infection.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "humidity-disease-pressure-to-tolerance-v1@1.0.0: documented humidity/wetness disease pressure -> conservative medium atmospheric humidity tolerance."
     },
     {
       "claimId": "waterNeeds",
