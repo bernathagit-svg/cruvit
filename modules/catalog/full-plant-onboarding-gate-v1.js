@@ -33,10 +33,23 @@ function present(value) {
   return true;
 }
 
-function climateTraitReady(climateTraits, key) {
+function climateTraitEvidenceState(climateTraits, key) {
   const value = climateTraits?.[key];
-  if (key === 'needsWinterChill') return typeof value === 'boolean';
-  return present(value);
+  const asserted = key === 'needsWinterChill'
+    ? typeof value === 'boolean'
+    : present(value);
+  if (asserted) return 'ASSERTED';
+
+  const classes = climateTraits?.traitEvidenceClasses;
+  const provenance = climateTraits?.traitProvenance;
+  const evidenceClass = text(classes?.[key]).toUpperCase();
+  const status = text(provenance?.[key]?.status).toLowerCase();
+  if (evidenceClass === 'UNKNOWN' || status === 'unknown') return 'EXPLICIT_UNKNOWN';
+  return 'MISSING';
+}
+
+function climateTraitReady(climateTraits, key) {
+  return climateTraitEvidenceState(climateTraits, key) !== 'MISSING';
 }
 
 function knowledgeReady(climateTraits = {}) {
@@ -129,8 +142,14 @@ export function evaluateFullPlantOnboarding(row = null, expected = {}) {
     reasons.push('catalog-review-still-required');
   }
 
+  const climateTraitStates = Object.fromEntries(
+    REQUIRED_CORE_CLIMATE_TRAITS.map((key) => [key, climateTraitEvidenceState(ct, key)])
+  );
   const missingClimateTraits = REQUIRED_CORE_CLIMATE_TRAITS.filter(
-    (key) => !climateTraitReady(ct, key)
+    (key) => climateTraitStates[key] === 'MISSING'
+  );
+  const explicitUnknownClimateTraits = REQUIRED_CORE_CLIMATE_TRAITS.filter(
+    (key) => climateTraitStates[key] === 'EXPLICIT_UNKNOWN'
   );
   const climate = missingClimateTraits.length ? 'FAIL' : 'PASS';
   if (missingClimateTraits.length) {
@@ -178,6 +197,8 @@ export function evaluateFullPlantOnboarding(row = null, expected = {}) {
     },
     climate: {
       missingCoreTraits: missingClimateTraits,
+      explicitUnknownCoreTraits: explicitUnknownClimateTraits,
+      traitStates: climateTraitStates,
       needsReview: ct.needsReview === true
     },
     outcome,
