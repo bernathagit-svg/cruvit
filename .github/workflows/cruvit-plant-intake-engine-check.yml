@@ -1,0 +1,18 @@
+name: CRUVIT Plant Intake Engine Check
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cruvit-plant-intake-engine-check.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/cruvit-plant-intake-engine-v1.test.mjs
