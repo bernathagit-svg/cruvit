@@ -1,0 +1,18 @@
+name: Batch A Humidity Enrichment Check
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/batch-a-humidity-enrichment-check.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/humidity-disease-pressure-to-tolerance-v1.test.mjs
