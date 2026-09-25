@@ -41,12 +41,13 @@ export default async(req)=>{
   if(!slugs.length) return json(400,{ok:false,code:'SLUGS_REQUIRED'});
   if(slugs.length>100) return json(400,{ok:false,code:'TOO_MANY_SLUGS',maxSlugs:100});
 
-  let identityRegistry,designAssetRegistry,sizeAuthorityRegistry;
+  let identityRegistry,designAssetRegistry,sizeAuthorityRegistry,catalogMediaCoverage;
   try{
-    [identityRegistry,designAssetRegistry,sizeAuthorityRegistry]=await Promise.all([
+    [identityRegistry,designAssetRegistry,sizeAuthorityRegistry,catalogMediaCoverage]=await Promise.all([
       staticJson(req,'/data/plant-identity.registry.json'),
       staticJson(req,'/modules/garden-design/assets/plants/design-asset-registry-v1.json'),
-      staticJson(req,'/data/catalog/botanical-size-authority-v1.json')
+      staticJson(req,'/data/catalog/botanical-size-authority-v1.json'),
+      staticJson(req,'/data/catalog-media/active-canonical-image-coverage-v1.json')
     ]);
   }catch(err){
     return json(503,{ok:false,code:'APPROVAL_STATIC_DATA_UNAVAILABLE',errorName:err?.message||null});
@@ -59,18 +60,53 @@ export default async(req)=>{
     catch(err){
       return json(503,{ok:false,code:'CANONICAL_CATALOG_READ_FAILED',canonicalSlug:slug,errorName:err?.message||null});
     }
+    const id=(identityRegistry?.canonicalIdentities||[]).find(x=>
+      String(x?.canonicalSlug||'').toLowerCase()===slug
+      || (x?.aliasSlugs||[]).some(a=>String(a||'').toLowerCase()===slug)
+    )||null;
+    const mediaSlug=String(id?.canonicalSlug||slug).toLowerCase();
+    const mediaRecord=(catalogMediaCoverage?.records||[]).find(x=>String(x?.slug||'').toLowerCase()===mediaSlug)||null;
     evaluations.push(evaluateFullCruvitPlantApproval({
       catalogRow:row,
       identityRegistry,
       designAssetRegistry,
-      sizeAuthorityRegistry
+      sizeAuthorityRegistry,
+      catalogMediaCoverageRecord:mediaRecord
     }));
   }
 
-  return json(200,{
-    ok:true,
-    ...summarizeFullCruvitPlantApproval(evaluations)
-  });
+  const summary=summarizeFullCruvitPlantApproval(evaluations);
+  const compact=new URL(req.url).searchParams.get('compact')==='1';
+  if(compact){
+    const blockerCounts={};
+    for(const row of evaluations){
+      for(const b of row.blockingReasons||[]) blockerCounts[b]=(blockerCounts[b]||0)+1;
+    }
+    return json(200,{
+      ok:true,
+      version:summary.version,
+      total:summary.total,
+      approved:summary.approved,
+      blocked:summary.blocked,
+      byStatus:summary.byStatus,
+      blockerCounts,
+      rows:evaluations.map(row=>({
+        canonicalSlug:row.canonicalSlug,
+        scientific:row.scientific,
+        status:row.status,
+        approved:row.approved,
+        blockingReasons:row.blockingReasons,
+        climateClass:row.modules?.climateAndSuitability?.readinessClass||null,
+        identityReady:row.modules?.canonicalIdentity?.ready===true,
+        mediaReady:row.modules?.myGarden?.catalogMedia?.ready===true,
+        doctorReady:row.modules?.plantDoctor?.ready===true,
+        gardenDesignReady:row.modules?.gardenDesign?.ready===true,
+        missingVisualVariants:row.modules?.gardenDesign?.missingRequiredCount??null,
+        sizeStates:row.modules?.gardenDesign?.sizeAuthority?.states||[]
+      }))
+    });
+  }
+  return json(200,{ok:true,...summary});
 };
 
 export const config={path:'/.netlify/functions/full-cruvit-plant-approval'};
