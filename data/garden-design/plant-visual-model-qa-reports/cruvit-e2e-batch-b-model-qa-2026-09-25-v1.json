@@ -1,0 +1,39 @@
+{
+  "contract": "plant-visual-model-qa-summary-v1",
+  "runId": "cruvit-e2e-batch-b-model-qa-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "reviewed": 18,
+  "pass": 8,
+  "uncertain": 9,
+  "fail": 1,
+  "actualSpendUsd": 0.013534,
+  "passJobs": [
+    "fig__mature__shrub__vegetative__v1",
+    "fig__mature__tree__fruiting__v1",
+    "fig__mature__tree__vegetative__v1",
+    "fig__young__tree__vegetative__v1",
+    "lettuce__mature__default__vegetative__v1",
+    "pomegranate__mature__tree__dormant__v1",
+    "pomegranate__mature__tree__fruiting__v1",
+    "zinnia__mature__default__flowering__v1"
+  ],
+  "uncertainJobs": [
+    "bigleaf-hydrangea__mature__shrub__vegetative__v1",
+    "bigleaf-hydrangea__mature__shrub__flowering__v1",
+    "bigleaf-hydrangea__mature__shrub__dormant__v1",
+    "english-lavender__mature__shrub__flowering__v1",
+    "fig__mature__tree__dormant__v1",
+    "pomegranate__mature__shrub__vegetative__v1",
+    "pomegranate__mature__tree__vegetative__v1",
+    "pomegranate__young__tree__vegetative__v1",
+    "zinnia__mature__default__vegetative__v1"
+  ],
+  "failJobs": [
+    "english-lavender__mature__shrub__vegetative__v1"
+  ],
+  "notes": [
+    "Most UNCERTAIN outcomes are species-level visual discrimination conservatism while architecture/growth/phenology pass.",
+    "English Lavender vegetative is a material botanical-identity FAIL: model reports rosemary-like needle foliage and woody branching.",
+    "No regeneration is authorized for the failed asset under the current no-retries approval."
+  ]
+}
