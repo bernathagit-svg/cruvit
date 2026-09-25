@@ -1,0 +1,72 @@
+name: Batch B Fast-6 E2E Acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/batch-b-fast6-e2e-acceptance.yml'
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Fetch live E2E status and visual plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/catalog/end-to-end-batch-b/fast6-live
+          curl --fail-with-body --silent --show-error             "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/full-cruvit-plant-approval?compact=1&slugs=bigleaf-hydrangea,english-lavender,fig,lettuce,pomegranate,zinnia"             -o data/catalog/end-to-end-batch-b/fast6-live/full-approval.json
+          curl --fail-with-body --silent --show-error             "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/plant-visual-variant-plan?slugs=bigleaf-hydrangea,english-lavender,fig,lettuce,pomegranate,zinnia"             -o data/catalog/end-to-end-batch-b/fast6-live/variant-plan.json
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const full=JSON.parse(fs.readFileSync('data/catalog/end-to-end-batch-b/fast6-live/full-approval.json','utf8'));
+          const visual=JSON.parse(fs.readFileSync('data/catalog/end-to-end-batch-b/fast6-live/variant-plan.json','utf8'));
+          const plans=visual.plans||visual.rows||visual.results||[];
+          const planRows=Array.isArray(plans)?plans:[];
+          const jobs=planRows.flatMap(p=>
+            (p.requiredVariants||[]).map(v=>({
+              canonicalSlug:p.canonicalSlug,
+              jobId:v.jobId||null,
+              growthStage:v.growthStage,
+              visualForm:v.visualForm||p.visualForm,
+              architectureMode:v.architectureMode||v.visualForm||p.visualForm,
+              phenology:v.phenology,
+              season:v.season||null,
+              reasonCodes:v.reasonCodes||[]
+            }))
+          );
+          const summary={
+            contract:'cruvit-e2e-batch-b-fast6-live-acceptance-v1',
+            createdAt:'2026-09-25',
+            fullApproval:{
+              total:full.total,
+              approved:full.approved,
+              blocked:full.blocked,
+              byStatus:full.byStatus,
+              blockerCounts:full.blockerCounts,
+              rows:full.rows
+            },
+            visual:{
+              planCount:planRows.length,
+              readyPlans:planRows.filter(x=>x.ready===true).length,
+              blockedPlans:planRows.filter(x=>x.ready!==true).length,
+              requiredJobCount:jobs.length,
+              jobs
+            },
+            paidCalls:0,
+            writes:0
+          };
+          fs.writeFileSync('data/catalog/end-to-end-batch-b/fast6-live/summary.json',JSON.stringify(summary,null,2)+'\n');
+          console.log(JSON.stringify(summary,null,2));
+          NODE
+      - name: Commit live audit
+        run: |
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add data/catalog/end-to-end-batch-b/fast6-live
+          git commit -m "catalog: record Batch B Fast-6 live E2E acceptance"
+          git push origin HEAD:main
