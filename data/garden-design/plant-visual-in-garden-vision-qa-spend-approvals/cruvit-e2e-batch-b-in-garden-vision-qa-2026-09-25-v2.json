@@ -1,0 +1,50 @@
+{
+  "contract": "plant-visual-in-garden-vision-qa-spend-approval-v1",
+  "runId": "cruvit-e2e-batch-b-in-garden-vision-qa-2026-09-25-v2",
+  "approved": true,
+  "approvedAt": "2026-09-25",
+  "approvalSource": "owner explicitly approved CRUVIT E2E Batch B Scale V2 In-Garden Vision QA up to USD 0.26, 17 calls, no retries",
+  "provider": "openai-responses-api",
+  "model": "gpt-5.6-luna",
+  "maxCalls": 17,
+  "maxRetries": 0,
+  "perCallReserveUsd": 0.01,
+  "maxSpendUsd": 0.26,
+  "jobIds": [
+    "fig__mature__shrub__vegetative__v1",
+    "fig__mature__tree__fruiting__v1",
+    "fig__mature__tree__vegetative__v1",
+    "fig__young__tree__vegetative__v1",
+    "lettuce__mature__default__vegetative__v1",
+    "pomegranate__mature__tree__dormant__v1",
+    "pomegranate__mature__tree__fruiting__v1",
+    "zinnia__mature__default__flowering__v1",
+    "bigleaf-hydrangea__mature__shrub__vegetative__v1",
+    "bigleaf-hydrangea__mature__shrub__flowering__v1",
+    "bigleaf-hydrangea__mature__shrub__dormant__v1",
+    "english-lavender__mature__shrub__flowering__v1",
+    "fig__mature__tree__dormant__v1",
+    "pomegranate__mature__shrub__vegetative__v1",
+    "pomegranate__mature__tree__vegetative__v1",
+    "pomegranate__young__tree__vegetative__v1",
+    "zinnia__mature__default__vegetative__v1"
+  ],
+  "allowedActions": [
+    "read exact in-garden QA capture bytes from candidate R2",
+    "send one renderer capture plus expected plant metadata to vision QA model",
+    "write in-garden vision QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "imageGenerationAllowed": false,
+  "imageMutationAllowed": false,
+  "carryForward": false,
+  "previousApprovalReuse": false,
+  "notes": [
+    "Approval applies only to the 17 Scale V2 Batch B in-garden captures.",
+    "English Lavender mature vegetative is excluded and remains HOLD.",
+    "No retry calls are authorized.",
+    "No image generation or mutation is authorized.",
+    "No Production R2 promotion or registry mutation is authorized."
+  ]
+}
