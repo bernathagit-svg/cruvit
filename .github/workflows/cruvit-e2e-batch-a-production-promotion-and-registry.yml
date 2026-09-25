@@ -1,0 +1,105 @@
+name: CRUVIT E2E Batch A Production Promotion and Registry
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cruvit-e2e-batch-a-production-promotion-and-registry.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  promote-and-activate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BASE_URL: https://friendly-taiyaki-64aacb.netlify.app
+      MANIFEST_ID: cruvit-e2e-batch-a-production-promotion-2026-09-25-v1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Promote exact verified candidates to Production R2
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error             -X POST "$BASE_URL/.netlify/functions/plant-visual-promote-manifest"             -H 'content-type: application/json'             --data '{"manifestId":"cruvit-e2e-batch-a-production-promotion-2026-09-25-v1"}'             | tee execution-results/promotion-result.json
+          test "$(jq -r '.ok' execution-results/promotion-result.json)" = "true"
+          test "$(jq -r '.totalJobs' execution-results/promotion-result.json)" = "12"
+          test "$(jq -r '.promotedOrVerified' execution-results/promotion-result.json)" = "12"
+          test "$(jq -r '.failed' execution-results/promotion-result.json)" = "0"
+          test "$(jq '[.results[]|select(.ok==true and (.code=="PROMOTED_AND_VERIFIED" or .code=="ALREADY_PROMOTED_IDENTICAL"))]|length' execution-results/promotion-result.json)" = "12"
+
+      - name: Activate only verified promotion results in registry
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import { activateVerifiedPromotionResults } from './modules/garden-design/asset-factory-v1/plant-visual-registry-activation-v1.js';
+
+          const registryPath='./modules/garden-design/assets/plants/design-asset-registry-v1.json';
+          const manifestPath='./data/garden-design/plant-visual-qa-manifests/cruvit-e2e-batch-a-production-promotion-2026-09-25-v1.json';
+          const promotionPath='./execution-results/promotion-result.json';
+
+          const registry=JSON.parse(fs.readFileSync(registryPath,'utf8'));
+          const manifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));
+          const promotion=JSON.parse(fs.readFileSync(promotionPath,'utf8'));
+
+          if(
+            promotion?.ok!==true
+            || Number(promotion?.promotedOrVerified)!==12
+            || Number(promotion?.failed)!==0
+          ) throw new Error('PROMOTION_NOT_FULLY_VERIFIED');
+
+          const activation=activateVerifiedPromotionResults(registry,manifest,promotion);
+
+          if(activation.activatedJobs!==12 || activation.skippedJobs!==0){
+            console.error(JSON.stringify(activation,null,2));
+            throw new Error('REGISTRY_ACTIVATION_NOT_12_OF_12');
+          }
+
+          fs.writeFileSync(registryPath,JSON.stringify(activation.registry,null,2)+'\n');
+          fs.mkdirSync('./data/garden-design/plant-visual-registry-activation-results',{recursive:true});
+          fs.writeFileSync(
+            './data/garden-design/plant-visual-registry-activation-results/cruvit-e2e-batch-a-production-promotion-2026-09-25-v1.json',
+            JSON.stringify({
+              version:activation.version,
+              manifestId:activation.manifestId,
+              activatedJobs:activation.activatedJobs,
+              skippedJobs:activation.skippedJobs,
+              activated:activation.activated,
+              networkCalls:activation.networkCalls,
+              r2Writes:activation.r2Writes,
+              activatedAt:'2026-09-25'
+            },null,2)+'\n'
+          );
+
+          console.log(JSON.stringify({
+            activatedJobs:activation.activatedJobs,
+            skippedJobs:activation.skippedJobs
+          }));
+          NODE
+
+      - name: Commit registry activation evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add             modules/garden-design/assets/plants/design-asset-registry-v1.json             data/garden-design/plant-visual-registry-activation-results/cruvit-e2e-batch-a-production-promotion-2026-09-25-v1.json
+          git commit -m "garden-design: activate all 12 Batch A production assets"
+          git push origin HEAD:main
+
+      - name: Upload execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cruvit-e2e-batch-a-production-promotion-and-registry
+          path: execution-results/
+          if-no-files-found: warn
+          retention-days: 30
