@@ -77,6 +77,7 @@ export default async(req)=>{
   const c=client(),bucket=env('PLANT_VISUAL_R2_CANDIDATES_BUCKET');
   const prefix=`candidates/${safeSegment(plan.sourceManifestId)}/natural-blend/${safeSegment(plan.runId)}`;
   const evidence=await readJson(c,bucket,prefix+'/evidence.json');
+  const compositeEvidence=await readJson(c,bucket,prefix+'/composite-evidence.json');
   const lock=await readJson(c,bucket,prefix+'/lock.json');
   return json(200,{
     ok:true,
@@ -101,6 +102,20 @@ export default async(req)=>{
       httpStatus:evidence.httpStatus||null,
       usage:evidence.usage||null,
       actualCostUsd:naturalBlendCostUsd(evidence.usage)
+    }:null,
+    compositeEvidence:compositeEvidence?{
+      code:compositeEvidence.code||null,
+      sourceCaptureObjectKey:compositeEvidence.sourceCaptureObjectKey||null,
+      sourceCaptureSha256:compositeEvidence.sourceCaptureSha256||null,
+      naturalBlendOutputObjectKey:compositeEvidence.naturalBlendOutputObjectKey||null,
+      naturalBlendOutputSha256:compositeEvidence.naturalBlendOutputSha256||null,
+      finalCompositeObjectKey:compositeEvidence.finalCompositeObjectKey||null,
+      finalCompositeSha256:compositeEvidence.finalCompositeSha256||null,
+      bytes:compositeEvidence.bytes||null,
+      hardCompositeClientApplied:compositeEvidence.hardCompositeClientApplied===true,
+      productionWrites:compositeEvidence.productionWrites||0,
+      registryWrites:compositeEvidence.registryWrites||0,
+      recordedAt:compositeEvidence.recordedAt||null
     }:null,
     claimedAt:lock?.claimedAt||null,
     retriesAllowed:lock?.retriesAllowed===true
