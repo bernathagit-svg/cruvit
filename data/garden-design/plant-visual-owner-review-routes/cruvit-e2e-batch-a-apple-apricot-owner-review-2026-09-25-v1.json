@@ -1,0 +1,102 @@
+{
+  "contract": "plant-visual-owner-review-routing-v1",
+  "reviewId": "cruvit-e2e-batch-a-apple-apricot-owner-review-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "sourceRunId": "plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1",
+  "batchId": "cruvit-e2e-batch-a-2026-09-25-v1",
+  "reason": "MODEL_QA_BOTANICAL_IDENTITY_CONSERVATIVE_UNCERTAINTY",
+  "jobCount": 5,
+  "jobs": [
+    {
+      "jobId": "apple__mature__tree__vegetative__v1",
+      "canonicalSlug": "apple",
+      "scientific": "Malus domestica",
+      "modelQA": "UNCERTAIN",
+      "alreadyPassed": [
+        "TECHNICAL_QA",
+        "FRAMING_QA",
+        "ARCHITECTURE_QA",
+        "GROWTH_STAGE_QA",
+        "PHENOLOGY_STATE_QA"
+      ],
+      "ownerQuestion": "Does this candidate visually represent a credible mature vegetative apple tree?"
+    },
+    {
+      "jobId": "apple__mature__tree__dormant__v1",
+      "canonicalSlug": "apple",
+      "scientific": "Malus domestica",
+      "modelQA": "UNCERTAIN",
+      "alreadyPassed": [
+        "TECHNICAL_QA",
+        "FRAMING_QA",
+        "ARCHITECTURE_QA",
+        "GROWTH_STAGE_QA",
+        "PHENOLOGY_STATE_QA"
+      ],
+      "ownerQuestion": "Does this candidate visually represent a credible mature dormant/leaf-off apple tree?"
+    },
+    {
+      "jobId": "apricot__mature__tree__vegetative__v1",
+      "canonicalSlug": "apricot",
+      "scientific": "Prunus armeniaca",
+      "modelQA": "UNCERTAIN",
+      "alreadyPassed": [
+        "TECHNICAL_QA",
+        "FRAMING_QA",
+        "ARCHITECTURE_QA",
+        "GROWTH_STAGE_QA",
+        "PHENOLOGY_STATE_QA"
+      ],
+      "ownerQuestion": "Does this candidate visually represent a credible mature vegetative apricot tree?"
+    },
+    {
+      "jobId": "apricot__mature__tree__fruiting__v1",
+      "canonicalSlug": "apricot",
+      "scientific": "Prunus armeniaca",
+      "modelQA": "UNCERTAIN",
+      "alreadyPassed": [
+        "TECHNICAL_QA",
+        "FRAMING_QA",
+        "ARCHITECTURE_QA",
+        "GROWTH_STAGE_QA",
+        "PHENOLOGY_STATE_QA"
+      ],
+      "ownerQuestion": "Does this candidate visually represent a credible mature fruiting apricot tree?"
+    },
+    {
+      "jobId": "apricot__mature__tree__dormant__v1",
+      "canonicalSlug": "apricot",
+      "scientific": "Prunus armeniaca",
+      "modelQA": "UNCERTAIN",
+      "alreadyPassed": [
+        "TECHNICAL_QA",
+        "FRAMING_QA",
+        "ARCHITECTURE_QA",
+        "GROWTH_STAGE_QA",
+        "PHENOLOGY_STATE_QA"
+      ],
+      "ownerQuestion": "Does this candidate visually represent a credible mature dormant/leaf-off apricot tree?"
+    }
+  ],
+  "excluded": [
+    {
+      "jobId": "apple__mature__tree__fruiting__v1",
+      "reason": "MODEL_QA_PASS_CONTINUE_IN_GARDEN"
+    },
+    {
+      "jobId": "breadfruit__mature__tree__fruiting__v1",
+      "reason": "OUTSIDE_BATCH_A"
+    },
+    {
+      "jobId": "breadfruit__mature__tree__vegetative__v1",
+      "reason": "OUTSIDE_BATCH_A"
+    }
+  ],
+  "allowedOwnerDecisions": [
+    "PASS",
+    "HOLD"
+  ],
+  "regenerationOnUncertaintyForbidden": true,
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false
+}
