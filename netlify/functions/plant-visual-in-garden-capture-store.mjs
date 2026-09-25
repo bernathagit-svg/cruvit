@@ -28,10 +28,25 @@ async function readBytes(c,bucket,key){
     throw err;
   }
 }
-async function loadPlan(req,runId){
-  const res=await fetch(new URL('/data/garden-design/plant-visual-in-garden-model-qa-plans/'+runId+'.json',req.url),{headers:{'cache-control':'no-cache'}});
+async function loadStaticJson(req,path){
+  const res=await fetch(new URL(path,req.url),{headers:{'cache-control':'no-cache'}});
   if(!res.ok) return null;
-  return res.json();
+  try{return await res.json();}catch{return null;}
+}
+async function loadPlan(req,runId){
+  return loadStaticJson(req,'/data/garden-design/plant-visual-in-garden-model-qa-plans/'+runId+'.json');
+}
+async function ownerAdmissionAllowed(req,plan,job){
+  const admission=String(job?.admission||'MODEL_QA_PASS');
+  if(admission==='MODEL_QA_PASS') return {ok:true,code:'MODEL_QA_PASS_ADMISSION'};
+  if(admission!=='OWNER_PASS_REQUIRED') return {ok:false,code:'UNKNOWN_ADMISSION_POLICY'};
+  const approvalId=String(plan?.ownerApprovalId||'').trim();
+  if(!approvalId) return {ok:false,code:'OWNER_APPROVAL_ID_REQUIRED'};
+  const approval=await loadStaticJson(req,'/data/garden-design/plant-visual-owner-visual-approvals/'+approvalId+'.json');
+  if(!approval||approval.contract!=='plant-visual-owner-visual-approval-v1') return {ok:false,code:'OWNER_VISUAL_APPROVAL_REQUIRED'};
+  const approved=new Set(approval?.scope?.exactJobIds||[]);
+  if(!approved.has(job.jobId)) return {ok:false,code:'JOB_NOT_OWNER_APPROVED'};
+  return {ok:true,code:'OWNER_PASS_ADMISSION'};
 }
 export default async (req)=>{
   if(req.method!=='POST') return json(405,{ok:false,code:'METHOD_NOT_ALLOWED'});
@@ -42,6 +57,8 @@ export default async (req)=>{
   if(!plan||!Array.isArray(plan.jobs)) return json(404,{ok:false,code:'IN_GARDEN_QA_PLAN_NOT_FOUND'});
   const job=plan.jobs.find(j=>j.jobId===jobId);
   if(!job) return json(404,{ok:false,code:'JOB_NOT_IN_IN_GARDEN_QA_PLAN'});
+  const admission=await ownerAdmissionAllowed(req,plan,job);
+  if(!admission.ok) return json(403,{ok:false,code:admission.code,jobId});
   const required=['PLANT_VISUAL_R2_ACCOUNT_ID','PLANT_VISUAL_R2_ACCESS_KEY_ID','PLANT_VISUAL_R2_SECRET_ACCESS_KEY','PLANT_VISUAL_R2_CANDIDATES_BUCKET'];
   const missing=required.filter(k=>!env(k));
   if(missing.length) return json(500,{ok:false,code:'ENV_MISSING',missing});
