@@ -1,0 +1,38 @@
+{
+  "contract": "plant-visual-model-qa-spend-approval-v1",
+  "runId": "cruvit-e2e-batch-a-citrus-model-qa-2026-09-25-v1",
+  "approved": true,
+  "approvedAt": "2026-09-25",
+  "approvalSource": "owner explicitly approved CRUVIT E2E Batch A Citrus Model QA up to USD 0.09, 6 calls, no retries",
+  "provider": "openai-responses-api",
+  "model": "gpt-5.6-luna",
+  "maxCalls": 6,
+  "maxRetries": 0,
+  "perCallReserveUsd": 0.01,
+  "maxSpendUsd": 0.09,
+  "jobIds": [
+    "grapefruit__mature__tree__vegetative__v1",
+    "grapefruit__young__tree__vegetative__v1",
+    "grapefruit__mature__tree__fruiting__v1",
+    "sweet-orange__mature__tree__vegetative__v1",
+    "sweet-orange__young__tree__vegetative__v1",
+    "sweet-orange__mature__tree__fruiting__v1"
+  ],
+  "allowedActions": [
+    "read exact candidate PNG bytes from candidate R2",
+    "send one candidate image plus expected metadata to vision QA model",
+    "write model QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "imageGenerationAllowed": false,
+  "imageMutationAllowed": false,
+  "carryForward": false,
+  "previousApprovalReuse": false,
+  "notes": [
+    "Approval applies only to CRUVIT E2E Batch A Citrus Model QA.",
+    "No retry calls are authorized.",
+    "No image generation or mutation is authorized.",
+    "No Production promotion or registry mutation is authorized."
+  ]
+}
