@@ -1,0 +1,37 @@
+name: CRUVIT Batch B Natural Blend Auto Repairs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cruvit-batch-b-natural-blend-auto-repairs.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Run auto repair host in headless Chrome
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://friendly-taiyaki-64aacb.netlify.app/modules/garden-design/cruvit-natural-blend-auto-repair.html?runs=cruvit-e2e-batch-b-fig-young-natural-blend-repair-2026-09-25-v1%2Ccruvit-e2e-batch-b-lettuce-natural-blend-repair-2026-09-25-v1"
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME"
+          timeout 240s "$CHROME"             --headless=new             --no-sandbox             --disable-gpu             --disable-dev-shm-usage             --window-size=1440,1200             --virtual-time-budget=180000             "$URL" > /tmp/chrome.out 2>/tmp/chrome.err || true
+          echo "--- chrome stderr tail ---"
+          tail -n 80 /tmp/chrome.err || true
+
+      - name: Verify both Natural Blend repair evidences exist
+        shell: bash
+        run: |
+          set -euo pipefail
+          for run in             cruvit-e2e-batch-b-fig-young-natural-blend-repair-2026-09-25-v1             cruvit-e2e-batch-b-lettuce-natural-blend-repair-2026-09-25-v1
+          do
+            curl --fail-with-body --silent --show-error               "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/plant-visual-natural-blend-status?runId=$run"               -o "/tmp/$run.json"
+            cat "/tmp/$run.json"
+            test "$(jq -r '.status' "/tmp/$run.json")" != "PENDING"
+          done
