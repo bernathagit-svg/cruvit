@@ -1,0 +1,70 @@
+{
+  "contract": "plant-visual-production-wave-execution-manifest-v1",
+  "runId": "cruvit-e2e-batch-b-lavender-vegetative-repair-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "source": {
+    "repairProposalId": "cruvit-e2e-batch-b-lavender-vegetative-repair-2026-09-25-v1",
+    "sourceRunId": "cruvit-e2e-batch-b-visual-wave-001-2026-09-25-v1",
+    "sourceModelQaRunId": "cruvit-e2e-batch-b-model-qa-2026-09-25-v1",
+    "reason": "BOTANICAL_IDENTITY_FAIL_ROSEMARY_LIKE_FOLIAGE"
+  },
+  "bounded": true,
+  "jobCount": 1,
+  "plantCount": 1,
+  "canonicalSlugs": [
+    "english-lavender"
+  ],
+  "candidateStorage": {
+    "backend": "cloudflare-r2",
+    "bucketEnv": "PLANT_VISUAL_R2_CANDIDATES_BUCKET",
+    "immutableKeyPattern": "candidates/{runId}/{canonicalSlug}/{assetId}__{sha256}.png"
+  },
+  "executionPolicy": {
+    "provider": "openai-images-api",
+    "model": "gpt-image-2",
+    "maxJobs": 1,
+    "maxCalls": 1,
+    "maxRetries": 0,
+    "registryWritesAllowed": false,
+    "productionWritesAllowed": false,
+    "ownerSpendApprovalRequired": true,
+    "approvalArtifactContract": "plant-visual-production-wave-spend-approval-v1",
+    "fullPlantOnboardingRequiredBeforePaidGeneration": true
+  },
+  "spendPreflight": {
+    "mediumJobs": 1,
+    "highJobs": 0,
+    "projectedMediumCallUsd": 0.091,
+    "projectedMaximumSpendUsd": 0.091,
+    "label": "PREAPPROVAL_ESTIMATE_NOT_LIVE_QUOTE"
+  },
+  "jobs": [
+    {
+      "jobId": "english-lavender__mature__shrub__vegetative__v1",
+      "canonicalSlug": "english-lavender",
+      "scientific": "Lavandula angustifolia",
+      "identityScope": "species",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "BOTANICAL_IDENTITY_REPAIR"
+      ],
+      "placementScaleHold": false,
+      "repairPromptAddendum": "This is a correction pass for Lavandula angustifolia. The result must unmistakably read as English lavender, not rosemary. Use a compact rounded lavender shrub habit with many slender upright stems. Leaves should be narrow linear to lanceolate, soft grey-green/silvery-green, visibly flatter and softer than rosemary needles. Avoid dense dark needle-like rosemary foliage, glossy rosemary leaves, and rosemary branch texture. Keep the plant in a non-flowering vegetative state: no purple flower spikes and no open flowers. Preserve realistic mature shrub architecture and transparent-background isolated cutout presentation."
+    }
+  ],
+  "excludedJobs": [],
+  "safety": {
+    "exactVariantRepairOnly": true,
+    "noRetry": true,
+    "noProductionWrites": true,
+    "noRegistryWrites": true,
+    "fullPlantOnboardingRequired": true
+  }
+}
