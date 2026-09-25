@@ -1,0 +1,56 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CRUVIT · Batch A Owner Review</title>
+<style>
+body{font-family:Inter,system-ui,sans-serif;background:#0f1412;color:#eef5ef;margin:0;padding:24px}
+h1{font-size:26px;margin:0 0 8px}p{color:#aab8ae;max-width:980px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+button{border:1px solid #3c4a40;background:#223029;color:#fff;padding:9px 12px;border-radius:9px;cursor:pointer}
+button.primary{background:#2e7d50}button.warn{background:#6b3030}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;margin-top:18px}
+.card{background:#17201b;border:1px solid #2b3a31;border-radius:16px;overflow:hidden}
+.card img{display:block;width:100%;aspect-ratio:2/3;object-fit:contain;background:#0a0d0b}
+.body{padding:14px}.row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.badge{padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700;background:#6a5319;color:#fff1b8}
+.meta{font-size:12px;color:#aab8ae;margin:8px 0}.reason{font-size:13px;line-height:1.45;color:#d7e3da}
+.actions{display:flex;gap:8px;margin-top:12px}
+pre{background:#0b0f0d;padding:12px;border-radius:10px;overflow:auto;margin-top:18px}
+</style>
+<h1>CRUVIT · Batch A Owner Visual Review</h1>
+<p>11 exception candidates only. These images already passed Technical + Framing QA. Most uncertainty is conservative species-level visual discrimination. Buttons are local only: no server write, no Production promotion.</p>
+<div class="toolbar">
+  <button class="primary" id="passAll">PASS ALL 11</button>
+  <button id="clearAll">Clear</button>
+</div>
+<div class="grid" id="grid"></div>
+<pre id="log">loading…</pre>
+<script>
+(async()=>{
+ const REVIEW='cruvit-e2e-batch-a-owner-review-2026-09-25-v1';
+ const res=await fetch('/data/garden-design/plant-visual-owner-review-bundles/'+REVIEW+'.json?t='+Date.now(),{cache:'no-store'});
+ if(!res.ok){document.getElementById('log').textContent='BUNDLE_LOAD_'+res.status;return;}
+ const bundle=await res.json();
+ const rows=bundle.jobs||[];
+ const decisions={};
+ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const img=r=>'/.netlify/functions/plant-visual-candidate-by-model-plan?runId='+encodeURIComponent(r.sourceModelQaRunId)+'&jobId='+encodeURIComponent(r.jobId)+'&t='+Date.now();
+ function render(){
+   document.getElementById('grid').innerHTML=rows.map(r=>{
+     const d=decisions[r.jobId]||'PENDING';
+     return '<div class="card"><img src="'+img(r)+'" alt="'+esc(r.canonicalSlug)+'"><div class="body"><div class="row"><strong>'+esc(r.canonicalSlug)+' · '+esc(r.growthStage)+' · '+esc(r.phenology)+'</strong><span class="badge">'+esc(d)+'</span></div><div class="meta">'+esc(r.scientific)+'<br>'+esc(r.jobId)+'</div><div class="reason">'+esc(r.reason)+'</div><div class="actions"><button class="primary" onclick="decide(\''+r.jobId+'\',\'PASS\')">PASS</button><button class="warn" onclick="decide(\''+r.jobId+'\',\'HOLD\')">HOLD</button></div></div></div>';
+   }).join('');
+   const pass=Object.entries(decisions).filter(([,v])=>v==='PASS').map(([k])=>k);
+   const hold=Object.entries(decisions).filter(([,v])=>v==='HOLD').map(([k])=>k);
+   const pending=rows.filter(r=>!decisions[r.jobId]).map(r=>r.jobId);
+   document.getElementById('log').textContent=
+     'PASS '+pass.length+' / '+rows.length+'\n'+pass.join('\n')+
+     '\n\nHOLD '+hold.length+'\n'+hold.join('\n')+
+     '\n\nPENDING '+pending.length+'\n'+pending.join('\n')+
+     '\n\nWhen finished, tell ChatGPT: "מאשרת Owner PASS לכל 11 נכסי Batch A" or list any HOLD exceptions.';
+ }
+ window.decide=(id,val)=>{decisions[id]=val;render();};
+ document.getElementById('passAll').onclick=()=>{for(const r of rows)decisions[r.jobId]='PASS';render();};
+ document.getElementById('clearAll').onclick=()=>{for(const k of Object.keys(decisions))delete decisions[k];render();};
+ render();
+})().catch(err=>document.getElementById('log').textContent=String(err?.message||err));
+</script>
