@@ -1,0 +1,26 @@
+name: Batch B Promote Size Authority
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/batch-b-promote-size-authority.yml'
+permissions:
+  contents: write
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/e2e-batch-b-promote-size-authority-v1.mjs
+      - run: |
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add data/catalog/botanical-size-authority-v1.json data/catalog/end-to-end-batch-b/size-authority/evidence.json
+          git commit -m "catalog: promote seven Batch B source-supported size authorities"
+          git push origin HEAD:main
