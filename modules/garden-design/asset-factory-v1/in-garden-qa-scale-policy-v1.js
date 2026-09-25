@@ -14,7 +14,7 @@
  * Phenology does not choose scale by itself.
  */
 
-export const IN_GARDEN_QA_SCALE_POLICY_VERSION = 'in-garden-qa-scale-policy-v1';
+export const IN_GARDEN_QA_SCALE_POLICY_VERSION = 'in-garden-qa-scale-policy-v1.1';
 
 export const QA_SCALE_BANDS = Object.freeze({
   SMALL: Object.freeze({ id: 'small', maxHeightPct: 34, maxWidthPct: 80 }),
@@ -111,6 +111,12 @@ function normalizeForm(value) {
   return FORM_STAGE_BASELINE[form] ? form : 'unknown';
 }
 
+export function resolveInGardenScaleForm(input = {}) {
+  const architecture = normalizeForm(input.architectureMode);
+  if (architecture !== 'unknown' && architecture !== 'default') return architecture;
+  return normalizeForm(input.visualForm);
+}
+
 function shiftBand(band, delta) {
   const i = BAND_ORDER.indexOf(asText(band));
   if (i < 0) return 'medium';
@@ -130,7 +136,7 @@ function adjacentBands(band) {
 
 export function deriveInGardenQaScale(input = {}, options = {}) {
   const jobId = asText(input.jobId);
-  const visualForm = normalizeForm(input.visualForm);
+  const visualForm = resolveInGardenScaleForm(input);
   const growthStage = normalizeStage(input.growthStage);
   const phenology = asText(input.phenology || input.phenologyState || 'vegetative') || 'vegetative';
 
