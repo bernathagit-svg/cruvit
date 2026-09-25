@@ -1,0 +1,52 @@
+name: CRUVIT E2E Batch A Citrus Visual Wave
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cruvit-e2e-batch-a-citrus-visual-wave.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      BASE_URL: https://friendly-taiyaki-64aacb.netlify.app
+      RUN_ID: cruvit-e2e-batch-a-citrus-visual-wave-001-2026-09-25-v1
+    steps:
+      - name: Grapefruit mature vegetative
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-generate-wave-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-a-citrus-visual-wave-001-2026-09-25-v1","jobId":"grapefruit__mature__tree__vegetative__v1"}' | tee execution-results/01-grapefruit-mature-vegetative.json
+      - name: Grapefruit young vegetative
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-generate-wave-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-a-citrus-visual-wave-001-2026-09-25-v1","jobId":"grapefruit__young__tree__vegetative__v1"}' | tee execution-results/02-grapefruit-young-vegetative.json
+      - name: Grapefruit mature fruiting
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-generate-wave-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-a-citrus-visual-wave-001-2026-09-25-v1","jobId":"grapefruit__mature__tree__fruiting__v1"}' | tee execution-results/03-grapefruit-mature-fruiting.json
+      - name: Sweet orange mature vegetative
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-generate-wave-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-a-citrus-visual-wave-001-2026-09-25-v1","jobId":"sweet-orange__mature__tree__vegetative__v1"}' | tee execution-results/04-sweet-orange-mature-vegetative.json
+      - name: Sweet orange young vegetative
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-generate-wave-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-a-citrus-visual-wave-001-2026-09-25-v1","jobId":"sweet-orange__young__tree__vegetative__v1"}' | tee execution-results/05-sweet-orange-young-vegetative.json
+      - name: Sweet orange mature fruiting
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-generate-wave-job" -H 'content-type: application/json' --data '{"runId":"cruvit-e2e-batch-a-citrus-visual-wave-001-2026-09-25-v1","jobId":"sweet-orange__mature__tree__fruiting__v1"}' | tee execution-results/06-sweet-orange-mature-fruiting.json
+      - name: Upload execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cruvit-e2e-batch-a-citrus-visual-wave
+          path: execution-results/
+          if-no-files-found: warn
+          retention-days: 30
