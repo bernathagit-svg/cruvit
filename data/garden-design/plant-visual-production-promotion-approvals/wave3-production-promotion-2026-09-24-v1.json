@@ -1,0 +1,29 @@
+{
+  "contract": "plant-visual-production-promotion-approval-v1",
+  "manifestId": "wave3-production-promotion-2026-09-24-v1",
+  "approvedAt": "2026-09-25",
+  "approvalSource": "owner explicitly approved promotion of the five Wave 3 assets to Production after readback/checksum verification",
+  "sourceManifestId": "wave3-owner-review-2026-09-24-v1",
+  "excludedJobs": [
+    "blue-gum__mature__tree__vegetative__v1",
+    "blue-gum__young__tree__vegetative__v1",
+    "carob__young__tree__vegetative__v1"
+  ],
+  "scope": {
+    "candidateJobs": [
+      "breadfruit__young__tree__vegetative__v1",
+      "cacao__mature__tree__fruiting__v1",
+      "cacao__mature__tree__vegetative__v1",
+      "cacao__young__tree__vegetative__v1",
+      "carob__mature__tree__vegetative__v1"
+    ],
+    "allowedActions": [
+      "copy exact verified candidate bytes to immutable Production R2 keys",
+      "verify production readback checksum",
+      "update design asset registry only for successfully verified production objects"
+    ],
+    "paidGenerationAllowed": false,
+    "newImageGenerationAllowed": false,
+    "unrelatedRegistryChangesAllowed": false
+  }
+}
