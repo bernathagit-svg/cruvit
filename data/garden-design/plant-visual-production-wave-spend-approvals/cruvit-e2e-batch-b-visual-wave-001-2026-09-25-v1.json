@@ -1,0 +1,49 @@
+{
+  "contract": "plant-visual-production-wave-spend-approval-v1",
+  "runId": "cruvit-e2e-batch-b-visual-wave-001-2026-09-25-v1",
+  "approved": true,
+  "approvedAt": "2026-09-25",
+  "approvalSource": "owner explicitly approved CRUVIT E2E Batch B Visual Wave up to USD 1.64, 18 calls, no retries",
+  "provider": "openai-images-api",
+  "model": "gpt-image-2",
+  "maxJobs": 18,
+  "maxCalls": 18,
+  "maxRetries": 0,
+  "maxSpendUsd": 1.64,
+  "jobIds": [
+    "bigleaf-hydrangea__mature__shrub__vegetative__v1",
+    "bigleaf-hydrangea__mature__shrub__flowering__v1",
+    "bigleaf-hydrangea__mature__shrub__dormant__v1",
+    "english-lavender__mature__shrub__vegetative__v1",
+    "english-lavender__mature__shrub__flowering__v1",
+    "fig__mature__tree__vegetative__v1",
+    "fig__mature__shrub__vegetative__v1",
+    "fig__young__tree__vegetative__v1",
+    "fig__mature__tree__fruiting__v1",
+    "fig__mature__tree__dormant__v1",
+    "lettuce__mature__default__vegetative__v1",
+    "pomegranate__mature__tree__vegetative__v1",
+    "pomegranate__mature__shrub__vegetative__v1",
+    "pomegranate__young__tree__vegetative__v1",
+    "pomegranate__mature__tree__fruiting__v1",
+    "pomegranate__mature__tree__dormant__v1",
+    "zinnia__mature__default__vegetative__v1",
+    "zinnia__mature__default__flowering__v1"
+  ],
+  "allowedActions": [
+    "generate exact approved wave candidate jobs",
+    "write generated PNGs only to candidate R2",
+    "write generation and technical QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "carryForward": false,
+  "previousApprovalReuse": false,
+  "notes": [
+    "Approval applies only to CRUVIT E2E Batch B Visual Wave.",
+    "No retry calls are authorized.",
+    "No Production R2 promotion is authorized.",
+    "No design asset registry mutation is authorized.",
+    "Candidate reuse index was checked before spend and contains zero reusable assets for these six plants."
+  ]
+}
