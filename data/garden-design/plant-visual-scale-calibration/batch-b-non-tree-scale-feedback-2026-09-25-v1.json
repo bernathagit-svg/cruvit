@@ -1,0 +1,28 @@
+{
+  "contract": "cruvit-owner-preview-scale-feedback-v1",
+  "feedbackId": "batch-b-non-tree-scale-feedback-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "batchId": "cruvit-e2e-batch-b-2026-09-25-v1",
+  "ownerObservation": "Flowering plants and shrub-like forms looked somewhat oversized in the real-garden preview.",
+  "affectedExamples": [
+    "zinnia__mature__default__flowering__v1",
+    "bigleaf-hydrangea__mature__shrub__flowering__v1",
+    "pomegranate__mature__shrub__vegetative__v1"
+  ],
+  "systemFinding": [
+    "architectureMode shrub was not overriding tree visualForm for presentation sizing",
+    "plant-specific botanical spread evidence was collected but not used by the In-Garden preview planner"
+  ],
+  "correctivePolicy": [
+    "architecture-specific presentation form takes precedence when more specific than visualForm",
+    "source-supported mature spread evidence may adjust preview size through bounded damped relative scaling",
+    "tree-only scaling remains unchanged in this calibration",
+    "preview adjustment never claims meter accuracy and never mutates canonical botanical size evidence"
+  ],
+  "oldRunId": "cruvit-e2e-batch-b-in-garden-qa-2026-09-25-v1",
+  "newRunId": "cruvit-e2e-batch-b-in-garden-scale-v2-2026-09-25-v1",
+  "paidCalls": 0,
+  "imageMutation": false,
+  "productionWrites": 0,
+  "registryWrites": 0
+}
