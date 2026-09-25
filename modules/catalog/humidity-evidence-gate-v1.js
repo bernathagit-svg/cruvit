@@ -39,6 +39,7 @@ export function extractHumidityEvidence(raw=''){
   const text=clean(raw), lower=text.toLowerCase();
   const directHigh=[
     /tolerates? high humidity/g,
+    /tolerant of (?:heat and )?humidity/g,
     /high humidity tolerance/g,
     /thrives? in humid/g
   ];
