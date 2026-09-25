@@ -1,0 +1,51 @@
+name: Owner Approved Plant Visual Execution Remaining 7 2026-09-25
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/plant-visual-owner-approved-execution-remaining7-2026-09-25.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  execute-remaining-seven:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BASE_URL: https://friendly-taiyaki-64aacb.netlify.app
+      VARIANT_RUN_ID: plant-visual-variant-completion-wave-001-2026-09-25-v1
+    steps:
+      - name: Generate remaining seven Variant Completion jobs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p execution-results
+          jobs=(
+            apple__mature__tree__fruiting__v1
+            apple__mature__tree__dormant__v1
+            apricot__mature__tree__vegetative__v1
+            apricot__mature__tree__fruiting__v1
+            apricot__mature__tree__dormant__v1
+            breadfruit__mature__tree__vegetative__v1
+            breadfruit__mature__tree__fruiting__v1
+          )
+          i=1
+          for job in "${jobs[@]}"; do
+            curl --fail-with-body --silent --show-error \
+              -X POST "$BASE_URL/.netlify/functions/plant-visual-generate-wave-job" \
+              -H 'content-type: application/json' \
+              --data "{\"runId\":\"$VARIANT_RUN_ID\",\"jobId\":\"$job\"}" \
+              | tee "execution-results/remaining-${i}-${job}.json"
+            i=$((i+1))
+          done
+
+      - name: Upload remaining execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: owner-approved-plant-visual-execution-remaining7-2026-09-25
+          path: execution-results/
+          if-no-files-found: warn
+          retention-days: 30
