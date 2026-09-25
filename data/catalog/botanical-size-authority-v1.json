@@ -54,7 +54,14 @@
     "rosemary": "taxon:salvia-rosmarinus",
     "acerola": "taxon:malpighia-emarginata",
     "aloe-vera": "taxon:aloe-vera",
-    "areca-palm": "taxon:dypsis-lutescens"
+    "areca-palm": "taxon:dypsis-lutescens",
+    "bigleaf-hydrangea": "taxon:hydrangea-macrophylla",
+    "borage": "taxon:borago-officinalis",
+    "english-lavender": "taxon:lavandula-angustifolia",
+    "fig": "taxon:ficus-carica",
+    "lettuce": "taxon:lactuca-sativa",
+    "pomegranate": "taxon:punica-granatum",
+    "zinnia": "taxon:zinnia-elegans"
   },
   "expectedAccounting": {
     "RUNTIME_AUTHORITY_READY": 13,
@@ -65,232 +72,6 @@
     "TOTAL": 46
   },
   "records": [
-    {
-      "botanicalTaxonId": "taxon:eucalyptus-globulus",
-      "canonicalSlugAliases": [
-        "blue-gum"
-      ],
-      "scientificName": "Eucalyptus globulus",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
-      "defaultPreviewScenario": "NATURAL_MATURE",
-      "selectedHeightEvidenceRef": "blue-gum__usda-feis__natural-mature-height",
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": {
-        "heightM": {
-          "min": 30,
-          "max": 55
-        },
-        "spreadM": {
-          "min": null,
-          "max": null
-        }
-      },
-      "provenanceEvidenceIds": [
-        "blue-gum__usda-feis__natural-mature-height",
-        "blue-gum__calpoly-selectree__landscape-maxima"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": "HEIGHT_ANCHORED_ESTIMATE",
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": false,
-      "unknownFields": [
-        "spread"
-      ],
-      "sensitivity": {
-        "cultivarSensitive": false,
-        "rootstockSensitive": false,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": false,
-        "reasons": []
-      },
-      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false,
-      "contextSeparableHeight": false
-    },
-    {
-      "botanicalTaxonId": "taxon:cupressus-sempervirens",
-      "canonicalSlugAliases": [
-        "cypress"
-      ],
-      "scientificName": "Cupressus sempervirens",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_CONFLICT_HOLD",
-      "defaultPreviewScenario": null,
-      "selectedHeightEvidenceRef": null,
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": null,
-      "provenanceEvidenceIds": [
-        "cypress__uf-ifas-st225__landscape-columnar",
-        "cypress__ncsu-ces__landscape-columnar"
-      ],
-      "conflictingEvidenceIds": [
-        "cypress__uf-ifas-st225__landscape-columnar",
-        "cypress__ncsu-ces__landscape-columnar"
-      ],
-      "partialAnchor": null,
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": true,
-      "unknownFields": [],
-      "sensitivity": {
-        "cultivarSensitive": false,
-        "rootstockSensitive": false,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": false,
-        "reasons": []
-      },
-      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false
-    },
-    {
-      "botanicalTaxonId": "taxon:olea-europaea",
-      "canonicalSlugAliases": [
-        "olive"
-      ],
-      "scientificName": "Olea europaea",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
-      "defaultPreviewScenario": "LANDSCAPE_MATURE",
-      "selectedHeightEvidenceRef": "olive__ncsu-ces__landscape-mature",
-      "selectedSpreadEvidenceRef": "olive__ncsu-ces__landscape-mature",
-      "selectedSource": "olive__ncsu-ces__landscape-mature",
-      "normalizedRange": {
-        "heightM": {
-          "min": 6.096,
-          "max": 9.144
-        },
-        "spreadM": {
-          "min": 4.572,
-          "max": 7.62
-        }
-      },
-      "provenanceEvidenceIds": [
-        "olive__ncsu-ces__landscape-mature",
-        "olive__uf-ifas-ep515__fertile-canopy-max",
-        "olive__maintained-garden__evidence-gap"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": true,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": true,
-      "unknownFields": [],
-      "sensitivity": {
-        "cultivarSensitive": false,
-        "rootstockSensitive": false,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": false,
-        "reasons": []
-      },
-      "gardenDesignFallback": null,
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false
-    },
-    {
-      "botanicalTaxonId": "taxon:citrus-limon",
-      "canonicalSlugAliases": [
-        "lemon"
-      ],
-      "scientificName": "Citrus × limon",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
-      "defaultPreviewScenario": null,
-      "selectedHeightEvidenceRef": null,
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": null,
-      "provenanceEvidenceIds": [
-        "lemon__uf-ifas-hs402__species-may-reach",
-        "lemon__ncsu-ces__landscape-mature",
-        "lemon__uf-ifas-hs402__maintained-home-landscape",
-        "lemon__uf-ifas-hs1260__citrus-rootstock-classes"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": true,
-      "unknownFields": [],
-      "sensitivity": {
-        "cultivarSensitive": true,
-        "rootstockSensitive": true,
-        "cultivarVariable": false,
-        "maintainedForm": true,
-        "notFinalPersonalGardenSize": true,
-        "reasons": [
-          "cultivar sensitive",
-          "rootstock sensitive",
-          "maintained form",
-          "not final personal garden size"
-        ]
-      },
-      "gardenDesignFallback": "Estimated size + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false,
-      "botanicalEvidenceRemainsValid": true,
-      "mayChooseUniversalPersonalGardenSize": false
-    },
-    {
-      "botanicalTaxonId": "taxon:malus-domestica",
-      "canonicalSlugAliases": [
-        "apple"
-      ],
-      "scientificName": "Malus domestica",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
-      "defaultPreviewScenario": null,
-      "selectedHeightEvidenceRef": null,
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": null,
-      "provenanceEvidenceIds": [
-        "apple__extension-org__standard-unpruned",
-        "apple__extension-org__standard-pruned",
-        "apple__extension-org__semi-dwarf-class",
-        "apple__extension-org__dwarf-class",
-        "apple__umd-extension__standard-seedling",
-        "apple__cornell__m9",
-        "apple__cornell__m26"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": true,
-      "unknownFields": [],
-      "sensitivity": {
-        "cultivarSensitive": true,
-        "rootstockSensitive": true,
-        "cultivarVariable": false,
-        "maintainedForm": true,
-        "notFinalPersonalGardenSize": true,
-        "reasons": [
-          "cultivar sensitive",
-          "rootstock sensitive",
-          "maintained form",
-          "not final personal garden size"
-        ]
-      },
-      "gardenDesignFallback": "Estimated size + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false,
-      "botanicalEvidenceRemainsValid": true,
-      "mayChooseUniversalPersonalGardenSize": false
-    },
     {
       "botanicalTaxonId": "taxon:acer-palmatum",
       "canonicalSlugAliases": [
@@ -333,30 +114,30 @@
       "mayChooseUniversalPersonalGardenSize": false
     },
     {
-      "botanicalTaxonId": "taxon:mangifera-indica",
+      "botanicalTaxonId": "taxon:aloe-vera",
       "canonicalSlugAliases": [
-        "mango"
+        "aloe-vera"
       ],
-      "scientificName": "Mangifera indica",
-      "architectureMode": "tree",
+      "scientificName": "Aloe vera",
+      "architectureMode": "default",
       "growthStage": "mature",
       "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
       "defaultPreviewScenario": "LANDSCAPE_MATURE",
-      "selectedHeightEvidenceRef": "mango__uf-ifas-enh563-st404__landscape-mature",
-      "selectedSpreadEvidenceRef": "mango__uf-ifas-enh563-st404__landscape-mature",
-      "selectedSource": "mango__uf-ifas-enh563-st404__landscape-mature",
+      "selectedHeightEvidenceRef": "aloe-vera__ncsu__landscape-mature",
+      "selectedSpreadEvidenceRef": "aloe-vera__ncsu__landscape-mature",
+      "selectedSource": "aloe-vera__ncsu__landscape-mature",
       "normalizedRange": {
         "heightM": {
-          "min": 9.144,
-          "max": 18.288
+          "min": 0.3048,
+          "max": 0.6096
         },
         "spreadM": {
-          "min": 9.144,
-          "max": 15.24
+          "min": 0.3048,
+          "max": 0.762
         }
       },
       "provenanceEvidenceIds": [
-        "mango__uf-ifas-enh563-st404__landscape-mature"
+        "aloe-vera__ncsu__landscape-mature"
       ],
       "conflictingEvidenceIds": null,
       "partialAnchor": null,
@@ -377,132 +158,43 @@
       "runtimeWired": false
     },
     {
-      "botanicalTaxonId": "taxon:prunus-dulcis",
+      "botanicalTaxonId": "taxon:annona-cherimola",
       "canonicalSlugAliases": [
-        "almond"
+        "cherimoya"
       ],
-      "scientificName": "Prunus dulcis",
+      "scientificName": "Annona cherimola",
       "architectureMode": "tree",
       "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_CONFLICT_HOLD",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_EVIDENCE_GAP",
       "defaultPreviewScenario": null,
       "selectedHeightEvidenceRef": null,
       "selectedSpreadEvidenceRef": null,
       "selectedSource": null,
       "normalizedRange": null,
       "provenanceEvidenceIds": [
-        "almond__mobot__landscape-typical",
-        "almond__uaex__about-30"
+        "cherimoya__evidence-gap"
       ],
-      "conflictingEvidenceIds": [
-        "almond__mobot__landscape-typical",
-        "almond__uaex__about-30"
-      ],
+      "conflictingEvidenceIds": null,
       "partialAnchor": null,
       "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": true,
-      "unknownFields": [],
+      "HEIGHT_SCALE_READY": false,
+      "SPREAD_SCALE_READY": false,
+      "unknownFields": [
+        "height",
+        "spread"
+      ],
       "sensitivity": {
-        "cultivarSensitive": true,
-        "rootstockSensitive": true,
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
         "cultivarVariable": false,
         "maintainedForm": false,
-        "notFinalPersonalGardenSize": true,
-        "reasons": [
-          "cultivar sensitive",
-          "rootstock sensitive",
-          "not final personal garden size"
-        ]
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
       },
       "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
       "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false
-    },
-    {
-      "botanicalTaxonId": "taxon:prunus-armeniaca",
-      "canonicalSlugAliases": [
-        "apricot"
-      ],
-      "scientificName": "Prunus armeniaca",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
-      "defaultPreviewScenario": null,
-      "selectedHeightEvidenceRef": null,
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": null,
-      "provenanceEvidenceIds": [
-        "apricot__ncsu__landscape-mature"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": true,
-      "unknownFields": [],
-      "sensitivity": {
-        "cultivarSensitive": true,
-        "rootstockSensitive": true,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": true,
-        "reasons": [
-          "cultivar sensitive",
-          "rootstock sensitive",
-          "not final personal garden size"
-        ]
-      },
-      "gardenDesignFallback": "Estimated size + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
       "runtimeWired": false,
-      "botanicalEvidenceRemainsValid": true,
-      "mayChooseUniversalPersonalGardenSize": false
-    },
-    {
-      "botanicalTaxonId": "taxon:persea-americana",
-      "canonicalSlugAliases": [
-        "avocado"
-      ],
-      "scientificName": "Persea americana",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
-      "defaultPreviewScenario": null,
-      "selectedHeightEvidenceRef": null,
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": null,
-      "provenanceEvidenceIds": [
-        "avocado__uf-ifas-st435__landscape",
-        "avocado__uf-ifas-mg213__home-landscape-range",
-        "avocado__uf-ifas-mg213__maintained"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": true,
-      "unknownFields": [],
-      "sensitivity": {
-        "cultivarSensitive": true,
-        "rootstockSensitive": false,
-        "cultivarVariable": true,
-        "maintainedForm": true,
-        "notFinalPersonalGardenSize": true,
-        "reasons": [
-          "cultivar sensitive",
-          "cultivar variable",
-          "maintained form",
-          "not final personal garden size"
-        ]
-      },
-      "gardenDesignFallback": "Estimated size + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false,
-      "botanicalEvidenceRemainsValid": true,
-      "mayChooseUniversalPersonalGardenSize": false
+      "meterTruth": false
     },
     {
       "botanicalTaxonId": "taxon:artocarpus-altilis",
@@ -544,22 +236,22 @@
       "meterTruth": false
     },
     {
-      "botanicalTaxonId": "taxon:theobroma-cacao",
+      "botanicalTaxonId": "taxon:artocarpus-heterophyllus",
       "canonicalSlugAliases": [
-        "cacao"
+        "jackfruit"
       ],
-      "scientificName": "Theobroma cacao",
+      "scientificName": "Artocarpus heterophyllus",
       "architectureMode": "tree",
       "growthStage": "mature",
       "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
       "defaultPreviewScenario": "LANDSCAPE_MATURE",
-      "selectedHeightEvidenceRef": "cacao__uf-ifas-hs307__tropical",
+      "selectedHeightEvidenceRef": "jackfruit__uf-ifas-mg370__florida",
       "selectedSpreadEvidenceRef": null,
       "selectedSource": null,
       "normalizedRange": {
         "heightM": {
-          "min": 7.6,
-          "max": 9.1
+          "min": 9,
+          "max": 12
         },
         "spreadM": {
           "min": null,
@@ -567,8 +259,8 @@
         }
       },
       "provenanceEvidenceIds": [
-        "cacao__uf-ifas-hs307__tropical",
-        "cacao__uf-ifas-hs307__maintained"
+        "jackfruit__uf-ifas-mg370__florida",
+        "jackfruit__uf-ifas-mg370__maintained"
       ],
       "conflictingEvidenceIds": null,
       "partialAnchor": "HEIGHT_ANCHORED_ESTIMATE",
@@ -592,22 +284,22 @@
       "contextSeparableHeight": false
     },
     {
-      "botanicalTaxonId": "taxon:ceratonia-siliqua",
+      "botanicalTaxonId": "taxon:averrhoa-carambola",
       "canonicalSlugAliases": [
-        "carob"
+        "starfruit"
       ],
-      "scientificName": "Ceratonia siliqua",
+      "scientificName": "Averrhoa carambola",
       "architectureMode": "tree",
       "growthStage": "mature",
       "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
-      "defaultPreviewScenario": "NATURAL_MATURE",
-      "selectedHeightEvidenceRef": "carob__ncsu__mature-height",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "starfruit__uf-ifas-mg373__unpruned",
       "selectedSpreadEvidenceRef": null,
       "selectedSource": null,
       "normalizedRange": {
         "heightM": {
-          "min": 15.24,
-          "max": 15.24
+          "min": 9.144,
+          "max": 10.668000000000001
         },
         "spreadM": {
           "min": null,
@@ -615,7 +307,144 @@
         }
       },
       "provenanceEvidenceIds": [
-        "carob__ncsu__mature-height"
+        "starfruit__uf-ifas-mg373__unpruned",
+        "starfruit__uf-ifas-mg373__maintained"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": "HEIGHT_ANCHORED_ESTIMATE",
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": false,
+      "unknownFields": [
+        "spread"
+      ],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false,
+      "contextSeparableHeight": false
+    },
+    {
+      "botanicalTaxonId": "taxon:betula-pendula",
+      "canonicalSlugAliases": [
+        "silver-birch"
+      ],
+      "scientificName": "Betula pendula",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "silver-birch__ncsu__landscape",
+      "selectedSpreadEvidenceRef": "silver-birch__ncsu__landscape",
+      "selectedSource": "silver-birch__ncsu__landscape",
+      "normalizedRange": {
+        "heightM": {
+          "min": 9.144,
+          "max": 15.24
+        },
+        "spreadM": {
+          "min": 3.048,
+          "max": 9.144
+        }
+      },
+      "provenanceEvidenceIds": [
+        "silver-birch__ncsu__landscape"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:borago-officinalis",
+      "canonicalSlugAliases": [
+        "borage"
+      ],
+      "scientificName": "Borago officinalis",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "borage__ncsu__mature-size-batch-b-v1",
+      "selectedSpreadEvidenceRef": "borage__ncsu__mature-size-batch-b-v1",
+      "selectedSource": "borage__ncsu__mature-size-batch-b-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.4826,
+          "max": 0.9652
+        },
+        "spreadM": {
+          "min": 0.3048,
+          "max": 0.4064
+        }
+      },
+      "provenanceEvidenceIds": [
+        "borage__ncsu__mature-size-batch-b-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:casimiroa-edulis",
+      "canonicalSlugAliases": [
+        "white-sapote"
+      ],
+      "scientificName": "Casimiroa edulis",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "white-sapote__uf-ifas-hs304__range",
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": {
+        "heightM": {
+          "min": 4.6,
+          "max": 18.3
+        },
+        "spreadM": {
+          "min": null,
+          "max": null
+        }
+      },
+      "provenanceEvidenceIds": [
+        "white-sapote__uf-ifas-hs304__range",
+        "white-sapote__uf-ifas-hs304__maintained"
       ],
       "conflictingEvidenceIds": null,
       "partialAnchor": "HEIGHT_ANCHORED_ESTIMATE",
@@ -683,29 +512,37 @@
       "runtimeWired": false
     },
     {
-      "botanicalTaxonId": "taxon:annona-cherimola",
+      "botanicalTaxonId": "taxon:ceratonia-siliqua",
       "canonicalSlugAliases": [
-        "cherimoya"
+        "carob"
       ],
-      "scientificName": "Annona cherimola",
+      "scientificName": "Ceratonia siliqua",
       "architectureMode": "tree",
       "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_EVIDENCE_GAP",
-      "defaultPreviewScenario": null,
-      "selectedHeightEvidenceRef": null,
+      "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
+      "defaultPreviewScenario": "NATURAL_MATURE",
+      "selectedHeightEvidenceRef": "carob__ncsu__mature-height",
       "selectedSpreadEvidenceRef": null,
       "selectedSource": null,
-      "normalizedRange": null,
+      "normalizedRange": {
+        "heightM": {
+          "min": 15.24,
+          "max": 15.24
+        },
+        "spreadM": {
+          "min": null,
+          "max": null
+        }
+      },
       "provenanceEvidenceIds": [
-        "cherimoya__evidence-gap"
+        "carob__ncsu__mature-height"
       ],
       "conflictingEvidenceIds": null,
-      "partialAnchor": null,
+      "partialAnchor": "HEIGHT_ANCHORED_ESTIMATE",
       "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": false,
+      "HEIGHT_SCALE_READY": true,
       "SPREAD_SCALE_READY": false,
       "unknownFields": [
-        "height",
         "spread"
       ],
       "sensitivity": {
@@ -719,7 +556,303 @@
       "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
       "authorityVersion": "botanical-size-authority-v1",
       "runtimeWired": false,
-      "meterTruth": false
+      "contextSeparableHeight": false
+    },
+    {
+      "botanicalTaxonId": "taxon:citrus-limon",
+      "canonicalSlugAliases": [
+        "lemon"
+      ],
+      "scientificName": "Citrus × limon",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "defaultPreviewScenario": null,
+      "selectedHeightEvidenceRef": null,
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": null,
+      "provenanceEvidenceIds": [
+        "lemon__uf-ifas-hs402__species-may-reach",
+        "lemon__ncsu-ces__landscape-mature",
+        "lemon__uf-ifas-hs402__maintained-home-landscape",
+        "lemon__uf-ifas-hs1260__citrus-rootstock-classes"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": true,
+        "rootstockSensitive": true,
+        "cultivarVariable": false,
+        "maintainedForm": true,
+        "notFinalPersonalGardenSize": true,
+        "reasons": [
+          "cultivar sensitive",
+          "rootstock sensitive",
+          "maintained form",
+          "not final personal garden size"
+        ]
+      },
+      "gardenDesignFallback": "Estimated size + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false,
+      "botanicalEvidenceRemainsValid": true,
+      "mayChooseUniversalPersonalGardenSize": false
+    },
+    {
+      "botanicalTaxonId": "taxon:citrus-paradisi",
+      "canonicalSlugAliases": [
+        "grapefruit"
+      ],
+      "scientificName": "Citrus × paradisi",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "defaultPreviewScenario": null,
+      "selectedHeightEvidenceRef": null,
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": null,
+      "provenanceEvidenceIds": [
+        "grapefruit__ncsu__landscape"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": true,
+        "rootstockSensitive": true,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": true,
+        "reasons": [
+          "cultivar sensitive",
+          "rootstock sensitive",
+          "not final personal garden size"
+        ]
+      },
+      "gardenDesignFallback": "Estimated size + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false,
+      "botanicalEvidenceRemainsValid": true,
+      "mayChooseUniversalPersonalGardenSize": false
+    },
+    {
+      "botanicalTaxonId": "taxon:citrus-reticulata",
+      "canonicalSlugAliases": [
+        "mandarin"
+      ],
+      "scientificName": "Citrus reticulata",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "defaultPreviewScenario": null,
+      "selectedHeightEvidenceRef": null,
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": null,
+      "provenanceEvidenceIds": [
+        "mandarin__uf-ifas-hs1372__citrus-maintained"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": false,
+      "unknownFields": [
+        "spread"
+      ],
+      "sensitivity": {
+        "cultivarSensitive": true,
+        "rootstockSensitive": true,
+        "cultivarVariable": false,
+        "maintainedForm": true,
+        "notFinalPersonalGardenSize": true,
+        "reasons": [
+          "cultivar sensitive",
+          "rootstock sensitive",
+          "maintained form",
+          "not final personal garden size"
+        ]
+      },
+      "gardenDesignFallback": "Estimated size + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false,
+      "botanicalEvidenceRemainsValid": true,
+      "mayChooseUniversalPersonalGardenSize": false
+    },
+    {
+      "botanicalTaxonId": "taxon:citrus-sinensis",
+      "canonicalSlugAliases": [
+        "orange",
+        "sweet-orange"
+      ],
+      "scientificName": "Citrus × sinensis",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "defaultPreviewScenario": null,
+      "selectedHeightEvidenceRef": null,
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": null,
+      "provenanceEvidenceIds": [
+        "citrus-sinensis__ncsu__landscape"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": true,
+        "rootstockSensitive": true,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": true,
+        "reasons": [
+          "cultivar sensitive",
+          "rootstock sensitive",
+          "not final personal garden size"
+        ]
+      },
+      "gardenDesignFallback": "Estimated size + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false,
+      "botanicalEvidenceRemainsValid": true,
+      "mayChooseUniversalPersonalGardenSize": false
+    },
+    {
+      "botanicalTaxonId": "taxon:cupressus-sempervirens",
+      "canonicalSlugAliases": [
+        "cypress"
+      ],
+      "scientificName": "Cupressus sempervirens",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_CONFLICT_HOLD",
+      "defaultPreviewScenario": null,
+      "selectedHeightEvidenceRef": null,
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": null,
+      "provenanceEvidenceIds": [
+        "cypress__uf-ifas-st225__landscape-columnar",
+        "cypress__ncsu-ces__landscape-columnar"
+      ],
+      "conflictingEvidenceIds": [
+        "cypress__uf-ifas-st225__landscape-columnar",
+        "cypress__ncsu-ces__landscape-columnar"
+      ],
+      "partialAnchor": null,
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:dimocarpus-longan",
+      "canonicalSlugAliases": [
+        "longan"
+      ],
+      "scientificName": "Dimocarpus longan",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "longan__uf-ifas-mg049__south-florida",
+      "selectedSpreadEvidenceRef": "longan__uf-ifas-mg049__south-florida",
+      "selectedSource": "longan__uf-ifas-mg049__south-florida",
+      "normalizedRange": {
+        "heightM": {
+          "min": 9.1,
+          "max": 12.2
+        },
+        "spreadM": {
+          "min": 9.1,
+          "max": 12.2
+        }
+      },
+      "provenanceEvidenceIds": [
+        "longan__uf-ifas-mg049__south-florida",
+        "longan__uf-ifas-mg049__maintained"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:diospyros-kaki",
+      "canonicalSlugAliases": [
+        "persimmon"
+      ],
+      "scientificName": "Diospyros kaki",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "defaultPreviewScenario": null,
+      "selectedHeightEvidenceRef": null,
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": null,
+      "provenanceEvidenceIds": [
+        "persimmon__ncsu__landscape"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": true,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": true,
+        "reasons": [
+          "cultivar variable",
+          "not final personal garden size"
+        ]
+      },
+      "gardenDesignFallback": "Estimated size + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false,
+      "botanicalEvidenceRemainsValid": true,
+      "mayChooseUniversalPersonalGardenSize": false
     },
     {
       "botanicalTaxonId": "taxon:durio-zibethinus",
@@ -761,30 +894,75 @@
       "meterTruth": false
     },
     {
-      "botanicalTaxonId": "taxon:juglans-regia",
+      "botanicalTaxonId": "taxon:dypsis-lutescens",
       "canonicalSlugAliases": [
-        "english-walnut"
+        "areca-palm"
       ],
-      "scientificName": "Juglans regia",
+      "scientificName": "Dypsis lutescens",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "areca-palm__uf-ifas-st165__landscape-mature",
+      "selectedSpreadEvidenceRef": "areca-palm__uf-ifas-st165__landscape-mature",
+      "selectedSource": "areca-palm__uf-ifas-st165__landscape-mature",
+      "normalizedRange": {
+        "heightM": {
+          "min": 6.096,
+          "max": 9.144
+        },
+        "spreadM": {
+          "min": 2.4384,
+          "max": 3.048
+        }
+      },
+      "provenanceEvidenceIds": [
+        "areca-palm__uf-ifas-st165__landscape-mature"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false,
+      "youngStateMustRemainSeparate": true
+    },
+    {
+      "botanicalTaxonId": "taxon:eriobotrya-japonica",
+      "canonicalSlugAliases": [
+        "loquat"
+      ],
+      "scientificName": "Eriobotrya japonica",
       "architectureMode": "tree",
       "growthStage": "mature",
       "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
       "defaultPreviewScenario": "LANDSCAPE_MATURE",
-      "selectedHeightEvidenceRef": "english-walnut__ncsu__landscape",
-      "selectedSpreadEvidenceRef": "english-walnut__ncsu__landscape",
-      "selectedSource": "english-walnut__ncsu__landscape",
+      "selectedHeightEvidenceRef": "loquat__uf-ifas-st235__landscape",
+      "selectedSpreadEvidenceRef": "loquat__uf-ifas-st235__landscape",
+      "selectedSource": "loquat__uf-ifas-st235__landscape",
       "normalizedRange": {
         "heightM": {
-          "min": 12.192,
-          "max": 18.288
+          "min": 6.096,
+          "max": 9.144
         },
         "spreadM": {
-          "min": 12.192,
-          "max": 18.288
+          "min": 9.144,
+          "max": 10.668000000000001
         }
       },
       "provenanceEvidenceIds": [
-        "english-walnut__ncsu__landscape"
+        "loquat__uf-ifas-st235__landscape"
       ],
       "conflictingEvidenceIds": null,
       "partialAnchor": null,
@@ -803,6 +981,54 @@
       "gardenDesignFallback": null,
       "authorityVersion": "botanical-size-authority-v1",
       "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:eucalyptus-globulus",
+      "canonicalSlugAliases": [
+        "blue-gum"
+      ],
+      "scientificName": "Eucalyptus globulus",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
+      "defaultPreviewScenario": "NATURAL_MATURE",
+      "selectedHeightEvidenceRef": "blue-gum__usda-feis__natural-mature-height",
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": {
+        "heightM": {
+          "min": 30,
+          "max": 55
+        },
+        "spreadM": {
+          "min": null,
+          "max": null
+        }
+      },
+      "provenanceEvidenceIds": [
+        "blue-gum__usda-feis__natural-mature-height",
+        "blue-gum__calpoly-selectree__landscape-maxima"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": "HEIGHT_ANCHORED_ESTIMATE",
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": false,
+      "unknownFields": [
+        "spread"
+      ],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false,
+      "contextSeparableHeight": false
     },
     {
       "botanicalTaxonId": "taxon:ficus-benjamina",
@@ -830,6 +1056,50 @@
       "provenanceEvidenceIds": [
         "ficus-benjamina__ncsu__landscape",
         "ficus-benjamina__ncsu__houseplant-maintained"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:ficus-carica",
+      "canonicalSlugAliases": [
+        "fig"
+      ],
+      "scientificName": "Ficus carica",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "fig__ncsu__mature-size-batch-b-v1",
+      "selectedSpreadEvidenceRef": "fig__ncsu__mature-size-batch-b-v1",
+      "selectedSource": "fig__ncsu__mature-size-batch-b-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 3.048,
+          "max": 9.144
+        },
+        "spreadM": {
+          "min": 3.048,
+          "max": 9.144
+        }
+      },
+      "provenanceEvidenceIds": [
+        "fig__ncsu__mature-size-batch-b-v1"
       ],
       "conflictingEvidenceIds": null,
       "partialAnchor": null,
@@ -898,6 +1168,45 @@
       "contextSeparableHeight": false
     },
     {
+      "botanicalTaxonId": "taxon:garcinia-mangostana",
+      "canonicalSlugAliases": [
+        "mangosteen"
+      ],
+      "scientificName": "Garcinia mangostana",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_EVIDENCE_GAP",
+      "defaultPreviewScenario": null,
+      "selectedHeightEvidenceRef": null,
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": null,
+      "provenanceEvidenceIds": [
+        "mangosteen__evidence-gap"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": false,
+      "SPREAD_SCALE_READY": false,
+      "unknownFields": [
+        "height",
+        "spread"
+      ],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false,
+      "meterTruth": false
+    },
+    {
       "botanicalTaxonId": "taxon:ginkgo-biloba",
       "canonicalSlugAliases": [
         "ginkgo"
@@ -938,11 +1247,317 @@
       "mayChooseUniversalPersonalGardenSize": false
     },
     {
-      "botanicalTaxonId": "taxon:citrus-paradisi",
+      "botanicalTaxonId": "taxon:hydrangea-macrophylla",
       "canonicalSlugAliases": [
-        "grapefruit"
+        "bigleaf-hydrangea"
       ],
-      "scientificName": "Citrus × paradisi",
+      "scientificName": "Hydrangea macrophylla",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "bigleaf-hydrangea__ncsu__mature-size-batch-b-v1",
+      "selectedSpreadEvidenceRef": "bigleaf-hydrangea__ncsu__mature-size-batch-b-v1",
+      "selectedSource": "bigleaf-hydrangea__ncsu__mature-size-batch-b-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.9144,
+          "max": 1.8288
+        },
+        "spreadM": {
+          "min": 0.9144,
+          "max": 1.8288
+        }
+      },
+      "provenanceEvidenceIds": [
+        "bigleaf-hydrangea__ncsu__mature-size-batch-b-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:juglans-regia",
+      "canonicalSlugAliases": [
+        "english-walnut"
+      ],
+      "scientificName": "Juglans regia",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "english-walnut__ncsu__landscape",
+      "selectedSpreadEvidenceRef": "english-walnut__ncsu__landscape",
+      "selectedSource": "english-walnut__ncsu__landscape",
+      "normalizedRange": {
+        "heightM": {
+          "min": 12.192,
+          "max": 18.288
+        },
+        "spreadM": {
+          "min": 12.192,
+          "max": 18.288
+        }
+      },
+      "provenanceEvidenceIds": [
+        "english-walnut__ncsu__landscape"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:lactuca-sativa",
+      "canonicalSlugAliases": [
+        "lettuce"
+      ],
+      "scientificName": "Lactuca sativa",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "lettuce__ncsu__mature-size-batch-b-v1",
+      "selectedSpreadEvidenceRef": "lettuce__ncsu__mature-size-batch-b-v1",
+      "selectedSource": "lettuce__ncsu__mature-size-batch-b-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.1524,
+          "max": 0.3048
+        },
+        "spreadM": {
+          "min": 0.1524,
+          "max": 0.3048
+        }
+      },
+      "provenanceEvidenceIds": [
+        "lettuce__ncsu__mature-size-batch-b-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:lavandula-angustifolia",
+      "canonicalSlugAliases": [
+        "lavender"
+      ],
+      "scientificName": "Lavandula angustifolia",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "lavender__ncsu__landscape-mature",
+      "selectedSpreadEvidenceRef": "lavender__ncsu__landscape-mature",
+      "selectedSource": "lavender__ncsu__landscape-mature",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.3048,
+          "max": 0.6096
+        },
+        "spreadM": {
+          "min": 0.6096,
+          "max": 0.9144
+        }
+      },
+      "provenanceEvidenceIds": [
+        "lavender__ncsu__landscape-mature"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:litchi-chinensis",
+      "canonicalSlugAliases": [
+        "lychee"
+      ],
+      "scientificName": "Litchi chinensis",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "lychee__uf-ifas-st364__landscape",
+      "selectedSpreadEvidenceRef": "lychee__uf-ifas-st364__landscape",
+      "selectedSource": "lychee__uf-ifas-st364__landscape",
+      "normalizedRange": {
+        "heightM": {
+          "min": 9.144,
+          "max": 15.24
+        },
+        "spreadM": {
+          "min": 9.144,
+          "max": 15.24
+        }
+      },
+      "provenanceEvidenceIds": [
+        "lychee__uf-ifas-st364__landscape"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:magnolia-grandiflora",
+      "canonicalSlugAliases": [
+        "southern-magnolia"
+      ],
+      "scientificName": "Magnolia grandiflora",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_CONFLICT_HOLD",
+      "defaultPreviewScenario": null,
+      "selectedHeightEvidenceRef": null,
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": null,
+      "provenanceEvidenceIds": [
+        "southern-magnolia__ncsu__landscape-dimensions",
+        "southern-magnolia__ncsu__landscape-prose-spread"
+      ],
+      "conflictingEvidenceIds": [
+        "southern-magnolia__ncsu__landscape-dimensions",
+        "southern-magnolia__ncsu__landscape-prose-spread"
+      ],
+      "partialAnchor": null,
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:malpighia-emarginata",
+      "canonicalSlugAliases": [
+        "acerola"
+      ],
+      "scientificName": "Malpighia emarginata",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
+      "defaultPreviewScenario": "NATURAL_MATURE",
+      "selectedHeightEvidenceRef": "acerola__wfo__species-height",
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": {
+        "heightM": {
+          "min": 2,
+          "max": 6
+        },
+        "spreadM": {
+          "min": null,
+          "max": 6
+        }
+      },
+      "provenanceEvidenceIds": [
+        "acerola__wfo__species-height",
+        "acerola__ntbg__max-equal-breadth"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": "HEIGHT_ANCHORED_SPREAD_MAX_ONLY",
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": false,
+      "unknownFields": [
+        "spreadMin"
+      ],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": "Height-authoritative estimate + shrub form heuristic + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:malus-domestica",
+      "canonicalSlugAliases": [
+        "apple"
+      ],
+      "scientificName": "Malus domestica",
       "architectureMode": "tree",
       "growthStage": "mature",
       "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
@@ -952,7 +1567,478 @@
       "selectedSource": null,
       "normalizedRange": null,
       "provenanceEvidenceIds": [
-        "grapefruit__ncsu__landscape"
+        "apple__extension-org__standard-unpruned",
+        "apple__extension-org__standard-pruned",
+        "apple__extension-org__semi-dwarf-class",
+        "apple__extension-org__dwarf-class",
+        "apple__umd-extension__standard-seedling",
+        "apple__cornell__m9",
+        "apple__cornell__m26"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": true,
+        "rootstockSensitive": true,
+        "cultivarVariable": false,
+        "maintainedForm": true,
+        "notFinalPersonalGardenSize": true,
+        "reasons": [
+          "cultivar sensitive",
+          "rootstock sensitive",
+          "maintained form",
+          "not final personal garden size"
+        ]
+      },
+      "gardenDesignFallback": "Estimated size + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false,
+      "botanicalEvidenceRemainsValid": true,
+      "mayChooseUniversalPersonalGardenSize": false
+    },
+    {
+      "botanicalTaxonId": "taxon:mangifera-indica",
+      "canonicalSlugAliases": [
+        "mango"
+      ],
+      "scientificName": "Mangifera indica",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "mango__uf-ifas-enh563-st404__landscape-mature",
+      "selectedSpreadEvidenceRef": "mango__uf-ifas-enh563-st404__landscape-mature",
+      "selectedSource": "mango__uf-ifas-enh563-st404__landscape-mature",
+      "normalizedRange": {
+        "heightM": {
+          "min": 9.144,
+          "max": 18.288
+        },
+        "spreadM": {
+          "min": 9.144,
+          "max": 15.24
+        }
+      },
+      "provenanceEvidenceIds": [
+        "mango__uf-ifas-enh563-st404__landscape-mature"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:moringa-oleifera",
+      "canonicalSlugAliases": [
+        "moringa"
+      ],
+      "scientificName": "Moringa oleifera",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_EVIDENCE_GAP",
+      "defaultPreviewScenario": null,
+      "selectedHeightEvidenceRef": null,
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": null,
+      "provenanceEvidenceIds": [
+        "moringa__evidence-gap"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": false,
+      "SPREAD_SCALE_READY": false,
+      "unknownFields": [
+        "height",
+        "spread"
+      ],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false,
+      "meterTruth": false
+    },
+    {
+      "botanicalTaxonId": "taxon:nephelium-lappaceum",
+      "canonicalSlugAliases": [
+        "rambutan"
+      ],
+      "scientificName": "Nephelium lappaceum",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_EVIDENCE_GAP",
+      "defaultPreviewScenario": null,
+      "selectedHeightEvidenceRef": null,
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": null,
+      "provenanceEvidenceIds": [
+        "rambutan__evidence-gap"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": false,
+      "SPREAD_SCALE_READY": false,
+      "unknownFields": [
+        "height",
+        "spread"
+      ],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false,
+      "meterTruth": false
+    },
+    {
+      "botanicalTaxonId": "taxon:olea-europaea",
+      "canonicalSlugAliases": [
+        "olive"
+      ],
+      "scientificName": "Olea europaea",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "olive__ncsu-ces__landscape-mature",
+      "selectedSpreadEvidenceRef": "olive__ncsu-ces__landscape-mature",
+      "selectedSource": "olive__ncsu-ces__landscape-mature",
+      "normalizedRange": {
+        "heightM": {
+          "min": 6.096,
+          "max": 9.144
+        },
+        "spreadM": {
+          "min": 4.572,
+          "max": 7.62
+        }
+      },
+      "provenanceEvidenceIds": [
+        "olive__ncsu-ces__landscape-mature",
+        "olive__uf-ifas-ep515__fertile-canopy-max",
+        "olive__maintained-garden__evidence-gap"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:persea-americana",
+      "canonicalSlugAliases": [
+        "avocado"
+      ],
+      "scientificName": "Persea americana",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "defaultPreviewScenario": null,
+      "selectedHeightEvidenceRef": null,
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": null,
+      "provenanceEvidenceIds": [
+        "avocado__uf-ifas-st435__landscape",
+        "avocado__uf-ifas-mg213__home-landscape-range",
+        "avocado__uf-ifas-mg213__maintained"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": true,
+        "rootstockSensitive": false,
+        "cultivarVariable": true,
+        "maintainedForm": true,
+        "notFinalPersonalGardenSize": true,
+        "reasons": [
+          "cultivar sensitive",
+          "cultivar variable",
+          "maintained form",
+          "not final personal garden size"
+        ]
+      },
+      "gardenDesignFallback": "Estimated size + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false,
+      "botanicalEvidenceRemainsValid": true,
+      "mayChooseUniversalPersonalGardenSize": false
+    },
+    {
+      "botanicalTaxonId": "taxon:pistacia-vera",
+      "canonicalSlugAliases": [
+        "pistachio"
+      ],
+      "scientificName": "Pistacia vera",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_EVIDENCE_GAP",
+      "defaultPreviewScenario": null,
+      "selectedHeightEvidenceRef": null,
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": null,
+      "provenanceEvidenceIds": [
+        "pistachio__evidence-gap"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": false,
+      "SPREAD_SCALE_READY": false,
+      "unknownFields": [
+        "height",
+        "spread"
+      ],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false,
+      "meterTruth": false
+    },
+    {
+      "botanicalTaxonId": "taxon:plinia-cauliflora",
+      "canonicalSlugAliases": [
+        "jaboticaba"
+      ],
+      "scientificName": "Plinia cauliflora",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "jaboticaba__uf-ifas-mg373__florida",
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": {
+        "heightM": {
+          "min": null,
+          "max": null
+        },
+        "spreadM": {
+          "min": null,
+          "max": null
+        }
+      },
+      "provenanceEvidenceIds": [
+        "jaboticaba__uf-ifas-mg373__florida"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": "HEIGHT_ANCHORED_ESTIMATE",
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": false,
+      "unknownFields": [
+        "spread"
+      ],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false,
+      "contextSeparableHeight": true
+    },
+    {
+      "botanicalTaxonId": "taxon:prunus-armeniaca",
+      "canonicalSlugAliases": [
+        "apricot"
+      ],
+      "scientificName": "Prunus armeniaca",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "defaultPreviewScenario": null,
+      "selectedHeightEvidenceRef": null,
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": null,
+      "provenanceEvidenceIds": [
+        "apricot__ncsu__landscape-mature"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": true,
+        "rootstockSensitive": true,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": true,
+        "reasons": [
+          "cultivar sensitive",
+          "rootstock sensitive",
+          "not final personal garden size"
+        ]
+      },
+      "gardenDesignFallback": "Estimated size + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false,
+      "botanicalEvidenceRemainsValid": true,
+      "mayChooseUniversalPersonalGardenSize": false
+    },
+    {
+      "botanicalTaxonId": "taxon:prunus-avium",
+      "canonicalSlugAliases": [
+        "sweet-cherry"
+      ],
+      "scientificName": "Prunus avium",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "defaultPreviewScenario": null,
+      "selectedHeightEvidenceRef": null,
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": null,
+      "provenanceEvidenceIds": [
+        "sweet-cherry__ncsu__landscape"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": true,
+        "rootstockSensitive": true,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": true,
+        "reasons": [
+          "cultivar sensitive",
+          "rootstock sensitive",
+          "not final personal garden size"
+        ]
+      },
+      "gardenDesignFallback": "Estimated size + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false,
+      "botanicalEvidenceRemainsValid": true,
+      "mayChooseUniversalPersonalGardenSize": false
+    },
+    {
+      "botanicalTaxonId": "taxon:prunus-dulcis",
+      "canonicalSlugAliases": [
+        "almond"
+      ],
+      "scientificName": "Prunus dulcis",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_CONFLICT_HOLD",
+      "defaultPreviewScenario": null,
+      "selectedHeightEvidenceRef": null,
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": null,
+      "provenanceEvidenceIds": [
+        "almond__mobot__landscape-typical",
+        "almond__uaex__about-30"
+      ],
+      "conflictingEvidenceIds": [
+        "almond__mobot__landscape-typical",
+        "almond__uaex__about-30"
+      ],
+      "partialAnchor": null,
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": true,
+        "rootstockSensitive": true,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": true,
+        "reasons": [
+          "cultivar sensitive",
+          "rootstock sensitive",
+          "not final personal garden size"
+        ]
+      },
+      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:prunus-persica",
+      "canonicalSlugAliases": [
+        "peach"
+      ],
+      "scientificName": "Prunus persica",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "defaultPreviewScenario": null,
+      "selectedHeightEvidenceRef": null,
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": null,
+      "provenanceEvidenceIds": [
+        "peach__ncsu__landscape"
       ],
       "conflictingEvidenceIds": null,
       "partialAnchor": null,
@@ -1027,126 +2113,30 @@
       "contextSeparableHeight": false
     },
     {
-      "botanicalTaxonId": "taxon:plinia-cauliflora",
+      "botanicalTaxonId": "taxon:punica-granatum",
       "canonicalSlugAliases": [
-        "jaboticaba"
+        "pomegranate"
       ],
-      "scientificName": "Plinia cauliflora",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
-      "defaultPreviewScenario": "LANDSCAPE_MATURE",
-      "selectedHeightEvidenceRef": "jaboticaba__uf-ifas-mg373__florida",
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": {
-        "heightM": {
-          "min": null,
-          "max": null
-        },
-        "spreadM": {
-          "min": null,
-          "max": null
-        }
-      },
-      "provenanceEvidenceIds": [
-        "jaboticaba__uf-ifas-mg373__florida"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": "HEIGHT_ANCHORED_ESTIMATE",
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": false,
-      "unknownFields": [
-        "spread"
-      ],
-      "sensitivity": {
-        "cultivarSensitive": false,
-        "rootstockSensitive": false,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": false,
-        "reasons": []
-      },
-      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false,
-      "contextSeparableHeight": true
-    },
-    {
-      "botanicalTaxonId": "taxon:artocarpus-heterophyllus",
-      "canonicalSlugAliases": [
-        "jackfruit"
-      ],
-      "scientificName": "Artocarpus heterophyllus",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
-      "defaultPreviewScenario": "LANDSCAPE_MATURE",
-      "selectedHeightEvidenceRef": "jackfruit__uf-ifas-mg370__florida",
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": {
-        "heightM": {
-          "min": 9,
-          "max": 12
-        },
-        "spreadM": {
-          "min": null,
-          "max": null
-        }
-      },
-      "provenanceEvidenceIds": [
-        "jackfruit__uf-ifas-mg370__florida",
-        "jackfruit__uf-ifas-mg370__maintained"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": "HEIGHT_ANCHORED_ESTIMATE",
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": false,
-      "unknownFields": [
-        "spread"
-      ],
-      "sensitivity": {
-        "cultivarSensitive": false,
-        "rootstockSensitive": false,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": false,
-        "reasons": []
-      },
-      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false,
-      "contextSeparableHeight": false
-    },
-    {
-      "botanicalTaxonId": "taxon:dimocarpus-longan",
-      "canonicalSlugAliases": [
-        "longan"
-      ],
-      "scientificName": "Dimocarpus longan",
-      "architectureMode": "tree",
+      "scientificName": "Punica granatum",
+      "architectureMode": "default",
       "growthStage": "mature",
       "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
       "defaultPreviewScenario": "LANDSCAPE_MATURE",
-      "selectedHeightEvidenceRef": "longan__uf-ifas-mg049__south-florida",
-      "selectedSpreadEvidenceRef": "longan__uf-ifas-mg049__south-florida",
-      "selectedSource": "longan__uf-ifas-mg049__south-florida",
+      "selectedHeightEvidenceRef": "pomegranate__ncsu__mature-size-batch-b-v1",
+      "selectedSpreadEvidenceRef": "pomegranate__ncsu__mature-size-batch-b-v1",
+      "selectedSource": "pomegranate__ncsu__mature-size-batch-b-v1",
       "normalizedRange": {
         "heightM": {
-          "min": 9.1,
-          "max": 12.2
+          "min": 3.048,
+          "max": 3.6576
         },
         "spreadM": {
-          "min": 9.1,
-          "max": 12.2
+          "min": 2.4384,
+          "max": 3.048
         }
       },
       "provenanceEvidenceIds": [
-        "longan__uf-ifas-mg049__south-florida",
-        "longan__uf-ifas-mg049__maintained"
+        "pomegranate__ncsu__mature-size-batch-b-v1"
       ],
       "conflictingEvidenceIds": null,
       "partialAnchor": null,
@@ -1165,257 +2155,6 @@
       "gardenDesignFallback": null,
       "authorityVersion": "botanical-size-authority-v1",
       "runtimeWired": false
-    },
-    {
-      "botanicalTaxonId": "taxon:eriobotrya-japonica",
-      "canonicalSlugAliases": [
-        "loquat"
-      ],
-      "scientificName": "Eriobotrya japonica",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
-      "defaultPreviewScenario": "LANDSCAPE_MATURE",
-      "selectedHeightEvidenceRef": "loquat__uf-ifas-st235__landscape",
-      "selectedSpreadEvidenceRef": "loquat__uf-ifas-st235__landscape",
-      "selectedSource": "loquat__uf-ifas-st235__landscape",
-      "normalizedRange": {
-        "heightM": {
-          "min": 6.096,
-          "max": 9.144
-        },
-        "spreadM": {
-          "min": 9.144,
-          "max": 10.668000000000001
-        }
-      },
-      "provenanceEvidenceIds": [
-        "loquat__uf-ifas-st235__landscape"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": true,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": true,
-      "unknownFields": [],
-      "sensitivity": {
-        "cultivarSensitive": false,
-        "rootstockSensitive": false,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": false,
-        "reasons": []
-      },
-      "gardenDesignFallback": null,
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false
-    },
-    {
-      "botanicalTaxonId": "taxon:litchi-chinensis",
-      "canonicalSlugAliases": [
-        "lychee"
-      ],
-      "scientificName": "Litchi chinensis",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
-      "defaultPreviewScenario": "LANDSCAPE_MATURE",
-      "selectedHeightEvidenceRef": "lychee__uf-ifas-st364__landscape",
-      "selectedSpreadEvidenceRef": "lychee__uf-ifas-st364__landscape",
-      "selectedSource": "lychee__uf-ifas-st364__landscape",
-      "normalizedRange": {
-        "heightM": {
-          "min": 9.144,
-          "max": 15.24
-        },
-        "spreadM": {
-          "min": 9.144,
-          "max": 15.24
-        }
-      },
-      "provenanceEvidenceIds": [
-        "lychee__uf-ifas-st364__landscape"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": true,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": true,
-      "unknownFields": [],
-      "sensitivity": {
-        "cultivarSensitive": false,
-        "rootstockSensitive": false,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": false,
-        "reasons": []
-      },
-      "gardenDesignFallback": null,
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false
-    },
-    {
-      "botanicalTaxonId": "taxon:citrus-reticulata",
-      "canonicalSlugAliases": [
-        "mandarin"
-      ],
-      "scientificName": "Citrus reticulata",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
-      "defaultPreviewScenario": null,
-      "selectedHeightEvidenceRef": null,
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": null,
-      "provenanceEvidenceIds": [
-        "mandarin__uf-ifas-hs1372__citrus-maintained"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": false,
-      "unknownFields": [
-        "spread"
-      ],
-      "sensitivity": {
-        "cultivarSensitive": true,
-        "rootstockSensitive": true,
-        "cultivarVariable": false,
-        "maintainedForm": true,
-        "notFinalPersonalGardenSize": true,
-        "reasons": [
-          "cultivar sensitive",
-          "rootstock sensitive",
-          "maintained form",
-          "not final personal garden size"
-        ]
-      },
-      "gardenDesignFallback": "Estimated size + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false,
-      "botanicalEvidenceRemainsValid": true,
-      "mayChooseUniversalPersonalGardenSize": false
-    },
-    {
-      "botanicalTaxonId": "taxon:garcinia-mangostana",
-      "canonicalSlugAliases": [
-        "mangosteen"
-      ],
-      "scientificName": "Garcinia mangostana",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_EVIDENCE_GAP",
-      "defaultPreviewScenario": null,
-      "selectedHeightEvidenceRef": null,
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": null,
-      "provenanceEvidenceIds": [
-        "mangosteen__evidence-gap"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": false,
-      "SPREAD_SCALE_READY": false,
-      "unknownFields": [
-        "height",
-        "spread"
-      ],
-      "sensitivity": {
-        "cultivarSensitive": false,
-        "rootstockSensitive": false,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": false,
-        "reasons": []
-      },
-      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false,
-      "meterTruth": false
-    },
-    {
-      "botanicalTaxonId": "taxon:moringa-oleifera",
-      "canonicalSlugAliases": [
-        "moringa"
-      ],
-      "scientificName": "Moringa oleifera",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_EVIDENCE_GAP",
-      "defaultPreviewScenario": null,
-      "selectedHeightEvidenceRef": null,
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": null,
-      "provenanceEvidenceIds": [
-        "moringa__evidence-gap"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": false,
-      "SPREAD_SCALE_READY": false,
-      "unknownFields": [
-        "height",
-        "spread"
-      ],
-      "sensitivity": {
-        "cultivarSensitive": false,
-        "rootstockSensitive": false,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": false,
-        "reasons": []
-      },
-      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false,
-      "meterTruth": false
-    },
-    {
-      "botanicalTaxonId": "taxon:prunus-persica",
-      "canonicalSlugAliases": [
-        "peach"
-      ],
-      "scientificName": "Prunus persica",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
-      "defaultPreviewScenario": null,
-      "selectedHeightEvidenceRef": null,
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": null,
-      "provenanceEvidenceIds": [
-        "peach__ncsu__landscape"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": true,
-      "unknownFields": [],
-      "sensitivity": {
-        "cultivarSensitive": true,
-        "rootstockSensitive": true,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": true,
-        "reasons": [
-          "cultivar sensitive",
-          "rootstock sensitive",
-          "not final personal garden size"
-        ]
-      },
-      "gardenDesignFallback": "Estimated size + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false,
-      "botanicalEvidenceRemainsValid": true,
-      "mayChooseUniversalPersonalGardenSize": false
     },
     {
       "botanicalTaxonId": "taxon:pyrus-communis",
@@ -1457,430 +2196,6 @@
       "runtimeWired": false,
       "botanicalEvidenceRemainsValid": true,
       "mayChooseUniversalPersonalGardenSize": false
-    },
-    {
-      "botanicalTaxonId": "taxon:diospyros-kaki",
-      "canonicalSlugAliases": [
-        "persimmon"
-      ],
-      "scientificName": "Diospyros kaki",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
-      "defaultPreviewScenario": null,
-      "selectedHeightEvidenceRef": null,
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": null,
-      "provenanceEvidenceIds": [
-        "persimmon__ncsu__landscape"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": true,
-      "unknownFields": [],
-      "sensitivity": {
-        "cultivarSensitive": false,
-        "rootstockSensitive": false,
-        "cultivarVariable": true,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": true,
-        "reasons": [
-          "cultivar variable",
-          "not final personal garden size"
-        ]
-      },
-      "gardenDesignFallback": "Estimated size + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false,
-      "botanicalEvidenceRemainsValid": true,
-      "mayChooseUniversalPersonalGardenSize": false
-    },
-    {
-      "botanicalTaxonId": "taxon:pistacia-vera",
-      "canonicalSlugAliases": [
-        "pistachio"
-      ],
-      "scientificName": "Pistacia vera",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_EVIDENCE_GAP",
-      "defaultPreviewScenario": null,
-      "selectedHeightEvidenceRef": null,
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": null,
-      "provenanceEvidenceIds": [
-        "pistachio__evidence-gap"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": false,
-      "SPREAD_SCALE_READY": false,
-      "unknownFields": [
-        "height",
-        "spread"
-      ],
-      "sensitivity": {
-        "cultivarSensitive": false,
-        "rootstockSensitive": false,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": false,
-        "reasons": []
-      },
-      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false,
-      "meterTruth": false
-    },
-    {
-      "botanicalTaxonId": "taxon:nephelium-lappaceum",
-      "canonicalSlugAliases": [
-        "rambutan"
-      ],
-      "scientificName": "Nephelium lappaceum",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_EVIDENCE_GAP",
-      "defaultPreviewScenario": null,
-      "selectedHeightEvidenceRef": null,
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": null,
-      "provenanceEvidenceIds": [
-        "rambutan__evidence-gap"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": false,
-      "SPREAD_SCALE_READY": false,
-      "unknownFields": [
-        "height",
-        "spread"
-      ],
-      "sensitivity": {
-        "cultivarSensitive": false,
-        "rootstockSensitive": false,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": false,
-        "reasons": []
-      },
-      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false,
-      "meterTruth": false
-    },
-    {
-      "botanicalTaxonId": "taxon:betula-pendula",
-      "canonicalSlugAliases": [
-        "silver-birch"
-      ],
-      "scientificName": "Betula pendula",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
-      "defaultPreviewScenario": "LANDSCAPE_MATURE",
-      "selectedHeightEvidenceRef": "silver-birch__ncsu__landscape",
-      "selectedSpreadEvidenceRef": "silver-birch__ncsu__landscape",
-      "selectedSource": "silver-birch__ncsu__landscape",
-      "normalizedRange": {
-        "heightM": {
-          "min": 9.144,
-          "max": 15.24
-        },
-        "spreadM": {
-          "min": 3.048,
-          "max": 9.144
-        }
-      },
-      "provenanceEvidenceIds": [
-        "silver-birch__ncsu__landscape"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": true,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": true,
-      "unknownFields": [],
-      "sensitivity": {
-        "cultivarSensitive": false,
-        "rootstockSensitive": false,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": false,
-        "reasons": []
-      },
-      "gardenDesignFallback": null,
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false
-    },
-    {
-      "botanicalTaxonId": "taxon:magnolia-grandiflora",
-      "canonicalSlugAliases": [
-        "southern-magnolia"
-      ],
-      "scientificName": "Magnolia grandiflora",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_CONFLICT_HOLD",
-      "defaultPreviewScenario": null,
-      "selectedHeightEvidenceRef": null,
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": null,
-      "provenanceEvidenceIds": [
-        "southern-magnolia__ncsu__landscape-dimensions",
-        "southern-magnolia__ncsu__landscape-prose-spread"
-      ],
-      "conflictingEvidenceIds": [
-        "southern-magnolia__ncsu__landscape-dimensions",
-        "southern-magnolia__ncsu__landscape-prose-spread"
-      ],
-      "partialAnchor": null,
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": true,
-      "unknownFields": [],
-      "sensitivity": {
-        "cultivarSensitive": false,
-        "rootstockSensitive": false,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": false,
-        "reasons": []
-      },
-      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false
-    },
-    {
-      "botanicalTaxonId": "taxon:averrhoa-carambola",
-      "canonicalSlugAliases": [
-        "starfruit"
-      ],
-      "scientificName": "Averrhoa carambola",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
-      "defaultPreviewScenario": "LANDSCAPE_MATURE",
-      "selectedHeightEvidenceRef": "starfruit__uf-ifas-mg373__unpruned",
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": {
-        "heightM": {
-          "min": 9.144,
-          "max": 10.668000000000001
-        },
-        "spreadM": {
-          "min": null,
-          "max": null
-        }
-      },
-      "provenanceEvidenceIds": [
-        "starfruit__uf-ifas-mg373__unpruned",
-        "starfruit__uf-ifas-mg373__maintained"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": "HEIGHT_ANCHORED_ESTIMATE",
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": false,
-      "unknownFields": [
-        "spread"
-      ],
-      "sensitivity": {
-        "cultivarSensitive": false,
-        "rootstockSensitive": false,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": false,
-        "reasons": []
-      },
-      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false,
-      "contextSeparableHeight": false
-    },
-    {
-      "botanicalTaxonId": "taxon:prunus-avium",
-      "canonicalSlugAliases": [
-        "sweet-cherry"
-      ],
-      "scientificName": "Prunus avium",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
-      "defaultPreviewScenario": null,
-      "selectedHeightEvidenceRef": null,
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": null,
-      "provenanceEvidenceIds": [
-        "sweet-cherry__ncsu__landscape"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": true,
-      "unknownFields": [],
-      "sensitivity": {
-        "cultivarSensitive": true,
-        "rootstockSensitive": true,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": true,
-        "reasons": [
-          "cultivar sensitive",
-          "rootstock sensitive",
-          "not final personal garden size"
-        ]
-      },
-      "gardenDesignFallback": "Estimated size + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false,
-      "botanicalEvidenceRemainsValid": true,
-      "mayChooseUniversalPersonalGardenSize": false
-    },
-    {
-      "botanicalTaxonId": "taxon:casimiroa-edulis",
-      "canonicalSlugAliases": [
-        "white-sapote"
-      ],
-      "scientificName": "Casimiroa edulis",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
-      "defaultPreviewScenario": "LANDSCAPE_MATURE",
-      "selectedHeightEvidenceRef": "white-sapote__uf-ifas-hs304__range",
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": {
-        "heightM": {
-          "min": 4.6,
-          "max": 18.3
-        },
-        "spreadM": {
-          "min": null,
-          "max": null
-        }
-      },
-      "provenanceEvidenceIds": [
-        "white-sapote__uf-ifas-hs304__range",
-        "white-sapote__uf-ifas-hs304__maintained"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": "HEIGHT_ANCHORED_ESTIMATE",
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": false,
-      "unknownFields": [
-        "spread"
-      ],
-      "sensitivity": {
-        "cultivarSensitive": false,
-        "rootstockSensitive": false,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": false,
-        "reasons": []
-      },
-      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false,
-      "contextSeparableHeight": false
-    },
-    {
-      "botanicalTaxonId": "taxon:citrus-sinensis",
-      "canonicalSlugAliases": [
-        "orange",
-        "sweet-orange"
-      ],
-      "scientificName": "Citrus × sinensis",
-      "architectureMode": "tree",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
-      "defaultPreviewScenario": null,
-      "selectedHeightEvidenceRef": null,
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": null,
-      "provenanceEvidenceIds": [
-        "citrus-sinensis__ncsu__landscape"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": true,
-      "unknownFields": [],
-      "sensitivity": {
-        "cultivarSensitive": true,
-        "rootstockSensitive": true,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": true,
-        "reasons": [
-          "cultivar sensitive",
-          "rootstock sensitive",
-          "not final personal garden size"
-        ]
-      },
-      "gardenDesignFallback": "Estimated size + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false,
-      "botanicalEvidenceRemainsValid": true,
-      "mayChooseUniversalPersonalGardenSize": false
-    },
-    {
-      "botanicalTaxonId": "taxon:lavandula-angustifolia",
-      "canonicalSlugAliases": [
-        "lavender"
-      ],
-      "scientificName": "Lavandula angustifolia",
-      "architectureMode": "shrub",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
-      "defaultPreviewScenario": "LANDSCAPE_MATURE",
-      "selectedHeightEvidenceRef": "lavender__ncsu__landscape-mature",
-      "selectedSpreadEvidenceRef": "lavender__ncsu__landscape-mature",
-      "selectedSource": "lavender__ncsu__landscape-mature",
-      "normalizedRange": {
-        "heightM": {
-          "min": 0.3048,
-          "max": 0.6096
-        },
-        "spreadM": {
-          "min": 0.6096,
-          "max": 0.9144
-        }
-      },
-      "provenanceEvidenceIds": [
-        "lavender__ncsu__landscape-mature"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": true,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": true,
-      "unknownFields": [],
-      "sensitivity": {
-        "cultivarSensitive": false,
-        "rootstockSensitive": false,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": false,
-        "reasons": []
-      },
-      "gardenDesignFallback": null,
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false
     },
     {
       "botanicalTaxonId": "taxon:salvia-rosmarinus",
@@ -1927,39 +2242,39 @@
       "runtimeWired": false
     },
     {
-      "botanicalTaxonId": "taxon:malpighia-emarginata",
+      "botanicalTaxonId": "taxon:theobroma-cacao",
       "canonicalSlugAliases": [
-        "acerola"
+        "cacao"
       ],
-      "scientificName": "Malpighia emarginata",
-      "architectureMode": "shrub",
+      "scientificName": "Theobroma cacao",
+      "architectureMode": "tree",
       "growthStage": "mature",
       "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
-      "defaultPreviewScenario": "NATURAL_MATURE",
-      "selectedHeightEvidenceRef": "acerola__wfo__species-height",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "cacao__uf-ifas-hs307__tropical",
       "selectedSpreadEvidenceRef": null,
       "selectedSource": null,
       "normalizedRange": {
         "heightM": {
-          "min": 2,
-          "max": 6
+          "min": 7.6,
+          "max": 9.1
         },
         "spreadM": {
           "min": null,
-          "max": 6
+          "max": null
         }
       },
       "provenanceEvidenceIds": [
-        "acerola__wfo__species-height",
-        "acerola__ntbg__max-equal-breadth"
+        "cacao__uf-ifas-hs307__tropical",
+        "cacao__uf-ifas-hs307__maintained"
       ],
       "conflictingEvidenceIds": null,
-      "partialAnchor": "HEIGHT_ANCHORED_SPREAD_MAX_ONLY",
+      "partialAnchor": "HEIGHT_ANCHORED_ESTIMATE",
       "spreadSourceSupported": false,
       "HEIGHT_SCALE_READY": true,
       "SPREAD_SCALE_READY": false,
       "unknownFields": [
-        "spreadMin"
+        "spread"
       ],
       "sensitivity": {
         "cultivarSensitive": false,
@@ -1969,98 +2284,54 @@
         "notFinalPersonalGardenSize": false,
         "reasons": []
       },
-      "gardenDesignFallback": "Height-authoritative estimate + shrub form heuristic + manual resize",
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false
-    },
-    {
-      "botanicalTaxonId": "taxon:aloe-vera",
-      "canonicalSlugAliases": [
-        "aloe-vera"
-      ],
-      "scientificName": "Aloe vera",
-      "architectureMode": "default",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
-      "defaultPreviewScenario": "LANDSCAPE_MATURE",
-      "selectedHeightEvidenceRef": "aloe-vera__ncsu__landscape-mature",
-      "selectedSpreadEvidenceRef": "aloe-vera__ncsu__landscape-mature",
-      "selectedSource": "aloe-vera__ncsu__landscape-mature",
-      "normalizedRange": {
-        "heightM": {
-          "min": 0.3048,
-          "max": 0.6096
-        },
-        "spreadM": {
-          "min": 0.3048,
-          "max": 0.762
-        }
-      },
-      "provenanceEvidenceIds": [
-        "aloe-vera__ncsu__landscape-mature"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": true,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": true,
-      "unknownFields": [],
-      "sensitivity": {
-        "cultivarSensitive": false,
-        "rootstockSensitive": false,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": false,
-        "reasons": []
-      },
-      "gardenDesignFallback": null,
-      "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false
-    },
-    {
-      "botanicalTaxonId": "taxon:dypsis-lutescens",
-      "canonicalSlugAliases": [
-        "areca-palm"
-      ],
-      "scientificName": "Dypsis lutescens",
-      "architectureMode": "default",
-      "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
-      "defaultPreviewScenario": "LANDSCAPE_MATURE",
-      "selectedHeightEvidenceRef": "areca-palm__uf-ifas-st165__landscape-mature",
-      "selectedSpreadEvidenceRef": "areca-palm__uf-ifas-st165__landscape-mature",
-      "selectedSource": "areca-palm__uf-ifas-st165__landscape-mature",
-      "normalizedRange": {
-        "heightM": {
-          "min": 6.096,
-          "max": 9.144
-        },
-        "spreadM": {
-          "min": 2.4384,
-          "max": 3.048
-        }
-      },
-      "provenanceEvidenceIds": [
-        "areca-palm__uf-ifas-st165__landscape-mature"
-      ],
-      "conflictingEvidenceIds": null,
-      "partialAnchor": null,
-      "spreadSourceSupported": true,
-      "HEIGHT_SCALE_READY": true,
-      "SPREAD_SCALE_READY": true,
-      "unknownFields": [],
-      "sensitivity": {
-        "cultivarSensitive": false,
-        "rootstockSensitive": false,
-        "cultivarVariable": false,
-        "maintainedForm": false,
-        "notFinalPersonalGardenSize": false,
-        "reasons": []
-      },
-      "gardenDesignFallback": null,
+      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
       "authorityVersion": "botanical-size-authority-v1",
       "runtimeWired": false,
-      "youngStateMustRemainSeparate": true
+      "contextSeparableHeight": false
+    },
+    {
+      "botanicalTaxonId": "taxon:zinnia-elegans",
+      "canonicalSlugAliases": [
+        "zinnia"
+      ],
+      "scientificName": "Zinnia elegans",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "zinnia__ncsu__mature-size-batch-b-v1",
+      "selectedSpreadEvidenceRef": "zinnia__ncsu__mature-size-batch-b-v1",
+      "selectedSource": "zinnia__ncsu__mature-size-batch-b-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.1524,
+          "max": 0.9144
+        },
+        "spreadM": {
+          "min": 0.2032,
+          "max": 0.3048
+        }
+      },
+      "provenanceEvidenceIds": [
+        "zinnia__ncsu__mature-size-batch-b-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
     }
   ],
   "provenanceOverlays": [
