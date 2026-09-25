@@ -1,0 +1,28 @@
+name: Plant Visual Candidate Reuse Index
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/plant-visual-candidate-reuse-index.yml'
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/plant-visual-candidate-reuse-index-v1.mjs
+      - run: node --test tests/plant-visual-candidate-reuse-index-v1.test.mjs
+      - run: |
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add data/garden-design/plant-visual-candidate-reuse-index-v1.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "garden-design: refresh candidate reuse index"
+          git push origin HEAD:main
