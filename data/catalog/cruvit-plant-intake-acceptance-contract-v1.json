@@ -1,0 +1,151 @@
+{
+  "contract": "cruvit-plant-intake-acceptance-contract-v1",
+  "version": "1.0.0",
+  "createdAt": "2026-09-25",
+  "finalState": "FULL_CRUVIT_APPROVED",
+  "finalAuthority": "full-cruvit-plant-approval-v1",
+  "stages": [
+    {
+      "order": 1,
+      "id": "canonical-request",
+      "required": true,
+      "exit": "stable canonical slug + scientific identity candidate"
+    },
+    {
+      "order": 2,
+      "id": "evidence-first-packet",
+      "required": true,
+      "exit": "validated packet with provenance and explicit UNKNOWN where evidence is missing"
+    },
+    {
+      "order": 3,
+      "id": "owner-ingest-approval",
+      "required": true,
+      "exit": "explicit Owner approval for catalog ingest"
+    },
+    {
+      "order": 4,
+      "id": "canonical-catalog-write",
+      "required": true,
+      "exit": "one verified public.catalog_plants row; no parallel module catalog"
+    },
+    {
+      "order": 5,
+      "id": "canonical-identity-reconciliation",
+      "required": true,
+      "exit": "identity registry resolves canonical/species/aliases without unresolved conflict"
+    },
+    {
+      "order": 6,
+      "id": "class-a-suitability",
+      "required": true,
+      "exit": "plant-data-contract-v1 A_REAL_SUITABILITY_READY; no synthetic defaults"
+    },
+    {
+      "order": 7,
+      "id": "plant-knowledge",
+      "required": true,
+      "exit": "provenanced Plant Knowledge record; warnings/unknowns honest"
+    },
+    {
+      "order": 8,
+      "id": "catalog-media",
+      "required": true,
+      "exit": "approved catalog media or explicit media policy; user scan never becomes catalog identity media"
+    },
+    {
+      "order": 9,
+      "id": "seasonality-and-size-authority",
+      "required": true,
+      "exit": "variant-relevant seasonality resolved; size READY/PARTIAL/CONTEXT_REQUIRED explicit; evidence gap/conflict cannot silently pass"
+    },
+    {
+      "order": 10,
+      "id": "variant-plan",
+      "required": true,
+      "exit": "only biologically justified required variants; no fake summer/winter variants"
+    },
+    {
+      "order": 11,
+      "id": "candidate-reuse-first",
+      "required": true,
+      "exit": "existing candidate/production assets indexed and reused before any generation proposal"
+    },
+    {
+      "order": 12,
+      "id": "bounded-generation",
+      "required": "when missing",
+      "exit": "explicit Owner spend approval; exact max calls/spend; no retries unless separately approved"
+    },
+    {
+      "order": 13,
+      "id": "visual-qa",
+      "required": true,
+      "exit": "Technical + Framing + Botanical/Architecture/Growth/Phenology + In-Garden; uncertainty routes to Owner, not auto-pass"
+    },
+    {
+      "order": 14,
+      "id": "owner-visual-exceptions",
+      "required": "exceptions only",
+      "exit": "PASS/HOLD for UNCERTAIN or exception assets only"
+    },
+    {
+      "order": 15,
+      "id": "production-promotion",
+      "required": true,
+      "exit": "explicit Owner promotion approval; immutable copy; checksum/readback pass"
+    },
+    {
+      "order": 16,
+      "id": "registry-activation",
+      "required": true,
+      "exit": "verified Production object activated in design asset registry for exact role"
+    },
+    {
+      "order": 17,
+      "id": "final-all-modules-gate",
+      "required": true,
+      "exit": "FULL_CRUVIT_APPROVED"
+    }
+  ],
+  "moduleCoverage": {
+    "myGarden": [
+      "identity",
+      "plantKnowledge",
+      "catalogMedia",
+      "care/context"
+    ],
+    "smartRecommendations": [
+      "Class A climate/outcome data",
+      "evidence strength",
+      "canonical identity"
+    ],
+    "plantIdentification": [
+      "canonical identity",
+      "aliases",
+      "catalog media"
+    ],
+    "plantDoctor": [
+      "canonical identity context",
+      "runtime diagnosis safety contract",
+      "plant knowledge/warnings"
+    ],
+    "gardenDesign": [
+      "variant plan",
+      "size authority",
+      "production-approved assets",
+      "registry activation"
+    ],
+    "shop": "separate commerce authority; botanical approval does not create SKUs/products"
+  },
+  "prohibited": [
+    "module-specific plant approval as final approval",
+    "silent default values promoted to botanical truth",
+    "duplicate image generation when reusable exact candidate exists",
+    "production promotion before mandatory QA",
+    "registry activation before production readback/checksum",
+    "user photo promoted to catalog identity media",
+    "owner review for routine automatic PASS items",
+    "paid call without explicit bounded Owner approval"
+  ]
+}
