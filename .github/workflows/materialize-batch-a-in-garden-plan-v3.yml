@@ -1,0 +1,37 @@
+name: Materialize Batch A In-Garden Plan V3
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/materialize-batch-a-in-garden-plan-v3.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Build plan from production builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/garden-design/plant-visual-in-garden-model-qa-plans
+          curl --fail-with-body --silent --show-error             "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/cruvit-e2e-in-garden-plan-builder?bundleId=cruvit-e2e-batch-a-in-garden-source-2026-09-25-v1&runId=cruvit-e2e-batch-a-in-garden-qa-2026-09-25-v1"             -o data/garden-design/plant-visual-in-garden-model-qa-plans/cruvit-e2e-batch-a-in-garden-qa-2026-09-25-v1.json
+          test "$(jq -r '.jobCount' data/garden-design/plant-visual-in-garden-model-qa-plans/cruvit-e2e-batch-a-in-garden-qa-2026-09-25-v1.json)" = "12"
+          test "$(jq '[.jobs[]|select(.admission=="OWNER_PASS_REQUIRED")]|length' data/garden-design/plant-visual-in-garden-model-qa-plans/cruvit-e2e-batch-a-in-garden-qa-2026-09-25-v1.json)" = "11"
+          test "$(jq '[.jobs[]|select(.admission=="MODEL_QA_PASS")]|length' data/garden-design/plant-visual-in-garden-model-qa-plans/cruvit-e2e-batch-a-in-garden-qa-2026-09-25-v1.json)" = "1"
+      - name: Commit admission-gated plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add data/garden-design/plant-visual-in-garden-model-qa-plans/cruvit-e2e-batch-a-in-garden-qa-2026-09-25-v1.json
+          git commit -m "garden-design: gate Batch A in-garden plan on owner review"
+          git push origin HEAD:main
