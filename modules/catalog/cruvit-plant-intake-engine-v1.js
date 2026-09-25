@@ -309,6 +309,18 @@ export function summarizeCruvitPlantIntake(rows=[]){
     byStage,
     ownerActionCount:list.reduce((n,x)=>n+(x.ownerActions?.length||0),0),
     paidActionCount:list.reduce((n,x)=>n+(x.paidActions?.length||0),0),
+    paidGenerationCallsRequired:list.reduce(
+      (n,x)=>n+Number(x.visualTransient?.missingGenerationCount||0),
+      0
+    ),
+    reusableCandidateCount:list.reduce(
+      (n,x)=>n+Number(x.visualTransient?.existingCandidateReuseCount||0),
+      0
+    ),
+    ownerVisualExceptionCount:list.reduce(
+      (n,x)=>n+Number(x.visualTransient?.ownerVisualReviewCount||0),
+      0
+    ),
     rows:list
   });
 }
