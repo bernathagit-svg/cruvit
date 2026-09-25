@@ -1,0 +1,36 @@
+{
+  "contract": "plant-visual-model-qa-spend-proposal-v1",
+  "runId": "plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1",
+  "createdAt": "2026-09-25",
+  "provider": "openai-responses-api",
+  "model": "gpt-5.6-luna",
+  "maxCalls": 8,
+  "maxRetries": 0,
+  "perCallReserveUsd": 0.01,
+  "proposedMaxSpendUsd": 0.12,
+  "jobIds": [
+    "apple__mature__tree__vegetative__v1",
+    "apple__mature__tree__fruiting__v1",
+    "apple__mature__tree__dormant__v1",
+    "apricot__mature__tree__vegetative__v1",
+    "apricot__mature__tree__fruiting__v1",
+    "apricot__mature__tree__dormant__v1",
+    "breadfruit__mature__tree__vegetative__v1",
+    "breadfruit__mature__tree__fruiting__v1"
+  ],
+  "allowedActions": [
+    "read exact candidate PNG bytes from candidate R2",
+    "send one candidate image plus expected metadata to vision QA model",
+    "write model QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "imageGenerationAllowed": false,
+  "imageMutationAllowed": false,
+  "notes": [
+    "This proposal covers only the eight successfully generated Variant Completion Wave 1 candidates.",
+    "No image generation, mutation, Production R2 promotion, or registry mutation is authorized.",
+    "UNCERTAIN routes to owner review and FAIL routes to hold.",
+    "The USD 0.12 ceiling preserves bounded headroom above the eight-call reserve while remaining below the prior per-call envelope used for Wave 3 Model QA."
+  ]
+}
