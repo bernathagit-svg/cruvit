@@ -1,4 +1,5 @@
 import { fetchCanonicalCatalogRow } from './_plant-full-onboarding-gate-v1.mjs';
+import { hydrateDesignMetadataFromApprovedPacket } from './_catalog-design-metadata-v1.mjs';
 import { evaluateFullPlantOnboarding } from '../../modules/catalog/full-plant-onboarding-gate-v1.js';
 import { buildPlantVisualVariantPlan } from '../../modules/garden-design/asset-factory-v1/plant-visual-variant-plan-v1.js';
 
@@ -55,8 +56,17 @@ export default async (req) => {
       });
       continue;
     }
-    const full=evaluateFullPlantOnboarding(row,item);
-    results.push(buildPlantVisualVariantPlan({catalogRow:row,fullOnboarding:full}));
+    const hydrated=await hydrateDesignMetadataFromApprovedPacket(req,row);
+    const effectiveRow=hydrated.row || row;
+    const full=evaluateFullPlantOnboarding(effectiveRow,item);
+    results.push({
+      ...buildPlantVisualVariantPlan({catalogRow:effectiveRow,fullOnboarding:full}),
+      designMetadataHydration:{
+        hydrated:hydrated.hydrated===true,
+        code:hydrated.code,
+        packetPath:hydrated.packetPath||null
+      }
+    });
   }
 
   return json(200,{
