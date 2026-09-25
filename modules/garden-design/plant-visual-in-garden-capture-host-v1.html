@@ -58,9 +58,13 @@
     return URL.createObjectURL(await res.blob());
   }
 
-  async function candidateBlobUrl(jobId){
-    const url='/.netlify/functions/plant-visual-qa-candidate?manifest='
-      +encodeURIComponent(MANIFEST_ID)+'&job='+encodeURIComponent(jobId)+'&t='+Date.now();
+  async function candidateBlobUrl(job){
+    const jobId=job.jobId;
+    const url=job.sourceModelQaRunId
+      ? '/.netlify/functions/plant-visual-candidate-by-model-plan?runId='
+        +encodeURIComponent(job.sourceModelQaRunId)+'&jobId='+encodeURIComponent(jobId)+'&t='+Date.now()
+      : '/.netlify/functions/plant-visual-qa-candidate?manifest='
+        +encodeURIComponent(MANIFEST_ID)+'&job='+encodeURIComponent(jobId)+'&t='+Date.now();
     const res=await fetch(url,{cache:'no-store'});
     if(!res.ok) throw new Error('CANDIDATE_FETCH_'+res.status);
     return URL.createObjectURL(await res.blob());
@@ -106,7 +110,7 @@
       state.currentJobId=job.jobId; render();
       let candidateUrl=null;
       try{
-        candidateUrl=await candidateBlobUrl(job.jobId);
+        candidateUrl=await candidateBlobUrl(job);
         const q=job.qaRendererInput||{};
         iframe.contentWindow.postMessage({
           type:'cruvit:garden-design-qa-preview',
