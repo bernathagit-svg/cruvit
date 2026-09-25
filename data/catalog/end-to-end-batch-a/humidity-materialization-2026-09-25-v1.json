@@ -1,0 +1,1581 @@
+{
+  "contract": "cruvit-e2e-batch-a-humidity-materialization-v1",
+  "createdAt": "2026-09-25",
+  "count": 4,
+  "rows": [
+    {
+      "path": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/apple.packet.json",
+      "packetId": "apple-bulk-batch-3-v1",
+      "row": {
+        "slug": "apple",
+        "scientific_name": "Malus domestica",
+        "common_names": {
+          "en": "Apple"
+        },
+        "aliases": [
+          "apple",
+          "malus domestica",
+          "cultivated apple"
+        ],
+        "climate_traits": {
+          "groupIds": [
+            "temperate-chill-fruit-tree"
+          ],
+          "frostSensitivity": "medium",
+          "coldTolerance": "high",
+          "heatTolerance": "medium",
+          "humidityTolerance": "medium",
+          "waterNeeds": "medium",
+          "sunNeeds": "full_sun",
+          "drainageNeeds": "high",
+          "needsWinterChill": true,
+          "floweringRequirements": "White to pink flowers in spring on previous-season wood.",
+          "fruitingRequirements": "Edible pomes ripen mid-summer to autumn depending on cultivar.",
+          "needsReview": false,
+          "floweringEvidenceClass": "SOURCE_SUPPORTED",
+          "reproductiveBiology": {
+            "requires_pollinator": true,
+            "cultivar_dependency": true
+          },
+          "traitEvidenceClasses": {
+            "groupIds": "HEURISTIC_ASSERTION",
+            "frostSensitivity": "SOURCE_SUPPORTED",
+            "coldTolerance": "SOURCE_SUPPORTED",
+            "heatTolerance": "HEURISTIC_ASSERTION",
+            "humidityTolerance": "HEURISTIC_ASSERTION",
+            "waterNeeds": "SOURCE_SUPPORTED",
+            "sunNeeds": "SOURCE_SUPPORTED",
+            "drainageNeeds": "SOURCE_SUPPORTED",
+            "needsWinterChill": "HEURISTIC_ASSERTION",
+            "floweringRequirements": "SOURCE_SUPPORTED",
+            "fruitingRequirements": "SOURCE_SUPPORTED",
+            "reproductive.requires_pollinator": "HEURISTIC_ASSERTION",
+            "reproductive.cultivar_dependency": "HEURISTIC_ASSERTION"
+          },
+          "traitProvenance": {
+            "groupIds": {
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "sourceIds": [
+                "ncsu-malus-domestica"
+              ],
+              "shortExcerpt": "Structural groupIds: temperate-chill-fruit-tree",
+              "status": "asserted"
+            },
+            "frostSensitivity": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-malus-domestica"
+              ],
+              "shortExcerpt": "USDA Plant Hardiness Zone: 3a–8b; spring blossoms are frost-sensitive.",
+              "status": "asserted"
+            },
+            "coldTolerance": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-malus-domestica"
+              ],
+              "shortExcerpt": "USDA Plant Hardiness Zone: 3a, 3b, 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b.",
+              "status": "asserted"
+            },
+            "heatTolerance": {
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "sourceIds": [
+                "ncsu-malus-domestica"
+              ],
+              "shortExcerpt": "Zones listed to 8b; no heat-mortality rating published on NCSU page.",
+              "status": "asserted"
+            },
+            "humidityTolerance": {
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "sourceIds": [
+                "ucipm-apple-scab-humidity"
+              ],
+              "shortExcerpt": "UC IPM identifies wet periods, temperature and relative humidity as important drivers of apple scab infection.",
+              "status": "asserted"
+            },
+            "waterNeeds": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-malus-domestica"
+              ],
+              "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+              "status": "asserted"
+            },
+            "sunNeeds": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-malus-domestica"
+              ],
+              "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+              "status": "asserted"
+            },
+            "drainageNeeds": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-malus-domestica"
+              ],
+              "shortExcerpt": "Soil Drainage: Good Drainage.",
+              "status": "asserted"
+            },
+            "needsWinterChill": {
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "sourceIds": [
+                "ncsu-malus-domestica"
+              ],
+              "shortExcerpt": "Temperate deciduous fruit tree flowering in spring after dormancy; chill hours not quantified on page.",
+              "status": "asserted"
+            },
+            "floweringRequirements": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-malus-domestica"
+              ],
+              "shortExcerpt": "Showy white to pink flowers appear in spring.",
+              "status": "asserted"
+            },
+            "fruitingRequirements": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-malus-domestica"
+              ],
+              "shortExcerpt": "Edible fruit (pome) ripens in summer to fall.",
+              "status": "asserted"
+            },
+            "reproductive.requires_pollinator": {
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "sourceIds": [
+                "ncsu-malus-domestica"
+              ],
+              "shortExcerpt": "Most dessert apple cultivars need a compatible pollenizer; NCSU page does not state pollination type.",
+              "status": "asserted"
+            },
+            "reproductive.cultivar_dependency": {
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "sourceIds": [
+                "ncsu-malus-domestica"
+              ],
+              "shortExcerpt": "Pollination and chill needs vary strongly by cultivar.",
+              "status": "asserted"
+            }
+          },
+          "plantKnowledge": {
+            "plantKnowledgeContractVersion": "1.0.0",
+            "sources": [
+              {
+                "sourceId": "ncsu-malus-domestica",
+                "institution": "North Carolina State University Extension Gardener",
+                "publisher": "North Carolina State University Extension Gardener",
+                "title": "Malus domestica (Apple)",
+                "url": "https://plants.ces.ncsu.edu/plants/malus-domestica/",
+                "authorityTier": "university_extension",
+                "verifiedAt": "2026-08-31"
+              },
+              {
+                "sourceId": "ucipm-apple-scab-humidity",
+                "institution": "University of California Statewide Integrated Pest Management Program",
+                "publisher": "University of California Agriculture and Natural Resources",
+                "title": "Apple Scab / Apple / Agriculture: Pest Management Guidelines",
+                "url": "https://ipm.ucanr.edu/agriculture/apple/apple-scab/",
+                "authorityTier": "university_extension",
+                "verifiedAt": "2026-09-25"
+              }
+            ],
+            "warnings": [],
+            "importantNotes": [],
+            "regionalRestrictions": [],
+            "invasiveness": {},
+            "plantingRequirements": {},
+            "soilRequirements": {},
+            "maintenance": {},
+            "pestsAndDiseases": [],
+            "cultivarCaveats": {},
+            "toxicity": {},
+            "physicalHazards": {},
+            "allergenicity": {},
+            "harvestUseWarnings": {}
+          },
+          "designMetadata": {
+            "contractVersion": "design-metadata-v1",
+            "tags": [
+              "temperate",
+              "fruit",
+              "tree",
+              "chill"
+            ],
+            "growth": "Tree",
+            "matureSize": null,
+            "leafHabit": {
+              "state": "UNKNOWN",
+              "evidenceClass": "UNKNOWN",
+              "evidence": [
+                {
+                  "field": "needsWinterChill",
+                  "state": "DECIDUOUS",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "sourceIds": [
+                    "ncsu-malus-domestica"
+                  ],
+                  "shortExcerpt": "Temperate deciduous fruit tree flowering in spring after dormancy; chill hours not quantified on page."
+                }
+              ]
+            },
+            "seasonalityResearchRequired": true,
+            "sourcePacket": "apple-bulk-batch-3-v1"
+          }
+        },
+        "flowering_requirements": "White to pink flowers in spring on previous-season wood.",
+        "fruiting_requirements": "Edible pomes ripen mid-summer to autumn depending on cultivar.",
+        "provenance": [
+          {
+            "sourceId": "ncsu-malus-domestica",
+            "institution": "North Carolina State University Extension Gardener",
+            "publisher": "North Carolina State University Extension Gardener",
+            "title": "Malus domestica (Apple)",
+            "url": "https://plants.ces.ncsu.edu/plants/malus-domestica/",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31",
+            "plantIdentity": {
+              "canonicalSlug": "apple",
+              "commonNameEn": "Apple",
+              "acceptedScientificName": "Malus domestica"
+            },
+            "supportsFields": [
+              "scientific",
+              "aliases",
+              "climateLabel",
+              "tags",
+              "care.sun",
+              "care.water",
+              "care.growth",
+              "care.guide",
+              "groupIds",
+              "frostSensitivity",
+              "coldTolerance",
+              "heatTolerance",
+              "waterNeeds",
+              "sunNeeds",
+              "drainageNeeds",
+              "needsWinterChill",
+              "floweringRequirements",
+              "fruitingRequirements",
+              "reproductive.requires_pollinator",
+              "reproductive.cultivar_dependency"
+            ],
+            "assertedClaims": [
+              {
+                "claimId": "identity-scientific",
+                "field": "scientific",
+                "status": "asserted"
+              },
+              {
+                "claimId": "identity-aliases",
+                "field": "aliases",
+                "status": "asserted"
+              },
+              {
+                "claimId": "climate-label",
+                "field": "climateLabel",
+                "status": "asserted"
+              },
+              {
+                "claimId": "tags",
+                "field": "tags",
+                "status": "asserted"
+              },
+              {
+                "claimId": "care-sun",
+                "field": "care.sun",
+                "status": "asserted"
+              },
+              {
+                "claimId": "care-water",
+                "field": "care.water",
+                "status": "asserted"
+              },
+              {
+                "claimId": "care-growth",
+                "field": "care.growth",
+                "status": "asserted"
+              },
+              {
+                "claimId": "care-guide",
+                "field": "care.guide",
+                "status": "asserted"
+              },
+              {
+                "claimId": "groups",
+                "field": "groupIds",
+                "status": "asserted"
+              },
+              {
+                "claimId": "frostSensitivity",
+                "field": "frostSensitivity",
+                "status": "asserted"
+              },
+              {
+                "claimId": "coldTolerance",
+                "field": "coldTolerance",
+                "status": "asserted"
+              },
+              {
+                "claimId": "heatTolerance",
+                "field": "heatTolerance",
+                "status": "asserted"
+              },
+              {
+                "claimId": "waterNeeds",
+                "field": "waterNeeds",
+                "status": "asserted"
+              },
+              {
+                "claimId": "sunNeeds",
+                "field": "sunNeeds",
+                "status": "asserted"
+              },
+              {
+                "claimId": "drainageNeeds",
+                "field": "drainageNeeds",
+                "status": "asserted"
+              },
+              {
+                "claimId": "needsWinterChill",
+                "field": "needsWinterChill",
+                "status": "asserted"
+              },
+              {
+                "claimId": "floweringRequirements",
+                "field": "floweringRequirements",
+                "status": "asserted"
+              },
+              {
+                "claimId": "fruitingRequirements",
+                "field": "fruitingRequirements",
+                "status": "asserted"
+              },
+              {
+                "claimId": "reproductive-requires_pollinator",
+                "field": "reproductive.requires_pollinator",
+                "status": "asserted"
+              },
+              {
+                "claimId": "reproductive-cultivar_dependency",
+                "field": "reproductive.cultivar_dependency",
+                "status": "asserted"
+              }
+            ],
+            "unknownClaims": [
+              {
+                "claimId": "care-size",
+                "field": "care.size",
+                "status": "unknown"
+              }
+            ]
+          },
+          {
+            "sourceId": "ucipm-apple-scab-humidity",
+            "institution": "University of California Statewide Integrated Pest Management Program",
+            "publisher": "University of California Agriculture and Natural Resources",
+            "title": "Apple Scab / Apple / Agriculture: Pest Management Guidelines",
+            "url": "https://ipm.ucanr.edu/agriculture/apple/apple-scab/",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-09-25",
+            "plantIdentity": {
+              "canonicalSlug": "apple",
+              "commonNameEn": "Apple",
+              "acceptedScientificName": "Malus domestica"
+            },
+            "supportsFields": [
+              "humidityTolerance"
+            ],
+            "assertedClaims": [
+              {
+                "claimId": "humidityTolerance",
+                "field": "humidityTolerance",
+                "status": "asserted"
+              }
+            ],
+            "unknownClaims": []
+          }
+        ],
+        "needs_review": false,
+        "verification_state": "verified",
+        "media": {
+          "searchQuery": "Malus domestica Apple",
+          "imageStatus": "IMAGE_PENDING"
+        },
+        "media_status": "IMAGE_PENDING",
+        "catalog_version": "1.0.0",
+        "source_packet": "apple-bulk-batch-3-v1"
+      }
+    },
+    {
+      "path": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/apricot.packet.json",
+      "packetId": "apricot-bulk-batch-3-v1",
+      "row": {
+        "slug": "apricot",
+        "scientific_name": "Prunus armeniaca",
+        "common_names": {
+          "en": "Apricot"
+        },
+        "aliases": [
+          "apricot",
+          "prunus armeniaca"
+        ],
+        "climate_traits": {
+          "groupIds": [
+            "temperate-chill-fruit-tree"
+          ],
+          "frostSensitivity": "high",
+          "coldTolerance": "medium",
+          "heatTolerance": "medium",
+          "humidityTolerance": "medium",
+          "waterNeeds": "medium",
+          "sunNeeds": "full_sun",
+          "drainageNeeds": "high",
+          "needsWinterChill": true,
+          "floweringRequirements": "White to pale pink flowers in very early spring.",
+          "fruitingRequirements": "Edible yellow-orange drupes in early to mid-summer.",
+          "needsReview": false,
+          "floweringEvidenceClass": "SOURCE_SUPPORTED",
+          "reproductiveBiology": {
+            "self_fertile": true
+          },
+          "traitEvidenceClasses": {
+            "groupIds": "HEURISTIC_ASSERTION",
+            "frostSensitivity": "SOURCE_SUPPORTED",
+            "coldTolerance": "SOURCE_SUPPORTED",
+            "heatTolerance": "HEURISTIC_ASSERTION",
+            "humidityTolerance": "HEURISTIC_ASSERTION",
+            "waterNeeds": "SOURCE_SUPPORTED",
+            "sunNeeds": "SOURCE_SUPPORTED",
+            "drainageNeeds": "SOURCE_SUPPORTED",
+            "needsWinterChill": "HEURISTIC_ASSERTION",
+            "floweringRequirements": "SOURCE_SUPPORTED",
+            "fruitingRequirements": "SOURCE_SUPPORTED",
+            "reproductive.self_fertile": "HEURISTIC_ASSERTION"
+          },
+          "traitProvenance": {
+            "groupIds": {
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "sourceIds": [
+                "ncsu-prunus-armeniaca"
+              ],
+              "shortExcerpt": "Structural groupIds: temperate-chill-fruit-tree",
+              "status": "asserted"
+            },
+            "frostSensitivity": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-prunus-armeniaca"
+              ],
+              "shortExcerpt": "USDA Plant Hardiness Zone: 5a–8b; very early bloom highly frost-susceptible.",
+              "status": "asserted"
+            },
+            "coldTolerance": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-prunus-armeniaca"
+              ],
+              "shortExcerpt": "USDA Plant Hardiness Zone: 5a–8b.",
+              "status": "asserted"
+            },
+            "heatTolerance": {
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "sourceIds": [
+                "ncsu-prunus-armeniaca"
+              ],
+              "shortExcerpt": "Warm-summer Mediterranean/temperate fruit; no heat rating on NCSU.",
+              "status": "asserted"
+            },
+            "humidityTolerance": {
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "sourceIds": [
+                "ucipm-apricot-brown-rot-humidity"
+              ],
+              "shortExcerpt": "UC IPM reports spore masses under high humidity and notes moist bloom weather favors apricot blossom blight.",
+              "status": "asserted"
+            },
+            "waterNeeds": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-prunus-armeniaca"
+              ],
+              "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+              "status": "asserted"
+            },
+            "sunNeeds": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-prunus-armeniaca"
+              ],
+              "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+              "status": "asserted"
+            },
+            "drainageNeeds": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-prunus-armeniaca"
+              ],
+              "shortExcerpt": "Soil Drainage: Good Drainage.",
+              "status": "asserted"
+            },
+            "needsWinterChill": {
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "sourceIds": [
+                "ncsu-prunus-armeniaca"
+              ],
+              "shortExcerpt": "Deciduous stone fruit with winter dormancy; chill hours not quantified.",
+              "status": "asserted"
+            },
+            "floweringRequirements": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-prunus-armeniaca"
+              ],
+              "shortExcerpt": "White to pale pink flowers appear in early spring.",
+              "status": "asserted"
+            },
+            "fruitingRequirements": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-prunus-armeniaca"
+              ],
+              "shortExcerpt": "Edible fruit ripens in early to mid-summer.",
+              "status": "asserted"
+            },
+            "reproductive.self_fertile": {
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "sourceIds": [
+                "ncsu-prunus-armeniaca"
+              ],
+              "shortExcerpt": "Many apricot cultivars self-fertile; some benefit from pollenizers — not stated on NCSU.",
+              "status": "asserted"
+            }
+          },
+          "plantKnowledge": {
+            "plantKnowledgeContractVersion": "1.0.0",
+            "sources": [
+              {
+                "sourceId": "ncsu-prunus-armeniaca",
+                "institution": "North Carolina State University Extension Gardener",
+                "publisher": "North Carolina State University Extension Gardener",
+                "title": "Prunus armeniaca (Apricot)",
+                "url": "https://plants.ces.ncsu.edu/plants/prunus-armeniaca/",
+                "authorityTier": "university_extension",
+                "verifiedAt": "2026-08-31"
+              },
+              {
+                "sourceId": "ucipm-apricot-brown-rot-humidity",
+                "institution": "University of California Statewide Integrated Pest Management Program",
+                "publisher": "University of California Agriculture and Natural Resources",
+                "title": "Brown Rot Blossom and Twig Blight / Apricot",
+                "url": "https://ipm.ucanr.edu/agriculture/apricot/brown-rot-blossom-and-twig-blight/",
+                "authorityTier": "university_extension",
+                "verifiedAt": "2026-09-25"
+              }
+            ],
+            "warnings": [],
+            "importantNotes": [],
+            "regionalRestrictions": [],
+            "invasiveness": {},
+            "plantingRequirements": {},
+            "soilRequirements": {},
+            "maintenance": {},
+            "pestsAndDiseases": [],
+            "cultivarCaveats": {},
+            "toxicity": {},
+            "physicalHazards": {},
+            "allergenicity": {},
+            "harvestUseWarnings": {}
+          },
+          "designMetadata": {
+            "contractVersion": "design-metadata-v1",
+            "tags": [
+              "temperate",
+              "fruit",
+              "tree",
+              "stone-fruit",
+              "early-bloom"
+            ],
+            "growth": "Tree",
+            "matureSize": null,
+            "leafHabit": {
+              "state": "UNKNOWN",
+              "evidenceClass": "UNKNOWN",
+              "evidence": [
+                {
+                  "field": "needsWinterChill",
+                  "state": "DECIDUOUS",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "sourceIds": [
+                    "ncsu-prunus-armeniaca"
+                  ],
+                  "shortExcerpt": "Deciduous stone fruit with winter dormancy; chill hours not quantified."
+                }
+              ]
+            },
+            "seasonalityResearchRequired": true,
+            "sourcePacket": "apricot-bulk-batch-3-v1"
+          }
+        },
+        "flowering_requirements": "White to pale pink flowers in very early spring.",
+        "fruiting_requirements": "Edible yellow-orange drupes in early to mid-summer.",
+        "provenance": [
+          {
+            "sourceId": "ncsu-prunus-armeniaca",
+            "institution": "North Carolina State University Extension Gardener",
+            "publisher": "North Carolina State University Extension Gardener",
+            "title": "Prunus armeniaca (Apricot)",
+            "url": "https://plants.ces.ncsu.edu/plants/prunus-armeniaca/",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31",
+            "plantIdentity": {
+              "canonicalSlug": "apricot",
+              "commonNameEn": "Apricot",
+              "acceptedScientificName": "Prunus armeniaca"
+            },
+            "supportsFields": [
+              "scientific",
+              "aliases",
+              "climateLabel",
+              "tags",
+              "care.sun",
+              "care.water",
+              "care.growth",
+              "care.guide",
+              "groupIds",
+              "frostSensitivity",
+              "coldTolerance",
+              "heatTolerance",
+              "waterNeeds",
+              "sunNeeds",
+              "drainageNeeds",
+              "needsWinterChill",
+              "floweringRequirements",
+              "fruitingRequirements",
+              "reproductive.self_fertile"
+            ],
+            "assertedClaims": [
+              {
+                "claimId": "identity-scientific",
+                "field": "scientific",
+                "status": "asserted"
+              },
+              {
+                "claimId": "identity-aliases",
+                "field": "aliases",
+                "status": "asserted"
+              },
+              {
+                "claimId": "climate-label",
+                "field": "climateLabel",
+                "status": "asserted"
+              },
+              {
+                "claimId": "tags",
+                "field": "tags",
+                "status": "asserted"
+              },
+              {
+                "claimId": "care-sun",
+                "field": "care.sun",
+                "status": "asserted"
+              },
+              {
+                "claimId": "care-water",
+                "field": "care.water",
+                "status": "asserted"
+              },
+              {
+                "claimId": "care-growth",
+                "field": "care.growth",
+                "status": "asserted"
+              },
+              {
+                "claimId": "care-guide",
+                "field": "care.guide",
+                "status": "asserted"
+              },
+              {
+                "claimId": "groups",
+                "field": "groupIds",
+                "status": "asserted"
+              },
+              {
+                "claimId": "frostSensitivity",
+                "field": "frostSensitivity",
+                "status": "asserted"
+              },
+              {
+                "claimId": "coldTolerance",
+                "field": "coldTolerance",
+                "status": "asserted"
+              },
+              {
+                "claimId": "heatTolerance",
+                "field": "heatTolerance",
+                "status": "asserted"
+              },
+              {
+                "claimId": "waterNeeds",
+                "field": "waterNeeds",
+                "status": "asserted"
+              },
+              {
+                "claimId": "sunNeeds",
+                "field": "sunNeeds",
+                "status": "asserted"
+              },
+              {
+                "claimId": "drainageNeeds",
+                "field": "drainageNeeds",
+                "status": "asserted"
+              },
+              {
+                "claimId": "needsWinterChill",
+                "field": "needsWinterChill",
+                "status": "asserted"
+              },
+              {
+                "claimId": "floweringRequirements",
+                "field": "floweringRequirements",
+                "status": "asserted"
+              },
+              {
+                "claimId": "fruitingRequirements",
+                "field": "fruitingRequirements",
+                "status": "asserted"
+              },
+              {
+                "claimId": "reproductive-self_fertile",
+                "field": "reproductive.self_fertile",
+                "status": "asserted"
+              }
+            ],
+            "unknownClaims": [
+              {
+                "claimId": "care-size",
+                "field": "care.size",
+                "status": "unknown"
+              }
+            ]
+          },
+          {
+            "sourceId": "ucipm-apricot-brown-rot-humidity",
+            "institution": "University of California Statewide Integrated Pest Management Program",
+            "publisher": "University of California Agriculture and Natural Resources",
+            "title": "Brown Rot Blossom and Twig Blight / Apricot",
+            "url": "https://ipm.ucanr.edu/agriculture/apricot/brown-rot-blossom-and-twig-blight/",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-09-25",
+            "plantIdentity": {
+              "canonicalSlug": "apricot",
+              "commonNameEn": "Apricot",
+              "acceptedScientificName": "Prunus armeniaca"
+            },
+            "supportsFields": [
+              "humidityTolerance"
+            ],
+            "assertedClaims": [
+              {
+                "claimId": "humidityTolerance",
+                "field": "humidityTolerance",
+                "status": "asserted"
+              }
+            ],
+            "unknownClaims": []
+          }
+        ],
+        "needs_review": false,
+        "verification_state": "verified",
+        "media": {
+          "searchQuery": "Prunus armeniaca Apricot",
+          "imageStatus": "IMAGE_PENDING"
+        },
+        "media_status": "IMAGE_PENDING",
+        "catalog_version": "1.0.0",
+        "source_packet": "apricot-bulk-batch-3-v1"
+      }
+    },
+    {
+      "path": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/grapefruit.packet.json",
+      "packetId": "grapefruit-bulk-batch-3-v1",
+      "row": {
+        "slug": "grapefruit",
+        "scientific_name": "Citrus × paradisi",
+        "common_names": {
+          "en": "Grapefruit"
+        },
+        "aliases": [
+          "grapefruit",
+          "citrus paradisi",
+          "citrus × paradisi"
+        ],
+        "climate_traits": {
+          "groupIds": [
+            "citrus-subtropical"
+          ],
+          "frostSensitivity": "high",
+          "coldTolerance": "low",
+          "heatTolerance": "high",
+          "humidityTolerance": "medium",
+          "waterNeeds": "medium",
+          "sunNeeds": "full_sun",
+          "drainageNeeds": "high",
+          "needsWinterChill": false,
+          "floweringRequirements": "Fragrant white flowers in spring.",
+          "fruitingRequirements": "Large edible citrus fruit; best quality with heat.",
+          "needsReview": false,
+          "floweringEvidenceClass": "SOURCE_SUPPORTED",
+          "reproductiveBiology": {
+            "self_fertile": true
+          },
+          "traitEvidenceClasses": {
+            "groupIds": "HEURISTIC_ASSERTION",
+            "frostSensitivity": "SOURCE_SUPPORTED",
+            "coldTolerance": "SOURCE_SUPPORTED",
+            "heatTolerance": "HEURISTIC_ASSERTION",
+            "humidityTolerance": "HEURISTIC_ASSERTION",
+            "waterNeeds": "SOURCE_SUPPORTED",
+            "sunNeeds": "SOURCE_SUPPORTED",
+            "drainageNeeds": "SOURCE_SUPPORTED",
+            "needsWinterChill": "SOURCE_SUPPORTED",
+            "floweringRequirements": "SOURCE_SUPPORTED",
+            "fruitingRequirements": "SOURCE_SUPPORTED",
+            "reproductive.self_fertile": "HEURISTIC_ASSERTION"
+          },
+          "traitProvenance": {
+            "groupIds": {
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "sourceIds": [
+                "ncsu-citrus-paradisi"
+              ],
+              "shortExcerpt": "Structural groupIds: citrus-subtropical",
+              "status": "asserted"
+            },
+            "frostSensitivity": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-citrus-paradisi"
+              ],
+              "shortExcerpt": "USDA Plant Hardiness Zone: 9a–11; more cold-sensitive than some mandarins.",
+              "status": "asserted"
+            },
+            "coldTolerance": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-citrus-paradisi"
+              ],
+              "shortExcerpt": "USDA Plant Hardiness Zone: 9a–11.",
+              "status": "asserted"
+            },
+            "heatTolerance": {
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "sourceIds": [
+                "ncsu-citrus-paradisi"
+              ],
+              "shortExcerpt": "Needs long hot summers for fruit quality; no formal heat class.",
+              "status": "asserted"
+            },
+            "humidityTolerance": {
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "sourceIds": [
+                "ufifas-citrus-greasy-spot-humidity"
+              ],
+              "shortExcerpt": "UF/IFAS reports greasy spot infection is enhanced by long leaf wetness/high summer conditions and that grapefruit leaves are among the most severely affected citrus types.",
+              "status": "asserted"
+            },
+            "waterNeeds": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-citrus-paradisi"
+              ],
+              "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+              "status": "asserted"
+            },
+            "sunNeeds": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-citrus-paradisi"
+              ],
+              "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+              "status": "asserted"
+            },
+            "drainageNeeds": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-citrus-paradisi"
+              ],
+              "shortExcerpt": "Soil Drainage: Good Drainage.",
+              "status": "asserted"
+            },
+            "needsWinterChill": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-citrus-paradisi"
+              ],
+              "shortExcerpt": "Evergreen subtropical; no chill requirement listed.",
+              "status": "asserted"
+            },
+            "floweringRequirements": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-citrus-paradisi"
+              ],
+              "shortExcerpt": "Fragrant white flowers in spring.",
+              "status": "asserted"
+            },
+            "fruitingRequirements": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-citrus-paradisi"
+              ],
+              "shortExcerpt": "Large edible yellow to pink grapefruit.",
+              "status": "asserted"
+            },
+            "reproductive.self_fertile": {
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "sourceIds": [
+                "ncsu-citrus-paradisi"
+              ],
+              "shortExcerpt": "Grapefruit generally self-fruitful; NCSU silent.",
+              "status": "asserted"
+            }
+          },
+          "plantKnowledge": {
+            "plantKnowledgeContractVersion": "1.0.0",
+            "sources": [
+              {
+                "sourceId": "ncsu-citrus-paradisi",
+                "institution": "North Carolina State University Extension Gardener",
+                "publisher": "North Carolina State University Extension Gardener",
+                "title": "Citrus × paradisi (Grapefruit)",
+                "url": "https://plants.ces.ncsu.edu/plants/citrus-paradisi/",
+                "authorityTier": "university_extension",
+                "verifiedAt": "2026-08-31"
+              },
+              {
+                "sourceId": "ufifas-citrus-greasy-spot-humidity",
+                "institution": "University of Florida IFAS Extension",
+                "publisher": "University of Florida Institute of Food and Agricultural Sciences",
+                "title": "Field Identification and Management of Greasy Spot Disease",
+                "url": "https://edis.ifas.ufl.edu/publication/HS263",
+                "authorityTier": "university_extension",
+                "verifiedAt": "2026-09-25"
+              }
+            ],
+            "warnings": [],
+            "importantNotes": [],
+            "regionalRestrictions": [],
+            "invasiveness": {},
+            "plantingRequirements": {},
+            "soilRequirements": {},
+            "maintenance": {},
+            "pestsAndDiseases": [],
+            "cultivarCaveats": {},
+            "toxicity": {},
+            "physicalHazards": {},
+            "allergenicity": {},
+            "harvestUseWarnings": {}
+          },
+          "designMetadata": {
+            "contractVersion": "design-metadata-v1",
+            "tags": [
+              "subtropical",
+              "citrus",
+              "fruit",
+              "evergreen",
+              "heat-tolerant"
+            ],
+            "growth": "Woody landscape plant",
+            "matureSize": null,
+            "leafHabit": {
+              "state": "EVERGREEN",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "evidence": [
+                {
+                  "field": "needsWinterChill",
+                  "state": "EVERGREEN",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "sourceIds": [
+                    "ncsu-citrus-paradisi"
+                  ],
+                  "shortExcerpt": "Evergreen subtropical; no chill requirement listed."
+                }
+              ]
+            },
+            "seasonalityResearchRequired": false,
+            "sourcePacket": "grapefruit-bulk-batch-3-v1"
+          }
+        },
+        "flowering_requirements": "Fragrant white flowers in spring.",
+        "fruiting_requirements": "Large edible citrus fruit; best quality with heat.",
+        "provenance": [
+          {
+            "sourceId": "ncsu-citrus-paradisi",
+            "institution": "North Carolina State University Extension Gardener",
+            "publisher": "North Carolina State University Extension Gardener",
+            "title": "Citrus × paradisi (Grapefruit)",
+            "url": "https://plants.ces.ncsu.edu/plants/citrus-paradisi/",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31",
+            "plantIdentity": {
+              "canonicalSlug": "grapefruit",
+              "commonNameEn": "Grapefruit",
+              "acceptedScientificName": "Citrus × paradisi"
+            },
+            "supportsFields": [
+              "scientific",
+              "aliases",
+              "climateLabel",
+              "tags",
+              "care.sun",
+              "care.water",
+              "care.growth",
+              "care.guide",
+              "groupIds",
+              "frostSensitivity",
+              "coldTolerance",
+              "heatTolerance",
+              "waterNeeds",
+              "sunNeeds",
+              "drainageNeeds",
+              "needsWinterChill",
+              "floweringRequirements",
+              "fruitingRequirements",
+              "reproductive.self_fertile"
+            ],
+            "assertedClaims": [
+              {
+                "claimId": "identity-scientific",
+                "field": "scientific",
+                "status": "asserted"
+              },
+              {
+                "claimId": "identity-aliases",
+                "field": "aliases",
+                "status": "asserted"
+              },
+              {
+                "claimId": "climate-label",
+                "field": "climateLabel",
+                "status": "asserted"
+              },
+              {
+                "claimId": "tags",
+                "field": "tags",
+                "status": "asserted"
+              },
+              {
+                "claimId": "care-sun",
+                "field": "care.sun",
+                "status": "asserted"
+              },
+              {
+                "claimId": "care-water",
+                "field": "care.water",
+                "status": "asserted"
+              },
+              {
+                "claimId": "care-growth",
+                "field": "care.growth",
+                "status": "asserted"
+              },
+              {
+                "claimId": "care-guide",
+                "field": "care.guide",
+                "status": "asserted"
+              },
+              {
+                "claimId": "groups",
+                "field": "groupIds",
+                "status": "asserted"
+              },
+              {
+                "claimId": "frostSensitivity",
+                "field": "frostSensitivity",
+                "status": "asserted"
+              },
+              {
+                "claimId": "coldTolerance",
+                "field": "coldTolerance",
+                "status": "asserted"
+              },
+              {
+                "claimId": "heatTolerance",
+                "field": "heatTolerance",
+                "status": "asserted"
+              },
+              {
+                "claimId": "waterNeeds",
+                "field": "waterNeeds",
+                "status": "asserted"
+              },
+              {
+                "claimId": "sunNeeds",
+                "field": "sunNeeds",
+                "status": "asserted"
+              },
+              {
+                "claimId": "drainageNeeds",
+                "field": "drainageNeeds",
+                "status": "asserted"
+              },
+              {
+                "claimId": "needsWinterChill",
+                "field": "needsWinterChill",
+                "status": "asserted"
+              },
+              {
+                "claimId": "floweringRequirements",
+                "field": "floweringRequirements",
+                "status": "asserted"
+              },
+              {
+                "claimId": "fruitingRequirements",
+                "field": "fruitingRequirements",
+                "status": "asserted"
+              },
+              {
+                "claimId": "reproductive-self_fertile",
+                "field": "reproductive.self_fertile",
+                "status": "asserted"
+              }
+            ],
+            "unknownClaims": [
+              {
+                "claimId": "care-size",
+                "field": "care.size",
+                "status": "unknown"
+              }
+            ]
+          },
+          {
+            "sourceId": "ufifas-citrus-greasy-spot-humidity",
+            "institution": "University of Florida IFAS Extension",
+            "publisher": "University of Florida Institute of Food and Agricultural Sciences",
+            "title": "Field Identification and Management of Greasy Spot Disease",
+            "url": "https://edis.ifas.ufl.edu/publication/HS263",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-09-25",
+            "plantIdentity": {
+              "canonicalSlug": "grapefruit",
+              "commonNameEn": "Grapefruit",
+              "acceptedScientificName": "Citrus × paradisi"
+            },
+            "supportsFields": [
+              "humidityTolerance"
+            ],
+            "assertedClaims": [
+              {
+                "claimId": "humidityTolerance",
+                "field": "humidityTolerance",
+                "status": "asserted"
+              }
+            ],
+            "unknownClaims": []
+          }
+        ],
+        "needs_review": false,
+        "verification_state": "verified",
+        "media": {
+          "searchQuery": "Citrus × paradisi Grapefruit",
+          "imageStatus": "IMAGE_PENDING"
+        },
+        "media_status": "IMAGE_PENDING",
+        "catalog_version": "1.0.0",
+        "source_packet": "grapefruit-bulk-batch-3-v1"
+      }
+    },
+    {
+      "path": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/sweet-orange.packet.json",
+      "packetId": "sweet-orange-bulk-batch-3-v1",
+      "row": {
+        "slug": "sweet-orange",
+        "scientific_name": "Citrus × sinensis",
+        "common_names": {
+          "en": "Sweet orange"
+        },
+        "aliases": [
+          "sweet orange",
+          "citrus sinensis",
+          "citrus × sinensis",
+          "orange"
+        ],
+        "climate_traits": {
+          "groupIds": [
+            "citrus-subtropical"
+          ],
+          "frostSensitivity": "high",
+          "coldTolerance": "low",
+          "heatTolerance": "high",
+          "humidityTolerance": "medium",
+          "waterNeeds": "medium",
+          "sunNeeds": "full_sun",
+          "drainageNeeds": "high",
+          "needsWinterChill": false,
+          "floweringRequirements": "Fragrant white flowers in spring (main flush).",
+          "fruitingRequirements": "Sweet edible oranges ripen in winter in many climates.",
+          "needsReview": false,
+          "floweringEvidenceClass": "SOURCE_SUPPORTED",
+          "reproductiveBiology": {
+            "self_fertile": true
+          },
+          "traitEvidenceClasses": {
+            "groupIds": "HEURISTIC_ASSERTION",
+            "frostSensitivity": "SOURCE_SUPPORTED",
+            "coldTolerance": "SOURCE_SUPPORTED",
+            "heatTolerance": "HEURISTIC_ASSERTION",
+            "humidityTolerance": "HEURISTIC_ASSERTION",
+            "waterNeeds": "SOURCE_SUPPORTED",
+            "sunNeeds": "SOURCE_SUPPORTED",
+            "drainageNeeds": "SOURCE_SUPPORTED",
+            "needsWinterChill": "SOURCE_SUPPORTED",
+            "floweringRequirements": "SOURCE_SUPPORTED",
+            "fruitingRequirements": "SOURCE_SUPPORTED",
+            "reproductive.self_fertile": "HEURISTIC_ASSERTION"
+          },
+          "traitProvenance": {
+            "groupIds": {
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "sourceIds": [
+                "ncsu-citrus-sinensis"
+              ],
+              "shortExcerpt": "Structural groupIds: citrus-subtropical",
+              "status": "asserted"
+            },
+            "frostSensitivity": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-citrus-sinensis"
+              ],
+              "shortExcerpt": "USDA Plant Hardiness Zone: 9a–11; frost injures foliage and fruit.",
+              "status": "asserted"
+            },
+            "coldTolerance": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-citrus-sinensis"
+              ],
+              "shortExcerpt": "USDA Plant Hardiness Zone: 9a–11.",
+              "status": "asserted"
+            },
+            "heatTolerance": {
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "sourceIds": [
+                "ncsu-citrus-sinensis"
+              ],
+              "shortExcerpt": "Warm subtropical crop; heat needed for sweetness; no mortality class published.",
+              "status": "asserted"
+            },
+            "humidityTolerance": {
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "sourceIds": [
+                "ufifas-citrus-greasy-spot-orange"
+              ],
+              "shortExcerpt": "UF/IFAS states citrus greasy spot infection is enhanced by long leaf wetness/high summer conditions and affects commercial orange varieties to varying degrees.",
+              "status": "asserted"
+            },
+            "waterNeeds": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-citrus-sinensis"
+              ],
+              "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+              "status": "asserted"
+            },
+            "sunNeeds": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-citrus-sinensis"
+              ],
+              "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+              "status": "asserted"
+            },
+            "drainageNeeds": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-citrus-sinensis"
+              ],
+              "shortExcerpt": "Soil Drainage: Good Drainage.",
+              "status": "asserted"
+            },
+            "needsWinterChill": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-citrus-sinensis"
+              ],
+              "shortExcerpt": "Evergreen subtropical citrus; no chill listed.",
+              "status": "asserted"
+            },
+            "floweringRequirements": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-citrus-sinensis"
+              ],
+              "shortExcerpt": "Fragrant white flowers, primarily in spring.",
+              "status": "asserted"
+            },
+            "fruitingRequirements": {
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "sourceIds": [
+                "ncsu-citrus-sinensis"
+              ],
+              "shortExcerpt": "Edible sweet orange fruit.",
+              "status": "asserted"
+            },
+            "reproductive.self_fertile": {
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "sourceIds": [
+                "ncsu-citrus-sinensis"
+              ],
+              "shortExcerpt": "Sweet oranges typically self-fruitful; page silent.",
+              "status": "asserted"
+            }
+          },
+          "plantKnowledge": {
+            "plantKnowledgeContractVersion": "1.0.0",
+            "sources": [
+              {
+                "sourceId": "ncsu-citrus-sinensis",
+                "institution": "North Carolina State University Extension Gardener",
+                "publisher": "North Carolina State University Extension Gardener",
+                "title": "Citrus × sinensis (Sweet Orange)",
+                "url": "https://plants.ces.ncsu.edu/plants/citrus-sinensis/",
+                "authorityTier": "university_extension",
+                "verifiedAt": "2026-08-31"
+              },
+              {
+                "sourceId": "ufifas-citrus-greasy-spot-orange",
+                "institution": "University of Florida IFAS Extension",
+                "publisher": "University of Florida Institute of Food and Agricultural Sciences",
+                "title": "Field Identification and Management of Greasy Spot Disease",
+                "url": "https://edis.ifas.ufl.edu/publication/HS263",
+                "authorityTier": "university_extension",
+                "verifiedAt": "2026-09-25"
+              }
+            ],
+            "warnings": [],
+            "importantNotes": [],
+            "regionalRestrictions": [],
+            "invasiveness": {},
+            "plantingRequirements": {},
+            "soilRequirements": {},
+            "maintenance": {},
+            "pestsAndDiseases": [],
+            "cultivarCaveats": {},
+            "toxicity": {},
+            "physicalHazards": {},
+            "allergenicity": {},
+            "harvestUseWarnings": {}
+          },
+          "designMetadata": {
+            "contractVersion": "design-metadata-v1",
+            "tags": [
+              "subtropical",
+              "citrus",
+              "fruit",
+              "evergreen"
+            ],
+            "growth": "Woody landscape plant",
+            "matureSize": null,
+            "leafHabit": {
+              "state": "EVERGREEN",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "evidence": [
+                {
+                  "field": "needsWinterChill",
+                  "state": "EVERGREEN",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "sourceIds": [
+                    "ncsu-citrus-sinensis"
+                  ],
+                  "shortExcerpt": "Evergreen subtropical citrus; no chill listed."
+                }
+              ]
+            },
+            "seasonalityResearchRequired": false,
+            "sourcePacket": "sweet-orange-bulk-batch-3-v1"
+          }
+        },
+        "flowering_requirements": "Fragrant white flowers in spring (main flush).",
+        "fruiting_requirements": "Sweet edible oranges ripen in winter in many climates.",
+        "provenance": [
+          {
+            "sourceId": "ncsu-citrus-sinensis",
+            "institution": "North Carolina State University Extension Gardener",
+            "publisher": "North Carolina State University Extension Gardener",
+            "title": "Citrus × sinensis (Sweet Orange)",
+            "url": "https://plants.ces.ncsu.edu/plants/citrus-sinensis/",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31",
+            "plantIdentity": {
+              "canonicalSlug": "sweet-orange",
+              "commonNameEn": "Sweet orange",
+              "acceptedScientificName": "Citrus × sinensis"
+            },
+            "supportsFields": [
+              "scientific",
+              "aliases",
+              "climateLabel",
+              "tags",
+              "care.sun",
+              "care.water",
+              "care.growth",
+              "care.guide",
+              "groupIds",
+              "frostSensitivity",
+              "coldTolerance",
+              "heatTolerance",
+              "waterNeeds",
+              "sunNeeds",
+              "drainageNeeds",
+              "needsWinterChill",
+              "floweringRequirements",
+              "fruitingRequirements",
+              "reproductive.self_fertile"
+            ],
+            "assertedClaims": [
+              {
+                "claimId": "identity-scientific",
+                "field": "scientific",
+                "status": "asserted"
+              },
+              {
+                "claimId": "identity-aliases",
+                "field": "aliases",
+                "status": "asserted"
+              },
+              {
+                "claimId": "climate-label",
+                "field": "climateLabel",
+                "status": "asserted"
+              },
+              {
+                "claimId": "tags",
+                "field": "tags",
+                "status": "asserted"
+              },
+              {
+                "claimId": "care-sun",
+                "field": "care.sun",
+                "status": "asserted"
+              },
+              {
+                "claimId": "care-water",
+                "field": "care.water",
+                "status": "asserted"
+              },
+              {
+                "claimId": "care-growth",
+                "field": "care.growth",
+                "status": "asserted"
+              },
+              {
+                "claimId": "care-guide",
+                "field": "care.guide",
+                "status": "asserted"
+              },
+              {
+                "claimId": "groups",
+                "field": "groupIds",
+                "status": "asserted"
+              },
+              {
+                "claimId": "frostSensitivity",
+                "field": "frostSensitivity",
+                "status": "asserted"
+              },
+              {
+                "claimId": "coldTolerance",
+                "field": "coldTolerance",
+                "status": "asserted"
+              },
+              {
+                "claimId": "heatTolerance",
+                "field": "heatTolerance",
+                "status": "asserted"
+              },
+              {
+                "claimId": "waterNeeds",
+                "field": "waterNeeds",
+                "status": "asserted"
+              },
+              {
+                "claimId": "sunNeeds",
+                "field": "sunNeeds",
+                "status": "asserted"
+              },
+              {
+                "claimId": "drainageNeeds",
+                "field": "drainageNeeds",
+                "status": "asserted"
+              },
+              {
+                "claimId": "needsWinterChill",
+                "field": "needsWinterChill",
+                "status": "asserted"
+              },
+              {
+                "claimId": "floweringRequirements",
+                "field": "floweringRequirements",
+                "status": "asserted"
+              },
+              {
+                "claimId": "fruitingRequirements",
+                "field": "fruitingRequirements",
+                "status": "asserted"
+              },
+              {
+                "claimId": "reproductive-self_fertile",
+                "field": "reproductive.self_fertile",
+                "status": "asserted"
+              }
+            ],
+            "unknownClaims": [
+              {
+                "claimId": "care-size",
+                "field": "care.size",
+                "status": "unknown"
+              }
+            ]
+          },
+          {
+            "sourceId": "ufifas-citrus-greasy-spot-orange",
+            "institution": "University of Florida IFAS Extension",
+            "publisher": "University of Florida Institute of Food and Agricultural Sciences",
+            "title": "Field Identification and Management of Greasy Spot Disease",
+            "url": "https://edis.ifas.ufl.edu/publication/HS263",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-09-25",
+            "plantIdentity": {
+              "canonicalSlug": "sweet-orange",
+              "commonNameEn": "Sweet orange",
+              "acceptedScientificName": "Citrus × sinensis"
+            },
+            "supportsFields": [
+              "humidityTolerance"
+            ],
+            "assertedClaims": [
+              {
+                "claimId": "humidityTolerance",
+                "field": "humidityTolerance",
+                "status": "asserted"
+              }
+            ],
+            "unknownClaims": []
+          }
+        ],
+        "needs_review": false,
+        "verification_state": "verified",
+        "media": {
+          "searchQuery": "Citrus × sinensis Sweet orange",
+          "imageStatus": "IMAGE_PENDING"
+        },
+        "media_status": "IMAGE_PENDING",
+        "catalog_version": "1.0.0",
+        "source_packet": "sweet-orange-bulk-batch-3-v1"
+      }
+    }
+  ]
+}
