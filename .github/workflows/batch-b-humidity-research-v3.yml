@@ -1,0 +1,49 @@
+name: Batch B Humidity Research V3
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/batch-b-humidity-research-v3.yml'
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Run corrected humidity research
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/catalog/end-to-end-batch-b/humidity-v3
+          slugs=(bigleaf-hydrangea borage english-lavender fig lettuce pomegranate zinnia)
+          for slug in "${slugs[@]}"; do
+            curl --fail-with-body --silent --show-error               "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/humidity-research?slug=$slug"               -o "data/catalog/end-to-end-batch-b/humidity-v3/$slug.json"
+          done
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const dir='data/catalog/end-to-end-batch-b/humidity-v3';
+          const files=fs.readdirSync(dir).filter(f=>f.endsWith('.json')&&f!=='summary.json');
+          const docs=files.map(f=>JSON.parse(fs.readFileSync(dir+'/'+f,'utf8')));
+          const rows=docs.map(d=>({
+            canonicalSlug:d.canonicalSlug,scientific:d.scientific,
+            value:d.result?.value??null,evidenceClass:d.result?.evidenceClass||'UNKNOWN',
+            transformRef:d.result?.transformRef||null,
+            selectedEvidence:d.selectedEvidence||null
+          })).sort((a,b)=>a.canonicalSlug.localeCompare(b.canonicalSlug));
+          const summary={contract:'cruvit-e2e-batch-b-humidity-research-v3',createdAt:'2026-09-25',
+            total:rows.length,resolved:rows.filter(x=>x.value!==null).length,
+            unknown:rows.filter(x=>x.value===null).length,paidCalls:0,catalogWrites:0,rows};
+          fs.writeFileSync(dir+'/summary.json',JSON.stringify(summary,null,2)+'\n');
+          console.log(JSON.stringify(summary,null,2));
+          NODE
+      - name: Commit corrected evidence
+        run: |
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add data/catalog/end-to-end-batch-b/humidity-v3
+          git commit -m "catalog: record Batch B humidity V3 evidence"
+          git push origin HEAD:main
