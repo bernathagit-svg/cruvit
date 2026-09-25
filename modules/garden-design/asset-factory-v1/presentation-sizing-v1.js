@@ -3,16 +3,21 @@
  * Uses alpha bounds + visual form, never canonical plant-name switches.
  * Physical-size authority may override this at runtime when trusted evidence exists.
  */
-export const PRESENTATION_SIZING_VERSION = 'presentation-sizing-v1';
+export const PRESENTATION_SIZING_VERSION = 'presentation-sizing-v1.1';
 export const PRESENTATION_REFERENCE_SCENE_WIDTH_PX = 1200;
 
 export const PRESENTATION_SIZE_PROFILES = Object.freeze({
   tree: Object.freeze({ targetVisibleWidthRatio: 0.38, minBaseWidthPx: 260, maxBaseWidthPx: 560 }),
   'herbaceous-clump': Object.freeze({ targetVisibleWidthRatio: 0.32, minBaseWidthPx: 220, maxBaseWidthPx: 460 }),
   shrub: Object.freeze({ targetVisibleWidthRatio: 0.23, minBaseWidthPx: 160, maxBaseWidthPx: 360 }),
-  rosette: Object.freeze({ targetVisibleWidthRatio: 0.15, minBaseWidthPx: 120, maxBaseWidthPx: 280 }),
-  flower: Object.freeze({ targetVisibleWidthRatio: 0.14, minBaseWidthPx: 110, maxBaseWidthPx: 260 }),
-  herb: Object.freeze({ targetVisibleWidthRatio: 0.14, minBaseWidthPx: 110, maxBaseWidthPx: 260 }),
+  subshrub: Object.freeze({ targetVisibleWidthRatio: 0.18, minBaseWidthPx: 130, maxBaseWidthPx: 300 }),
+  'herbaceous-upright': Object.freeze({ targetVisibleWidthRatio: 0.14, minBaseWidthPx: 100, maxBaseWidthPx: 240 }),
+  'herbaceous-clump': Object.freeze({ targetVisibleWidthRatio: 0.20, minBaseWidthPx: 140, maxBaseWidthPx: 320 }),
+  rosette: Object.freeze({ targetVisibleWidthRatio: 0.15, minBaseWidthPx: 110, maxBaseWidthPx: 260 }),
+  flower: Object.freeze({ targetVisibleWidthRatio: 0.12, minBaseWidthPx: 90, maxBaseWidthPx: 220 }),
+  herb: Object.freeze({ targetVisibleWidthRatio: 0.12, minBaseWidthPx: 90, maxBaseWidthPx: 220 }),
+  groundcover: Object.freeze({ targetVisibleWidthRatio: 0.16, minBaseWidthPx: 110, maxBaseWidthPx: 260 }),
+  'grass-like': Object.freeze({ targetVisibleWidthRatio: 0.15, minBaseWidthPx: 100, maxBaseWidthPx: 240 }),
   default: Object.freeze({ targetVisibleWidthRatio: 0.18, minBaseWidthPx: 130, maxBaseWidthPx: 320 })
 });
 
@@ -27,8 +32,18 @@ function normalizeForm(value) {
   return 'default';
 }
 
+export function resolvePresentationForm(input = {}) {
+  const architecture = String(input.architectureMode || '').trim().toLowerCase();
+  if (
+    architecture
+    && architecture !== 'default'
+    && PRESENTATION_SIZE_PROFILES[architecture]
+  ) return architecture;
+  return normalizeForm(input.visualForm || input.architectureMode);
+}
+
 export function derivePresentationSizing(input = {}, options = {}) {
-  const form = normalizeForm(input.visualForm || input.architectureMode);
+  const form = resolvePresentationForm(input);
   const profile = PRESENTATION_SIZE_PROFILES[form] || PRESENTATION_SIZE_PROFILES.default;
   const sceneWidth = Number(options.referenceSceneWidthPx || PRESENTATION_REFERENCE_SCENE_WIDTH_PX);
   const width = Number(input.width || input.metrics?.width || 0);
@@ -50,7 +65,15 @@ export function derivePresentationSizing(input = {}, options = {}) {
   const visibleHeightRatio = bboxHeight / height;
   const targetVisibleWidthPx = sceneWidth * profile.targetVisibleWidthRatio;
   const rawBaseWidthPx = targetVisibleWidthPx / Math.max(0.01, visibleWidthRatio);
-  const baseWidthPx = Math.round(clamp(rawBaseWidthPx, profile.minBaseWidthPx, profile.maxBaseWidthPx));
+  const relativeScaleFactor = Number(options.relativeScaleFactor || 1);
+  const safeRelativeScaleFactor =
+    Number.isFinite(relativeScaleFactor) && relativeScaleFactor > 0
+      ? relativeScaleFactor
+      : 1;
+  const evidenceAdjustedBaseWidthPx = rawBaseWidthPx * safeRelativeScaleFactor;
+  const baseWidthPx = Math.round(
+    clamp(evidenceAdjustedBaseWidthPx, profile.minBaseWidthPx, profile.maxBaseWidthPx)
+  );
   const renderedHeightPx = Math.round(baseWidthPx * (height / width));
   const visibleRenderedHeightPx = Math.round(renderedHeightPx * visibleHeightRatio);
   return {
@@ -62,6 +85,9 @@ export function derivePresentationSizing(input = {}, options = {}) {
     visibleWidthRatio,
     visibleHeightRatio,
     baseWidthPx,
+    relativeScaleFactor:safeRelativeScaleFactor,
+    rawBaseWidthPx,
+    evidenceAdjustedBaseWidthPx,
     renderedHeightPx,
     visibleRenderedHeightPx,
     algorithm: 'visual-form-target-width-divided-by-alpha-visible-width',
