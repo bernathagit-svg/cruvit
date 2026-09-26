@@ -419,3 +419,53 @@ test('reproductive source id must resolve to botanical provenance',()=>{
   );
   assert.ok(r.blockingReasons.includes('REPRODUCTIVE_CLIMATE_EVIDENCE_REQUIRED'));
 });
+
+test('verified catalog identity provenance is accepted when registry entry is absent',()=>{
+  const row=baseRow();
+  row.provenance=[{
+    sourceId:'test',
+    plantIdentity:{
+      canonicalSlug:'test-plant',
+      acceptedScientificName:'Testus plantus'
+    },
+    assertedClaims:[{field:'scientific',status:'asserted'}]
+  }];
+  const r=evaluateFullCruvitPlantApproval({
+    catalogRow:row,
+    identityRegistry:{canonicalIdentities:[]},
+    designAssetRegistry:{sets:[]},
+    sizeAuthorityRegistry:size
+  });
+  assert.equal(r.modules.canonicalIdentity.ready,true);
+  assert.equal(r.modules.canonicalIdentity.authority,'VERIFIED_CATALOG_IDENTITY_PROVENANCE');
+  assert.equal(r.modules.plantDoctor.ready,true);
+  assert.ok(!r.blockingReasons.includes('CANONICAL_IDENTITY_NOT_READY'));
+  assert.ok(!r.blockingReasons.includes('PLANT_DOCTOR_CONTEXT_NOT_READY'));
+});
+
+test('explicit registry needsReview blocks catalog fallback even with verified provenance',()=>{
+  const row=baseRow();
+  row.provenance=[{
+    sourceId:'test',
+    plantIdentity:{
+      canonicalSlug:'test-plant',
+      acceptedScientificName:'Testus plantus'
+    },
+    assertedClaims:[{field:'scientific',status:'asserted'}]
+  }];
+  const r=evaluateFullCruvitPlantApproval({
+    catalogRow:row,
+    identityRegistry:{canonicalIdentities:[{
+      canonicalSlug:'test-plant',
+      acceptedScientificName:'Testus plantus',
+      needsReview:true
+    }]},
+    designAssetRegistry:{sets:[]},
+    sizeAuthorityRegistry:size
+  });
+  assert.equal(r.modules.canonicalIdentity.ready,false);
+  assert.equal(r.modules.canonicalIdentity.needsReview,true);
+  assert.equal(r.status,FULL_CRUVIT_PLANT_STATUS.OWNER_REVIEW_REQUIRED);
+  assert.ok(r.blockingReasons.includes('CANONICAL_IDENTITY_NOT_READY'));
+});
+
