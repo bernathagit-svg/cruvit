@@ -33,6 +33,15 @@
       "url": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:592855-1",
       "authorityTier": "botanical_authority",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "rhs-eucalyptus-globulus",
+      "institution": "Royal Horticultural Society",
+      "publisher": "Royal Horticultural Society",
+      "title": "Eucalyptus globulus (southern blue gum)",
+      "url": "https://www.rhs.org.uk/plants/25081/eucalyptus-globulus/details",
+      "authorityTier": "horticultural_society",
+      "verifiedAt": "2026-09-26"
     }
   ],
   "claims": [
@@ -74,11 +83,13 @@
       "claimId": "cold",
       "field": "coldTolerance",
       "status": "asserted",
-      "value": "medium",
+      "value": "low",
       "sourceIds": [
-        "powo-eucalyptus-globulus"
+        "rhs-eucalyptus-globulus"
       ],
-      "shortExcerpt": "Cold tolerance characterized as medium."
+      "shortExcerpt": "RHS hardiness rating H3 (-5 to 1°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
     },
     {
       "claimId": "heat",
