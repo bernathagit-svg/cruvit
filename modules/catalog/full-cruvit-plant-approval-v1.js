@@ -38,6 +38,37 @@ function identityRecord(registry, slug){
   )||null;
 }
 
+function verifiedCatalogIdentityProvenance(catalogRow, runtimePlant){
+  const slug=norm(runtimePlant?.canonicalSlug || catalogRow?.slug);
+  const scientific=norm(runtimePlant?.scientific || catalogRow?.scientific_name);
+  if(!slug || !scientific) return {ready:false,reason:'IDENTITY_FIELDS_MISSING'};
+  if(catalogRow?.needs_review===true || norm(catalogRow?.verification_state)!=='verified'){
+    return {ready:false,reason:'CATALOG_IDENTITY_NOT_VERIFIED'};
+  }
+  if(/\bspp\.?\b/i.test(scientific) || /^various\b/i.test(scientific)){
+    return {ready:false,reason:'SCIENTIFIC_IDENTITY_AMBIGUOUS'};
+  }
+  const provenance=Array.isArray(catalogRow?.provenance)?catalogRow.provenance:[];
+  const source=provenance.find(row=>{
+    const pi=row?.plantIdentity||{};
+    const claims=Array.isArray(row?.assertedClaims)?row.assertedClaims:[];
+    return Boolean(
+      text(row?.sourceId)
+      && norm(pi.canonicalSlug)===slug
+      && norm(pi.acceptedScientificName)===scientific
+      && claims.some(c=>norm(c?.field)==='scientific' && norm(c?.status)==='asserted')
+    );
+  })||null;
+  return {
+    ready:Boolean(source),
+    reason:source?null:'SOURCE_BACKED_IDENTITY_PROVENANCE_REQUIRED',
+    authority:source?'VERIFIED_CATALOG_IDENTITY_PROVENANCE':null,
+    sourceId:source?.sourceId||null,
+    canonicalSlug:source?.plantIdentity?.canonicalSlug||null,
+    acceptedScientificName:source?.plantIdentity?.acceptedScientificName||null
+  };
+}
+
 function catalogMediaReady(row={}, coverageRecord=null){
   const coverageStatus=text(coverageRecord?.imageStatus).toUpperCase();
   if(coverageStatus==='IMAGE_READY' && coverageRecord?.approved===true){
@@ -249,12 +280,19 @@ export function evaluateFullCruvitPlantApproval({
   }
 
   const identity=identityRecord(identityRegistry,slug);
-  const identityReady=Boolean(
+  const registryIdentityReady=Boolean(
     identity
     && identity.needsReview !== true
     && text(identity.acceptedScientificName)
     && norm(identity.acceptedScientificName)===norm(scientific)
   );
+  // Explicit registry entries remain authoritative, including needsReview/conflict holds.
+  // Catalog fallback is allowed only when no registry record exists and the verified
+  // canonical catalog row carries source-backed slug + scientific identity provenance.
+  const catalogIdentity=!identity
+    ?verifiedCatalogIdentityProvenance(catalogRow,runtimePlant)
+    :{ready:false,reason:'REGISTRY_ENTRY_PRESENT'};
+  const identityReady=registryIdentityReady || catalogIdentity.ready===true;
 
   const data=classifyPlantDataReadiness(runtimePlant,{
     requireReproductiveBiologyForFruiting:true
@@ -289,8 +327,14 @@ export function evaluateFullCruvitPlantApproval({
     canonicalIdentity:{
       ready:identityReady,
       needsReview:identity?.needsReview===true,
-      canonicalSlug:identity?.canonicalSlug||null,
-      acceptedScientificName:identity?.acceptedScientificName||null
+      canonicalSlug:identity?.canonicalSlug||catalogIdentity?.canonicalSlug||null,
+      acceptedScientificName:identity?.acceptedScientificName||catalogIdentity?.acceptedScientificName||null,
+      authority:registryIdentityReady
+        ?'PLANT_IDENTITY_REGISTRY'
+        :catalogIdentity?.ready===true
+          ?catalogIdentity.authority
+          :null,
+      sourceId:catalogIdentity?.sourceId||null
     },
     climateAndSuitability:{
       ready:suitabilityReady && reproductiveClimate.ready,
