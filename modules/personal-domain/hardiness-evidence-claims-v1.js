@@ -13,11 +13,13 @@ export const HARDINESS_EVIDENCE_CLAIMS_REF = `${HARDINESS_EVIDENCE_CLAIMS_ID}@${
 export const HARDINESS_CLAIM_TYPE = Object.freeze({
   USDA_HARDINESS_ZONE_BAND: 'usda_hardiness_zone_band',
   COLD_DAMAGE_THRESHOLD: 'cold_damage_threshold',
-  FROST_INJURY_STATEMENT: 'frost_injury_statement'
+  FROST_INJURY_STATEMENT: 'frost_injury_statement',
+  RHS_HARDINESS_RATING: 'rhs_hardiness_rating'
 });
 
 export const HARDINESS_ZONE_SYSTEM = Object.freeze({
-  USDA: 'USDA'
+  USDA: 'USDA',
+  RHS: 'RHS'
 });
 
 function sha256(text) {
@@ -102,6 +104,52 @@ export function extractUsdaHardinessZoneBandClaim(text) {
         sys: HARDINESS_ZONE_SYSTEM.USDA
       })
     )
+  };
+}
+
+
+/**
+ * RAW SOURCE CLAIM: RHS H1A-H7 hardiness rating.
+ * RHS ratings have published minimum-temperature semantics and are kept raw here;
+ * conversion to CRUVIT coldTolerance belongs to the transform contract.
+ */
+export function extractRhsHardinessRatingClaim(text) {
+  const t = String(text || '');
+  const m = t.match(/(?:hardiness(?:\s+rating)?\s*[:.]?\s*)?\bH(1[ABC]|[2-7])\b/i);
+  if (!m) return null;
+  const rating = 'H' + String(m[1]).toUpperCase();
+  const rangeByRating = {
+    H1A: { minC: 15, maxC: null, relation: 'above' },
+    H1B: { minC: 10, maxC: 15 },
+    H1C: { minC: 5, maxC: 10 },
+    H2: { minC: 1, maxC: 5 },
+    H3: { minC: -5, maxC: 1 },
+    H4: { minC: -10, maxC: -5 },
+    H5: { minC: -15, maxC: -10 },
+    H6: { minC: -20, maxC: -15 },
+    H7: { minC: null, maxC: -20, relation: 'below' }
+  };
+  const range = rangeByRating[rating];
+  if (!range) return null;
+  const supportingExcerpt = (
+    t.match(new RegExp('[^.]{0,120}\\b' + rating + '\\b[^.]{0,120}', 'i'))?.[0]
+    || ('RHS hardiness rating: ' + rating)
+  ).replace(/\s+/g, ' ').trim().slice(0, 240);
+  return {
+    claimType: HARDINESS_CLAIM_TYPE.RHS_HARDINESS_RATING,
+    hardinessZoneSystem: HARDINESS_ZONE_SYSTEM.RHS,
+    rhsHardinessRating: rating,
+    minimumTemperatureC: range.minC,
+    maximumTemperatureC: range.maxC,
+    temperatureRelation: range.relation || 'range',
+    rawValue: rating,
+    displayValue: 'RHS ' + rating,
+    units: 'rhs_hardiness_rating',
+    supportingExcerpt,
+    claimFingerprint: sha256(JSON.stringify({
+      t: HARDINESS_CLAIM_TYPE.RHS_HARDINESS_RATING,
+      rating
+    }))
   };
 }
 
