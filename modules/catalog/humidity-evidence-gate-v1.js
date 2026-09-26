@@ -41,7 +41,10 @@ export function extractHumidityEvidence(raw=''){
     /tolerates? high humidity/g,
     /tolerant of (?:heat and )?humidity/g,
     /high humidity tolerance/g,
-    /thrives? in humid/g
+    /thrives? in humid/g,
+    /grows? best in [^.]{0,80}humid conditions/g,
+    /prefers? [^.]{0,80}humid conditions/g,
+    /resistance to challenges:\s{0,5}.{0,260}\bhumidity\b/g
   ];
   for(const re of directHigh){
     const m=re.exec(lower);
