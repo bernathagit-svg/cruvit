@@ -16,12 +16,31 @@ function normText(v){
 }
 function esc(s){return String(s||'').replace(/[.*+?^\${}()|[\]\\]/g,'\\$&');}
 
+function normalizeTaxonText(value){
+  return String(value||'')
+    .replace(/&times;|&#215;/gi,'×')
+    .replace(/[×]/g,' x ')
+    .replace(/\b(subsp|ssp|var|f)\.?\b/gi,' ')
+    .replace(/\s+/g,' ')
+    .trim()
+    .toLowerCase();
+}
+
+export function lifecycleIdentityMatches(raw,scientific){
+  const text=normalizeTaxonText(normText(raw));
+  const sci=normalizeTaxonText(scientific);
+  if(!text||!sci) return false;
+  if(text.includes(sci)) return true;
+  const parts=sci.split(' ').filter(Boolean).filter(x=>x!=='x');
+  if(parts.length<2) return false;
+  return text.includes(parts[0]+' '+parts[1]);
+}
+
 export function extractExplicitLifecycle(raw,scientific){
   const text=normText(raw);
   const sci=String(scientific||'').trim();
   if(!text||!sci) return {ok:false,state:'UNKNOWN',code:'INPUT_REQUIRED',excerpt:null};
-  const identityRe=new RegExp(esc(sci).replace(/\s+/g,'\\s+'),'i');
-  if(!identityRe.test(text)) return {ok:false,state:'UNKNOWN',code:'IDENTITY_MISMATCH',excerpt:null};
+  if(!lifecycleIdentityMatches(text,sci)) return {ok:false,state:'UNKNOWN',code:'IDENTITY_MISMATCH',excerpt:null};
 
   const patterns=[
     {state:'ANNUAL',re:/\bannual\b/i},
