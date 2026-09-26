@@ -9,7 +9,7 @@
  * evidence can correct morphology fallbacks without pretending the garden photo
  * has full metric calibration.
  */
-export const RELATIVE_PREVIEW_SCALE_VERSION='relative-preview-scale-v1';
+export const RELATIVE_PREVIEW_SCALE_VERSION='relative-preview-scale-v1.1';
 
 export const PREVIEW_REFERENCE_SPREAD_M=Object.freeze({
   shrub:1.5,
@@ -26,6 +26,19 @@ export const PREVIEW_REFERENCE_SPREAD_M=Object.freeze({
 function text(v){return String(v==null?'':v).trim().toLowerCase();}
 function finite(v){const n=Number(v);return Number.isFinite(n)?n:null;}
 function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
+
+export const RELATIVE_PREVIEW_RESPONSE_BY_FORM=Object.freeze({
+  rosette:Object.freeze({compactThreshold:0.6,exponent:0.70,minScale:0.50,maxScale:1.25}),
+  groundcover:Object.freeze({compactThreshold:0.6,exponent:0.70,minScale:0.50,maxScale:1.25}),
+  'succulent-form':Object.freeze({compactThreshold:0.6,exponent:0.70,minScale:0.50,maxScale:1.25}),
+  default:Object.freeze({compactThreshold:0,exponent:0.50,minScale:0.60,maxScale:1.35})
+});
+
+function responseFor(form,rawRatio){
+  const profile=RELATIVE_PREVIEW_RESPONSE_BY_FORM[form]||RELATIVE_PREVIEW_RESPONSE_BY_FORM.default;
+  if(profile.compactThreshold>0 && rawRatio<profile.compactThreshold) return profile;
+  return RELATIVE_PREVIEW_RESPONSE_BY_FORM.default;
+}
 
 export function resolveEffectivePreviewForm(input={}){
   const architecture=text(input.architectureMode);
@@ -115,8 +128,9 @@ export function deriveRelativePreviewScale(sizeRegistry={},input={}){
 
   const midpointSpreadM=(min+max)/2;
   const rawRatio=midpointSpreadM/referenceSpreadM;
-  const damped=Math.sqrt(rawRatio);
-  const scaleFactor=clamp(damped,0.6,1.35);
+  const response=responseFor(form,rawRatio);
+  const damped=Math.pow(rawRatio,response.exponent);
+  const scaleFactor=clamp(damped,response.minScale,response.maxScale);
 
   return Object.freeze({
     version:RELATIVE_PREVIEW_SCALE_VERSION,
@@ -130,7 +144,9 @@ export function deriveRelativePreviewScale(sizeRegistry={},input={}){
     referenceSpreadM,
     rawRatio,
     dampedRatio:damped,
-    clampRange:[0.6,1.35],
+    responseExponent:response.exponent,
+    responseProfile:response===RELATIVE_PREVIEW_RESPONSE_BY_FORM.default?'DEFAULT_DAMPED':'COMPACT_LOW_FORM',
+    clampRange:[response.minScale,response.maxScale],
     meterAccuracyClaimed:false,
     source:'BOTANICAL_SPREAD_EVIDENCE_DAMPED_FOR_PREVIEW',
     evidenceRef:record.selectedSpreadEvidenceRef||record.selectedSource||null,
@@ -146,6 +162,7 @@ export const RELATIVE_PREVIEW_SCALE_GOVERNANCE=Object.freeze({
   treeScalingUnchangedByThisVersion:true,
   perSpeciesHardcodingForbidden:true,
   dampedInfluence:true,
+  compactLowFormEvidenceResponse:true,
   boundedScaleFactor:true,
   note:'This adapter corrects preview proportions only. Scene geometry and trusted placement calibration remain separate authorities.'
 });
