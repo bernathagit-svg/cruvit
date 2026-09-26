@@ -61,7 +61,41 @@
     "fig": "taxon:ficus-carica",
     "lettuce": "taxon:lactuca-sativa",
     "pomegranate": "taxon:punica-granatum",
-    "zinnia": "taxon:zinnia-elegans"
+    "zinnia": "taxon:zinnia-elegans",
+    "artichoke": "taxon:cynara-cardunculus-var-scolymus",
+    "bay-laurel": "taxon:laurus-nobilis",
+    "blueberry": "taxon:vaccinium-corymbosum",
+    "boxwood": "taxon:buxus-sempervirens",
+    "broccoli": "taxon:brassica-oleracea-var-italica",
+    "chinese-wisteria": "taxon:wisteria-sinensis",
+    "chives": "taxon:allium-schoenoprasum",
+    "cilantro": "taxon:coriandrum-sativum",
+    "common-lilac": "taxon:syringa-vulgaris",
+    "common-thyme": "taxon:thymus-vulgaris",
+    "cranberry": "taxon:vaccinium-macrocarpon",
+    "crepe-myrtle": "taxon:lagerstroemia-indica",
+    "elderberry": "taxon:sambucus-canadensis",
+    "feijoa": "taxon:acca-sellowiana",
+    "flowering-dogwood": "taxon:cornus-florida",
+    "french-marigold": "taxon:tagetes-patula",
+    "garden-pea": "taxon:pisum-sativum",
+    "garden-sage": "taxon:salvia-officinalis",
+    "hazelnut": "taxon:corylus-avellana",
+    "lesser-bougainvillea": "taxon:bougainvillea-glabra",
+    "nasturtium": "taxon:tropaeolum-majus",
+    "okra": "taxon:abelmoschus-esculentus",
+    "oleander": "taxon:nerium-oleander",
+    "pecan": "taxon:carya-illinoinensis",
+    "plum": "taxon:prunus-domestica",
+    "serviceberry": "taxon:amelanchier-canadensis",
+    "spearmint": "taxon:mentha-spicata",
+    "spinach": "taxon:spinacia-oleracea",
+    "strawberry": "taxon:fragaria-x-ananassa",
+    "sweet-potato": "taxon:ipomoea-batatas",
+    "turmeric": "taxon:curcuma-longa",
+    "watermelon": "taxon:citrullus-lanatus",
+    "yucca": "taxon:yucca-filamentosa",
+    "zucchini": "taxon:cucurbita-pepo"
   },
   "expectedAccounting": {
     "RUNTIME_AUTHORITY_READY": 13,
@@ -72,6 +106,94 @@
     "TOTAL": 46
   },
   "records": [
+    {
+      "botanicalTaxonId": "taxon:abelmoschus-esculentus",
+      "canonicalSlugAliases": [
+        "okra"
+      ],
+      "scientificName": "Abelmoschus esculentus",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "okra__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "okra__ncsu__mature-size-full64-v1",
+      "selectedSource": "okra__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.9144,
+          "max": 1.524
+        },
+        "spreadM": {
+          "min": 0.9144,
+          "max": 1.524
+        }
+      },
+      "provenanceEvidenceIds": [
+        "okra__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:acca-sellowiana",
+      "canonicalSlugAliases": [
+        "feijoa"
+      ],
+      "scientificName": "Acca sellowiana",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "feijoa__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "feijoa__ncsu__mature-size-full64-v1",
+      "selectedSource": "feijoa__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 3.048,
+          "max": 4.572
+        },
+        "spreadM": {
+          "min": 1.524,
+          "max": 1.8288
+        }
+      },
+      "provenanceEvidenceIds": [
+        "feijoa__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
     {
       "botanicalTaxonId": "taxon:acer-palmatum",
       "canonicalSlugAliases": [
@@ -114,6 +236,50 @@
       "mayChooseUniversalPersonalGardenSize": false
     },
     {
+      "botanicalTaxonId": "taxon:allium-schoenoprasum",
+      "canonicalSlugAliases": [
+        "chives"
+      ],
+      "scientificName": "Allium schoenoprasum",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "chives__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "chives__ncsu__mature-size-full64-v1",
+      "selectedSource": "chives__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.3048,
+          "max": 0.4572
+        },
+        "spreadM": {
+          "min": 0.3048,
+          "max": 0.4318
+        }
+      },
+      "provenanceEvidenceIds": [
+        "chives__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
       "botanicalTaxonId": "taxon:aloe-vera",
       "canonicalSlugAliases": [
         "aloe-vera"
@@ -138,6 +304,50 @@
       },
       "provenanceEvidenceIds": [
         "aloe-vera__ncsu__landscape-mature"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:amelanchier-canadensis",
+      "canonicalSlugAliases": [
+        "serviceberry"
+      ],
+      "scientificName": "Amelanchier canadensis",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "serviceberry__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "serviceberry__ncsu__mature-size-full64-v1",
+      "selectedSource": "serviceberry__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 4.572,
+          "max": 7.62
+        },
+        "spreadM": {
+          "min": 4.572,
+          "max": 6.096
+        }
+      },
+      "provenanceEvidenceIds": [
+        "serviceberry__ncsu__mature-size-full64-v1"
       ],
       "conflictingEvidenceIds": null,
       "partialAnchor": null,
@@ -420,6 +630,182 @@
       "runtimeWired": false
     },
     {
+      "botanicalTaxonId": "taxon:bougainvillea-glabra",
+      "canonicalSlugAliases": [
+        "lesser-bougainvillea"
+      ],
+      "scientificName": "Bougainvillea glabra",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "lesser-bougainvillea__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "lesser-bougainvillea__ncsu__mature-size-full64-v1",
+      "selectedSource": "lesser-bougainvillea__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 3.048,
+          "max": 6.096
+        },
+        "spreadM": {
+          "min": 1.8288,
+          "max": 3.048
+        }
+      },
+      "provenanceEvidenceIds": [
+        "lesser-bougainvillea__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:brassica-oleracea-var-italica",
+      "canonicalSlugAliases": [
+        "broccoli"
+      ],
+      "scientificName": "Brassica oleracea var. italica",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "broccoli__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "broccoli__ncsu__mature-size-full64-v1",
+      "selectedSource": "broccoli__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.254,
+          "max": 0.6096
+        },
+        "spreadM": {
+          "min": 0.3048,
+          "max": 0.6096
+        }
+      },
+      "provenanceEvidenceIds": [
+        "broccoli__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:buxus-sempervirens",
+      "canonicalSlugAliases": [
+        "boxwood"
+      ],
+      "scientificName": "Buxus sempervirens",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "boxwood__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "boxwood__ncsu__mature-size-full64-v1",
+      "selectedSource": "boxwood__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 1.524,
+          "max": 6.096
+        },
+        "spreadM": {
+          "min": 1.524,
+          "max": 4.572
+        }
+      },
+      "provenanceEvidenceIds": [
+        "boxwood__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:carya-illinoinensis",
+      "canonicalSlugAliases": [
+        "pecan"
+      ],
+      "scientificName": "Carya illinoinensis",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "pecan__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "pecan__ncsu__mature-size-full64-v1",
+      "selectedSource": "pecan__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 21.336,
+          "max": 30.48
+        },
+        "spreadM": {
+          "min": 12.192,
+          "max": 22.86
+        }
+      },
+      "provenanceEvidenceIds": [
+        "pecan__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
       "botanicalTaxonId": "taxon:casimiroa-edulis",
       "canonicalSlugAliases": [
         "white-sapote"
@@ -557,6 +943,50 @@
       "authorityVersion": "botanical-size-authority-v1",
       "runtimeWired": false,
       "contextSeparableHeight": false
+    },
+    {
+      "botanicalTaxonId": "taxon:citrullus-lanatus",
+      "canonicalSlugAliases": [
+        "watermelon"
+      ],
+      "scientificName": "Citrullus lanatus",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "watermelon__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "watermelon__ncsu__mature-size-full64-v1",
+      "selectedSource": "watermelon__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.1016,
+          "max": 0.2032
+        },
+        "spreadM": {
+          "min": 1.524,
+          "max": 3.048
+        }
+      },
+      "provenanceEvidenceIds": [
+        "watermelon__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
     },
     {
       "botanicalTaxonId": "taxon:citrus-limon",
@@ -731,6 +1161,182 @@
       "mayChooseUniversalPersonalGardenSize": false
     },
     {
+      "botanicalTaxonId": "taxon:coriandrum-sativum",
+      "canonicalSlugAliases": [
+        "cilantro"
+      ],
+      "scientificName": "Coriandrum sativum",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "cilantro__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "cilantro__ncsu__mature-size-full64-v1",
+      "selectedSource": "cilantro__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.3048,
+          "max": 0.6096
+        },
+        "spreadM": {
+          "min": 0.3048,
+          "max": 0.6096
+        }
+      },
+      "provenanceEvidenceIds": [
+        "cilantro__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:cornus-florida",
+      "canonicalSlugAliases": [
+        "flowering-dogwood"
+      ],
+      "scientificName": "Cornus florida",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "flowering-dogwood__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "flowering-dogwood__ncsu__mature-size-full64-v1",
+      "selectedSource": "flowering-dogwood__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 4.572,
+          "max": 7.62
+        },
+        "spreadM": {
+          "min": 4.572,
+          "max": 9.144
+        }
+      },
+      "provenanceEvidenceIds": [
+        "flowering-dogwood__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:corylus-avellana",
+      "canonicalSlugAliases": [
+        "hazelnut"
+      ],
+      "scientificName": "Corylus avellana",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "hazelnut__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "hazelnut__ncsu__mature-size-full64-v1",
+      "selectedSource": "hazelnut__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 3.6576,
+          "max": 6.096
+        },
+        "spreadM": {
+          "min": 2.4384,
+          "max": 4.572
+        }
+      },
+      "provenanceEvidenceIds": [
+        "hazelnut__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:cucurbita-pepo",
+      "canonicalSlugAliases": [
+        "zucchini"
+      ],
+      "scientificName": "Cucurbita pepo",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "zucchini__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "zucchini__ncsu__mature-size-full64-v1",
+      "selectedSource": "zucchini__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.3048,
+          "max": 0.9144
+        },
+        "spreadM": {
+          "min": 0.6096,
+          "max": 7.62
+        }
+      },
+      "provenanceEvidenceIds": [
+        "zucchini__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
       "botanicalTaxonId": "taxon:cupressus-sempervirens",
       "canonicalSlugAliases": [
         "cypress"
@@ -766,6 +1372,94 @@
         "reasons": []
       },
       "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:curcuma-longa",
+      "canonicalSlugAliases": [
+        "turmeric"
+      ],
+      "scientificName": "Curcuma longa",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "turmeric__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "turmeric__ncsu__mature-size-full64-v1",
+      "selectedSource": "turmeric__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.9144,
+          "max": 1.2192
+        },
+        "spreadM": {
+          "min": 0.9144,
+          "max": 1.2192
+        }
+      },
+      "provenanceEvidenceIds": [
+        "turmeric__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:cynara-cardunculus-var-scolymus",
+      "canonicalSlugAliases": [
+        "artichoke"
+      ],
+      "scientificName": "Cynara cardunculus var. scolymus",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "artichoke__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "artichoke__ncsu__mature-size-full64-v1",
+      "selectedSource": "artichoke__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.9144,
+          "max": 1.524
+        },
+        "spreadM": {
+          "min": 0.6096,
+          "max": 0.9144
+        }
+      },
+      "provenanceEvidenceIds": [
+        "artichoke__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
       "authorityVersion": "botanical-size-authority-v1",
       "runtimeWired": false
     },
@@ -1168,6 +1862,50 @@
       "contextSeparableHeight": false
     },
     {
+      "botanicalTaxonId": "taxon:fragaria-x-ananassa",
+      "canonicalSlugAliases": [
+        "strawberry"
+      ],
+      "scientificName": "Fragaria × ananassa",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "strawberry__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "strawberry__ncsu__mature-size-full64-v1",
+      "selectedSource": "strawberry__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.1524,
+          "max": 0.3048
+        },
+        "spreadM": {
+          "min": 0.3048,
+          "max": 0.6096
+        }
+      },
+      "provenanceEvidenceIds": [
+        "strawberry__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
       "botanicalTaxonId": "taxon:garcinia-mangostana",
       "canonicalSlugAliases": [
         "mangosteen"
@@ -1291,6 +2029,50 @@
       "runtimeWired": false
     },
     {
+      "botanicalTaxonId": "taxon:ipomoea-batatas",
+      "canonicalSlugAliases": [
+        "sweet-potato"
+      ],
+      "scientificName": "Ipomoea batatas",
+      "architectureMode": "climber",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "sweet-potato__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "sweet-potato__ncsu__mature-size-full64-v1",
+      "selectedSource": "sweet-potato__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 1.8288,
+          "max": 3.048
+        },
+        "spreadM": {
+          "min": 2.4384,
+          "max": 3.048
+        }
+      },
+      "provenanceEvidenceIds": [
+        "sweet-potato__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
       "botanicalTaxonId": "taxon:juglans-regia",
       "canonicalSlugAliases": [
         "english-walnut"
@@ -1359,6 +2141,94 @@
       },
       "provenanceEvidenceIds": [
         "lettuce__ncsu__mature-size-batch-b-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:lagerstroemia-indica",
+      "canonicalSlugAliases": [
+        "crepe-myrtle"
+      ],
+      "scientificName": "Lagerstroemia indica",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "crepe-myrtle__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "crepe-myrtle__ncsu__mature-size-full64-v1",
+      "selectedSource": "crepe-myrtle__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 1.8288,
+          "max": 9.144
+        },
+        "spreadM": {
+          "min": 1.8288,
+          "max": 9.144
+        }
+      },
+      "provenanceEvidenceIds": [
+        "crepe-myrtle__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:laurus-nobilis",
+      "canonicalSlugAliases": [
+        "bay-laurel"
+      ],
+      "scientificName": "Laurus nobilis",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "bay-laurel__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "bay-laurel__ncsu__mature-size-full64-v1",
+      "selectedSource": "bay-laurel__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 2.4384,
+          "max": 3.6576
+        },
+        "spreadM": {
+          "min": 2.4384,
+          "max": 9.144
+        }
+      },
+      "provenanceEvidenceIds": [
+        "bay-laurel__ncsu__mature-size-full64-v1"
       ],
       "conflictingEvidenceIds": null,
       "partialAnchor": null,
@@ -1645,6 +2515,50 @@
       "runtimeWired": false
     },
     {
+      "botanicalTaxonId": "taxon:mentha-spicata",
+      "canonicalSlugAliases": [
+        "spearmint"
+      ],
+      "scientificName": "Mentha spicata",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "spearmint__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "spearmint__ncsu__mature-size-full64-v1",
+      "selectedSource": "spearmint__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.3048,
+          "max": 0.6096
+        },
+        "spreadM": {
+          "min": 0.3048,
+          "max": 0.6096
+        }
+      },
+      "provenanceEvidenceIds": [
+        "spearmint__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
       "botanicalTaxonId": "taxon:moringa-oleifera",
       "canonicalSlugAliases": [
         "moringa"
@@ -1721,6 +2635,50 @@
       "authorityVersion": "botanical-size-authority-v1",
       "runtimeWired": false,
       "meterTruth": false
+    },
+    {
+      "botanicalTaxonId": "taxon:nerium-oleander",
+      "canonicalSlugAliases": [
+        "oleander"
+      ],
+      "scientificName": "Nerium oleander",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "oleander__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "oleander__ncsu__mature-size-full64-v1",
+      "selectedSource": "oleander__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 1.524,
+          "max": 5.9436
+        },
+        "spreadM": {
+          "min": 1.8288,
+          "max": 3.048
+        }
+      },
+      "provenanceEvidenceIds": [
+        "oleander__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
     },
     {
       "botanicalTaxonId": "taxon:olea-europaea",
@@ -1852,6 +2810,50 @@
       "meterTruth": false
     },
     {
+      "botanicalTaxonId": "taxon:pisum-sativum",
+      "canonicalSlugAliases": [
+        "garden-pea"
+      ],
+      "scientificName": "Pisum sativum",
+      "architectureMode": "climber",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "garden-pea__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "garden-pea__ncsu__mature-size-full64-v1",
+      "selectedSource": "garden-pea__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.3048,
+          "max": 0.4572
+        },
+        "spreadM": {
+          "min": 0.1524,
+          "max": 0.3048
+        }
+      },
+      "provenanceEvidenceIds": [
+        "garden-pea__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
       "botanicalTaxonId": "taxon:plinia-cauliflora",
       "canonicalSlugAliases": [
         "jaboticaba"
@@ -1979,6 +2981,50 @@
       "runtimeWired": false,
       "botanicalEvidenceRemainsValid": true,
       "mayChooseUniversalPersonalGardenSize": false
+    },
+    {
+      "botanicalTaxonId": "taxon:prunus-domestica",
+      "canonicalSlugAliases": [
+        "plum"
+      ],
+      "scientificName": "Prunus domestica",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "plum__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "plum__ncsu__mature-size-full64-v1",
+      "selectedSource": "plum__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 3.048,
+          "max": 6.096
+        },
+        "spreadM": {
+          "min": 3.048,
+          "max": 6.096
+        }
+      },
+      "provenanceEvidenceIds": [
+        "plum__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
     },
     {
       "botanicalTaxonId": "taxon:prunus-dulcis",
@@ -2198,6 +3244,50 @@
       "mayChooseUniversalPersonalGardenSize": false
     },
     {
+      "botanicalTaxonId": "taxon:salvia-officinalis",
+      "canonicalSlugAliases": [
+        "garden-sage"
+      ],
+      "scientificName": "Salvia officinalis",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "garden-sage__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "garden-sage__ncsu__mature-size-full64-v1",
+      "selectedSource": "garden-sage__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.3048,
+          "max": 0.6096
+        },
+        "spreadM": {
+          "min": 0.6096,
+          "max": 0.9144
+        }
+      },
+      "provenanceEvidenceIds": [
+        "garden-sage__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
       "botanicalTaxonId": "taxon:salvia-rosmarinus",
       "canonicalSlugAliases": [
         "rosemary"
@@ -2222,6 +3312,182 @@
       },
       "provenanceEvidenceIds": [
         "rosemary__ncsu__landscape-mature"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:sambucus-canadensis",
+      "canonicalSlugAliases": [
+        "elderberry"
+      ],
+      "scientificName": "Sambucus canadensis",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "elderberry__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "elderberry__ncsu__mature-size-full64-v1",
+      "selectedSource": "elderberry__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 1.524,
+          "max": 3.6576
+        },
+        "spreadM": {
+          "min": 1.8288,
+          "max": 3.6576
+        }
+      },
+      "provenanceEvidenceIds": [
+        "elderberry__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:spinacia-oleracea",
+      "canonicalSlugAliases": [
+        "spinach"
+      ],
+      "scientificName": "Spinacia oleracea",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "spinach__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "spinach__ncsu__mature-size-full64-v1",
+      "selectedSource": "spinach__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.1524,
+          "max": 0.3048
+        },
+        "spreadM": {
+          "min": 0.1524,
+          "max": 0.3048
+        }
+      },
+      "provenanceEvidenceIds": [
+        "spinach__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:syringa-vulgaris",
+      "canonicalSlugAliases": [
+        "common-lilac"
+      ],
+      "scientificName": "Syringa vulgaris",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "common-lilac__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "common-lilac__ncsu__mature-size-full64-v1",
+      "selectedSource": "common-lilac__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 2.4384,
+          "max": 4.8768
+        },
+        "spreadM": {
+          "min": 1.8288,
+          "max": 3.6576
+        }
+      },
+      "provenanceEvidenceIds": [
+        "common-lilac__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:tagetes-patula",
+      "canonicalSlugAliases": [
+        "french-marigold"
+      ],
+      "scientificName": "Tagetes patula",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "french-marigold__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "french-marigold__ncsu__mature-size-full64-v1",
+      "selectedSource": "french-marigold__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.1524,
+          "max": 0.3048
+        },
+        "spreadM": {
+          "min": 0.1524,
+          "max": 0.4572
+        }
+      },
+      "provenanceEvidenceIds": [
+        "french-marigold__ncsu__mature-size-full64-v1"
       ],
       "conflictingEvidenceIds": null,
       "partialAnchor": null,
@@ -2288,6 +3554,270 @@
       "authorityVersion": "botanical-size-authority-v1",
       "runtimeWired": false,
       "contextSeparableHeight": false
+    },
+    {
+      "botanicalTaxonId": "taxon:thymus-vulgaris",
+      "canonicalSlugAliases": [
+        "common-thyme"
+      ],
+      "scientificName": "Thymus vulgaris",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "common-thyme__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "common-thyme__ncsu__mature-size-full64-v1",
+      "selectedSource": "common-thyme__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.1524,
+          "max": 0.3048
+        },
+        "spreadM": {
+          "min": 0.1524,
+          "max": 0.4064
+        }
+      },
+      "provenanceEvidenceIds": [
+        "common-thyme__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:tropaeolum-majus",
+      "canonicalSlugAliases": [
+        "nasturtium"
+      ],
+      "scientificName": "Tropaeolum majus",
+      "architectureMode": "climber",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "nasturtium__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "nasturtium__ncsu__mature-size-full64-v1",
+      "selectedSource": "nasturtium__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.3048,
+          "max": 3.048
+        },
+        "spreadM": {
+          "min": 0.3048,
+          "max": 0.9144
+        }
+      },
+      "provenanceEvidenceIds": [
+        "nasturtium__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:vaccinium-corymbosum",
+      "canonicalSlugAliases": [
+        "blueberry"
+      ],
+      "scientificName": "Vaccinium corymbosum",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "blueberry__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "blueberry__ncsu__mature-size-full64-v1",
+      "selectedSource": "blueberry__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 1.8288,
+          "max": 3.6576
+        },
+        "spreadM": {
+          "min": 1.8288,
+          "max": 3.048
+        }
+      },
+      "provenanceEvidenceIds": [
+        "blueberry__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:vaccinium-macrocarpon",
+      "canonicalSlugAliases": [
+        "cranberry"
+      ],
+      "scientificName": "Vaccinium macrocarpon",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "cranberry__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "cranberry__ncsu__mature-size-full64-v1",
+      "selectedSource": "cranberry__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.3048,
+          "max": 0.9144
+        },
+        "spreadM": {
+          "min": 0.4572,
+          "max": 0.7112
+        }
+      },
+      "provenanceEvidenceIds": [
+        "cranberry__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:wisteria-sinensis",
+      "canonicalSlugAliases": [
+        "chinese-wisteria"
+      ],
+      "scientificName": "Wisteria sinensis",
+      "architectureMode": "climber",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "chinese-wisteria__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "chinese-wisteria__ncsu__mature-size-full64-v1",
+      "selectedSource": "chinese-wisteria__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 3.048,
+          "max": 7.62
+        },
+        "spreadM": {
+          "min": 1.2192,
+          "max": 9.144
+        }
+      },
+      "provenanceEvidenceIds": [
+        "chinese-wisteria__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:yucca-filamentosa",
+      "canonicalSlugAliases": [
+        "yucca"
+      ],
+      "scientificName": "Yucca filamentosa",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "yucca__ncsu__mature-size-full64-v1",
+      "selectedSpreadEvidenceRef": "yucca__ncsu__mature-size-full64-v1",
+      "selectedSource": "yucca__ncsu__mature-size-full64-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.9144,
+          "max": 2.4384
+        },
+        "spreadM": {
+          "min": 0.9144,
+          "max": 1.524
+        }
+      },
+      "provenanceEvidenceIds": [
+        "yucca__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
     },
     {
       "botanicalTaxonId": "taxon:zinnia-elegans",
