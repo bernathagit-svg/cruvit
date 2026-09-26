@@ -78,15 +78,24 @@ export function classifyFruitProductionIntent(runtimePlant){
   const groups=Array.isArray(traits.groupIds)?traits.groupIds.map(x=>norm(x)):[];
   const tags=Array.isArray(runtimePlant?.tags)?runtimePlant.tags.map(x=>norm(x)):[];
   const prov=traits?.traitProvenance?.fruitingRequirements||{};
+  const tagProv=traits?.traitProvenance?.tags||{};
   const fruitingText=norm(traits.fruitingRequirements);
   const provenanceAsserted=String(prov?.status||'').toLowerCase()==='asserted';
   const provenanceKnown=provenanceAsserted && Array.isArray(prov?.sourceIds) && prov.sourceIds.length>0;
+  const tagProvenanceKnown=
+    String(tagProv?.status||'').toLowerCase()==='asserted'
+    && Array.isArray(tagProv?.sourceIds)
+    && tagProv.sourceIds.length>0;
+  const tagEvidenceText=norm(tagProv?.shortExcerpt);
 
   const structuralPositive=
     groups.some(g=>/fruit|citrus|berry/.test(g))
     || tags.some(t=>['fruit','citrus','berry','fruit-tree','orchard'].includes(t));
   if(structuralPositive){
     return {applicable:true,authority:'STRUCTURED_FRUIT_PURPOSE',reason:null};
+  }
+  if(tagProvenanceKnown && /catalog tags:.*\b(fruit|berry|citrus)\b/.test(tagEvidenceText)){
+    return {applicable:true,authority:'SOURCE_BACKED_CATALOG_TAG_PURPOSE',reason:null};
   }
 
   // Explicit negative / secondary reproductive descriptions must not turn an ornamental,
