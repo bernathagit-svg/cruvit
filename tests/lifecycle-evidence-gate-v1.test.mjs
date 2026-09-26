@@ -30,3 +30,16 @@ test('structured Annual + Perennial source block is held as conflict',()=>{
   assert.equal(r.state,'UNKNOWN');
   assert.equal(r.code,'STRUCTURED_LIFECYCLE_CONFLICT');
 });
+
+
+test('matches hybrid scientific identity across multiplication-sign normalization',()=>{
+  const r=extractExplicitLifecycle('Fragaria x ananassa Whole Plant Traits: Plant Type: Perennial Ground Cover Herb','Fragaria × ananassa');
+  assert.equal(r.ok,true); assert.equal(r.state,'PERENNIAL');
+});
+
+test('matches infraspecific identity against authoritative base-species page',()=>{
+  const broccoli=extractExplicitLifecycle('Brassica oleracea Whole Plant Traits: Plant Type: Biennial Vegetable','Brassica oleracea var. italica');
+  assert.equal(broccoli.ok,true); assert.equal(broccoli.state,'BIENNIAL');
+  const carrot=extractExplicitLifecycle('Daucus carota Whole Plant Traits: Plant Type: Biennial Edible Root','Daucus carota subsp. sativus');
+  assert.equal(carrot.ok,true); assert.equal(carrot.state,'BIENNIAL');
+});
