@@ -44,6 +44,9 @@ async function buildInput(plan){
   const frameW=fullImg.naturalWidth||fullImg.width;
   const frameH=fullImg.naturalHeight||fullImg.height;
   const cut=row.geometry.cutout;
+  const compositeProfile=String(plan?.inputContract?.compositeProfile||'DEFAULT');
+  const boundaryMode=String(plan?.inputContract?.finalCompositeBoundaryMode||'HARD_ROUNDED_RECT_V1');
+  const lowPlant=compositeProfile==='LOW_PLANT_TIGHT_FEATHER_V1';
 
   const cx=Number(cut.x)+Number(cut.width)/2;
   const cy=Number(cut.y)+Number(cut.height)*0.54;
@@ -62,7 +65,9 @@ async function buildInput(plan){
   const sx=out/side;
   const bx=(Number(cut.x)-cropX)*sx,by=(Number(cut.y)-cropY)*sx;
   const bw=Number(cut.width)*sx,bh=Number(cut.height)*sx;
-  const expandX=Math.max(18,bw*0.12),expandTop=Math.max(14,bh*0.07),expandBottom=Math.max(28,bh*0.16);
+  const expandX=Math.max(lowPlant?10:18,bw*(lowPlant?0.05:0.12));
+  const expandTop=Math.max(lowPlant?8:14,bh*(lowPlant?0.03:0.07));
+  const expandBottom=Math.max(lowPlant?18:28,bh*(lowPlant?0.10:0.16));
   const editX=clamp(bx-expandX,0,out),editY=clamp(by-expandTop,0,out);
   const editW=clamp(bw+expandX*2,1,out-editX),editH=clamp(bh+expandTop+expandBottom,1,out-editY);
 
@@ -75,10 +80,21 @@ async function buildInput(plan){
 
   const alpha=document.createElement('canvas');alpha.width=out;alpha.height=out;
   const actx=alpha.getContext('2d');if(!actx)throw new Error('ALPHA_CTX');
-  actx.fillStyle='#fff';roundedRectPath(actx,editX,editY,editW,editH,Math.max(24,editW*0.08));actx.fill();
-  actx.beginPath();actx.ellipse(bx+bw/2,Math.min(out-2,by+bh*0.98),Math.max(24,bw*0.48),Math.max(12,bh*0.10),0,0,Math.PI*2);actx.fill();
+  if(boundaryMode==='FEATHERED_EDIT_REGION_V1'){
+    const shape=document.createElement('canvas');shape.width=out;shape.height=out;
+    const sctx=shape.getContext('2d');if(!sctx)throw new Error('ALPHA_SHAPE_CTX');
+    sctx.fillStyle='#fff';roundedRectPath(sctx,editX,editY,editW,editH,Math.max(18,editW*0.07));sctx.fill();
+    sctx.beginPath();sctx.ellipse(bx+bw/2,Math.min(out-2,by+bh*0.98),Math.max(18,bw*0.44),Math.max(10,bh*0.09),0,0,Math.PI*2);sctx.fill();
+    const featherPx=Math.max(12,Math.min(30,Math.min(editW,editH)*0.045));
+    actx.filter='blur('+featherPx+'px)';
+    actx.drawImage(shape,0,0);
+    actx.filter='none';
+  }else{
+    actx.fillStyle='#fff';roundedRectPath(actx,editX,editY,editW,editH,Math.max(24,editW*0.08));actx.fill();
+    actx.beginPath();actx.ellipse(bx+bw/2,Math.min(out-2,by+bh*0.98),Math.max(24,bw*0.48),Math.max(12,bh*0.10),0,0,Math.PI*2);actx.fill();
+  }
 
-  return {cropBase64:data64(cropCanvas),maskBase64:data64(mask),alpha,fullImg,frameW,frameH,cropRect:{x:cropX,y:cropY,side},outputSize:out,blobUrl:loaded.url};
+  return {cropBase64:data64(cropCanvas),maskBase64:data64(mask),alpha,fullImg,frameW,frameH,cropRect:{x:cropX,y:cropY,side},outputSize:out,blobUrl:loaded.url,boundaryMode,compositeProfile};
 }
 
 async function hardComposite(input,editedBase64){
@@ -110,7 +126,8 @@ async function runOne(runId){
 
   const compositeBase64=await hardComposite(input,bd.outputBase64);
   const sr=await fetch('/.netlify/functions/plant-visual-natural-blend-composite-store',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({
-    runId:plan.runId,jobId:plan.sourceJobId,compositeBase64
+    runId:plan.runId,jobId:plan.sourceJobId,compositeBase64,
+    compositeMode:input.boundaryMode,compositeProfile:input.compositeProfile
   })});
   const sd=await sr.json();
   if(!sr.ok||!sd?.ok)throw new Error(sd?.code||('STORE_'+sr.status));
