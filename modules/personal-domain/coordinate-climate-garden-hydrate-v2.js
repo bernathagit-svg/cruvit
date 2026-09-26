@@ -23,6 +23,10 @@ import {
   resolveGlobalCoverageRoot
 } from './coordinate-climate-global-lookup-v2.js';
 import { isClimateRemoteTransportAvailable } from './coordinate-climate-global-object-storage-v1.js';
+import {
+  readGlobalClimateDeploymentReadiness,
+  GLOBAL_CLIMATE_COVERAGE_STATE
+} from './coordinate-climate-global-deployment-readiness-v1.js';
 import { buildStructuralClimateServerFields } from './structural-climate-persistence-contract.js';
 import { isPersistedClimateAuthorityStale } from './pre-scale-suitability-systemic-hardening-v1-contract.js';
 
@@ -323,6 +327,27 @@ export async function resolveGardenStructuralClimateFromCoordinateV2Async(lat, l
   const preferGlobal = options.preferGlobal !== false && options.disableGlobal !== true;
   let lookup = null;
   let lookupSource = null;
+  const localGlobalReady = isAuthoritativeGlobalCorpusAvailable(options.globalRoot);
+  let globalCoverage = localGlobalReady
+    ? {
+        state:'LOCAL_GLOBAL_READY',
+        globalReady:true,
+        globalBakeId:options.globalBakeId||null,
+        reason:null
+      }
+    : {
+        state:GLOBAL_CLIMATE_COVERAGE_STATE.UNAVAILABLE,
+        globalReady:false,
+        globalBakeId:options.globalBakeId||null,
+        reason:'GLOBAL_AUTHORITY_NOT_CHECKED'
+      };
+  if (preferGlobal && !localGlobalReady && isClimateRemoteTransportAvailable(options.env)) {
+    globalCoverage = await readGlobalClimateDeploymentReadiness({
+      env:options.env,
+      globalBakeId:options.globalBakeId,
+      force:options.forceCoverageReadiness===true
+    });
+  }
 
   if (preferGlobal && isGlobalClimateAuthorityReachable(options.globalRoot, options.env)) {
     const globalLookup = await lookupCoordinateClimateGlobalAsync(latitude, longitude, {
@@ -369,7 +394,9 @@ export async function resolveGardenStructuralClimateFromCoordinateV2Async(lat, l
       cost: getCoordinateClimateRuntimeCounters(),
       prepEnqueued: prep,
       resolutionContract: RESOLUTION_CONTRACT_V2,
-      lookupSource: null
+      lookupSource: null,
+      globalCoverageState:globalCoverage.state,
+      globalCoverage
     };
   }
 
@@ -387,7 +414,9 @@ export async function resolveGardenStructuralClimateFromCoordinateV2Async(lat, l
     lookupSource,
     tileKey: lookup.tileKey || null,
     objectKey: lookup.objectKey || null,
-    globalBakeId: lookup.globalBakeId || null
+    globalBakeId: lookup.globalBakeId || null,
+    globalCoverageState:globalCoverage.state,
+    globalCoverage
   };
 }
 
