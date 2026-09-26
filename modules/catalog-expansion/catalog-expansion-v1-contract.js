@@ -60,7 +60,11 @@ export function enforceBatch2EvidenceIngestionRule(packet, { hardFail = true } =
     'fruitingRequirements'
   ]);
   for (const c of claims) {
-    if (!climateTraitFields.has(c.field) && !String(c.field || '').startsWith('reproductive.')) {
+    if (
+      !climateTraitFields.has(c.field)
+      && !String(c.field || '').startsWith('reproductive.')
+      && !String(c.field || '').startsWith('reproductiveClimate.')
+    ) {
       continue;
     }
     if (c.status !== 'asserted') continue;
@@ -117,7 +121,15 @@ export const CLAIM_FIELDS = Object.freeze([
   'tags',
   'gardenCompatibility.spacing.matureSize',
   ...QUANTITATIVE_CLAIM_FIELDS,
-  ...REPRODUCTIVE_BIOLOGY_CLAIM_FIELDS
+  ...REPRODUCTIVE_BIOLOGY_CLAIM_FIELDS,
+  'reproductiveClimate.flowering.requiresFrostFree',
+  'reproductiveClimate.flowering.requiresCoolSeason',
+  'reproductiveClimate.flowering.summerHeatBand',
+  'reproductiveClimate.flowering.minWarmestMonthMeanMaxC',
+  'reproductiveClimate.fruiting.requiresFrostFree',
+  'reproductiveClimate.fruiting.requiresCoolSeason',
+  'reproductiveClimate.fruiting.summerHeatBand',
+  'reproductiveClimate.fruiting.minWarmestMonthMeanMaxC'
 ]);
 
 const TRAIT_FIELDS = new Set([
@@ -479,12 +491,41 @@ export function materializePlantCatalogItemFromPacket(packet, options = {}) {
     climateTraits.reproductiveBiology = reproductiveBiology;
   }
 
+  // Structured reproductive climate block.
+  // Only explicitly asserted packet claims are materialized; no prose inference here.
+  const reproductiveClimate = { contractVersion: 'reproductive-climate-v1' };
+  for (const claim of packet.claims) {
+    const field = String(claim?.field || '');
+    if (!field.startsWith('reproductiveClimate.')) continue;
+    if (claim.status !== 'asserted' || claim.value === undefined || claim.value === null || claim.value === '') continue;
+    const parts = field.split('.');
+    if (parts.length !== 3) continue;
+    const phase = parts[1];
+    const key = parts[2];
+    if (!['flowering','fruiting'].includes(phase)) continue;
+    if (!reproductiveClimate[phase]) reproductiveClimate[phase] = {};
+    reproductiveClimate[phase][key] = claim.value;
+    reproductiveClimate[phase].evidenceClass =
+      claim.evidenceClass || classifyClaimFieldProvenance(claim).evidenceClass;
+    reproductiveClimate[phase].sourceIds = Array.isArray(claim.sourceIds) ? [...claim.sourceIds] : [];
+    reproductiveClimate[phase].sourceExcerpt = claim.shortExcerpt || null;
+    if (claim.transformation || claim.transformRef) {
+      reproductiveClimate[phase].transformRef = claim.transformRef || claim.transformation;
+    }
+  }
+  if (reproductiveClimate.flowering || reproductiveClimate.fruiting) {
+    climateTraits.reproductiveClimate = reproductiveClimate;
+  }
+
   // Field-level evidence classes for evaluator evidence-strength propagation.
   const traitEvidenceClasses = {};
   const traitProvenance = {};
   for (const c of packet.claims) {
     if (!TRAIT_FIELDS.has(c.field) && c.field !== 'groupIds' && c.field !== 'floweringRequirements' && c.field !== 'fruitingRequirements') {
-      if (!String(c.field || '').startsWith('reproductive.')) continue;
+      if (
+        !String(c.field || '').startsWith('reproductive.')
+        && !String(c.field || '').startsWith('reproductiveClimate.')
+      ) continue;
     }
     const cls = c.evidenceClass || classifyClaimFieldProvenance(c).evidenceClass;
     traitEvidenceClasses[c.field] = cls;
