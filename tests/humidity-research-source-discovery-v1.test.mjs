@@ -5,7 +5,7 @@ import {generatedNcsuSpeciesSource} from '../netlify/functions/humidity-research
 test('plain binomial scientific name gets deterministic NC State candidate',()=>{
   const s=generatedNcsuSpeciesSource('Pyrus communis','pear');
   assert.equal(s.url,'https://plants.ces.ncsu.edu/plants/pyrus-communis/');
-  assert.equal(s.sourceId,'ncsu-auto-pear');
+  assert.equal(s.sourceId,'ncsu-pyrus-communis');
   assert.equal(s.generatedDiscovery,true);
 });
 
