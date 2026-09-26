@@ -25,6 +25,11 @@ import {
   REPRODUCTIVE_BIOLOGY_CLAIM_FIELDS,
   REPRODUCTIVE_BIOLOGY_CONTRACT_VERSION
 } from './reproductive-biology-v1-contract.js';
+import {
+  explicitCoolSeasonFruitingTransform,
+  explicitFrostFreeFruitingTransform,
+  qualitativeSummerHeatFruitingTransform
+} from '../suitability/reproductive-climate-transform-v1.js';
 
 export const CATALOG_EXPANSION_CONTRACT_VERSION = '1.2.0';
 export const CATALOG_EXPANSION_COMPATIBLE_VERSIONS = Object.freeze(['1.0.0', '1.1.0', '1.2.0']);
@@ -150,6 +155,80 @@ const TRAIT_FIELDS = new Set([
 
 function isNonEmptyString(v) {
   return typeof v === 'string' && v.trim().length > 0;
+}
+
+function usableSourceClaim(claim) {
+  const cls = String(claim?.evidenceClass || '').toUpperCase();
+  return claim?.status === 'asserted'
+    && Array.isArray(claim?.sourceIds)
+    && claim.sourceIds.length > 0
+    && ['SOURCE_SUPPORTED','HEURISTIC_ASSERTION'].includes(cls);
+}
+
+function claimEvidenceText(claim) {
+  const values = [];
+  if (typeof claim?.value === 'string') values.push(claim.value);
+  else if (claim?.value !== undefined && claim?.value !== null) values.push(String(claim.value));
+  if (claim?.shortExcerpt) values.push(String(claim.shortExcerpt));
+  return values.join(' ').trim();
+}
+
+function packetFruitProductionRelevant(packet) {
+  const claims = Array.isArray(packet?.claims) ? packet.claims : [];
+  const fruit = claims.find((x) => x?.field === 'fruitingRequirements');
+  if (!usableSourceClaim(fruit)) return false;
+  const text = claimEvidenceText(fruit).toLowerCase();
+  if (/not grown for (?:edible )?fruit|not a food crop|ornamental|seed heads?|capsules?/.test(text)) {
+    return false;
+  }
+  if (
+    /edible|harvest|fruit set|fruiting|ripen|ripe|berries?|pods?|peas?|beans?|drupe|pome|crop/.test(text)
+  ) {
+    return true;
+  }
+  const tags = claims.find((x) => x?.field === 'tags' && x?.status === 'asserted');
+  const tagValues = Array.isArray(tags?.value) ? tags.value : [];
+  return tagValues.some((x) =>
+    ['fruit','citrus','berry','fruit-tree','orchard','melon','cucurbit','legume'].includes(
+      String(x || '').trim().toLowerCase()
+    )
+  );
+}
+
+function addDerivedReproductiveClaim(reproductiveClimate, derived, sourceExcerpt = null) {
+  if (!derived?.eligible || !String(derived.field || '').startsWith('reproductiveClimate.')) return;
+  const parts = String(derived.field).split('.');
+  if (parts.length !== 3) return;
+  const phase = parts[1];
+  const key = parts[2];
+  if (!['flowering','fruiting'].includes(phase)) return;
+  if (!reproductiveClimate[phase]) reproductiveClimate[phase] = {};
+  if (reproductiveClimate[phase][key] !== undefined) return;
+  reproductiveClimate[phase][key] = derived.value;
+  reproductiveClimate[phase].evidenceClass = 'HEURISTIC_ASSERTION';
+  reproductiveClimate[phase].evidenceLineage =
+    derived.evidenceLineage || 'DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM';
+  const ids = [
+    ...(Array.isArray(reproductiveClimate[phase].sourceIds) ? reproductiveClimate[phase].sourceIds : []),
+    ...(Array.isArray(derived.sourceIds) ? derived.sourceIds : [])
+  ].filter(Boolean);
+  reproductiveClimate[phase].sourceIds = [...new Set(ids)];
+  const refs = [
+    ...(Array.isArray(reproductiveClimate[phase].transformRefs)
+      ? reproductiveClimate[phase].transformRefs
+      : reproductiveClimate[phase].transformRef
+        ? [reproductiveClimate[phase].transformRef]
+        : []),
+    derived.transformRef
+  ].filter(Boolean);
+  if (refs.length === 1) reproductiveClimate[phase].transformRef = refs[0];
+  if (refs.length > 1) {
+    delete reproductiveClimate[phase].transformRef;
+    reproductiveClimate[phase].transformRefs = [...new Set(refs)];
+  }
+  if (sourceExcerpt && !reproductiveClimate[phase].sourceExcerpt) {
+    reproductiveClimate[phase].sourceExcerpt = sourceExcerpt;
+  }
 }
 
 function fail(errors, msg) {
@@ -532,7 +611,9 @@ export function materializePlantCatalogItemFromPacket(packet, options = {}) {
   }
 
   // Structured reproductive climate block.
-  // Only explicitly asserted packet claims are materialized; no prose inference here.
+  // 1) Explicit packet claims are authoritative.
+  // 2) Missing structured fields may be filled only by named deterministic transforms
+  //    over asserted, source-linked evidence. Derived values stay HEURISTIC_ASSERTION.
   const reproductiveClimate = { contractVersion: 'reproductive-climate-v1' };
   for (const claim of packet.claims) {
     const field = String(claim?.field || '');
@@ -553,6 +634,56 @@ export function materializePlantCatalogItemFromPacket(packet, options = {}) {
       reproductiveClimate[phase].transformRef = claim.transformRef || claim.transformation;
     }
   }
+
+  const fruitProductionRelevant = packetFruitProductionRelevant(packet);
+  const fruitClimateClaim = packet.claims.find((x) => x?.field === 'fruitingRequirements');
+  const chillClaim = packet.claims.find((x) => x?.field === 'needsWinterChill');
+
+  if (fruitProductionRelevant && usableSourceClaim(chillClaim) && chillClaim.value === true) {
+    const base = {
+      eligible: true,
+      value: true,
+      evidenceClass: 'HEURISTIC_ASSERTION',
+      sourceIds: [...chillClaim.sourceIds],
+      transformRef: 'winter-chill-to-cool-season-v1@1.0.0',
+      evidenceLineage: 'DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM'
+    };
+    addDerivedReproductiveClaim(
+      reproductiveClimate,
+      {...base, field:'reproductiveClimate.flowering.requiresCoolSeason'},
+      claimEvidenceText(chillClaim)
+    );
+    addDerivedReproductiveClaim(
+      reproductiveClimate,
+      {...base, field:'reproductiveClimate.fruiting.requiresCoolSeason'},
+      claimEvidenceText(chillClaim)
+    );
+  } else if (fruitProductionRelevant && usableSourceClaim(chillClaim)) {
+    const cool = explicitCoolSeasonFruitingTransform({
+      sourceText: claimEvidenceText(chillClaim),
+      fruitProductionRelevant,
+      sourceIds: chillClaim.sourceIds
+    });
+    addDerivedReproductiveClaim(reproductiveClimate, cool, claimEvidenceText(chillClaim));
+  }
+
+  if (fruitProductionRelevant && usableSourceClaim(fruitClimateClaim)) {
+    const sourceText = claimEvidenceText(fruitClimateClaim);
+    const frostFree = explicitFrostFreeFruitingTransform({
+      sourceText,
+      fruitProductionRelevant,
+      sourceIds: fruitClimateClaim.sourceIds
+    });
+    addDerivedReproductiveClaim(reproductiveClimate, frostFree, sourceText);
+
+    const heat = qualitativeSummerHeatFruitingTransform({
+      sourceText,
+      fruitProductionRelevant,
+      sourceIds: fruitClimateClaim.sourceIds
+    });
+    addDerivedReproductiveClaim(reproductiveClimate, heat, sourceText);
+  }
+
   if (reproductiveClimate.flowering || reproductiveClimate.fruiting) {
     climateTraits.reproductiveClimate = reproductiveClimate;
   }
