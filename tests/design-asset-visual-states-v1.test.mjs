@@ -96,3 +96,22 @@ test('visual-state contract separates axes and does not cartesian-explode', () =
   });
   assert.equal(evergreenDemand.requiredVariants.length, 2);
 });
+
+
+test('context-dependent seasonality makes dormancy optional rather than a blocker',()=>{
+  const req=deriveVisualStateRequirements({
+    canonicalSlug:'context-climber',
+    scientific:'Contextus climber',
+    tags:['climber'],
+    growth:'Woody climber',
+    seasonalityEvidence:{
+      state:'CONTEXT_DEPENDENT',
+      evidenceClass:'SOURCE_SUPPORTED'
+    },
+    designMetadata:{lifecycle:'perennial'}
+  });
+  assert.equal(req.dormantRequired,'OPTIONAL');
+  assert.ok(!req.unknownStates.includes('dormant'));
+  assert.ok(req.optionalVariants.some(v=>v.phenologyState==='dormant'));
+  assert.equal(req.dormantDecision.reasonCode,VARIANT_REASON.CONTEXT_DEPENDENT_DORMANCY);
+});

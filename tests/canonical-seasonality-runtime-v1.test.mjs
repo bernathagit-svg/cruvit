@@ -53,3 +53,30 @@ test('designMetadata leafHabit remains fallback when canonical seasonality evide
   assert.equal(plant.growthHabit,'evergreen');
   assert.equal(plant.seasonalityEvidence.state,'EVERGREEN');
 });
+
+
+test('context-dependent canonical seasonality remains visible at runtime',()=>{
+  const row={
+    slug:'common-jasmine',
+    scientific_name:'Jasminum officinale',
+    common_names:{en:'Common jasmine'},
+    climate_traits:{
+      seasonalityEvidence:{
+        state:'CONTEXT_DEPENDENT',
+        evidenceClass:'SOURCE_SUPPORTED',
+        sourceIds:['ncsu-jasminum-officinale']
+      },
+      designMetadata:{
+        leafHabit:{state:'UNKNOWN',evidenceClass:'UNKNOWN'}
+      }
+    },
+    provenance:[{sourceId:'ncsu-jasminum-officinale'}],
+    needs_review:false,
+    verification_state:'verified',
+    media:{},
+    media_status:'IMAGE_PENDING'
+  };
+  const plant=catalogRowToRuntimePlant(row);
+  assert.equal(plant.seasonalityEvidence.state,'CONTEXT_DEPENDENT');
+  assert.equal(plant.seasonalityEvidence.evidenceClass,'SOURCE_SUPPORTED');
+});

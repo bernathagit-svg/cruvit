@@ -73,6 +73,7 @@ export const VARIANT_REASON = Object.freeze({
   DECIDUOUS_LEAF_OFF: 'DECIDUOUS_LEAF_OFF',
   HERBACEOUS_DIEBACK: 'HERBACEOUS_DIEBACK',
   EVERGREEN_NO_DORMANCY_ASSET: 'EVERGREEN_NO_DORMANCY_ASSET',
+  CONTEXT_DEPENDENT_DORMANCY: 'CONTEXT_DEPENDENT_DORMANCY',
   LIFECYCLE_EVIDENCE_UNKNOWN: 'LIFECYCLE_EVIDENCE_UNKNOWN',
   ANNUAL_OR_BIENNIAL_NO_DORMANT_ASSET: 'ANNUAL_OR_BIENNIAL_NO_DORMANT_ASSET',
   GROWTH_STAGE_EVIDENCE_UNKNOWN: 'GROWTH_STAGE_EVIDENCE_UNKNOWN',
@@ -422,6 +423,24 @@ export function classifyDormantState(plant, visualForm) {
       REQUIREMENT.NOT_REQUIRED,
       VARIANT_REASON.ANNUAL_OR_BIENNIAL_NO_DORMANT_ASSET,
       'annual/biennial lifecycle ends or renews rather than requiring a persistent dormant presentation asset',
+      CONFIDENCE.HIGH
+    );
+  }
+
+  const seasonalityEvidence=
+    plant?.seasonalityEvidence
+    || plant?.climateTraits?.seasonalityEvidence
+    || plant?.designMetadata?.leafHabit
+    || plant?.climateTraits?.designMetadata?.leafHabit
+    || null;
+  if (
+    String(seasonalityEvidence?.evidenceClass||'').toUpperCase()==='SOURCE_SUPPORTED'
+    && String(seasonalityEvidence?.state||'').toUpperCase()==='CONTEXT_DEPENDENT'
+  ) {
+    return decision(
+      REQUIREMENT.OPTIONAL,
+      VARIANT_REASON.CONTEXT_DEPENDENT_DORMANCY,
+      'source-backed leaf habit varies by climate/context; dormant representation may be useful contextually but is not globally required',
       CONFIDENCE.HIGH
     );
   }
