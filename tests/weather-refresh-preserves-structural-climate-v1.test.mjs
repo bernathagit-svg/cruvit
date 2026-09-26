@@ -11,7 +11,9 @@ test('weather refresh preserves existing structural climate when forecast omits 
   assert.ok(end>start,'refreshGardenWeather end missing');
   const body=app.slice(start,end);
   assert.match(body,/existingStructural:loc\.structuralClimate\|\|null/);
-  assert.match(body,/structuralClimate:structuralClimate\|\|loc\.structuralClimate\|\|null/);
+  assert.match(body,/returnedStructural\?\.status==='known'/);
+  assert.match(body,/existingStructural\?\.status==='known'/);
+  assert.match(body,/structuralClimate,/);
   assert.doesNotMatch(body,/structuralClimate:structuralClimate\|\|null,/);
   assert.doesNotMatch(body,/const structuralClimate=result\.structuralClimate\|\|rl\.structuralClimate\|\|null/);
 });
