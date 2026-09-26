@@ -255,3 +255,17 @@ test('species-level catalog identities are not collapsed onto legacy generic med
   assert.equal(resolveCanonicalImageSlug('english-lavender',maps),'lavender');
   assert.equal(resolveCanonicalImageSlug('bigleaf-hydrangea',maps),'hydrangea');
 });
+
+
+test('coverage generator promotes resolved registry species only with exact licensed cache media', async()=>{
+  const { buildActiveCanonicalImageCoverage } = await import('../modules/catalog-media/active-canonical-image-coverage-v1.js');
+  const out=buildActiveCanonicalImageCoverage(process.cwd());
+  for(const slug of ['common-jasmine','spearmint','lesser-bougainvillea']){
+    const row=out.records.find(r=>r.slug===slug);
+    assert.ok(row, slug+' must be active');
+    assert.equal(row.identityScope,'species',slug);
+    assert.equal(row.imageStatus,'IMAGE_READY',slug);
+    assert.equal(row.approved,true,slug);
+    assert.equal(row.inRegistryCache,true,slug);
+  }
+});
