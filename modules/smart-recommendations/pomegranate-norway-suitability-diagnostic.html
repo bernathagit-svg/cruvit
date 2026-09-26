@@ -1,7 +1,7 @@
 <!doctype html>
 <meta charset="utf-8">
 <title>CRUVIT · Pomegranate 3-Scenario Suitability Diagnostic</title>
-<!-- live-proof-v3 -->
+<!-- live-proof-v4-systemic-reproductive-climate -->
 <style>
 body{font:14px/1.45 ui-monospace,monospace;background:#0e1511;color:#e7f0e9;padding:20px}
 pre{white-space:pre-wrap;background:#162019;padding:16px;border-radius:12px}
@@ -134,7 +134,8 @@ iframe{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
         coldTolerance:meta?.coldTolerance||null,
         heatTolerance:meta?.heatTolerance||null,
         humidityTolerance:meta?.humidityTolerance||null,
-        groupIds:meta?.groupIds||[]
+        groupIds:meta?.groupIds||[],
+        reproductiveClimate:meta?.reproductiveClimate||null
       },
       climateProfile:{
         broadClimate:climateProfile?.broadClimate||null,
@@ -152,6 +153,7 @@ iframe{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
         floweringFit:suitability?.floweringFit??null,
         fruitingFit:suitability?.fruitingFit??null,
         hardSurvivalBlocked:suitability?.hardSurvivalBlocked===true,
+        reproductiveClimateGate:suitability?.reproductiveClimateGate||null,
         warnings:suitability?.warnings||[],
         explanationText:suitability?.explanationText||null
       }
