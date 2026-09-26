@@ -2022,6 +2022,9 @@ function climateMetaFromCatalogTraits(traits,scientific){
   if(traits.reproductiveBiology&&typeof traits.reproductiveBiology==='object'){
     merged.reproductiveBiology=Object.assign({},traits.reproductiveBiology);
   }
+  if(traits.reproductiveClimate&&typeof traits.reproductiveClimate==='object'){
+    merged.reproductiveClimate=JSON.parse(JSON.stringify(traits.reproductiveClimate));
+  }
   if(traits.quantitativeEvidence&&typeof traits.quantitativeEvidence==='object'){
     merged.quantitativeEvidence=Object.assign({},traits.quantitativeEvidence);
   }
