@@ -73,15 +73,50 @@ function knowledgeState(runtimePlant){
   };
 }
 
-function reproductiveClimateState(runtimePlant){
+export function classifyFruitProductionIntent(runtimePlant){
   const traits=runtimePlant?.climateTraits||{};
   const groups=Array.isArray(traits.groupIds)?traits.groupIds.map(x=>norm(x)):[];
   const tags=Array.isArray(runtimePlant?.tags)?runtimePlant.tags.map(x=>norm(x)):[];
-  const fruitOriented=Boolean(
-    text(traits.fruitingRequirements)
-    || groups.some(g=>/fruit|citrus|berry/.test(g))
-    || tags.some(t=>['fruit','citrus','berry','edible'].includes(t))
+  const prov=traits?.traitProvenance?.fruitingRequirements||{};
+  const fruitingText=norm(traits.fruitingRequirements);
+  const provenanceAsserted=String(prov?.status||'').toLowerCase()==='asserted';
+  const provenanceKnown=provenanceAsserted && Array.isArray(prov?.sourceIds) && prov.sourceIds.length>0;
+
+  const structuralPositive=
+    groups.some(g=>/fruit|citrus|berry/.test(g))
+    || tags.some(t=>['fruit','citrus','berry','fruit-tree','orchard'].includes(t));
+  if(structuralPositive){
+    return {applicable:true,authority:'STRUCTURED_FRUIT_PURPOSE',reason:null};
+  }
+
+  // Explicit negative / secondary reproductive descriptions must not turn an ornamental,
+  // foliage crop or seed-bearing plant into a fruit-yield recommendation target.
+  const explicitNonFruitPurpose =
+    /not grown for (?:edible )?fruit|not (?:a|an) .*fruit crop|not a food crop|not a conventional culinary fruit crop|grown for (?:foliage|flowers|leaves)|secondary to flowering|if allowed to fruit|ornamental(?:\b|;)|seed heads?|capsules?/.test(fruitingText);
+  if(explicitNonFruitPurpose){
+    return {applicable:false,authority:'EXPLICIT_NON_FRUIT_PURPOSE',reason:'FRUITING_TEXT_DESCRIBES_NON_CROP_REPRODUCTION'};
+  }
+
+  // Legacy catalog rows may lack structural tags. Only source-backed wording that clearly
+  // describes harvested / edible / ripening fruit is accepted as a migration-time purpose signal.
+  const sourceBackedCropText = provenanceKnown && (
+    /edible .*(fruit|berry|berries|pome|drupe|pod|pods)/.test(fruitingText)
+    || /(fruit|berry|berries|pome|drupe|pod|pods).*(edible|sweet|pulp|harvest|ripen|ripe|crop)/.test(fruitingText)
+    || /harvest .*(fruit|berry|berries|pod|pods)/.test(fruitingText)
+    || /(fruit|berry|berries|pod|pods).*ripen/.test(fruitingText)
+    || /fruit set/.test(fruitingText)
   );
+  if(sourceBackedCropText){
+    return {applicable:true,authority:'SOURCE_BACKED_FRUIT_PURPOSE_TEXT',reason:null};
+  }
+
+  return {applicable:false,authority:'NO_FRUIT_PRODUCTION_PURPOSE_EVIDENCE',reason:null};
+}
+
+function reproductiveClimateState(runtimePlant){
+  const traits=runtimePlant?.climateTraits||{};
+  const fruitIntent=classifyFruitProductionIntent(runtimePlant);
+  const fruitOriented=fruitIntent.applicable===true;
   const rc=traits.reproductiveClimate;
   const fruiting=rc&&typeof rc==='object'&&rc.fruiting&&typeof rc.fruiting==='object'
     ?rc.fruiting:null;
@@ -98,6 +133,7 @@ function reproductiveClimateState(runtimePlant){
   );
   return {
     applicable:fruitOriented,
+    purposeAuthority:fruitIntent.authority,
     ready:!fruitOriented||structured,
     contractVersion:rc?.contractVersion||null,
     fruitingStructured:structured,
