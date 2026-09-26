@@ -26,6 +26,15 @@
       "url": "https://www.rhs.org.uk/plants/12350/paeonia-lactiflora/details",
       "authorityTier": "horticultural_society",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "ncsu-herbaceous-peony",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "NC State Extension",
+      "title": "Peony — Paeonia herbaceous types",
+      "url": "https://plants.ces.ncsu.edu/plants/paeonia-herbaceous-types/common-name/peony/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-09-26"
     }
   ],
   "claims": [
@@ -70,9 +79,11 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "rhs-paeonia-lactiflora"
+        "ncsu-herbaceous-peony"
       ],
-      "shortExcerpt": "Cold tolerance characterized as high."
+      "shortExcerpt": "Herbaceous peonies, including Lactiflora cultivars, grow in USDA zones 3–8.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
     },
     {
       "claimId": "heat",
