@@ -39,16 +39,32 @@ function parseFeetInches(ft, inch){
 }
 
 function parseRange(raw,label){
-  const re=new RegExp(
+  const exactFeetInches=new RegExp(
     label+'\\s*:\\s*([0-9.]+)\\s*ft\\.\\s*([0-9.]+)\\s*in\\.\\s*-\\s*([0-9.]+)\\s*ft\\.\\s*([0-9.]+)\\s*in\\.',
     'i'
   );
-  const m=re.exec(raw);
-  if(!m) return null;
-  const min=parseFeetInches(m[1],m[2]);
-  const max=parseFeetInches(m[3],m[4]);
-  if(!(min>0)||!(max>0)||max<min) return null;
-  return {min,max};
+  const fi=exactFeetInches.exec(raw);
+  if(fi){
+    const min=parseFeetInches(fi[1],fi[2]);
+    const max=parseFeetInches(fi[3],fi[4]);
+    if(min>0&&max>0&&max>=min) return {min,max};
+  }
+
+  // UF/IFAS and other extension pages often publish explicit ranges as
+  // "Height: 8 to 20 feet" / "Spread: 6 to 15 feet".
+  // Only an explicit two-ended range is promoted; a single maximum is not
+  // silently converted into a mature-size range.
+  const feetRange=new RegExp(
+    label+'\\s*:\\s*([0-9.]+)\\s*(?:to|–|—|-)\\s*([0-9.]+)\\s*(?:feet|foot|ft\\.?)\\b',
+    'i'
+  );
+  const fr=feetRange.exec(raw);
+  if(fr){
+    const min=+(Number(fr[1])*0.3048).toFixed(4);
+    const max=+(Number(fr[2])*0.3048).toFixed(4);
+    if(min>0&&max>0&&max>=min) return {min,max};
+  }
+  return null;
 }
 
 function structuredBlock(raw,label,nextLabels){
@@ -118,7 +134,7 @@ export function extractStructuredMorphologyAndSize(excerpt=''){
   }
 
   const heightM=parseRange(raw,'Height');
-  const spreadM=parseRange(raw,'Width');
+  const spreadM=parseRange(raw,'Width') || parseRange(raw,'Spread');
 
   return Object.freeze({
     version:MORPHOLOGY_SIZE_EVIDENCE_GATE_VERSION,
