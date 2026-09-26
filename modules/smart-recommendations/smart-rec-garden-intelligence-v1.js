@@ -130,10 +130,12 @@ const POSITIVE_LEVELS = Object.freeze({ excellent: true, good: true });
  */
 export function isPositiveRecommendationIneligible({
   hardSurvivalBlocked,
+  positiveRecommendationEligible,
   recommendationLevel,
   derivedOverall,
   derivedSurvival
 } = {}) {
+  if (positiveRecommendationEligible === false) return true;
   if (hardSurvivalBlocked === true) return true;
   const level = asText(recommendationLevel).toLowerCase();
   if (level === 'blocked') return true;
@@ -164,6 +166,7 @@ export function alignSmartRecSuitabilityWithValidatedOutcomes(suitability = {}, 
   const next = Object.assign({}, suitability && typeof suitability === 'object' ? suitability : {});
   const ineligible = isPositiveRecommendationIneligible({
     hardSurvivalBlocked: next.hardSurvivalBlocked,
+    positiveRecommendationEligible: next.positiveRecommendationEligible,
     recommendationLevel: next.recommendationLevel,
     derivedOverall: derived?.overall,
     derivedSurvival: derived?.survival
