@@ -10,7 +10,7 @@
  * Not a second climate engine: callers still use smartRecEvaluateSuitability.
  * Not plant- or place-specific.
  */
-export const HARD_CLIMATE_SURVIVAL_GATE_VERSION = '1.1.1';
+export const HARD_CLIMATE_SURVIVAL_GATE_VERSION = '1.1.2';
 
 const RISK_RANK = Object.freeze({ unknown: 0, low: 1, medium: 2, high: 3 });
 
@@ -51,6 +51,7 @@ export function coldToleranceIsLow(value) {
 }
 
 function finiteNumber(value) {
+  if (value == null || value === '') return null;
   const n = Number(value);
   return Number.isFinite(n) ? n : null;
 }
