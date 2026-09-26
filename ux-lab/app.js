@@ -9,7 +9,7 @@ const modules=[
     id:"garden",
     name:"My Garden",
     subtitle:"Track, care and grow your garden.",
-    image:"/homepage-v1/assets/hero-garden.jpg"
+    image:"/homepage-v1/assets/my-garden-desktop.png"
   },
   {
     id:"doctor",
