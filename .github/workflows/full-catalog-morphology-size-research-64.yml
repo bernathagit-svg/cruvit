@@ -39,8 +39,13 @@ jobs:
           import fs from 'node:fs';
           const dir='data/catalog/full-catalog/morphology-size-64';
           const files=fs.readdirSync(dir).filter(f=>f.endsWith('.json')&&f!=='summary.json');
-          const docs=files.map(f=>JSON.parse(fs.readFileSync(dir+'/'+f,'utf8')));
-          const rows=docs.map(d=>({
+          const docs=files.map(f=>({file:f,doc:JSON.parse(fs.readFileSync(dir+'/'+f,'utf8'))}));
+          for(const {file,doc} of docs){
+            if(doc?.ok!==true || typeof doc?.canonicalSlug!=='string' || !doc.canonicalSlug){
+              throw new Error('INVALID_RESEARCH_RESPONSE:'+file+':'+String(doc?.code||'UNKNOWN'));
+            }
+          }
+          const rows=docs.map(({doc:d})=>({
             canonicalSlug:d.canonicalSlug,
             scientific:d.scientific,
             externalRequests:d.externalRequests??0,
