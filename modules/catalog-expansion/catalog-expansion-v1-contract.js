@@ -131,10 +131,18 @@ export const CLAIM_FIELDS = Object.freeze([
   'reproductiveClimate.flowering.requiresCoolSeason',
   'reproductiveClimate.flowering.summerHeatBand',
   'reproductiveClimate.flowering.minWarmestMonthMeanMaxC',
+  'reproductiveClimate.flowering.minReproductiveEventC',
+  'reproductiveClimate.flowering.seasonalInductionCue',
+  'reproductiveClimate.flowering.evidenceState',
+  'reproductiveClimate.flowering.contextKeys',
   'reproductiveClimate.fruiting.requiresFrostFree',
   'reproductiveClimate.fruiting.requiresCoolSeason',
   'reproductiveClimate.fruiting.summerHeatBand',
-  'reproductiveClimate.fruiting.minWarmestMonthMeanMaxC'
+  'reproductiveClimate.fruiting.minWarmestMonthMeanMaxC',
+  'reproductiveClimate.fruiting.minReproductiveEventC',
+  'reproductiveClimate.fruiting.seasonalInductionCue',
+  'reproductiveClimate.fruiting.evidenceState',
+  'reproductiveClimate.fruiting.contextKeys'
 ]);
 
 const TRAIT_FIELDS = new Set([
@@ -356,15 +364,25 @@ export function validateCatalogExpansionPacket(packet) {
 
     // Reproductive Climate V1 semantic validation.
     const allowedHeatBands = new Set(['cool','mild','warm','hot','very_hot']);
+    const allowedEvidenceStates = new Set(['CONTEXT_DEPENDENT','RESEARCHED_UNQUANTIFIED']);
+    const allowedInductionCues = new Set(['cool_or_dry']);
     const allowedRcFields = new Set([
       'reproductiveClimate.flowering.requiresFrostFree',
       'reproductiveClimate.flowering.requiresCoolSeason',
       'reproductiveClimate.flowering.summerHeatBand',
       'reproductiveClimate.flowering.minWarmestMonthMeanMaxC',
+      'reproductiveClimate.flowering.minReproductiveEventC',
+      'reproductiveClimate.flowering.seasonalInductionCue',
+      'reproductiveClimate.flowering.evidenceState',
+      'reproductiveClimate.flowering.contextKeys',
       'reproductiveClimate.fruiting.requiresFrostFree',
       'reproductiveClimate.fruiting.requiresCoolSeason',
       'reproductiveClimate.fruiting.summerHeatBand',
-      'reproductiveClimate.fruiting.minWarmestMonthMeanMaxC'
+      'reproductiveClimate.fruiting.minWarmestMonthMeanMaxC',
+      'reproductiveClimate.fruiting.minReproductiveEventC',
+      'reproductiveClimate.fruiting.seasonalInductionCue',
+      'reproductiveClimate.fruiting.evidenceState',
+      'reproductiveClimate.fruiting.contextKeys'
     ]);
     for (const claim of claims) {
       const field = String(claim?.field || '');
@@ -383,10 +401,24 @@ export function validateCatalogExpansionPacket(packet) {
         if (!allowedHeatBands.has(band)) {
           fail(errors, `claim ${claim.claimId}: ${field} must be cool|mild|warm|hot|very_hot`);
         }
-      } else if (field.endsWith('.minWarmestMonthMeanMaxC')) {
+      } else if (field.endsWith('.minWarmestMonthMeanMaxC') || field.endsWith('.minReproductiveEventC')) {
         const n = Number(claim.value);
-        if (!Number.isFinite(n) || n < -10 || n > 60) {
+        if (!Number.isFinite(n) || n < -50 || n > 60) {
           fail(errors, `claim ${claim.claimId}: ${field} must be a plausible Celsius number`);
+        }
+      } else if (field.endsWith('.seasonalInductionCue')) {
+        const cue=String(claim.value||'').trim().toLowerCase();
+        if(!allowedInductionCues.has(cue)){
+          fail(errors, `claim ${claim.claimId}: ${field} must be cool_or_dry`);
+        }
+      } else if (field.endsWith('.evidenceState')) {
+        const state=String(claim.value||'').trim().toUpperCase();
+        if(!allowedEvidenceStates.has(state)){
+          fail(errors, `claim ${claim.claimId}: ${field} must be CONTEXT_DEPENDENT|RESEARCHED_UNQUANTIFIED`);
+        }
+      } else if (field.endsWith('.contextKeys')) {
+        if(!Array.isArray(claim.value) || !claim.value.length || claim.value.some(x=>!isNonEmptyString(x))){
+          fail(errors, `claim ${claim.claimId}: ${field} must be a non-empty string array`);
         }
       }
       if (!claim.evidenceClass) {
