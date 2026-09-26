@@ -55,13 +55,28 @@ function parseRange(raw,label){
   // Only an explicit two-ended range is promoted; a single maximum is not
   // silently converted into a mature-size range.
   const feetRange=new RegExp(
-    label+'\\s*:\\s*([0-9.]+)\\s*(?:to|–|—|-)\\s*([0-9.]+)\\s*(?:feet|foot|ft\\.?)\\b',
+    label+'\\s*:?\\s*([0-9.]+)\\s*(?:to|–|—|-)\\s*([0-9.]+)\\s*(?:feet|foot|ft\\.?)\\b',
     'i'
   );
   const fr=feetRange.exec(raw);
   if(fr){
     const min=+(Number(fr[1])*0.3048).toFixed(4);
     const max=+(Number(fr[2])*0.3048).toFixed(4);
+    if(min>0&&max>0&&max>=min) return {min,max};
+  }
+
+  // RHS and other horticultural authorities often expose explicit metric
+  // ranges as "Max Height 0.5-1 metres" / "Max Spread 0.1-0.5 metres".
+  // Accept only two-ended source ranges; never infer a lower bound from a
+  // single maximum such as "up to 5 metres".
+  const metreRange=new RegExp(
+    label+'\\s*:?\\s*([0-9.]+)\\s*(?:to|–|—|-)\\s*([0-9.]+)\\s*(?:metres|meters|metre|meter|m)\\b',
+    'i'
+  );
+  const mr=metreRange.exec(raw);
+  if(mr){
+    const min=+Number(mr[1]).toFixed(4);
+    const max=+Number(mr[2]).toFixed(4);
     if(min>0&&max>0&&max>=min) return {min,max};
   }
   return null;
