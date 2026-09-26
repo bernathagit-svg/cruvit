@@ -14,10 +14,23 @@ const FORM = Object.freeze({
   PALM:'palm',
   HERBACEOUS_UPRIGHT:'herbaceous-upright',
   HERBACEOUS_CLUMP:'herbaceous-clump',
+  GROUNDCOVER:'groundcover',
   UNKNOWN:'unknown'
 });
 
-function text(v){ return String(v == null ? '' : v).replace(/\s+/g,' ').trim(); }
+function text(v){
+  return String(v == null ? '' : v)
+    .replace(/<script[\s\S]*?<\/script>/gi,' ')
+    .replace(/<style[\s\S]*?<\/style>/gi,' ')
+    .replace(/<[^>]+>/g,' ')
+    .replace(/&nbsp;|&#160;/gi,' ')
+    .replace(/&times;|&#215;/gi,'×')
+    .replace(/&amp;/gi,'&')
+    .replace(/&quot;/gi,'"')
+    .replace(/&#39;|&apos;/gi,"'")
+    .replace(/\s+/g,' ')
+    .trim();
+}
 
 function parseFeetInches(ft, inch){
   const f=Number(ft||0), i=Number(inch||0);
@@ -61,6 +74,7 @@ export function extractStructuredMorphologyAndSize(excerpt=''){
   const vine=/\bvine\b|\bclimber\b|\bclimbing\b/.test(pt+' '+hf);
   const palm=/\bpalm\b|\bcycad\b/.test(pt);
   const herbaceous=/\bherbaceous\b/.test(pt);
+  const groundcover=/\bground\s*cover\b|\bgroundcover\b/.test(pt+' '+hf);
   const clump=/\bclump\b|\bclumping\b|\bmounding\b|\bspreading\b/.test(hf);
   const erect=/\berect\b|\bupright\b/.test(hf);
 
@@ -88,6 +102,10 @@ export function extractStructuredMorphologyAndSize(excerpt=''){
     visualForm=FORM.SHRUB;
     architectureModes=['shrub'];
     morphologyCode='EXPLICIT_SHRUB';
+  }else if(groundcover){
+    visualForm=FORM.GROUNDCOVER;
+    architectureModes=['default'];
+    morphologyCode='EXPLICIT_GROUNDCOVER';
   }else if(herbaceous){
     visualForm=clump ? FORM.HERBACEOUS_CLUMP : FORM.HERBACEOUS_UPRIGHT;
     architectureModes=['default'];
