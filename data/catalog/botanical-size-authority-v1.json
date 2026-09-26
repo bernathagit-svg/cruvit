@@ -107,7 +107,10 @@
     "clematis": "taxon:clematis-viticella",
     "dill": "taxon:anethum-graveolens",
     "oregano": "taxon:origanum-vulgare",
-    "raspberry": "taxon:rubus-idaeus"
+    "raspberry": "taxon:rubus-idaeus",
+    "carrot": "taxon:daucus-carota-subsp-sativus",
+    "jujube": "taxon:ziziphus-jujuba",
+    "parsley": "taxon:petroselinum-crispum"
   },
   "expectedAccounting": {
     "RUNTIME_AUTHORITY_READY": 13,
@@ -1632,6 +1635,50 @@
       },
       "provenanceEvidenceIds": [
         "artichoke__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:daucus-carota-subsp-sativus",
+      "canonicalSlugAliases": [
+        "carrot"
+      ],
+      "scientificName": "Daucus carota subsp. sativus",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "carrot__ncsu-daucus-carota-subsp-sativus__mature-size-full-catalog-v1",
+      "selectedSpreadEvidenceRef": "carrot__ncsu-daucus-carota-subsp-sativus__mature-size-full-catalog-v1",
+      "selectedSource": "carrot__ncsu-daucus-carota-subsp-sativus__mature-size-full-catalog-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.0762,
+          "max": 0.9144
+        },
+        "spreadM": {
+          "min": 0.0508,
+          "max": 0.0762
+        }
+      },
+      "provenanceEvidenceIds": [
+        "carrot__ncsu-daucus-carota-subsp-sativus__mature-size-full-catalog-v1"
       ],
       "conflictingEvidenceIds": null,
       "partialAnchor": null,
@@ -3179,6 +3226,50 @@
       "mayChooseUniversalPersonalGardenSize": false
     },
     {
+      "botanicalTaxonId": "taxon:petroselinum-crispum",
+      "canonicalSlugAliases": [
+        "parsley"
+      ],
+      "scientificName": "Petroselinum crispum",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "parsley__ncsu-petroselinum-crispum__mature-size-full-catalog-v1",
+      "selectedSpreadEvidenceRef": "parsley__ncsu-petroselinum-crispum__mature-size-full-catalog-v1",
+      "selectedSource": "parsley__ncsu-petroselinum-crispum__mature-size-full-catalog-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.2032,
+          "max": 0.9144
+        },
+        "spreadM": {
+          "min": 0.2032,
+          "max": 0.3048
+        }
+      },
+      "provenanceEvidenceIds": [
+        "parsley__ncsu-petroselinum-crispum__mature-size-full-catalog-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
       "botanicalTaxonId": "taxon:pistacia-vera",
       "canonicalSlugAliases": [
         "pistachio"
@@ -4384,6 +4475,50 @@
       },
       "provenanceEvidenceIds": [
         "zinnia__ncsu__mature-size-batch-b-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:ziziphus-jujuba",
+      "canonicalSlugAliases": [
+        "jujube"
+      ],
+      "scientificName": "Ziziphus jujuba",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "jujube__ncsu-ziziphus-jujuba__mature-size-full-catalog-v1",
+      "selectedSpreadEvidenceRef": "jujube__ncsu-ziziphus-jujuba__mature-size-full-catalog-v1",
+      "selectedSource": "jujube__ncsu-ziziphus-jujuba__mature-size-full-catalog-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 4.572,
+          "max": 9.144
+        },
+        "spreadM": {
+          "min": 3.048,
+          "max": 9.144
+        }
+      },
+      "provenanceEvidenceIds": [
+        "jujube__ncsu-ziziphus-jujuba__mature-size-full-catalog-v1"
       ],
       "conflictingEvidenceIds": null,
       "partialAnchor": null,
