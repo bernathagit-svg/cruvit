@@ -50,27 +50,32 @@ function corpus(){
   const indexPath=path.join(GLOBAL_ROOT,'global-index.json');
   const checksPath=path.join(GLOBAL_ROOT,'tile-checksums.json');
   const landPath=path.join(GLOBAL_ROOT,'land-tile-mask.json');
-  for(const p of [manifestPath,indexPath,checksPath,landPath]){
-    if(!fs.existsSync(p)) throw new Error('REQUIRED_CORPUS_METADATA_MISSING:'+p);
-  }
-  const manifest=readJson(manifestPath);
-  const checks=readJson(checksPath);
-  const land=readJson(landPath);
+  const metadataPaths={manifestPath,indexPath,checksPath,landPath};
+  const missingMetadata=Object.entries(metadataPaths)
+    .filter(([,p])=>!fs.existsSync(p))
+    .map(([name,p])=>({name,path:p}));
+  const manifest=fs.existsSync(manifestPath)?readJson(manifestPath):{};
+  const index=fs.existsSync(indexPath)?readJson(indexPath):{};
+  const checks=fs.existsSync(checksPath)?readJson(checksPath):{};
+  const land=fs.existsSync(landPath)?readJson(landPath):{land:[]};
   const landKeys=Array.isArray(land.land)?land.land:[];
-  const expectedTileCount=Number(manifest?.stats?.landTiles ?? manifest?.tileCount ?? landKeys.length);
+  const expectedTileCount=Number(manifest?.stats?.landTiles ?? manifest?.tileCount ?? landKeys.length ?? 0);
   const files=fs.existsSync(TILES_DIR)
     ?fs.readdirSync(TILES_DIR).filter(x=>x.endsWith('.cctb.gz')).sort()
     :[];
   const totalBytes=files.reduce((s,name)=>s+fs.statSync(path.join(TILES_DIR,name)).size,0);
   return {
     manifestPath,indexPath,checksPath,landPath,
-    manifest,index:readJson(indexPath),checks,land,landKeys,
+    missingMetadata,
+    manifest,index,checks,land,landKeys,
     expectedTileCount,files,totalBytes,
     bake:manifest.globalBakeId||GLOBAL_BAKE_ID_DEFAULT
   };
 }
 function validateLocal(c){
   const errors=[];
+  for(const m of c.missingMetadata||[]) errors.push('REQUIRED_CORPUS_METADATA_MISSING:'+m.name);
+  if(!(c.expectedTileCount>0)) errors.push('EXPECTED_TILE_COUNT_MISSING');
   if(c.expectedTileCount!==c.landKeys.length) errors.push('MANIFEST_LAND_COUNT_MISMATCH');
   if(c.files.length!==c.expectedTileCount) errors.push('LOCAL_TILE_COUNT_MISMATCH');
   const checkNames=new Set(Object.keys(c.checks||{}).filter(k=>k.endsWith('.cctb.gz')));
