@@ -83,3 +83,30 @@ test('hybrid multiplication sign normalizes for morphology source identity', asy
   assert.equal(r.ok,true);
   assert.equal(r.authority,'CATALOG_SOURCE_TITLE');
 });
+
+
+test('parses explicit UF IFAS feet ranges for height and spread',()=>{
+  const r=extractStructuredMorphologyAndSize(
+    'Scientific name: Manilkara zapota Plant type: tree Height: 40 to 60 feet Spread: 35 to 45 feet Crown shape: pyramidal, round'
+  );
+  assert.equal(r.matureSize.ready,true);
+  assert.deepEqual(r.matureSize.heightM,{min:12.192,max:18.288});
+  assert.deepEqual(r.matureSize.spreadM,{min:10.668,max:13.716});
+});
+
+test('parses en-dash feet ranges',()=>{
+  const r=extractStructuredMorphologyAndSize(
+    'Plant Type: tree Height: 15–30 feet Spread: 10–20 feet'
+  );
+  assert.equal(r.matureSize.ready,true);
+  assert.deepEqual(r.matureSize.heightM,{min:4.572,max:9.144});
+});
+
+test('does not invent a range from a single maximum',()=>{
+  const r=extractStructuredMorphologyAndSize(
+    'Plant Type: tree Tamarind may reach heights of 65 feet and a spread of 50 feet.'
+  );
+  assert.equal(r.matureSize.ready,false);
+  assert.equal(r.matureSize.heightM,null);
+  assert.equal(r.matureSize.spreadM,null);
+});
