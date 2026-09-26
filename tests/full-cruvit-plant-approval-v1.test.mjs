@@ -287,3 +287,51 @@ test('edible non-fruit crop wording does not manufacture a fruit-production requ
   });
   assert.equal(out.applicable,false);
 });
+
+
+test('legacy fruit group cannot override explicit leafy/root/flower-bud harvest purpose',()=>{
+  const cases=[
+    {slug:'broccoli',tags:['vegetable','biennial','cole'],groups:['temperate-chill-fruit'],fruiting:'Harvest immature flower heads (crowns) before open bloom.'},
+    {slug:'carrot',tags:['vegetable','biennial','root'],groups:['temperate-chill-fruit'],fruiting:'Grown for edible taproots; seed in year two.'},
+    {slug:'lettuce',tags:['vegetable','annual','leafy'],groups:['temperate-chill-fruit'],fruiting:'Grown for leaves; seed after bolting.'},
+    {slug:'spinach',tags:['vegetable','annual','leafy'],groups:['temperate-chill-fruit'],fruiting:'Grown for leaves; seed after bolting.'}
+  ];
+  for(const row of cases){
+    const out=classifyFruitProductionIntent({
+      slug:row.slug,
+      tags:row.tags,
+      climateTraits:{
+        groupIds:row.groups,
+        fruitingRequirements:row.fruiting,
+        traitProvenance:{
+          fruitingRequirements:{status:'asserted',sourceIds:['source'],shortExcerpt:row.fruiting,evidenceClass:'SOURCE_SUPPORTED'}
+        }
+      }
+    });
+    assert.equal(out.applicable,false,row.slug);
+    assert.equal(out.authority,'EXPLICIT_NON_REPRODUCTIVE_HARVEST_PURPOSE');
+  }
+});
+
+test('legume/cucurbit/melon yield remains reproductive-climate applicable',()=>{
+  const cases=[
+    {slug:'garden-pea',tags:['vegetable','annual','legume'],groups:['temperate-chill-fruit'],fruiting:'Pods harvested for fresh peas or edible pods.'},
+    {slug:'green-bean',tags:['vegetable','annual','legume'],groups:['subtropical-fruit'],fruiting:'Harvest immature pods as snap beans.'},
+    {slug:'zucchini',tags:['vegetable','annual','cucurbit'],groups:['subtropical-fruit'],fruiting:'Harvest immature summer squash frequently.'},
+    {slug:'watermelon',tags:['vegetable','annual','cucurbit','melon'],groups:['subtropical-fruit'],fruiting:'Large sweet pepoes; long warm season required.'}
+  ];
+  for(const row of cases){
+    const out=classifyFruitProductionIntent({
+      slug:row.slug,
+      tags:row.tags,
+      climateTraits:{
+        groupIds:row.groups,
+        fruitingRequirements:row.fruiting,
+        traitProvenance:{
+          fruitingRequirements:{status:'asserted',sourceIds:['source'],shortExcerpt:row.fruiting,evidenceClass:'SOURCE_SUPPORTED'}
+        }
+      }
+    });
+    assert.equal(out.applicable,true,row.slug);
+  }
+});
