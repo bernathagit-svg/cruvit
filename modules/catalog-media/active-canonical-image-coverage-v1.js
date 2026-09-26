@@ -143,10 +143,10 @@ export function resolveCanonicalImageSlug(rawSlug, maps) {
   return key;
 }
 
-function exactLicensedRegistryCacheMedia(root, entry) {
-  const slug = String(entry?.canonicalSlug || '').trim().toLowerCase();
-  const scientific = String(entry?.acceptedScientificName || '').trim();
-  if (!slug || !scientific || entry?.needsReview === true) return null;
+function exactLicensedCacheMedia(root, { slug, scientific } = {}) {
+  slug = String(slug || '').trim().toLowerCase();
+  scientific = String(scientific || '').trim();
+  if (!slug || !scientific) return null;
   if (/\bspp\.?\b/i.test(scientific) || /^various\b/i.test(scientific)) return null;
   const cacheDir = path.join(root, 'data', 'catalog-media', 'cache');
   if (!fs.existsSync(cacheDir)) return null;
@@ -164,6 +164,49 @@ function exactLicensedRegistryCacheMedia(root, entry) {
     }
   }
   return null;
+}
+
+function approvedPacketIdentities(root) {
+  const base = path.join(root, 'data');
+  const out = new Map();
+  const conflicts = new Set();
+
+  function walk(dir) {
+    if (!fs.existsSync(dir)) return;
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walk(full);
+        continue;
+      }
+      if (!entry.isFile() || !entry.name.endsWith('.packet.json')) continue;
+      let packet;
+      try { packet = readJson(full); } catch { continue; }
+      if (packet?.humanApproval?.approvedForIngest !== true) continue;
+      const slug = String(packet?.identity?.canonicalSlug || '').trim().toLowerCase();
+      const scientific = String(packet?.identity?.acceptedScientificName || '').trim();
+      const name = String(packet?.identity?.commonNameEn || slug).trim();
+      if (!slug || !scientific) continue;
+      if (/\bspp\.?\b/i.test(scientific) || /^various\b/i.test(scientific)) continue;
+
+      const existing = out.get(slug);
+      if (existing && existing.scientific.toLowerCase() !== scientific.toLowerCase()) {
+        conflicts.add(slug);
+        continue;
+      }
+      out.set(slug, {
+        slug,
+        scientific,
+        name,
+        packetId: packet.packetId || null,
+        packetPath: path.relative(root, full).replace(/\\/g,'/')
+      });
+    }
+  }
+
+  walk(base);
+  for (const slug of conflicts) out.delete(slug);
+  return [...out.values()];
 }
 
 function mediaStatusForPlant(plant) {
@@ -265,7 +308,7 @@ export function buildActiveCanonicalImageCoverage(repoRoot = DEFAULT_ROOT) {
     const slug = String(entry?.canonicalSlug || '').trim().toLowerCase();
     const scientific = String(entry?.acceptedScientificName || '').trim();
     if (!slug || identities.has(slug) || entry?.needsReview === true || !scientific) continue;
-    const registryMedia = exactLicensedRegistryCacheMedia(root, entry);
+    const registryMedia = exactLicensedCacheMedia(root, { slug, scientific });
     if (!registryMedia) continue;
     identities.set(slug, {
       slug,
@@ -278,11 +321,37 @@ export function buildActiveCanonicalImageCoverage(repoRoot = DEFAULT_ROOT) {
     });
   }
 
+  // Approved catalog-expansion packets are a durable canonical identity authority
+  // for plants that may not yet have a PLANT_LIBRARY/seed/identity-registry row.
+  // A packet identity is admitted to media coverage only when it is explicitly
+  // approvedForIngest, species-level, non-conflicting across packets, and has an
+  // exact-scientific licensed cache record that passes the runtime media contract.
+  for (const packetIdentity of approvedPacketIdentities(root)) {
+    const slug = resolveCanonicalImageSlug(packetIdentity.slug, maps);
+    if (!slug || slug !== packetIdentity.slug || identities.has(slug)) continue;
+    const packetMedia = exactLicensedCacheMedia(root, {
+      slug,
+      scientific: packetIdentity.scientific
+    });
+    if (!packetMedia) continue;
+    identities.set(slug, {
+      slug,
+      name: packetIdentity.name || slug,
+      scientific: packetIdentity.scientific,
+      layers: new Set(['approved-packet-cache']),
+      seedPlant: null,
+      libraryPlant: null,
+      packetMedia,
+      packetId: packetIdentity.packetId,
+      packetPath: packetIdentity.packetPath
+    });
+  }
+
   const records = [...identities.values()]
     .sort((a, b) => a.slug.localeCompare(b.slug))
     .map((id) => {
       const seedPlant = seedBySlug.get(id.slug) || null;
-      const indexRecord = id.registryMedia || indexMedia[id.slug] || null;
+      const indexRecord = id.registryMedia || id.packetMedia || indexMedia[id.slug] || null;
       const plantForMedia = seedPlant
         ? seedPlant
         : {
@@ -317,6 +386,9 @@ export function buildActiveCanonicalImageCoverage(repoRoot = DEFAULT_ROOT) {
         inLibrary: !!id.libraryPlant,
         inSeed: !!seedPlant,
         inRegistryCache: !!id.registryMedia,
+        inApprovedPacketCache: !!id.packetMedia,
+        packetId: id.packetId || null,
+        packetPath: id.packetPath || null,
         imageStatus: coverage.imageStatus,
         approved: coverage.approved,
         reason: coverage.reason || null,

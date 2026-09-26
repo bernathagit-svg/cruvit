@@ -269,3 +269,18 @@ test('coverage generator promotes resolved registry species only with exact lice
     assert.equal(row.inRegistryCache,true,slug);
   }
 });
+
+
+test('coverage generator promotes approved packet identities with exact licensed cache media', async()=>{
+  const { buildActiveCanonicalImageCoverage } = await import('../modules/catalog-media/active-canonical-image-coverage-v1.js');
+  const out=buildActiveCanonicalImageCoverage(process.cwd());
+  for(const slug of ['artichoke','asparagus','blackberry','tamarind']){
+    const row=out.records.find(r=>r.slug===slug);
+    assert.ok(row, slug+' must be active from approved packet/cache authority');
+    assert.equal(row.identityScope,'species',slug);
+    assert.equal(row.imageStatus,'IMAGE_READY',slug);
+    assert.equal(row.approved,true,slug);
+    assert.equal(row.inApprovedPacketCache,true,slug);
+    assert.ok(row.packetId,slug+' must retain approved packet provenance');
+  }
+});
