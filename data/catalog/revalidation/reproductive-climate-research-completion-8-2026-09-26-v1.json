@@ -1,0 +1,100 @@
+{
+  "contract": "cruvit-reproductive-climate-research-completion-v1",
+  "runId": "cruvit-reproductive-climate-research-completion-8-2026-09-26-v1",
+  "createdAt": "2026-09-26",
+  "policy": {
+    "unknownNeverSilentlyGuessed": true,
+    "researchedUnknownIsNotSupported": true,
+    "sourceReferentialIntegrityRequired": true,
+    "paidCallsExecuted": 0
+  },
+  "provenanceRepairs": [
+    {
+      "slug": "durian",
+      "addedSourceId": "prosea-durio-zibethinus"
+    },
+    {
+      "slug": "feijoa",
+      "addedSourceId": "ncsu-acca-sellowiana"
+    },
+    {
+      "slug": "loquat",
+      "addedSourceId": "ncsu-eriobotrya-japonica"
+    }
+  ],
+  "plants": [
+    {
+      "slug": "cacao",
+      "state": "RESEARCHED_UNQUANTIFIED",
+      "sourceIds": [
+        "uf-ifas-hs1057"
+      ]
+    },
+    {
+      "slug": "feijoa",
+      "state": "RESEARCHED_UNQUANTIFIED",
+      "sourceIds": [
+        "ncsu-acca-sellowiana"
+      ]
+    },
+    {
+      "slug": "loquat",
+      "state": "STRUCTURED_EVENT_THRESHOLD",
+      "minReproductiveEventC": -2.2,
+      "sourceIds": [
+        "ncsu-eriobotrya-japonica"
+      ]
+    },
+    {
+      "slug": "sapodilla",
+      "state": "RESEARCHED_UNQUANTIFIED",
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ]
+    },
+    {
+      "slug": "strawberry",
+      "state": "CONTEXT_DEPENDENT",
+      "contextKeys": [
+        "cultivar",
+        "bearingType"
+      ],
+      "sourceIds": [
+        "ncsu-fragaria-x-ananassa"
+      ]
+    },
+    {
+      "slug": "sweet-orange",
+      "state": "RESEARCHED_UNQUANTIFIED",
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ]
+    },
+    {
+      "slug": "tamarind",
+      "state": "RESEARCHED_UNQUANTIFIED",
+      "sourceIds": [
+        "uf-ifas-tamarind"
+      ]
+    },
+    {
+      "slug": "white-sapote",
+      "state": "STRUCTURED_SEASONAL_INDUCTION",
+      "seasonalInductionCue": "cool_or_dry",
+      "sourceIds": [
+        "uf-ifas-white-sapote"
+      ]
+    }
+  ],
+  "sourcePacketSync": true,
+  "runtimeSemantics": {
+    "CONTEXT_DEPENDENT": "UNKNOWN_UNTIL_REQUIRED_PLANT_CONTEXT_EXISTS",
+    "RESEARCHED_UNQUANTIFIED": "UNKNOWN_NOT_POSITIVE_RECOMMENDATION",
+    "structuredEventThreshold": "EVALUATED_ONLY_AGAINST_MATCHING_EXTREME_EVENT_EVIDENCE"
+  },
+  "verification": {
+    "liveSourceReferenceMismatches": 0,
+    "packetRegressionSuite": "PASS",
+    "systemicSuite": "PASS"
+  }
+}
