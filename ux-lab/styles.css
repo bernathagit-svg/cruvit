@@ -15,3 +15,20 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#17271b}
 .drag-surface.dragging{cursor:grabbing}
 @media(max-aspect-ratio:941/1672){.approved-home{width:100vw;height:auto;aspect-ratio:941/1672}}
 .card-plant-id .variant{clip-path:polygon(4% 3%,96% 8%,92% 95%,4% 99%);}
+
+.smart-approved-card{
+  position:absolute;inset:0;overflow:hidden;border-radius:13%;
+  border:1px solid rgba(255,255,255,.72);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.16),rgba(65,83,43,.30)),
+    rgba(74,91,51,.58);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 16px 30px rgba(20,30,20,.18);
+  backdrop-filter:blur(10px);
+}
+.smart-approved-content{position:absolute;inset:0;text-align:center;color:#fff;font-family:Georgia,'Times New Roman',serif}
+.smart-approved-title{position:absolute;top:12%;left:7%;right:7%;font-size:7.7%;line-height:1.12;text-shadow:0 2px 8px rgba(0,0,0,.35)}
+.smart-approved-copy{position:absolute;top:30%;left:8%;right:8%;font-family:Arial,sans-serif;font-size:4.8%;line-height:1.25;text-shadow:0 1px 6px rgba(0,0,0,.35)}
+.smart-approved-plant{position:absolute;left:20%;right:20%;width:60%;height:38%;bottom:25%;object-fit:contain;filter:drop-shadow(0 8px 10px rgba(0,0,0,.2))}
+.smart-approved-thumbs{position:absolute;left:19%;right:19%;bottom:15%;display:flex;justify-content:center;gap:5%;font-size:7%}
+.smart-approved-thumbs span{display:grid;place-items:center;width:28%;aspect-ratio:1;border-radius:18%;background:rgba(250,248,238,.88);color:#3c5a30}
+.smart-approved-cta{position:absolute;left:14%;right:14%;bottom:5%;padding:4% 5%;border-radius:999px;background:rgba(245,242,231,.92);color:#243b24;font-family:Arial,sans-serif;font-size:4.6%;white-space:nowrap}
