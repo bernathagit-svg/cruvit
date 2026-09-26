@@ -158,7 +158,9 @@ function isNonEmptyString(v) {
 }
 
 function usableSourceClaim(claim) {
-  const cls = String(claim?.evidenceClass || '').toUpperCase();
+  const cls = String(
+    claim?.evidenceClass || classifyClaimFieldProvenance(claim).evidenceClass || ''
+  ).toUpperCase();
   return claim?.status === 'asserted'
     && Array.isArray(claim?.sourceIds)
     && claim.sourceIds.length > 0
