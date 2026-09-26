@@ -73,8 +73,9 @@ test('legacy strictly tropical fruit-production packet gets conservative warm ba
   assert.equal(rc?.fruiting?.transformRef,'qualitative-summer-heat-band-v1@1.0.0');
 });
 
-test('insufficient fruiting climate evidence remains unmaterialized',()=>{
+test('insufficient fruiting climate evidence remains unmaterialized when no researched state is asserted',()=>{
   const p=load('data/catalog-expansion/packets/cacao-theobroma-cacao-v1/packet.json');
+  p.claims=p.claims.filter(x=>!String(x.field||'').startsWith('reproductiveClimate.'));
   const m=materializePlantCatalogItemFromPacket(p,{updatedAt:'1970-01-01T00:00:00.000Z'});
   assert.equal(m.ok,true,JSON.stringify(m.errors));
   assert.equal(m.item?.climateTraits?.reproductiveClimate,undefined);
