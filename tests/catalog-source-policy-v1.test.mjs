@@ -260,3 +260,22 @@ test('commercial_page alone cannot authorize SOURCE_SUPPORTED', () => {
   );
   assert.equal(r.mayBeSourceSupported, false);
 });
+
+
+test('growthHabit groundcover accepts explicit Ground Cover source wording',()=>{
+  const r=evaluateSourceSupportedEligibility({
+    field:'growthHabit',
+    value:'groundcover',
+    sourceId:'ncsu-mentha-spicata',
+    sourceType:'university_extension',
+    excerpt:'Plant Type: Edible Ground Cover Herb Herbaceous Perennial Woody Plant.',
+    url:'https://plants.ces.ncsu.edu/plants/mentha-spicata/',
+    sourceTitle:'Mentha spicata (Spearmint)',
+    sourceInstitution:'NC State Extension',
+    declaredScientificName:'Mentha spicata',
+    expectedIdentity:{acceptedScientificName:'Mentha spicata',canonicalSlug:'spearmint'},
+    provenanceRetained:true
+  });
+  assert.equal(r.mayBeSourceSupported,true);
+  assert.equal(r.evidenceClass,EVIDENCE_CLASS.SOURCE_SUPPORTED);
+});
