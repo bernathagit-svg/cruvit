@@ -27,7 +27,8 @@
     "sourceGardenMutationForbidden": true,
     "productionPromotionForbidden": true,
     "ownerReviewRequired": true,
-    "zeroRetries": true
+    "zeroRetries": true,
+    "recompositeOnlyNoProviderRetry": true
   },
   "sourceCapture": {
     "runId": "cruvit-e2e-batch-b-in-garden-scale-v2-2026-09-25-v1",
@@ -42,6 +43,9 @@
     "exactSourceCandidateShaRequired": true,
     "exactSourceCaptureShaRequired": true,
     "maskRequired": true,
-    "finalCompositeUsesMaskAsHardPixelBoundary": true
+    "finalCompositeUsesMaskAsHardPixelBoundary": false,
+    "finalCompositeBoundaryMode": "FEATHERED_EDIT_REGION_V1",
+    "compositeProfile": "LOW_PLANT_TIGHT_FEATHER_V1",
+    "reuseExistingNaturalBlendEvidenceAllowed": true
   }
 }
