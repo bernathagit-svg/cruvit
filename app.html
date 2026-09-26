@@ -3838,7 +3838,15 @@ async function refreshGardenWeather(){
   const result=await callGardenWeather(payload);
   if(result.location){
     const rl=result.location;
-    const structuralClimate=result.structuralClimate||rl.structuralClimate||null;
+    const returnedStructural=result.structuralClimate||rl.structuralClimate||null;
+    const existingStructural=loc.structuralClimate&&typeof loc.structuralClimate==='object'
+      ?loc.structuralClimate:null;
+    const structuralClimate=
+      returnedStructural?.status==='known'
+        ?returnedStructural
+        :(existingStructural?.status==='known'
+          ?existingStructural
+          :(returnedStructural||existingStructural||null));
     let nextClimate=loc.climate||rl.climate;
     if(structuralClimate?.broadClimateOverride==='arid') nextClimate='Arid';
     else if(!loc.climate&&rl.climate) nextClimate=rl.climate;
@@ -3849,7 +3857,7 @@ async function refreshGardenWeather(){
       climate:nextClimate,
       country:String(rl.country||loc.country||'').trim(),
       timezone:String(rl.timezone||loc.timezone||'').trim(),
-      structuralClimate:structuralClimate||loc.structuralClimate||null,
+      structuralClimate,
       structuralAcquisitionMs:null,
       climateAuthorityCode:result.code||null,
       updatedAt:new Date().toISOString()
