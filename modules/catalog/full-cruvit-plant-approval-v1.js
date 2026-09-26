@@ -73,6 +73,39 @@ function knowledgeState(runtimePlant){
   };
 }
 
+function reproductiveClimateState(runtimePlant){
+  const traits=runtimePlant?.climateTraits||{};
+  const groups=Array.isArray(traits.groupIds)?traits.groupIds.map(x=>norm(x)):[];
+  const tags=Array.isArray(runtimePlant?.tags)?runtimePlant.tags.map(x=>norm(x)):[];
+  const fruitOriented=Boolean(
+    text(traits.fruitingRequirements)
+    || groups.some(g=>/fruit|citrus|berry/.test(g))
+    || tags.some(t=>['fruit','citrus','berry','edible'].includes(t))
+  );
+  const rc=traits.reproductiveClimate;
+  const fruiting=rc&&typeof rc==='object'&&rc.fruiting&&typeof rc.fruiting==='object'
+    ?rc.fruiting:null;
+  const evidenceClass=text(fruiting?.evidenceClass).toUpperCase();
+  const structured=Boolean(
+    fruiting
+    && (
+      fruiting.summerHeatBand
+      || fruiting.minWarmestMonthMeanMaxC!=null
+      || fruiting.requiresFrostFree===true
+      || fruiting.requiresCoolSeason===true
+    )
+    && ['SOURCE_SUPPORTED','HEURISTIC_ASSERTION'].includes(evidenceClass)
+  );
+  return {
+    applicable:fruitOriented,
+    ready:!fruitOriented||structured,
+    contractVersion:rc?.contractVersion||null,
+    fruitingStructured:structured,
+    evidenceClass:evidenceClass||null,
+    reason:fruitOriented&&!structured?'FRUITING_REPRODUCTIVE_CLIMATE_EVIDENCE_REQUIRED':null
+  };
+}
+
 function doctorState({identityReady,knowledgeReady}){
   // Plant Doctor is a runtime diagnostic engine. Per-plant disease encyclopedias
   // are not required by its current contract; canonical identity + knowledge are.
@@ -149,6 +182,7 @@ export function evaluateFullCruvitPlantApproval({
   });
   const suitabilityReady=data.readinessShort==='A' && data.gate==='PASS';
 
+  const reproductiveClimate=reproductiveClimateState(runtimePlant);
   const knowledge=knowledgeState(runtimePlant);
   const media=catalogMediaReady(catalogRow,catalogMediaCoverageRecord);
 
@@ -169,7 +203,7 @@ export function evaluateFullCruvitPlantApproval({
   const identificationReady=identityReady && media.ready;
   const myGardenReady=onboarding.ready===true && knowledge.ready===true && media.ready===true;
   const doctor=doctorState({identityReady,knowledgeReady:knowledge.ready});
-  const smartRecommendationsReady=suitabilityReady;
+  const smartRecommendationsReady=suitabilityReady && reproductiveClimate.ready;
   const gardenDesignReady=onboarding.ready===true && visualsReady && size.ready;
 
   const modules={
@@ -180,7 +214,8 @@ export function evaluateFullCruvitPlantApproval({
       acceptedScientificName:identity?.acceptedScientificName||null
     },
     climateAndSuitability:{
-      ready:suitabilityReady,
+      ready:suitabilityReady && reproductiveClimate.ready,
+      reproductiveClimate,
       readinessClass:data.readinessShort,
       gate:data.gate,
       allowedClaims:data.allowedClaims,
@@ -195,8 +230,9 @@ export function evaluateFullCruvitPlantApproval({
     },
     smartRecommendations:{
       ready:smartRecommendationsReady,
-      authority:'plant-data-contract-v1',
-      requiresClassA:true
+      authority:'plant-data-contract-v1+reproductive-climate-gate-v1',
+      requiresClassA:true,
+      reproductiveClimate
     },
     plantIdentification:{
       ready:identificationReady,
@@ -226,6 +262,7 @@ export function evaluateFullCruvitPlantApproval({
   if(!onboarding.ready) blockers.push('FULL_PLANT_ONBOARDING_BLOCKED');
   if(!identityReady) blockers.push('CANONICAL_IDENTITY_NOT_READY');
   if(!suitabilityReady) blockers.push('REAL_SUITABILITY_ENRICHMENT_REQUIRED');
+  if(!reproductiveClimate.ready) blockers.push('REPRODUCTIVE_CLIMATE_EVIDENCE_REQUIRED');
   if(!knowledge.ready) blockers.push('PLANT_KNOWLEDGE_NOT_READY');
   if(!media.ready) blockers.push('CATALOG_DISPLAY_MEDIA_NOT_READY');
   if(variantPlan.seasonalityResearchRequired) blockers.push('SEASONALITY_RESEARCH_REQUIRED');
@@ -245,6 +282,7 @@ export function evaluateFullCruvitPlantApproval({
     else if(
       blockers.some(x=>[
         'REAL_SUITABILITY_ENRICHMENT_REQUIRED',
+        'REPRODUCTIVE_CLIMATE_EVIDENCE_REQUIRED',
         'PLANT_KNOWLEDGE_NOT_READY',
         'SEASONALITY_RESEARCH_REQUIRED',
         'SIZE_AUTHORITY_ENRICHMENT_REQUIRED',
@@ -283,6 +321,7 @@ export function evaluateFullCruvitPlantApproval({
       visualFactoryAloneNeverApproves:true,
       unknownNeverSilentlyGuessed:true,
       smartRecommendationsRequiresClassA:true,
+      fruitRecommendationsRequireStructuredReproductiveClimate:true,
       plantDoctorUsesRuntimeDiagnosis:true,
       shopSeparatedFromBotanicalApproval:true
     }
