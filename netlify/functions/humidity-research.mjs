@@ -11,7 +11,7 @@ export function generatedNcsuSpeciesSource(scientific,slug){
   if(!parts.every(x=>/^[A-Za-z][A-Za-z-]*$/.test(x))) return null;
   const path=parts.map(x=>x.toLowerCase()).join('-');
   return {
-    sourceId:'ncsu-auto-'+String(slug||'').trim().toLowerCase(),
+    sourceId:'ncsu-'+path,
     url:'https://plants.ces.ncsu.edu/plants/'+path+'/',
     title:raw+' (NC State Extension candidate)',
     institution:'North Carolina State University Extension Gardener',
