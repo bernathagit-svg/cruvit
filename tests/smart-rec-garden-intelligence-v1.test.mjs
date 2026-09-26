@@ -245,3 +245,39 @@ test('paid network remains 0 after Smart Rec Garden Intelligence proofs', () => 
   assert.equal(paidNetwork, 0);
   globalThis.fetch = origFetch;
 });
+
+
+test('explicit positiveRecommendationEligible=false is authoritative for ranking eligibility',()=>{
+  assert.equal(isPositiveRecommendationIneligible({
+    positiveRecommendationEligible:false,
+    recommendationLevel:'good',
+    hardSurvivalBlocked:false,
+    derivedOverall:'possible',
+    derivedSurvival:'supported'
+  }),true);
+});
+
+test('positive eligibility remains allowed when explicit flag is true and survival is viable',()=>{
+  assert.equal(isPositiveRecommendationIneligible({
+    positiveRecommendationEligible:true,
+    recommendationLevel:'good',
+    hardSurvivalBlocked:false,
+    derivedOverall:'possible',
+    derivedSurvival:'supported'
+  }),false);
+});
+
+test('explicitly ineligible plant ranks behind otherwise-equal eligible plant',()=>{
+  const eligible={
+    positiveRecommendationEligible:true,
+    recommendationLevel:'good',
+    suitabilityScore:75
+  };
+  const ineligible={
+    positiveRecommendationEligible:false,
+    recommendationLevel:'good',
+    suitabilityScore:95
+  };
+  assert.ok(compareSmartRecRecommendationRank(eligible,ineligible)<0);
+  assert.ok(compareSmartRecRecommendationRank(ineligible,eligible)>0);
+});
