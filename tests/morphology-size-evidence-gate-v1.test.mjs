@@ -110,3 +110,31 @@ test('does not invent a range from a single maximum',()=>{
   assert.equal(r.matureSize.heightM,null);
   assert.equal(r.matureSize.spreadM,null);
 });
+
+
+test('parses RHS Max Height and Max Spread metric ranges',()=>{
+  const r=extractStructuredMorphologyAndSize(
+    'Asparagus officinalis Size Max Spread 0.1-0.5 metres Max Height 0.5-1 metres'
+  );
+  assert.equal(r.matureSize.ready,true);
+  assert.deepEqual(r.matureSize.heightM,{min:0.5,max:1});
+  assert.deepEqual(r.matureSize.spreadM,{min:0.1,max:0.5});
+});
+
+test('parses en-dash metric ranges without colon',()=>{
+  const r=extractStructuredMorphologyAndSize(
+    'Clematis viticella Max Height 2.5–4 metres Max Spread 1–1.5 metres'
+  );
+  assert.equal(r.matureSize.ready,true);
+  assert.deepEqual(r.matureSize.heightM,{min:2.5,max:4});
+  assert.deepEqual(r.matureSize.spreadM,{min:1,max:1.5});
+});
+
+test('does not invent metric range from RHS single maximum wording',()=>{
+  const r=extractStructuredMorphologyAndSize(
+    'Plant grows up to 5 metres tall and up to 2 metres wide.'
+  );
+  assert.equal(r.matureSize.ready,false);
+  assert.equal(r.matureSize.heightM,null);
+  assert.equal(r.matureSize.spreadM,null);
+});
