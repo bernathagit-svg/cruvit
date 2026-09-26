@@ -1,0 +1,49 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CRUVIT · Lettuce Scale V3 Review</title>
+<style>
+html,body{margin:0;background:#0d1210;color:#eef5ef;font-family:Inter,system-ui,sans-serif}
+main{max-width:1280px;margin:0 auto;padding:18px}
+h1{margin:0 0 6px;font-size:24px}.muted{color:#a9b7ad;margin:0 0 14px}
+iframe{width:100%;height:820px;border:0;border-radius:16px;background:#fff}
+#status{font-size:13px;color:#b9c6bd;margin-top:10px;white-space:pre-wrap}
+</style>
+<main>
+<h1>CRUVIT · Lettuce · Scale V3 Owner Review</h1>
+<p class="muted">Scale-only preview · 112px · same saved garden · same anchor · no paid AI call</p>
+<iframe id="gd" src="./index.html?gdQaPreview=1"></iframe>
+<div id="status">Loading…</div>
+</main>
+<script>
+(async()=>{
+ const status=document.getElementById('status');
+ const frame=document.getElementById('gd');
+ const runId='cruvit-e2e-batch-b-lettuce-scale-v3-2026-09-26-v1';
+ const jobId='lettuce__mature__default__vegetative__v1';
+ await new Promise(r=>frame.addEventListener('load',r,{once:true}));
+ const source='/.netlify/functions/cruvit-lettuce-scale-v3-garden-source?t='+Date.now();
+ const candidate='/.netlify/functions/plant-visual-candidate-by-model-plan?runId=cruvit-e2e-batch-b-model-qa-2026-09-25-v1&jobId='+encodeURIComponent(jobId)+'&t='+Date.now();
+ frame.contentWindow.postMessage({
+   type:'cruvit:garden-design-qa-preview',
+   sourceMediaUrl:source,
+   imageUrl:candidate,
+   label:'Lettuce',
+   jobId,
+   canonicalSlug:'lettuce',
+   scientific:'Lactuca sativa',
+   visualForm:'rosette',
+   architectureMode:'default',
+   growthStage:'mature',
+   phenology:'vegetative',
+   baseWidthPx:112,
+   qaScaleBand:'medium',
+   qaMaxHeightPct:54,
+   qaMaxWidthPct:80,
+   qaScalePolicyVersion:'in-garden-qa-scale-policy-v1.1',
+   scale:1,x:0.56,y:0.86,rotation:0,authorityUserResized:false
+ },location.origin);
+ setTimeout(()=>{
+   status.textContent='Scale V3 active · baseWidthPx 112 · previous 131 · reduction 14.5% · no paid AI call.';
+ },1800);
+})().catch(err=>{document.getElementById('status').textContent='ERROR · '+String(err?.message||err);});
+</script>
