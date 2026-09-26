@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#132019">
+  <title>CRUVIT UX Lab · Living Garden Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="app-shell" aria-label="CRUVIT UX Lab">
+    <section class="living-garden" id="livingGarden">
+      <img class="garden-photo" src="/homepage-v1/assets/hero-garden.jpg" alt="">
+      <div class="garden-light"></div>
+      <div class="garden-depth"></div>
+
+      <header class="topbar">
+        <div class="identity">
+          <span class="brand">cruvit</span>
+          <span class="greeting">Good morning, Hagit</span>
+        </div>
+        <div class="top-actions">
+          <button class="icon-button ai-button" data-toast="Ask CRUVIT is available when you need it." aria-label="Ask CRUVIT">✦</button>
+          <button class="icon-button notification-button" data-toast="No urgent garden alerts." aria-label="Notifications">◌<span class="notification-dot"></span></button>
+          <button class="avatar" data-toast="Profile" aria-label="Open profile">H</button>
+        </div>
+      </header>
+
+      <aside class="weather-context" aria-label="Garden weather context">
+        <span class="weather-symbol">☀</span>
+        <span>
+          <b>Warm afternoon ahead</b>
+          <small>Newly planted herbs may need water earlier.</small>
+        </span>
+      </aside>
+
+      <div class="hotspot hotspot-one" tabindex="0" role="button" aria-label="Lemon tree status" data-hotspot="Lemon tree">
+        <span class="pulse"></span>
+        <span class="hotspot-label"><b>Lemon tree</b><small>Leaves need a quick check</small></span>
+      </div>
+      <div class="hotspot hotspot-two" tabindex="0" role="button" aria-label="Herb corner status" data-hotspot="Herb corner">
+        <span class="pulse"></span>
+        <span class="hotspot-label"><b>Herb corner</b><small>Moisture trending low</small></span>
+      </div>
+      <div class="hotspot hotspot-three" tabindex="0" role="button" aria-label="Olive tree status" data-hotspot="Olive tree">
+        <span class="pulse calm"></span>
+        <span class="hotspot-label"><b>Olive tree</b><small>All good</small></span>
+      </div>
+
+      <section class="home-controls" aria-label="Garden controls">
+        <button class="focus-bar" id="focusBar">
+          <span class="focus-eyebrow">TODAY'S FOCUS</span>
+          <span class="focus-copy"><b>2 things need attention</b><small>Check lemon leaves first</small></span>
+          <span class="focus-arrow">›</span>
+        </button>
+
+        <section class="module-carousel" aria-label="CRUVIT modules">
+          <div class="carousel-stage" id="carouselStage"></div>
+          <div class="module-index" id="moduleIndex" aria-label="All modules"></div>
+          <div class="gesture-hint">Swipe or choose a module</div>
+        </section>
+      </section>
+
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
