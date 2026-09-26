@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   evaluateFullCruvitPlantApproval,
+  classifyFruitProductionIntent,
   FULL_CRUVIT_PLANT_STATUS
 } from '../modules/catalog/full-cruvit-plant-approval-v1.js';
 
@@ -30,6 +31,7 @@ function baseRow(){
       needsWinterChill:false,
       floweringRequirements:'flowers when appropriate',
       fruitingRequirements:'fruit when appropriate',
+      groupIds:['temperate-fruit-tree'],
       floweringOutcomeApplicable:true,
       fruitingOutcomeApplicable:true,
       reproductiveBiology:{requires_pollinator:false},
@@ -173,4 +175,115 @@ test('fruit-oriented recommendation readiness accepts structured provenance-back
   assert.equal(r.modules.smartRecommendations.reproductiveClimate.ready,true);
   assert.equal(r.modules.smartRecommendations.ready,true);
   assert.ok(!r.blockingReasons.includes('REPRODUCTIVE_CLIMATE_EVIDENCE_REQUIRED'));
+});
+
+
+test('ornamental fruit/seed description does not require fruit-production climate',()=>{
+  const cases=[
+    {
+      slug:'zinnia',
+      tags:['ornamental','cut-flower'],
+      groups:['ornamental-flowering'],
+      fruiting:'Ornamental annual.'
+    },
+    {
+      slug:'boxwood',
+      tags:[],
+      groups:[],
+      fruiting:'Small dehiscent capsules; grown for foliage not fruit.'
+    },
+    {
+      slug:'asparagus',
+      tags:[],
+      groups:[],
+      fruiting:'Red berries on female plants if allowed to fruit.'
+    }
+  ];
+  for(const row of cases){
+    const out=classifyFruitProductionIntent({
+      slug:row.slug,
+      tags:row.tags,
+      climateTraits:{
+        groupIds:row.groups,
+        fruitingRequirements:row.fruiting,
+        traitProvenance:{
+          fruitingRequirements:{status:'asserted',sourceIds:['test'],shortExcerpt:row.fruiting,evidenceClass:'SOURCE_SUPPORTED'}
+        }
+      }
+    });
+    assert.equal(out.applicable,false,row.slug);
+  }
+});
+
+test('source-backed legacy fruit purpose remains applicable when structural group is missing',()=>{
+  const out=classifyFruitProductionIntent({
+    slug:'carob',
+    tags:[],
+    climateTraits:{
+      groupIds:[],
+      fruitingRequirements:'Pods on female plants; pods take a full year.',
+      traitProvenance:{
+        tags:{
+          status:'asserted',
+          sourceIds:['source'],
+          shortExcerpt:'Catalog tags: subtropical, fruit, tree',
+          evidenceClass:'SOURCE_SUPPORTED'
+        },
+        fruitingRequirements:{
+          status:'asserted',
+          sourceIds:['source'],
+          shortExcerpt:'Pods on female plants; pods take a full year.',
+          evidenceClass:'SOURCE_SUPPORTED'
+        }
+      }
+    }
+  });
+  assert.equal(out.applicable,true);
+  assert.equal(out.authority,'SOURCE_BACKED_CATALOG_TAG_PURPOSE');
+});
+
+test('source-backed edible/ripening fruit wording can recover legacy fruit purpose',()=>{
+  for(const fruiting of [
+    'Edible aggregate fruits; cultivar dependent.',
+    'Brown fruit edible after bletting in late autumn.',
+    'Red berries ripen in autumn.',
+    'Harvest immature pods frequently for tenderness.'
+  ]){
+    const out=classifyFruitProductionIntent({
+      tags:[],
+      climateTraits:{
+        groupIds:[],
+        fruitingRequirements:fruiting,
+        traitProvenance:{
+          fruitingRequirements:{
+            status:'asserted',
+            sourceIds:['source'],
+            shortExcerpt:fruiting,
+            evidenceClass:'SOURCE_SUPPORTED'
+          }
+        }
+      }
+    });
+    assert.equal(out.applicable,true,fruiting);
+  }
+});
+
+test('edible non-fruit crop wording does not manufacture a fruit-production requirement',()=>{
+  const out=classifyFruitProductionIntent({
+    slug:'artichoke',
+    tags:[],
+    climateTraits:{
+      groupIds:[],
+      fruitingRequirements:'Edible immature flower buds harvested before opening (globe artichoke vegetable use).',
+      traitProvenance:{
+        fruitingRequirements:{
+          status:'asserted',
+          sourceIds:['source'],
+          shortExcerpt:'Edible immature flower buds harvested before opening.',
+          evidenceClass:'SOURCE_SUPPORTED'
+        }
+      }
+    }
+  });
+  assert.equal(out.applicable,false);
 });
