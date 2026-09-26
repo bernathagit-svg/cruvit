@@ -19,7 +19,7 @@ import {
 } from '../modules/personal-domain/hardiness-evidence-claims-v1.js';
 
 test('zone transform ref frozen', () => {
-  assert.equal(HARDINESS_ZONE_TO_COLD_TRAITS_REF, 'hardiness-zone-to-cold-traits-v1@1.0.0');
+  assert.equal(HARDINESS_ZONE_TO_COLD_TRAITS_REF, 'hardiness-zone-to-cold-traits-v1@1.1.0');
 });
 
 test('deterministic cold map', () => {
