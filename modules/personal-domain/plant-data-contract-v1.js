@@ -418,14 +418,16 @@ export function classifyPlantDataReadiness(plant, options = {}) {
       const c = evMap[f];
       return c && ALLOWED_EVIDENCE_CLASSES.includes(c);
     });
-    // Class A = real suitability ready: confident product claims require SOURCE_SUPPORTED
-    // on frost+cold (survival material axis). Aligns with evidence-strength propagation:
-    // HEURISTIC may preserve severe negatives but must not authorize Class A / confident positives.
-    // heatTolerance may remain HEURISTIC (existing Class A fixture); broader SOURCE_SUPPORTED
-    // on all material cores is a separate future policy.
-    sourceSupportedMaterialOk = ['frostSensitivity', 'coldTolerance'].every(
-      (f) => evMap[f] === EVIDENCE_CLASS.SOURCE_SUPPORTED
-    );
+    // Class A = real suitability DATA readiness, not a positive suitability verdict.
+    // Cold tolerance is the survival authority and must be SOURCE_SUPPORTED.
+    // Frost sensitivity may remain a provenanced HEURISTIC modifier: conservative severe
+    // frost values can still hard-block at runtime, while flowering/fruiting frost risk is
+    // handled by outcome-specific reproductive climate evidence. Requiring an independent
+    // SOURCE_SUPPORTED whole-plant frost ordinal would incorrectly collapse survival and
+    // reproductive-stage frost semantics (for example hardy perennials with frost-sensitive buds).
+    sourceSupportedMaterialOk =
+      evMap.coldTolerance === EVIDENCE_CLASS.SOURCE_SUPPORTED
+      && ALLOWED_EVIDENCE_CLASSES.includes(evMap.frostSensitivity);
   }
   if (!evidenceOk) reasons.push(PLANT_DATA_REASON.MISSING_TRAIT_EVIDENCE);
 
