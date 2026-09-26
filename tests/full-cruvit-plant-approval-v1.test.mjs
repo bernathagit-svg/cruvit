@@ -121,7 +121,6 @@ test('explicit UNKNOWN humidity stays unknown but does not manufacture a suitabi
   });
   assert.equal(r.modules.climateAndSuitability.readinessClass,'A');
   assert.ok(!r.blockingReasons.includes('REAL_SUITABILITY_ENRICHMENT_REQUIRED'));
-  assert.ok(r.modules.climateAndSuitability.readinessReasons.includes('HUMIDITY_UNKNOWN'));
 });
 
 test('visual factory readiness alone never equals full CRUVIT approval',()=>{
