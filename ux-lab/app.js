@@ -1,34 +1,71 @@
+const baseScreen=document.getElementById('baseScreen');
+const stage=document.getElementById('carouselStage');
 const surface=document.getElementById('dragSurface');
-const home=document.getElementById('approvedHome');
-const a=document.querySelector('.layer-a');
-const b=document.querySelector('.layer-b');
+const home=document.getElementById('home');
+const design=document.getElementById('cardDesign');
+const garden=document.getElementById('cardGarden');
+const doctor=document.getElementById('cardDoctor');
+
+const exact0='./assets/home-approved-reference.png';
+const exact1='./assets/home-garden-design-centered.png';
 
 let index=0;
+let dragging=false;
 let startX=0;
 let currentX=0;
-let dragging=false;
+let progress=0;
 
-const w=()=>home.getBoundingClientRect().width;
-const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
-function render(dx=0, snap=false){
-  const width=w();
-  const p=clamp(dx/width,-1,1);
+const poses={
+  design:[
+    {l:0,t:12.9,w:30.0,h:73.8},
+    {l:29.2,t:4.2,w:43.2,h:88.0}
+  ],
+  garden:[
+    {l:26.3,t:0.1,w:46.0,h:95.1},
+    {l:0,t:15.0,w:27.4,h:70.2}
+  ],
+  doctor:[
+    {l:73.0,t:14.3,w:27.0,h:72.0},
+    {l:72.7,t:16.0,w:27.3,h:69.4}
+  ]
+};
 
-  a.classList.toggle('snap',snap);
-  b.classList.toggle('snap',snap);
+function apply(card,pair,t){
+  const a=pair[0], b=pair[1];
+  card.style.left=lerp(a.l,b.l,t)+'%';
+  card.style.top=lerp(a.t,b.t,t)+'%';
+  card.style.width=lerp(a.w,b.w,t)+'%';
+  card.style.height=lerp(a.h,b.h,t)+'%';
+  const imgs=card.querySelectorAll('.variant');
+  imgs[0].style.opacity=String(1-t);
+  imgs[1].style.opacity=String(t);
+}
 
-  if(index===0){
-    a.style.transform=`translateX(${dx}px) scale(${1-0.035*Math.abs(p)})`;
-    b.style.transform=`translateX(${width+dx}px) scale(${0.965+0.035*Math.abs(p)})`;
-    a.style.filter=`brightness(${1-0.05*Math.abs(p)})`;
-    b.style.filter=`brightness(${0.96+0.04*Math.abs(p)})`;
-  } else {
-    a.style.transform=`translateX(${-width+dx}px) scale(${0.965+0.035*Math.abs(p)})`;
-    b.style.transform=`translateX(${dx}px) scale(${1-0.035*Math.abs(p)})`;
-    a.style.filter=`brightness(${0.96+0.04*Math.abs(p)})`;
-    b.style.filter=`brightness(${1-0.05*Math.abs(p)})`;
-  }
+function render(t){
+  progress=clamp(t,0,1);
+  apply(design,poses.design,progress);
+  apply(garden,poses.garden,progress);
+  apply(doctor,poses.doctor,progress);
+
+  const depth=0.015*Math.sin(progress*Math.PI);
+  design.style.transform='scale('+(1+depth)+')';
+  garden.style.transform='scale('+(1-depth*0.8)+')';
+  doctor.style.transform='scale('+(1-depth*0.2)+')';
+}
+
+function activate(){
+  stage.classList.add('active');
+  stage.setAttribute('aria-hidden','false');
+  render(index);
+}
+
+function deactivate(){
+  stage.classList.remove('active');
+  stage.setAttribute('aria-hidden','true');
+  baseScreen.src=(index===0?exact0:exact1)+'?v=10';
 }
 
 function begin(x){
@@ -36,36 +73,41 @@ function begin(x){
   startX=x;
   currentX=x;
   surface.classList.add('dragging');
-  a.classList.remove('snap');
-  b.classList.remove('snap');
+  activate();
 }
 
 function move(x){
   if(!dragging)return;
   currentX=x;
-  let dx=currentX-startX;
-  if(index===0 && dx>0) dx*=0.18;
-  if(index===1 && dx<0) dx*=0.18;
-  render(dx,false);
+  const dx=currentX-startX;
+  const w=home.getBoundingClientRect().width;
+  let t=index===0 ? (-dx/w) : (1-dx/w);
+  t=clamp(t,0,1);
+  render(t);
+}
+
+function animateTo(target){
+  const from=progress;
+  const start=performance.now();
+  const dur=260;
+  function frame(now){
+    const u=clamp((now-start)/dur,0,1);
+    const eased=1-Math.pow(1-u,3);
+    render(lerp(from,target,eased));
+    if(u<1) requestAnimationFrame(frame);
+    else{
+      index=target===1?1:0;
+      deactivate();
+    }
+  }
+  requestAnimationFrame(frame);
 }
 
 function finish(){
   if(!dragging)return;
-  let dx=currentX-startX;
-  const threshold=Math.max(52,w()*0.11);
-
-  if(index===0 && dx<=-threshold){
-    index=1;
-    render(0,true);
-  }else if(index===1 && dx>=threshold){
-    index=0;
-    render(0,true);
-  }else{
-    render(0,true);
-  }
-
   dragging=false;
   surface.classList.remove('dragging');
+  animateTo(progress>=0.5?1:0);
 }
 
 surface.addEventListener('pointerdown',e=>{
@@ -73,8 +115,15 @@ surface.addEventListener('pointerdown',e=>{
   surface.setPointerCapture?.(e.pointerId);
   e.preventDefault();
 });
-surface.addEventListener('pointermove',e=>{move(e.clientX); if(dragging)e.preventDefault();});
-surface.addEventListener('pointerup',e=>{move(e.clientX); finish(); e.preventDefault();});
+surface.addEventListener('pointermove',e=>{
+  move(e.clientX);
+  if(dragging)e.preventDefault();
+});
+surface.addEventListener('pointerup',e=>{
+  move(e.clientX);
+  finish();
+  e.preventDefault();
+});
 surface.addEventListener('pointercancel',finish);
 
 surface.addEventListener('touchstart',e=>{
@@ -86,5 +135,4 @@ surface.addEventListener('touchmove',e=>{
 },{passive:false});
 surface.addEventListener('touchend',finish,{passive:false});
 
-window.addEventListener('resize',()=>render(0,false));
-render(0,false);
+render(0);
