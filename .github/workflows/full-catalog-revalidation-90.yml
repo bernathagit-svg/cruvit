@@ -1,0 +1,345 @@
+name: CRUVIT Full Catalog Revalidation 90
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/full-catalog-revalidation-90.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  revalidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Run live Plant Intake Engine for all 90 plants
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/payload.json <<'JSON'
+{
+  "items": [
+    {
+      "canonicalSlug": "acerola"
+    },
+    {
+      "canonicalSlug": "apple"
+    },
+    {
+      "canonicalSlug": "apricot"
+    },
+    {
+      "canonicalSlug": "artichoke"
+    },
+    {
+      "canonicalSlug": "asparagus"
+    },
+    {
+      "canonicalSlug": "bay-laurel"
+    },
+    {
+      "canonicalSlug": "bigleaf-hydrangea"
+    },
+    {
+      "canonicalSlug": "blackberry"
+    },
+    {
+      "canonicalSlug": "blackcurrant"
+    },
+    {
+      "canonicalSlug": "blue-gum"
+    },
+    {
+      "canonicalSlug": "blueberry"
+    },
+    {
+      "canonicalSlug": "borage"
+    },
+    {
+      "canonicalSlug": "boxwood"
+    },
+    {
+      "canonicalSlug": "breadfruit"
+    },
+    {
+      "canonicalSlug": "broccoli"
+    },
+    {
+      "canonicalSlug": "cacao"
+    },
+    {
+      "canonicalSlug": "carob"
+    },
+    {
+      "canonicalSlug": "carrot"
+    },
+    {
+      "canonicalSlug": "chestnut"
+    },
+    {
+      "canonicalSlug": "chinese-wisteria"
+    },
+    {
+      "canonicalSlug": "chives"
+    },
+    {
+      "canonicalSlug": "cilantro"
+    },
+    {
+      "canonicalSlug": "clematis"
+    },
+    {
+      "canonicalSlug": "common-jasmine"
+    },
+    {
+      "canonicalSlug": "common-lilac"
+    },
+    {
+      "canonicalSlug": "common-myrtle"
+    },
+    {
+      "canonicalSlug": "common-thyme"
+    },
+    {
+      "canonicalSlug": "cranberry"
+    },
+    {
+      "canonicalSlug": "crepe-myrtle"
+    },
+    {
+      "canonicalSlug": "dill"
+    },
+    {
+      "canonicalSlug": "durian"
+    },
+    {
+      "canonicalSlug": "elderberry"
+    },
+    {
+      "canonicalSlug": "english-lavender"
+    },
+    {
+      "canonicalSlug": "english-walnut"
+    },
+    {
+      "canonicalSlug": "feijoa"
+    },
+    {
+      "canonicalSlug": "fig"
+    },
+    {
+      "canonicalSlug": "flowering-dogwood"
+    },
+    {
+      "canonicalSlug": "forsythia"
+    },
+    {
+      "canonicalSlug": "french-marigold"
+    },
+    {
+      "canonicalSlug": "garden-pea"
+    },
+    {
+      "canonicalSlug": "garden-peony"
+    },
+    {
+      "canonicalSlug": "garden-sage"
+    },
+    {
+      "canonicalSlug": "ginkgo"
+    },
+    {
+      "canonicalSlug": "gooseberry"
+    },
+    {
+      "canonicalSlug": "grapefruit"
+    },
+    {
+      "canonicalSlug": "green-bean"
+    },
+    {
+      "canonicalSlug": "hazelnut"
+    },
+    {
+      "canonicalSlug": "jaboticaba"
+    },
+    {
+      "canonicalSlug": "jujube"
+    },
+    {
+      "canonicalSlug": "lesser-bougainvillea"
+    },
+    {
+      "canonicalSlug": "lettuce"
+    },
+    {
+      "canonicalSlug": "longan"
+    },
+    {
+      "canonicalSlug": "loquat"
+    },
+    {
+      "canonicalSlug": "mangosteen"
+    },
+    {
+      "canonicalSlug": "medlar"
+    },
+    {
+      "canonicalSlug": "nasturtium"
+    },
+    {
+      "canonicalSlug": "okra"
+    },
+    {
+      "canonicalSlug": "oleander"
+    },
+    {
+      "canonicalSlug": "oregano"
+    },
+    {
+      "canonicalSlug": "parsley"
+    },
+    {
+      "canonicalSlug": "peach"
+    },
+    {
+      "canonicalSlug": "pear"
+    },
+    {
+      "canonicalSlug": "pecan"
+    },
+    {
+      "canonicalSlug": "persimmon"
+    },
+    {
+      "canonicalSlug": "pitanga"
+    },
+    {
+      "canonicalSlug": "plum"
+    },
+    {
+      "canonicalSlug": "pomegranate"
+    },
+    {
+      "canonicalSlug": "quince"
+    },
+    {
+      "canonicalSlug": "raspberry"
+    },
+    {
+      "canonicalSlug": "red-currant"
+    },
+    {
+      "canonicalSlug": "rhubarb"
+    },
+    {
+      "canonicalSlug": "sapodilla"
+    },
+    {
+      "canonicalSlug": "sea-buckthorn"
+    },
+    {
+      "canonicalSlug": "serviceberry"
+    },
+    {
+      "canonicalSlug": "silver-birch"
+    },
+    {
+      "canonicalSlug": "soursop"
+    },
+    {
+      "canonicalSlug": "southern-magnolia"
+    },
+    {
+      "canonicalSlug": "spearmint"
+    },
+    {
+      "canonicalSlug": "spinach"
+    },
+    {
+      "canonicalSlug": "strawberry"
+    },
+    {
+      "canonicalSlug": "sweet-cherry"
+    },
+    {
+      "canonicalSlug": "sweet-orange"
+    },
+    {
+      "canonicalSlug": "sweet-potato"
+    },
+    {
+      "canonicalSlug": "tamarind"
+    },
+    {
+      "canonicalSlug": "turmeric"
+    },
+    {
+      "canonicalSlug": "watermelon"
+    },
+    {
+      "canonicalSlug": "white-sapote"
+    },
+    {
+      "canonicalSlug": "yucca"
+    },
+    {
+      "canonicalSlug": "zinnia"
+    },
+    {
+      "canonicalSlug": "zucchini"
+    }
+  ]
+}
+JSON
+          curl --fail-with-body --silent --show-error             -X POST "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/cruvit-plant-intake-engine"             -H 'content-type: application/json'             --data-binary @/tmp/payload.json             -o /tmp/intake.json
+          jq '.' /tmp/intake.json
+          jq -e '.ok == true' /tmp/intake.json >/dev/null
+          jq -e '.total == 90' /tmp/intake.json >/dev/null
+
+      - name: Run full approval authority for all 90 plants
+        shell: bash
+        run: |
+          set -euo pipefail
+          jq '{slugs:[.items[].canonicalSlug]}' /tmp/payload.json > /tmp/approval-payload.json
+          curl --fail-with-body --silent --show-error             -X POST "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/full-cruvit-plant-approval?compact=1"             -H 'content-type: application/json'             --data-binary @/tmp/approval-payload.json             -o /tmp/approval.json
+          jq '.' /tmp/approval.json
+          jq -e '.ok == true' /tmp/approval.json >/dev/null
+          jq -e '.total == 90' /tmp/approval.json >/dev/null
+
+      - name: Build revalidation summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          cp /tmp/intake.json artifacts/intake.json
+          cp /tmp/approval.json artifacts/full-approval.json
+          jq -n             --slurpfile intake /tmp/intake.json             --slurpfile approval /tmp/approval.json             '{
+              runId:"cruvit-full-catalog-revalidation-90-2026-09-26-v1",
+              total:90,
+              intake:{
+                byStage:$intake[0].byStage,
+                counts:$intake[0].counts,
+                paidCallsExecuted:$intake[0].paidCallsExecuted,
+                catalogWritesExecuted:$intake[0].catalogWritesExecuted,
+                productionWritesExecuted:$intake[0].productionWritesExecuted,
+                registryWritesExecuted:$intake[0].registryWritesExecuted
+              },
+              approval:{
+                approved:$approval[0].approved,
+                blocked:$approval[0].blocked,
+                byStatus:$approval[0].byStatus,
+                blockerCounts:$approval[0].blockerCounts
+              },
+              blockedRows:[$approval[0].rows[]|select(.approved!=true)],
+              approvedRows:[$approval[0].rows[]|select(.approved==true)]
+            }' > artifacts/summary.json
+          jq '.' artifacts/summary.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cruvit-full-catalog-revalidation-90
+          path: artifacts/
+          retention-days: 30
