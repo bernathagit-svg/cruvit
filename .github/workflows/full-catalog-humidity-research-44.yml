@@ -22,7 +22,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          out="data/catalog/revalidation/humidity-research-44-2026-09-26-v2"
+          out="data/catalog/revalidation/humidity-research-44-2026-09-26-v3"
           mkdir -p "$out"
           slugs=(
             artichoke asparagus blackberry blackcurrant blueberry borage boxwood broccoli carrot chestnut
@@ -37,7 +37,7 @@ jobs:
           done
           node --input-type=module <<'NODE'
           import fs from 'node:fs';
-          const dir='data/catalog/revalidation/humidity-research-44-2026-09-26-v2';
+          const dir='data/catalog/revalidation/humidity-research-44-2026-09-26-v3';
           const files=fs.readdirSync(dir).filter(f=>f.endsWith('.json')&&f!=='summary.json');
           const docs=files.map(f=>JSON.parse(fs.readFileSync(dir+'/'+f,'utf8')));
           const rows=docs.map(d=>({
@@ -50,7 +50,7 @@ jobs:
             externalRequests:d.externalRequests||0
           })).sort((a,b)=>a.canonicalSlug.localeCompare(b.canonicalSlug));
           const summary={
-            contract:'cruvit-full-catalog-humidity-research-44-v2',
+            contract:'cruvit-full-catalog-humidity-research-44-v3',
             createdAt:'2026-09-26',
             total:rows.length,
             resolved:rows.filter(x=>x.value!==null).length,
@@ -73,6 +73,6 @@ jobs:
           set -euo pipefail
           git config user.name "bernathagit-svg"
           git config user.email "bernat.hagit@gmail.com"
-          git add data/catalog/revalidation/humidity-research-44-2026-09-26-v2
+          git add data/catalog/revalidation/humidity-research-44-2026-09-26-v3
           git commit -m "catalog: record 44-plant humidity research"
           git push origin HEAD:main
