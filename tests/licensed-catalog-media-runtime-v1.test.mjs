@@ -244,3 +244,14 @@ test('media lookup performance: 100 and 500 lookups (no network)', () => {
     'utf8'
   );
 });
+
+
+test('species-level catalog identities are not collapsed onto legacy generic media canonicals', async()=>{
+  const { resolveCanonicalImageSlug } = await import('../modules/catalog-media/active-canonical-image-coverage-v1.js');
+  const maps={bootstrapAliases:{},registryAliases:{}};
+  assert.equal(resolveCanonicalImageSlug('common-jasmine',maps),'common-jasmine');
+  assert.equal(resolveCanonicalImageSlug('spearmint',maps),'spearmint');
+  assert.equal(resolveCanonicalImageSlug('lesser-bougainvillea',maps),'lesser-bougainvillea');
+  assert.equal(resolveCanonicalImageSlug('english-lavender',maps),'lavender');
+  assert.equal(resolveCanonicalImageSlug('bigleaf-hydrangea',maps),'hydrangea');
+});
