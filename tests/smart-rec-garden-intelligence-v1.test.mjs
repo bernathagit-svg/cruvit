@@ -14,6 +14,8 @@ import {
   attachSmartRecCatalogImage,
   buildSmartRecCardModel,
   buildSmartRecCatalogBySlug,
+  compareSmartRecRecommendationRank,
+  isPositiveRecommendationIneligible,
   ownedCanonicalSlugSet,
   resolveSmartRecCanonicalSlug,
   resolveSmartRecCatalogDisplay,
