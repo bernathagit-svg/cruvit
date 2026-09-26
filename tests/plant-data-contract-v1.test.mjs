@@ -244,7 +244,7 @@ test('4. missing flowering requirements → flowering UNKNOWN stance', () => {
 });
 
 test('source-linked ornamental/herb purpose makes fruiting explicitly non-applicable without inventing fruit data', () => {
-  const plant = completePlant();
+  const plant = completeClassAPlant();
   delete plant.climateTraits.fruitingRequirements;
   plant.climateTraits.traitProvenance = {
     ...(plant.climateTraits.traitProvenance || {}),
@@ -262,7 +262,7 @@ test('source-linked ornamental/herb purpose makes fruiting explicitly non-applic
 });
 
 test('unprovenanced non-fruit-looking tags cannot bypass missing fruiting stance', () => {
-  const plant = completePlant();
+  const plant = completeClassAPlant();
   delete plant.climateTraits.fruitingRequirements;
   plant.climateTraits.traitProvenance = {
     ...(plant.climateTraits.traitProvenance || {}),
@@ -602,7 +602,7 @@ test('Batch 3 dry classification (no ingest)', () => {
   assert.equal(report.counts.A + report.counts.B + report.counts.C + report.counts.D, files.length);
   // Humidity UNKNOWN is an explicit optional modifier gap, not a Class-A blocker by itself.
   // Other evidence/stance gaps may still keep rows below A.
-  assert.ok(report.counts.A + report.counts.B + report.counts.C + report.counts.D === 75);
+  assert.equal(report.counts.A + report.counts.B + report.counts.C + report.counts.D, files.length);
 });
 
 test('scale gate labels are deterministic PASS/PARTIAL/HOLD/REJECT', () => {
