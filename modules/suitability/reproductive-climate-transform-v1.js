@@ -35,6 +35,26 @@ export function explicitCoolSeasonFruitingTransform({
   };
 }
 
+export function explicitFrostFreeFruitingTransform({
+  sourceText='',
+  fruitProductionRelevant=false,
+  sourceIds=[]
+}={}){
+  const text=norm(sourceText);
+  const ids=Array.isArray(sourceIds)?sourceIds.map(x=>String(x||'').trim()).filter(Boolean):[];
+  if(!fruitProductionRelevant || !ids.length) return {eligible:false,reason:'PRECONDITION_NOT_MET'};
+  if(!/\bfrost[ -]?free\b/.test(text)) return {eligible:false,reason:'FROST_FREE_NOT_EXPLICIT'};
+  return {
+    eligible:true,
+    field:'reproductiveClimate.fruiting.requiresFrostFree',
+    value:true,
+    evidenceClass:'HEURISTIC_ASSERTION',
+    sourceIds:ids,
+    transformRef:'explicit-frost-free-fruiting-requirement-v1@1.0.0',
+    evidenceLineage:'DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM'
+  };
+}
+
 export function qualitativeSummerHeatFruitingTransform({
   sourceText='',
   fruitProductionRelevant=false,
@@ -44,11 +64,18 @@ export function qualitativeSummerHeatFruitingTransform({
   const ids=Array.isArray(sourceIds)?sourceIds.map(x=>String(x||'').trim()).filter(Boolean):[];
   if(!fruitProductionRelevant || !ids.length) return {eligible:false,reason:'PRECONDITION_NOT_MET'};
   let band=null;
-  if(/\b(?:high summer temperatures?|hot summers?|hot[, ]+(?:dry|humid))\b/.test(text)) band='hot';
+  if(
+    /\b(?:high summer temperatures?|hot summers?|hot[, ]+(?:dry|humid))\b/.test(text)
+    || /\b(?:best|better|improved)\b.*\b(?:fruit|fruiting|quality|ripen|ripening|sweetness)\b.*\b(?:heat|hot)\b/.test(text)
+    || /\b(?:heat|hot)\b.*\b(?:best|better|improved)\b.*\b(?:fruit|fruiting|quality|ripen|ripening|sweetness)\b/.test(text)
+  ) band='hot';
   else if(
     /\b(?:long warm season|warm summers?|warm season)\b/.test(text)
     || /\bwarm conditions?\b.*\b(?:fruit|ripen|ripening)\b/.test(text)
     || /\b(?:fruit|ripen|ripening)\b.*\bwarm conditions?\b/.test(text)
+    || /\b(?:fruit|fruits|fruiting|berries|production|produced|flushes)\b.*\bwarm climates?\b/.test(text)
+    || /\bwarm climates?\b.*\b(?:fruit|fruits|fruiting|berries|production|produced|flushes)\b/.test(text)
+    || /\bstrictly tropical(?: climates?)?\b/.test(text)
   ) band='warm';
   if(!band) return {eligible:false,reason:'SUMMER_HEAT_NOT_EXPLICIT'};
   return {
@@ -85,6 +112,7 @@ export function warmSeasonFruitingTransform({
 const api={
   REPRODUCTIVE_CLIMATE_TRANSFORM_VERSION,
   explicitCoolSeasonFruitingTransform,
+  explicitFrostFreeFruitingTransform,
   qualitativeSummerHeatFruitingTransform,
   warmSeasonFruitingTransform
 };
