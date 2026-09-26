@@ -1,7 +1,7 @@
 <!doctype html>
 <meta charset="utf-8">
 <title>CRUVIT · Pomegranate 3-Scenario Suitability Diagnostic</title>
-<!-- live-proof-v5-canonical-climate-bootstrap -->
+<!-- live-proof-v6-complete-reproductive-climate -->
 <style>
 body{font:14px/1.45 ui-monospace,monospace;background:#0e1511;color:#e7f0e9;padding:20px}
 pre{white-space:pre-wrap;background:#162019;padding:16px;border-radius:12px}
@@ -47,7 +47,7 @@ iframe{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
         thermalRegime:'frost-prone',
         structuralColdRisk:'high',
         humiditySignal:'high',
-        evidence:{coldestMonthMeanMinC:-1,annualPrecipitationMm:2250}
+        evidence:{coldestMonthMeanMinC:-1,warmestMonthMeanMaxC:20,annualPrecipitationMm:2250}
       }
     },
     {
@@ -63,7 +63,7 @@ iframe{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
         thermalRegime:'frost-prone',
         structuralColdRisk:'high',
         humiditySignal:'high',
-        evidence:{coldestMonthMeanMinC:-1,annualPrecipitationMm:2250}
+        evidence:{coldestMonthMeanMinC:-1,warmestMonthMeanMaxC:20,annualPrecipitationMm:2250}
       }
     },
     {
@@ -142,6 +142,7 @@ iframe{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
         freezingRisk:climateProfile?.freezingRisk||null,
         thermalRegime:climateProfile?.thermalRegime||null,
         coldestMonthMeanMinC:climateProfile?.coldestMonthMeanMinC??null,
+        warmestMonthMeanMaxC:climateProfile?.warmestMonthMeanMaxC??null,
         isFrostFreeGrowingClimate:climateProfile?.isFrostFreeGrowingClimate===true,
         humiditySignal:climateProfile?.humiditySignal||null
       },
@@ -153,6 +154,7 @@ iframe{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
         floweringFit:suitability?.floweringFit??null,
         fruitingFit:suitability?.fruitingFit??null,
         hardSurvivalBlocked:suitability?.hardSurvivalBlocked===true,
+        positiveRecommendationEligible:suitability?.positiveRecommendationEligible!==false,
         reproductiveClimateGate:suitability?.reproductiveClimateGate||null,
         warnings:suitability?.warnings||[],
         explanationText:suitability?.explanationText||null
