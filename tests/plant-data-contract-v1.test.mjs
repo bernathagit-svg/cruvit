@@ -243,6 +243,41 @@ test('4. missing flowering requirements → flowering UNKNOWN stance', () => {
   assert.notEqual(r.readinessShort, 'A');
 });
 
+test('source-linked ornamental/herb purpose makes fruiting explicitly non-applicable without inventing fruit data', () => {
+  const plant = completePlant();
+  delete plant.climateTraits.fruitingRequirements;
+  plant.climateTraits.traitProvenance = {
+    ...(plant.climateTraits.traitProvenance || {}),
+    tags: {
+      status: 'asserted',
+      sourceIds: ['rhs-example'],
+      shortExcerpt: 'Catalog tags: ornamental, shrub',
+      evidenceClass: 'SOURCE_SUPPORTED'
+    }
+  };
+  const r = classifyPlantDataReadiness(plant);
+  assert.equal(r.fruitingStanceReady, true);
+  assert.equal(r.unknownOutcomes.includes('fruiting'), false);
+  assert.equal(r.reasons.includes(PLANT_DATA_REASON.FRUITING_REQUIREMENTS_MISSING), false);
+});
+
+test('unprovenanced non-fruit-looking tags cannot bypass missing fruiting stance', () => {
+  const plant = completePlant();
+  delete plant.climateTraits.fruitingRequirements;
+  plant.climateTraits.traitProvenance = {
+    ...(plant.climateTraits.traitProvenance || {}),
+    tags: {
+      status: 'asserted',
+      sourceIds: [],
+      shortExcerpt: 'Catalog tags: ornamental, shrub',
+      evidenceClass: 'SOURCE_SUPPORTED'
+    }
+  };
+  const r = classifyPlantDataReadiness(plant);
+  assert.equal(r.fruitingStanceReady, false);
+  assert.ok(r.reasons.includes(PLANT_DATA_REASON.FRUITING_REQUIREMENTS_MISSING));
+});
+
 test('5. missing fruiting requirements → fruiting UNKNOWN stance', () => {
   const plant = completeClassAPlant({
     climateTraits: { fruitingRequirements: '' }
