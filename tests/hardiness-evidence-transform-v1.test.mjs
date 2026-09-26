@@ -6,14 +6,16 @@ import assert from 'node:assert/strict';
 import {
   HARDINESS_ZONE_TO_COLD_TRAITS_REF,
   applyHardinessZoneToColdTraits,
-  mapUsdaMinZoneToColdTolerance
+  mapUsdaMinZoneToColdTolerance,
+  mapRhsHardinessRatingToColdTolerance
 } from '../modules/personal-domain/hardiness-zone-to-cold-traits-v1.js';
 import {
   applyFrostInjuryToFrostSensitivity
 } from '../modules/personal-domain/frost-injury-to-frost-sensitivity-v1.js';
 import {
   HARDINESS_CLAIM_TYPE,
-  HARDINESS_ZONE_SYSTEM
+  HARDINESS_ZONE_SYSTEM,
+  extractRhsHardinessRatingClaim
 } from '../modules/personal-domain/hardiness-evidence-claims-v1.js';
 
 test('zone transform ref frozen', () => {
@@ -40,6 +42,22 @@ test('zone claim → cold only', () => {
     ['coldTolerance']
   );
   assert.equal(out.outputs[0].value, 'low');
+  assert.equal(out.frostSensitivity.authorized, false);
+});
+
+
+test('RHS H-rating parses and maps without authorizing frost sensitivity', () => {
+  const raw = extractRhsHardinessRatingClaim('Hardiness rating: H4. Minimum temperature range -10 to -5C.');
+  assert.equal(raw.claimType, HARDINESS_CLAIM_TYPE.RHS_HARDINESS_RATING);
+  assert.equal(raw.rhsHardinessRating, 'H4');
+  assert.equal(mapRhsHardinessRatingToColdTolerance('H4'), 'low');
+  assert.equal(mapRhsHardinessRatingToColdTolerance('H6'), 'medium');
+  assert.equal(mapRhsHardinessRatingToColdTolerance('H7'), 'high');
+  const out = applyHardinessZoneToColdTraits(raw);
+  assert.equal(out.ok, true);
+  assert.equal(out.outputs[0].targetField, 'coldTolerance');
+  assert.equal(out.outputs[0].value, 'low');
+  assert.equal(out.outputs[0].evidenceClass, 'SOURCE_SUPPORTED');
   assert.equal(out.frostSensitivity.authorized, false);
 });
 
