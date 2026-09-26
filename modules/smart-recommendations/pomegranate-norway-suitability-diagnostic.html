@@ -17,7 +17,7 @@ iframe{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
   await new Promise(r=>frame.addEventListener('load',r,{once:true}));
   const w=frame.contentWindow;
   for(let i=0;i<120;i++){
-    if(w.cruvitSpecificPlantSuitability && typeof w.cruvitDeriveSpecificPlantOutcomes==='function') break;
+    if(w.cruvitSpecificPlantSuitability) break;
     await sleep(250);
   }
   const api=w.cruvitSpecificPlantSuitability;
@@ -102,6 +102,10 @@ iframe{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
       structuralClimate:c.structuralClimate
     },{skipServerPersist:true});
     await sleep(500);
+    // Re-assert the isolated Area context after location/render side effects.
+    w.cruvitGardenAreasV1={
+      getCachedAreas:()=>[c.area]
+    };
 
     const suitability=api.evaluate(plant);
     const climateProfile=api.getAppClimateProfile();
@@ -113,10 +117,6 @@ iframe{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
           frostFreeProtected:c.area.context.plantingMode==='greenhouse'
         })
       : false;
-    const outcomes=w.cruvitDeriveSpecificPlantOutcomes({
-      meta,climateProfile,suitability,plant,protectedGrowing:protection
-    });
-
     results.push({
       id:c.id,
       environment:{
@@ -153,8 +153,7 @@ iframe{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
         hardSurvivalBlocked:suitability?.hardSurvivalBlocked===true,
         warnings:suitability?.warnings||[],
         explanationText:suitability?.explanationText||null
-      },
-      outcomes
+      }
     });
   }
   out.textContent='DONE\n'+JSON.stringify({ok:true,engine:'live-app-production-evaluator',results},null,2);
