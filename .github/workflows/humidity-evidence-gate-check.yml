@@ -4,6 +4,8 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/humidity-evidence-gate-check.yml'
+      - 'modules/catalog/humidity-evidence-gate-v1.js'
+      - 'tests/humidity-evidence-gate-v1.test.mjs'
 permissions:
   contents: read
 jobs:
