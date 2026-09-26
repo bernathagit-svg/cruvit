@@ -79,3 +79,69 @@ test('insufficient fruiting climate evidence remains unmaterialized',()=>{
   assert.equal(m.ok,true,JSON.stringify(m.errors));
   assert.equal(m.item?.climateTraits?.reproductiveClimate,undefined);
 });
+
+
+test('eight researched reproductive packets validate and materialize without invented support',()=>{
+  const cases=[
+    {
+      path:'data/catalog-expansion/packets/cacao-theobroma-cacao-v1/packet.json',
+      check:rc=>assert.equal(rc?.fruiting?.evidenceState,'RESEARCHED_UNQUANTIFIED')
+    },
+    {
+      path:'data/catalog-expansion/batches/bulk-batch-1-v1/packets/feijoa.packet.json',
+      check:rc=>assert.equal(rc?.fruiting?.evidenceState,'RESEARCHED_UNQUANTIFIED')
+    },
+    {
+      path:'data/catalog-expansion/batches/bulk-batch-1-v1/packets/loquat.packet.json',
+      check:rc=>assert.equal(rc?.fruiting?.minReproductiveEventC,-2.2)
+    },
+    {
+      path:'data/catalog-expansion/batches/bulk-batch-2-v1/packets/sapodilla.packet.json',
+      check:rc=>assert.equal(rc?.fruiting?.evidenceState,'RESEARCHED_UNQUANTIFIED')
+    },
+    {
+      path:'data/catalog-expansion/batches/wave1-selective-v1/packets/strawberry.packet.json',
+      check:rc=>{
+        assert.equal(rc?.fruiting?.evidenceState,'CONTEXT_DEPENDENT');
+        assert.deepEqual(rc?.fruiting?.contextKeys,['cultivar','bearingType']);
+      }
+    },
+    {
+      path:'data/catalog-expansion/batches/bulk-batch-3-v1/packets/sweet-orange.packet.json',
+      check:rc=>assert.equal(rc?.fruiting?.evidenceState,'RESEARCHED_UNQUANTIFIED')
+    },
+    {
+      path:'data/catalog-expansion/batches/bulk-batch-2-v1/packets/tamarind.packet.json',
+      check:rc=>assert.equal(rc?.fruiting?.evidenceState,'RESEARCHED_UNQUANTIFIED')
+    },
+    {
+      path:'data/catalog-expansion/batches/bulk-batch-1-v1/packets/white-sapote.packet.json',
+      check:rc=>{
+        assert.equal(rc?.flowering?.seasonalInductionCue,'cool_or_dry');
+        assert.equal(rc?.fruiting?.seasonalInductionCue,'cool_or_dry');
+        assert.equal(rc?.fruiting?.evidenceClass,'HEURISTIC_ASSERTION');
+      }
+    }
+  ];
+  for(const row of cases){
+    const p=JSON.parse(fs.readFileSync(row.path,'utf8'));
+    const v=validateCatalogExpansionPacket(p);
+    assert.equal(v.ok,true,row.path+': '+JSON.stringify(v.errors));
+    const m=materializePlantCatalogItemFromPacket(p,{updatedAt:'1970-01-01T00:00:00.000Z'});
+    assert.equal(m.ok,true,row.path);
+    row.check(m.item?.climateTraits?.reproductiveClimate);
+  }
+});
+
+test('researched evidence state alone never manufactures a positive climate requirement',()=>{
+  const p=JSON.parse(fs.readFileSync(
+    'data/catalog-expansion/packets/cacao-theobroma-cacao-v1/packet.json','utf8'
+  ));
+  const m=materializePlantCatalogItemFromPacket(p,{updatedAt:'1970-01-01T00:00:00.000Z'});
+  const fruit=m.item?.climateTraits?.reproductiveClimate?.fruiting;
+  assert.equal(fruit?.evidenceState,'RESEARCHED_UNQUANTIFIED');
+  assert.equal(fruit?.requiresFrostFree,undefined);
+  assert.equal(fruit?.requiresCoolSeason,undefined);
+  assert.equal(fruit?.summerHeatBand,undefined);
+  assert.equal(fruit?.minWarmestMonthMeanMaxC,undefined);
+});
