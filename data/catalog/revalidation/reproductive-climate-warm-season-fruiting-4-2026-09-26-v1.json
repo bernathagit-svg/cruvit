@@ -1,0 +1,44 @@
+{
+  "contract": "cruvit-reproductive-climate-derived-migration-v1",
+  "migrationId": "reproductive-climate-warm-season-fruiting-4-2026-09-26-v1",
+  "createdAt": "2026-09-26",
+  "transform": {
+    "inputEvidence": "authoritative source explicitly classifies crop as warm-season / long warm summer",
+    "output": "reproductiveClimate.fruiting.summerHeatBand=warm",
+    "evidenceClass": "HEURISTIC_ASSERTION",
+    "transformRef": "warm-season-fruiting-crop-to-summer-heat-band-v1@1.0.0",
+    "evidenceLineage": "DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM"
+  },
+  "plants": [
+    {
+      "slug": "green-bean",
+      "scientific": "Phaseolus vulgaris",
+      "sourceId": "ncsu-phaseolus-vulgaris"
+    },
+    {
+      "slug": "okra",
+      "scientific": "Abelmoschus esculentus",
+      "sourceId": "ncsu-abelmoschus-esculentus"
+    },
+    {
+      "slug": "watermelon",
+      "scientific": "Citrullus lanatus",
+      "sourceId": "ncsu-citrullus-lanatus"
+    },
+    {
+      "slug": "zucchini",
+      "scientific": "Cucurbita pepo",
+      "sourceId": "ncsu-cucurbita-pepo"
+    }
+  ],
+  "writeGuards": {
+    "scientificIdentityMatchRequired": true,
+    "canonicalSourceIdRequired": true,
+    "reproductiveClimateMustBeMissing": true,
+    "affectedRowCountRequired": 4
+  },
+  "result": {
+    "updatedCount": 4,
+    "paidCalls": 0
+  }
+}
