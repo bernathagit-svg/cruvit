@@ -25,6 +25,10 @@ export default async(req)=>{
   const plan=await loadStaticJson(req,'/data/garden-design/plant-visual-natural-blend-plans/'+runId+'.json');
   if(!plan||plan.contract!==PLAN_CONTRACT||plan.runId!==runId)return json(404,{ok:false,code:'NATURAL_BLEND_PLAN_NOT_FOUND'});
   if(plan.sourceJobId!==jobId)return json(404,{ok:false,code:'JOB_NOT_IN_NATURAL_BLEND_PLAN'});
+  const compositeMode=String(plan?.inputContract?.finalCompositeBoundaryMode||'HARD_ROUNDED_RECT_V1');
+  const compositeProfile=String(plan?.inputContract?.compositeProfile||'DEFAULT');
+  if(body.compositeMode && String(body.compositeMode)!==compositeMode)return json(409,{ok:false,code:'COMPOSITE_MODE_PLAN_MISMATCH'});
+  if(body.compositeProfile && String(body.compositeProfile)!==compositeProfile)return json(409,{ok:false,code:'COMPOSITE_PROFILE_PLAN_MISMATCH'});
   const approval=await loadStaticJson(req,'/data/garden-design/plant-visual-natural-blend-spend-approvals/'+runId+'.json');
   if(!approval||approval.contract!==APPROVAL_CONTRACT||approval.approved!==true||approval.jobId!==jobId)return json(403,{ok:false,code:'NATURAL_BLEND_OWNER_APPROVAL_REQUIRED'});
 
@@ -69,7 +73,10 @@ export default async(req)=>{
     finalCompositeObjectKey:key,
     finalCompositeSha256:compositeSha,
     bytes:bytes.length,
-    hardCompositeClientApplied:true,
+    compositeMode,
+    compositeProfile,
+    hardCompositeClientApplied:compositeMode!=='FEATHERED_EDIT_REGION_V1',
+    featheredCompositeClientApplied:compositeMode==='FEATHERED_EDIT_REGION_V1',
     originalCandidateMutation:false,
     sourceGardenMutation:false,
     productionWrites:0,
