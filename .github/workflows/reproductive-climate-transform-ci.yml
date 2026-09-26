@@ -1,0 +1,20 @@
+name: CRUVIT Reproductive Climate Transform CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'modules/suitability/reproductive-climate-transform-v1.js'
+      - 'tests/reproductive-climate-transform-v1.test.mjs'
+      - '.github/workflows/reproductive-climate-transform-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run reproductive climate transform tests
+        run: node --test tests/reproductive-climate-transform-v1.test.mjs
