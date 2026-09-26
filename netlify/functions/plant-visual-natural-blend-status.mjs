@@ -112,7 +112,10 @@ export default async(req)=>{
       finalCompositeObjectKey:compositeEvidence.finalCompositeObjectKey||null,
       finalCompositeSha256:compositeEvidence.finalCompositeSha256||null,
       bytes:compositeEvidence.bytes||null,
+      compositeMode:compositeEvidence.compositeMode||null,
+      compositeProfile:compositeEvidence.compositeProfile||null,
       hardCompositeClientApplied:compositeEvidence.hardCompositeClientApplied===true,
+      featheredCompositeClientApplied:compositeEvidence.featheredCompositeClientApplied===true,
       productionWrites:compositeEvidence.productionWrites||0,
       registryWrites:compositeEvidence.registryWrites||0,
       recordedAt:compositeEvidence.recordedAt||null
