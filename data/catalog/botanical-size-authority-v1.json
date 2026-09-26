@@ -95,7 +95,10 @@
     "turmeric": "taxon:curcuma-longa",
     "watermelon": "taxon:citrullus-lanatus",
     "yucca": "taxon:yucca-filamentosa",
-    "zucchini": "taxon:cucurbita-pepo"
+    "zucchini": "taxon:cucurbita-pepo",
+    "pitanga": "taxon:eugenia-uniflora",
+    "sapodilla": "taxon:manilkara-zapota",
+    "tamarind": "taxon:tamarindus-indica"
   },
   "expectedAccounting": {
     "RUNTIME_AUTHORITY_READY": 13,
@@ -1725,6 +1728,50 @@
       "contextSeparableHeight": false
     },
     {
+      "botanicalTaxonId": "taxon:eugenia-uniflora",
+      "canonicalSlugAliases": [
+        "pitanga"
+      ],
+      "scientificName": "Eugenia uniflora",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "pitanga__uf-ifas-fp202-pitanga-size__mature-size-full-catalog-v1",
+      "selectedSpreadEvidenceRef": "pitanga__uf-ifas-fp202-pitanga-size__mature-size-full-catalog-v1",
+      "selectedSource": "pitanga__uf-ifas-fp202-pitanga-size__mature-size-full-catalog-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 2.4384,
+          "max": 6.096
+        },
+        "spreadM": {
+          "min": 1.8288,
+          "max": 4.572
+        }
+      },
+      "provenanceEvidenceIds": [
+        "pitanga__uf-ifas-fp202-pitanga-size__mature-size-full-catalog-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
       "botanicalTaxonId": "taxon:ficus-benjamina",
       "canonicalSlugAliases": [
         "ficus-benjamina"
@@ -2495,6 +2542,50 @@
       },
       "provenanceEvidenceIds": [
         "mango__uf-ifas-enh563-st404__landscape-mature"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:manilkara-zapota",
+      "canonicalSlugAliases": [
+        "sapodilla"
+      ],
+      "scientificName": "Manilkara zapota",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "sapodilla__uf-ifas-st405-sapodilla-size__mature-size-full-catalog-v1",
+      "selectedSpreadEvidenceRef": "sapodilla__uf-ifas-st405-sapodilla-size__mature-size-full-catalog-v1",
+      "selectedSource": "sapodilla__uf-ifas-st405-sapodilla-size__mature-size-full-catalog-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 12.192,
+          "max": 18.288
+        },
+        "spreadM": {
+          "min": 10.668,
+          "max": 13.716
+        }
+      },
+      "provenanceEvidenceIds": [
+        "sapodilla__uf-ifas-st405-sapodilla-size__mature-size-full-catalog-v1"
       ],
       "conflictingEvidenceIds": null,
       "partialAnchor": null,
@@ -3488,6 +3579,50 @@
       },
       "provenanceEvidenceIds": [
         "french-marigold__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:tamarindus-indica",
+      "canonicalSlugAliases": [
+        "tamarind"
+      ],
+      "scientificName": "Tamarindus indica",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "tamarind__uf-ifas-st618-tamarind-size__mature-size-full-catalog-v1",
+      "selectedSpreadEvidenceRef": "tamarind__uf-ifas-st618-tamarind-size__mature-size-full-catalog-v1",
+      "selectedSource": "tamarind__uf-ifas-st618-tamarind-size__mature-size-full-catalog-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 12.192,
+          "max": 19.812
+        },
+        "spreadM": {
+          "min": 12.192,
+          "max": 15.24
+        }
+      },
+      "provenanceEvidenceIds": [
+        "tamarind__uf-ifas-st618-tamarind-size__mature-size-full-catalog-v1"
       ],
       "conflictingEvidenceIds": null,
       "partialAnchor": null,
