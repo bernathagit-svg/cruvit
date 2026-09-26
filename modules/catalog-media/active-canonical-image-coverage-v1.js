@@ -19,10 +19,7 @@ export const IMAGE_BLOCKED = 'IMAGE_BLOCKED';
 /** Wave 1 species packets collapsed onto existing canonicals — never separate image authority. */
 export const SPECIES_ALIAS_ONTO_CANONICAL = Object.freeze({
   'english-lavender': 'lavender',
-  'spearmint': 'mint',
-  'common-jasmine': 'jasmine',
   'bigleaf-hydrangea': 'hydrangea',
-  'lesser-bougainvillea': 'bougainvillea',
   'bell-pepper': 'sweet-pepper'
 });
 
