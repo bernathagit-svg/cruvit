@@ -1,0 +1,56 @@
+name: CRUVIT Pomegranate Three-Scenario Live Proof
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/pomegranate-three-scenario-live-proof.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Wait for diagnostic deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://friendly-taiyaki-64aacb.netlify.app/modules/smart-recommendations/pomegranate-norway-suitability-diagnostic.html"
+          for i in $(seq 1 30); do
+            if curl -fsS "$URL" | grep -q "3 Scenario Test"; then
+              echo "diagnostic deployed"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "diagnostic did not deploy in time"
+          exit 1
+
+      - name: Run live app evaluator in headless Chrome
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://friendly-taiyaki-64aacb.netlify.app/modules/smart-recommendations/pomegranate-norway-suitability-diagnostic.html"
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME"
+          "$CHROME"             --headless=new             --no-sandbox             --disable-gpu             --disable-dev-shm-usage             --window-size=1280,900             --virtual-time-budget=45000             --dump-dom             "$URL" > /tmp/dom.html 2>/tmp/chrome.err || true
+          echo "--- chrome stderr tail ---"
+          tail -n 80 /tmp/chrome.err || true
+          echo "--- diagnostic output ---"
+          python - <<'PY'
+          import re, html, sys
+          s=open('/tmp/dom.html','r',encoding='utf-8',errors='replace').read()
+          m=re.search(r'<pre id="out">(.*?)</pre>',s,re.S)
+          if not m:
+              print(s[-10000:])
+              raise SystemExit("OUT_PRE_NOT_FOUND")
+          txt=html.unescape(re.sub(r'<[^>]+>','',m.group(1)))
+          print(txt)
+          if not txt.startswith('DONE'):
+              raise SystemExit("DIAGNOSTIC_NOT_DONE")
+          if '"ok": true' not in txt:
+              raise SystemExit("DIAGNOSTIC_FAILED")
+          PY
