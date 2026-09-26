@@ -3,15 +3,20 @@
   "preferredBackend": "cloudflare-r2",
   "immutablePathPattern": "climate/global-v1/{globalBakeId}/tiles/{tileFileName}",
   "cacheControl": "public, max-age=31536000, immutable",
-  "uploadStatus": "NOT_CONNECTED",
-  "runtimeFetchStatus": "IMPLEMENTED_AWAITING_CREDENTIALS",
+  "uploadStatus": "PARTIAL_CANARY_DEPLOYED",
+  "runtimeFetchStatus": "ACTIVE_PARTIAL_COVERAGE",
   "requiredEnvironment": [
     "R2_ACCOUNT_ID",
     "R2_ACCESS_KEY_ID",
     "R2_SECRET_ACCESS_KEY",
     "R2_BUCKET"
   ],
-  "optionalEnvironment": ["R2_ENDPOINT", "R2_PREFIX"],
+  "optionalEnvironment": [
+    "R2_ENDPOINT",
+    "R2_PREFIX"
+  ],
   "blockerWhenMissing": "GLOBAL_STORAGE_CONNECTION_REQUIRED",
-  "notes": "Do not commit secrets. Upload canary: scripts/coordinate-climate-v2-upload-r2-canary.mjs. Full plan: scripts/coordinate-climate-v2-upload-r2.mjs. Runtime module: modules/personal-domain/coordinate-climate-global-object-storage-v1.js. NOT_CONNECTED means owner R2 credentials/bucket are not configured yet; fetch code may still be present."
+  "notes": "R2 transport is configured and canary objects are live. Full validated 61,964-tile corpus was built locally but has not yet been fully deployed to R2. Missing remote tiles remain UNKNOWN and must never be converted to inferred hard frost. Full deployment: scripts/coordinate-climate-v2-upload-r2.mjs upload-full.",
+  "coverageReadinessAuthority": "climate/global-v1/{globalBakeId}/deployment-manifest.json",
+  "globalReadyRule": "GLOBAL_READY only when deployment-manifest.globalReady=true and verifiedRemoteTileCount===expectedLandTileCount"
 }
