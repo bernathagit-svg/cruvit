@@ -75,3 +75,14 @@ test('generic tropical label alone cannot authorize summer heat band',()=>{
   });
   assert.equal(r.eligible,false);
 });
+
+
+test('warm conditions explicitly needed for fruit ripening map to warm summer band',()=>{
+  const r=qualitativeSummerHeatFruitingTransform({
+    sourceText:'Warm conditions are needed for the fruit to ripen well.',
+    fruitProductionRelevant:true,
+    sourceIds:['authority-1']
+  });
+  assert.equal(r.eligible,true);
+  assert.equal(r.value,'warm');
+});
