@@ -1,0 +1,71 @@
+name: CRUVIT Reproductive Climate Proposal Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/reproductive-climate-proposal-validation.yml'
+      - 'scripts/reproductive-climate-revalidation-proposals-v1.mjs'
+      - 'data/catalog/revalidation/reproductive-climate-revalidation-queue-2026-09-26-v1.json'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Generate deterministic proposals
+        run: node scripts/reproductive-climate-revalidation-proposals-v1.mjs artifacts/reproductive-climate-proposals-v1.json
+
+      - name: Validate every auto-transform proposal against ingest contract
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import {
+            validateCatalogExpansionPacket,
+            materializePlantCatalogItemFromPacket
+          } from './modules/catalog-expansion/catalog-expansion-v1-contract.js';
+
+          const doc=JSON.parse(fs.readFileSync('artifacts/reproductive-climate-proposals-v1.json','utf8'));
+          let validated=0;
+          for(const row of doc.rows){
+            if(row.route!=='AUTO_TRANSFORM_PROPOSAL') continue;
+            if(!row.packetPath || !fs.existsSync(row.packetPath)) throw new Error('PACKET_MISSING:'+row.canonicalSlug);
+            const packet=JSON.parse(fs.readFileSync(row.packetPath,'utf8'));
+            const copy=structuredClone(packet);
+            const existingIds=new Set((copy.claims||[]).map(x=>x.claimId));
+            copy.claims=Array.isArray(copy.claims)?copy.claims:[];
+            let seq=0;
+            for(const proposed of row.proposedClaims){
+              if(proposed.evidenceClass!=='HEURISTIC_ASSERTION') throw new Error('EVIDENCE_INFLATION:'+row.canonicalSlug);
+              if(!Array.isArray(proposed.sourceIds)||!proposed.sourceIds.length) throw new Error('SOURCE_IDS_REQUIRED:'+row.canonicalSlug);
+              let claimId='rc-revalidation-'+row.canonicalSlug+'-'+(++seq);
+              while(existingIds.has(claimId)) claimId+='x';
+              existingIds.add(claimId);
+              copy.claims.push({...proposed,claimId});
+            }
+            const v=validateCatalogExpansionPacket(copy);
+            if(!v.ok) throw new Error('PACKET_VALIDATION_FAILED:'+row.canonicalSlug+':'+JSON.stringify(v.errors));
+            const m=materializePlantCatalogItemFromPacket(copy,{updatedAt:'1970-01-01T00:00:00.000Z'});
+            if(!m.ok) throw new Error('MATERIALIZATION_FAILED:'+row.canonicalSlug);
+            const rc=m.item?.climateTraits?.reproductiveClimate;
+            if(!rc?.fruiting) throw new Error('FRUITING_RC_NOT_MATERIALIZED:'+row.canonicalSlug);
+            validated++;
+          }
+          if(validated!==doc.autoTransformProposalCount) throw new Error('VALIDATED_COUNT_MISMATCH:'+validated+'!='+doc.autoTransformProposalCount);
+          console.log(JSON.stringify({validated, researchRequired:doc.researchRequiredCount, proposedClaims:doc.proposedClaimCount}));
+          NODE
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cruvit-reproductive-climate-proposals-v1
+          path: artifacts/reproductive-climate-proposals-v1.json
+          retention-days: 30
