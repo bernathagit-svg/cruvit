@@ -40,6 +40,8 @@ export default async(req)=>{
     tileKey:result.tileKey||null,
     objectKey:result.objectKey||null,
     globalBakeId:result.globalBakeId||null,
+    globalCoverageState:result.globalCoverageState||null,
+    globalCoverage:result.globalCoverage||null,
     structuralClimate:{
       status:s.status||null,
       broadClimateOverride:s.broadClimateOverride||null,
