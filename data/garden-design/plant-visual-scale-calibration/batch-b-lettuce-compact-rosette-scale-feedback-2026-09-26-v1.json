@@ -1,0 +1,30 @@
+{
+  "contract": "cruvit-owner-preview-scale-feedback-v1",
+  "feedbackId": "batch-b-lettuce-compact-rosette-scale-feedback-2026-09-26-v1",
+  "createdAt": "2026-09-26",
+  "batchId": "cruvit-e2e-batch-b-2026-09-25-v1",
+  "sourceJobId": "lettuce__mature__default__vegetative__v1",
+  "ownerObservation": "Lettuce still looks a little too large in the real-garden preview after Blend/composite repair.",
+  "screenshotAssessment": {
+    "issueClass": "SCENE_SCALE_PROPORTION",
+    "blendIssueResolvedEnoughForScaleReview": true,
+    "targetAdjustment": "approximately 15 percent smaller than current preview"
+  },
+  "systemFinding": [
+    "Lettuce has source-supported mature spread authority around 0.1524–0.3048 m.",
+    "Existing relative preview damping used sqrt(rawRatio), producing scaleFactor about 0.676.",
+    "Compact rosette evidence was therefore damped too heavily toward the generic rosette reference."
+  ],
+  "correctivePolicy": [
+    "For low compact forms with source-supported spread and raw spread ratio below 0.6, use exponent 0.70 instead of 0.50.",
+    "Keep species without size authority on neutral factor 1.0.",
+    "Do not change canonical botanical size authority.",
+    "Do not introduce species-name hardcoding."
+  ],
+  "expectedLettuceScaleFactorApprox": 0.578,
+  "previousScaleFactorApprox": 0.676,
+  "paidCalls": 0,
+  "imageMutation": false,
+  "productionWrites": 0,
+  "registryWrites": 0
+}
