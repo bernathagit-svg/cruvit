@@ -1,3 +1,5 @@
+[Reading 138 lines from start (total: 138 lines, 0 remaining)]
+
 const baseScreen=document.getElementById('baseScreen');
 const stage=document.getElementById('carouselStage');
 const surface=document.getElementById('dragSurface');
@@ -63,9 +65,11 @@ function activate(){
 }
 
 function deactivate(){
-  stage.classList.remove('active');
-  stage.setAttribute('aria-hidden','true');
-  baseScreen.src=(index===0?exact0:exact1)+'?v=10';
+  // Keep the independent-card stage visible at its settled endpoint.
+  // This avoids a blank frame/state swap after drag.
+  stage.classList.add('active');
+  stage.setAttribute('aria-hidden','false');
+  baseScreen.style.visibility='visible';
 }
 
 function begin(x){
@@ -97,6 +101,7 @@ function animateTo(target){
     if(u<1) requestAnimationFrame(frame);
     else{
       index=target===1?1:0;
+      render(index);
       deactivate();
     }
   }
@@ -136,3 +141,5 @@ surface.addEventListener('touchmove',e=>{
 surface.addEventListener('touchend',finish,{passive:false});
 
 render(0);
+
+[executed on device: חגית (5c07beb2-4e22-49cd-b84d-fbf06778d313)]
