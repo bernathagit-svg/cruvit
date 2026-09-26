@@ -225,6 +225,29 @@
         "uf-ifas-white-sapote"
       ],
       "shortExcerpt": "Soft sweet fruit in mild subtropical climates; trees tolerate light frost better than crop."
+    },
+    {
+      "claimId": "rc-flowering-seasonal-induction",
+      "field": "reproductiveClimate.flowering.seasonalInductionCue",
+      "status": "asserted",
+      "value": "cool_or_dry",
+      "sourceIds": [
+        "uf-ifas-white-sapote"
+      ],
+      "shortExcerpt": "A cool and/or dry period can induce dormancy, followed by flowering when warm temperatures and/or rains resume.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "rc-fruiting-seasonal-induction",
+      "field": "reproductiveClimate.fruiting.seasonalInductionCue",
+      "status": "asserted",
+      "value": "cool_or_dry",
+      "sourceIds": [
+        "uf-ifas-white-sapote"
+      ],
+      "shortExcerpt": "Fruit production depends on the flowering cycle induced by a distinct cool and/or dry period.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformRef": "flowering-induction-to-fruiting-seasonal-cue-v1@1.0.0"
     }
   ],
   "image": {
