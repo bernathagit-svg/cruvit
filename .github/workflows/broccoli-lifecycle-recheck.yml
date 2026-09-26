@@ -1,0 +1,64 @@
+name: CRUVIT Broccoli Lifecycle Recheck
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/broccoli-lifecycle-recheck.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Recheck broccoli lifecycle
+        shell: bash
+        run: |
+          set -euo pipefail
+          dir="data/catalog/full-catalog/lifecycle-broccoli"
+          mkdir -p "$dir"
+          curl --fail-with-body --silent --show-error             --retry 2 --retry-delay 1             "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/lifecycle-research?slug=broccoli"             -o "$dir/broccoli.json"
+
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const d=JSON.parse(fs.readFileSync('data/catalog/full-catalog/lifecycle-broccoli/broccoli.json','utf8'));
+          const summary={
+            contract:'cruvit-broccoli-lifecycle-recheck-v1',
+            createdAt:new Date().toISOString(),
+            canonicalSlug:d.canonicalSlug,
+            scientific:d.scientific,
+            state:d?.result?.state||'UNKNOWN',
+            evidenceClass:d?.result?.evidenceClass||'UNKNOWN',
+            ready:d?.result?.ready===true,
+            code:d?.result?.code||null,
+            externalRequests:d.externalRequests||0,
+            paidCalls:0,
+            catalogWrites:0,
+            productionWrites:0,
+            records:Array.isArray(d.records)?d.records.map(r=>({
+              sourceId:r.sourceId||null,
+              state:r.state||'UNKNOWN',
+              code:r.code||null,
+              evidenceClass:r.evidenceClass||'UNKNOWN',
+              sourcePolicyEligible:r.sourcePolicyEligible===true,
+              excerpt:r.excerpt||null,
+              url:r.url||null
+            })):[]
+          };
+          fs.writeFileSync('data/catalog/full-catalog/lifecycle-broccoli/summary.json',JSON.stringify(summary,null,2)+'\n');
+          console.log(JSON.stringify(summary,null,2));
+          NODE
+      - name: Commit evidence
+        run: |
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add data/catalog/full-catalog/lifecycle-broccoli
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "catalog: record broccoli lifecycle recheck"
+          git push origin HEAD:main
