@@ -88,38 +88,48 @@ export function classifyFruitProductionIntent(runtimePlant){
     && tagProv.sourceIds.length>0;
   const tagEvidenceText=norm(tagProv?.shortExcerpt);
 
-  const structuralPositive=
-    groups.some(g=>/fruit|citrus|berry/.test(g))
-    || tags.some(t=>['fruit','citrus','berry','fruit-tree','orchard'].includes(t));
-  if(structuralPositive){
-    return {applicable:true,authority:'STRUCTURED_FRUIT_PURPOSE',reason:null};
-  }
-  if(tagProvenanceKnown && /catalog tags:.*\b(fruit|berry|citrus)\b/.test(tagEvidenceText)){
-    return {applicable:true,authority:'SOURCE_BACKED_CATALOG_TAG_PURPOSE',reason:null};
+  // Primary harvest-purpose evidence outranks legacy group templates.
+  // Leaf/root/flower-bud crops must not become fruit-yield crops just because an old
+  // group template contains "fruit".
+  const explicitVegetativeHarvest =
+    tags.some(t=>['leafy','root','edible-flower','cut-flower'].includes(t))
+    || /grown for (?:edible )?(?:leaves|leaf|foliage|taproots?|roots?|flower buds?|flowers?)|harvest immature flower heads?|flower buds? harvested|edible (?:leaf stalks?|tuberous roots?|immature flower buds?)/.test(fruitingText);
+  if(explicitVegetativeHarvest){
+    return {applicable:false,authority:'EXPLICIT_NON_REPRODUCTIVE_HARVEST_PURPOSE',reason:'PRIMARY_YIELD_IS_NOT_FRUIT_OR_SEED_SET'};
   }
 
-  // Explicit negative / secondary reproductive descriptions must not turn an ornamental,
-  // foliage crop or seed-bearing plant into a fruit-yield recommendation target.
   const explicitNonFruitPurpose =
     /not grown for (?:edible )?fruit|not (?:a|an) .*fruit crop|not a food crop|not a conventional culinary fruit crop|grown for (?:foliage|flowers|leaves)|secondary to flowering|if allowed to fruit|ornamental(?:\b|;)|seed heads?|capsules?/.test(fruitingText);
   if(explicitNonFruitPurpose){
     return {applicable:false,authority:'EXPLICIT_NON_FRUIT_PURPOSE',reason:'FRUITING_TEXT_DESCRIBES_NON_CROP_REPRODUCTION'};
   }
 
+  // Explicit crop tags describe a harvest that depends on flowering / set.
+  const structuredPositive=
+    tags.some(t=>['fruit','citrus','berry','fruit-tree','orchard','melon','cucurbit','legume'].includes(t))
+    || groups.some(g=>/fruit|citrus|berry/.test(g));
+  if(structuredPositive){
+    return {applicable:true,authority:'STRUCTURED_REPRODUCTIVE_YIELD_PURPOSE',reason:null};
+  }
+
+  if(tagProvenanceKnown && /catalog tags:.*\b(fruit|berry|citrus|melon|cucurbit|legume)\b/.test(tagEvidenceText)){
+    return {applicable:true,authority:'SOURCE_BACKED_CATALOG_TAG_PURPOSE',reason:null};
+  }
+
   // Legacy catalog rows may lack structural tags. Only source-backed wording that clearly
-  // describes harvested / edible / ripening fruit is accepted as a migration-time purpose signal.
+  // describes harvested / edible / ripening reproductive yield is accepted.
   const sourceBackedCropText = provenanceKnown && (
     /edible .*(fruit|berry|berries|pome|drupe|pod|pods)/.test(fruitingText)
     || /(fruit|berry|berries|pome|drupe|pod|pods).*(edible|sweet|pulp|harvest|ripen|ripe|crop)/.test(fruitingText)
-    || /harvest .*(fruit|berry|berries|pod|pods)/.test(fruitingText)
+    || /harvest .*(fruit|berry|berries|pod|pods|peas|beans|squash)/.test(fruitingText)
     || /(fruit|berry|berries|pod|pods).*ripen/.test(fruitingText)
     || /fruit set/.test(fruitingText)
   );
   if(sourceBackedCropText){
-    return {applicable:true,authority:'SOURCE_BACKED_FRUIT_PURPOSE_TEXT',reason:null};
+    return {applicable:true,authority:'SOURCE_BACKED_REPRODUCTIVE_YIELD_TEXT',reason:null};
   }
 
-  return {applicable:false,authority:'NO_FRUIT_PRODUCTION_PURPOSE_EVIDENCE',reason:null};
+  return {applicable:false,authority:'NO_REPRODUCTIVE_YIELD_PURPOSE_EVIDENCE',reason:null};
 }
 
 function reproductiveClimateState(runtimePlant){
