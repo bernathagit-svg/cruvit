@@ -1,0 +1,101 @@
+{
+  "contract": "plant-visual-in-garden-model-qa-plan-v1",
+  "runId": "cruvit-e2e-batch-b-lettuce-scale-v3-2026-09-26-v1",
+  "sourceManifestId": "cruvit-e2e-batch-b-lettuce-scale-v3-source-2026-09-26-v1",
+  "sourceAssuranceReport": "cruvit-e2e-in-garden-source-bundle-v1",
+  "ownerApprovalId": "cruvit-e2e-batch-b-owner-review-2026-09-25-v1",
+  "createdAt": "2026-09-26",
+  "rendererOwner": "Garden Design production renderer",
+  "sourceGardenRequirement": "real saved Garden Design source photo only",
+  "sourceGarden": {
+    "designId": "a1a34009-a0b6-4e4a-a141-8926dd60334e",
+    "sourceMediaId": "08bc3085-9d6c-4c7e-a67a-dba324f00e70",
+    "storageBucket": "user-garden-media",
+    "storagePath": "819f3520-f516-4cb0-9a8c-f3eb8255126e/fab7eec4-86b7-4b8a-838d-8aa4bba61657/08bc3085-9d6c-4c7e-a67a-dba324f00e70/garden-source.jpg",
+    "validationState": "validated",
+    "signedUrlPersisted": false,
+    "objectCopiedToPlantStorage": false
+  },
+  "provider": "openai-responses-api",
+  "model": "gpt-5.6-luna",
+  "reasoningEffort": "low",
+  "jobCount": 1,
+  "jobs": [
+    {
+      "jobId": "lettuce__mature__default__vegetative__v1",
+      "canonicalSlug": "lettuce",
+      "scientific": "Lactuca sativa",
+      "visualForm": "rosette",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "objectKey": "candidates/cruvit-e2e-batch-b-visual-wave-001-2026-09-25-v1/lettuce/lettuce__mature__default__vegetative__v1__eee0f7e8708b39013a151b9a3bf2689a483c742669b2351a4a738e8b6be46f24.png",
+      "sha256": "eee0f7e8708b39013a151b9a3bf2689a483c742669b2351a4a738e8b6be46f24",
+      "bytes": 2014599,
+      "sourceModelQaRunId": "cruvit-e2e-batch-b-model-qa-2026-09-25-v1",
+      "admission": "MODEL_QA_PASS",
+      "qaRendererInput": {
+        "ok": true,
+        "code": "QA_PREVIEW_PRESENTATION_BASELINE",
+        "source": "presentation-sizing-v1.1+relative-preview-scale-v1.1+in-garden-qa-scale-policy-v1.1",
+        "baseWidthPx": 112,
+        "effectivePresentationForm": "rosette",
+        "relativePreviewScaleFactor": 0.578195031234703,
+        "relativePreviewScaleReady": true,
+        "relativePreviewScaleSource": "BOTANICAL_SPREAD_EVIDENCE_DAMPED_FOR_PREVIEW",
+        "relativePreviewSpreadMidpointM": 0.22860000000000003,
+        "relativePreviewReferenceSpreadM": 0.5,
+        "relativePreviewEvidenceRef": "lettuce__ncsu__mature-size-batch-b-v1",
+        "qaScaleBand": "medium",
+        "qaMaxHeightPct": 54,
+        "qaMaxWidthPct": 80,
+        "qaScalePolicyVersion": "in-garden-qa-scale-policy-v1.1",
+        "scale": 1,
+        "x": 0.56,
+        "y": 0.86,
+        "rotation": 0,
+        "authorityUserResized": false,
+        "renderingOwner": "Garden Design production renderer",
+        "independentQaScaleMath": false,
+        "relativePreviewScaleResponseProfile": "COMPACT_LOW_FORM",
+        "relativePreviewScaleResponseExponent": 0.7
+      }
+    }
+  ],
+  "requiredChecks": [
+    "perspective",
+    "groundContact",
+    "stickerLook",
+    "halo",
+    "sharpnessMatch",
+    "colorTonalMatch",
+    "scaleRealism",
+    "silhouette"
+  ],
+  "outputPolicy": {
+    "allowedVerdicts": [
+      "PASS",
+      "FAIL",
+      "UNCERTAIN"
+    ],
+    "failRoutesToHold": true,
+    "uncertainRoutesToOwnerReview": true,
+    "noSilentPass": true
+  },
+  "executionPolicy": {
+    "ownerSpendApprovalRequired": false,
+    "maxCalls": 0,
+    "maxRetries": 0,
+    "productionWritesAllowed": false,
+    "registryWritesAllowed": false,
+    "candidateEvidenceOnly": true
+  },
+  "safety": {
+    "realSavedGardenPhotoRequired": true,
+    "localStandInForbidden": true,
+    "rendererSnapshotMustUseQaRendererInput": true,
+    "noGardenPhotoMutation": true,
+    "noImageGeneration": true,
+    "noProductionPromotion": true
+  }
+}
