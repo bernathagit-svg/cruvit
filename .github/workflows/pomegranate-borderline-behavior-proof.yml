@@ -1,0 +1,93 @@
+name: CRUVIT Pomegranate Borderline Behavior Proof
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/pomegranate-borderline-behavior-proof.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Probe covered CRUVIT locations
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import path from 'node:path';
+          import {
+            resolveGardenStructuralClimateFromCoordinateV2
+          } from './modules/personal-domain/coordinate-climate-garden-hydrate-v2.js';
+          import {
+            evaluateHardClimateSurvival,
+            applyHardClimateSurvivalToFits,
+            enforceSurvivalDownstreamCaps
+          } from './modules/suitability/hard-climate-survival-gate-v1.js';
+
+          const DATA=path.resolve('data/coordinate-climate/v2');
+          const meta={
+            frostSensitivity:'high',
+            coldTolerance:'low',
+            heatTolerance:'high',
+            humidityTolerance:'medium',
+            groupIds:['mediterranean-fruit'],
+            needsWinterChill:false,
+            fruitingRequirements:'Edible leathery berries with arils; best set in hot summers.'
+          };
+          const places=[
+            {id:'yehiam',lat:32.9967,lon:35.2205},
+            {id:'tokyo',lat:35.6762,lon:139.6503},
+            {id:'quito',lat:-0.1807,lon:-78.4678},
+            {id:'cairo',lat:30.0444,lon:31.2357}
+          ];
+          for(const p of places){
+            const r=resolveGardenStructuralClimateFromCoordinateV2(p.lat,p.lon,{dataRoot:DATA,enqueuePrep:false,label:p.id});
+            const s=r.structuralClimate||{};
+            const profile={
+              broadClimate:s.broadClimateOverride||'unknown',
+              freezingRisk:s.freezingRisk||'unknown',
+              thermalRegime:s.thermalRegime||'unknown',
+              structuralColdRisk:s.structuralColdRisk||'unknown',
+              coldestMonthMeanMinC:s.evidence?.coldestMonthMeanMinC??null,
+              structuralClimateStatus:s.status||'unknown',
+              isFrostFreeGrowingClimate:s.freezingRisk==='low' && Number(s.evidence?.coldestMonthMeanMinC??-999)>=1
+            };
+            const verdict=evaluateHardClimateSurvival({meta,climateProfile:profile,protectionContext:{plantingMode:'ground'},coords:p});
+            let fits=applyHardClimateSurvivalToFits({
+              survivalFit:85,thriveFit:80,floweringFit:70,fruitingFit:70,heatColdFit:80,blocked:false
+            },verdict);
+            fits=enforceSurvivalDownstreamCaps(fits);
+            console.log(JSON.stringify({id:p.id,lookupOk:r.ok,profile,verdict,fits}));
+          }
+
+          // Controlled boundary case: no frost threat, but cool summer.
+          const controlled={
+            id:'controlled-frost-free-cool-summer',
+            climateProfile:{
+              broadClimate:'mediterranean',
+              freezingRisk:'low',
+              thermalRegime:'cool-seasonal',
+              structuralColdRisk:'low',
+              coldestMonthMeanMinC:8,
+              warmestMonthMeanMaxC:21,
+              structuralClimateStatus:'known',
+              isFrostFreeGrowingClimate:true
+            }
+          };
+          const verdict=evaluateHardClimateSurvival({
+            meta,
+            climateProfile:controlled.climateProfile,
+            protectionContext:{plantingMode:'ground'},
+            coords:{lat:37.7,lon:-122.4}
+          });
+          let fits=applyHardClimateSurvivalToFits({
+            survivalFit:85,thriveFit:80,floweringFit:70,fruitingFit:70,heatColdFit:80,blocked:false
+          },verdict);
+          fits=enforceSurvivalDownstreamCaps(fits);
+          console.log(JSON.stringify({id:controlled.id,profile:controlled.climateProfile,verdict,fits,note:'hard-climate layer only; full Smart Rec currently has no generic cool-summer fruiting penalty for pomegranate best-set-in-hot-summers prose'}));
+          NODE
