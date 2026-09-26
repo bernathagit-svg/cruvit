@@ -411,9 +411,11 @@ export function classifyFruitingState(plant, visualForm, purpose) {
 
 export function classifyDormantState(plant, visualForm) {
   const slug = slugify(plant.canonicalSlug || plant.slug);
+  const habit = classifyDesignHabitModifiers(plant);
   const lifecycle = lower(
     plant?.designMetadata?.lifecycle
     || plant?.lifecycle
+    || habit.lifecycle
     || ''
   );
 
@@ -450,7 +452,6 @@ export function classifyDormantState(plant, visualForm) {
       CONFIDENCE.LOW
     );
   }
-  const habit = classifyDesignHabitModifiers(plant);
   if (habit.deciduous === true) {
     if (
       visualForm === DESIGN_VISUAL_FORMS.TREE
