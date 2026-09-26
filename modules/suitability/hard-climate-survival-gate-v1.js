@@ -10,7 +10,7 @@
  * Not a second climate engine: callers still use smartRecEvaluateSuitability.
  * Not plant- or place-specific.
  */
-export const HARD_CLIMATE_SURVIVAL_GATE_VERSION = '1.1.2';
+export const HARD_CLIMATE_SURVIVAL_GATE_VERSION = '1.1.3';
 
 const RISK_RANK = Object.freeze({ unknown: 0, low: 1, medium: 2, high: 3 });
 
@@ -132,13 +132,11 @@ export function elevateAmbientFreezingRisk(climateProfile = {}, coords = {}) {
     risk = 'low';
   }
 
+  // Missing structural climate must remain UNKNOWN.
+  // Latitude is not sufficient evidence for a lethal-frost / hard-survival decision.
+  // A coarse latitude hint may be used by presentation layers, never by this hard gate.
   if (cold == null && status !== 'known') {
-    const lat = finiteNumber(coords.lat);
-    if (lat != null) {
-      const absLat = Math.abs(lat);
-      if (absLat > 50) risk = bumpRisk(risk, 'high');
-      else if (absLat > 35) risk = bumpRisk(risk, 'medium');
-    }
+    void coords;
   }
 
   return risk === 'unknown' ? 'unknown' : risk;
