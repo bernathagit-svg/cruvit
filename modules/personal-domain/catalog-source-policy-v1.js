@@ -263,6 +263,32 @@ function excerptSupportsValue(excerpt, value, field) {
   }
   if (!valueStr) return /frost|cold|heat|humid|water|sun|drain|chill|flower|fruit|species|scientific|hardiness/i.test(ex);
   if (ex.toLowerCase().includes(valueStr.toLowerCase())) return true;
+  if (['growthHabit','habit','growthForm'].includes(f)) {
+    const normMorph = (s) => String(s || '')
+      .toLowerCase()
+      .replace(/ground\s+cover/g,'groundcover')
+      .replace(/[-_/]+/g,' ')
+      .replace(/\s+/g,' ')
+      .trim();
+    const exMorph=normMorph(ex);
+    const valueMorph=normMorph(valueStr);
+    if (exMorph.includes(valueMorph)) return true;
+    if (valueMorph==='groundcover' && /\bgroundcover\b/.test(exMorph)) return true;
+    if (valueMorph==='climber' && /\b(vine|climber|climbing|twining)\b/.test(exMorph)) return true;
+    if (valueMorph==='palm' && /\b(palm|cycad)\b/.test(exMorph)) return true;
+    if (valueMorph==='tree' && /\btree\b/.test(exMorph)) return true;
+    if (valueMorph==='shrub' && /\bshrub\b/.test(exMorph)) return true;
+    if (
+      valueMorph==='herbaceous clump'
+      && /\bherbaceous\b/.test(exMorph)
+      && /\b(clump|clumping|mounding|spreading)\b/.test(exMorph)
+    ) return true;
+    if (
+      valueMorph==='herbaceous upright'
+      && /\bherbaceous\b/.test(exMorph)
+      && /\b(erect|upright)\b/.test(exMorph)
+    ) return true;
+  }
   return /frost|cold|heat|humid|water|sun|drain|chill|flower|fruit|species|scientific|hardiness/i.test(ex);
 }
 
