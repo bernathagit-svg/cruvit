@@ -29,11 +29,17 @@ export const HARDINESS_ZONE_TO_COLD_REASON = Object.freeze({
  */
 export function isAcceptedHardinessZoneClaim(sourceClaim) {
   if (!sourceClaim || typeof sourceClaim !== 'object') return false;
-  if (sourceClaim.claimType !== HARDINESS_CLAIM_TYPE.USDA_HARDINESS_ZONE_BAND) return false;
-  if (sourceClaim.hardinessZoneSystem !== HARDINESS_ZONE_SYSTEM.USDA) return false;
-  const min = Number(sourceClaim.hardinessZoneMin);
-  const max = Number(sourceClaim.hardinessZoneMax);
-  return Number.isFinite(min) && Number.isFinite(max) && min >= 1 && max <= 13 && min <= max;
+  if (sourceClaim.claimType === HARDINESS_CLAIM_TYPE.USDA_HARDINESS_ZONE_BAND) {
+    if (sourceClaim.hardinessZoneSystem !== HARDINESS_ZONE_SYSTEM.USDA) return false;
+    const min = Number(sourceClaim.hardinessZoneMin);
+    const max = Number(sourceClaim.hardinessZoneMax);
+    return Number.isFinite(min) && Number.isFinite(max) && min >= 1 && max <= 13 && min <= max;
+  }
+  if (sourceClaim.claimType === HARDINESS_CLAIM_TYPE.RHS_HARDINESS_RATING) {
+    if (sourceClaim.hardinessZoneSystem !== HARDINESS_ZONE_SYSTEM.RHS) return false;
+    return /^H(?:1[ABC]|[2-7])$/.test(String(sourceClaim.rhsHardinessRating || '').toUpperCase());
+  }
+  return false;
 }
 
 /**
@@ -47,6 +53,22 @@ export function mapUsdaMinZoneToColdTolerance(minZ) {
   if (z <= 6) return 'medium';
   if (z <= 8) return 'low';
   return 'very_low';
+}
+
+
+export function mapRhsHardinessRatingToColdTolerance(rating) {
+  switch (String(rating || '').toUpperCase()) {
+    case 'H7': return 'high';
+    case 'H6':
+    case 'H5': return 'medium';
+    case 'H4':
+    case 'H3': return 'low';
+    case 'H2':
+    case 'H1C':
+    case 'H1B':
+    case 'H1A': return 'very_low';
+    default: return null;
+  }
 }
 
 /**
@@ -81,7 +103,10 @@ export function applyHardinessZoneToColdTraits(sourceClaim, options = {}) {
     };
   }
 
-  const coldTolerance = mapUsdaMinZoneToColdTolerance(sourceClaim.hardinessZoneMin);
+  const isRhs = sourceClaim.claimType === HARDINESS_CLAIM_TYPE.RHS_HARDINESS_RATING;
+  const coldTolerance = isRhs
+    ? mapRhsHardinessRatingToColdTolerance(sourceClaim.rhsHardinessRating)
+    : mapUsdaMinZoneToColdTolerance(sourceClaim.hardinessZoneMin);
   const reason = HARDINESS_ZONE_TO_COLD_REASON.ZONE_BAND_MAPPED;
 
   /** Derived field retains SOURCE_SUPPORTED lineage via transform provenance (not literal source ordinal). */
@@ -107,8 +132,9 @@ export function applyHardinessZoneToColdTraits(sourceClaim, options = {}) {
         transformReason: reason,
         sourceClaimRef: {
           claimType: sourceClaim.claimType,
-          hardinessZoneMin: sourceClaim.hardinessZoneMin,
-          hardinessZoneMax: sourceClaim.hardinessZoneMax,
+          hardinessZoneMin: sourceClaim.hardinessZoneMin ?? null,
+          hardinessZoneMax: sourceClaim.hardinessZoneMax ?? null,
+          rhsHardinessRating: sourceClaim.rhsHardinessRating ?? null,
           hardinessZoneSystem: sourceClaim.hardinessZoneSystem,
           claimFingerprint: sourceClaim.claimFingerprint
         }
@@ -121,7 +147,10 @@ export const HARDINESS_ZONE_TO_COLD_TRAITS_CONTRACT = Object.freeze({
   transformId: HARDINESS_ZONE_TO_COLD_TRAITS_ID,
   transformVersion: HARDINESS_ZONE_TO_COLD_TRAITS_VERSION,
   transformRef: HARDINESS_ZONE_TO_COLD_TRAITS_REF,
-  acceptedInputClaimTypes: [HARDINESS_CLAIM_TYPE.USDA_HARDINESS_ZONE_BAND],
+  acceptedInputClaimTypes: [
+    HARDINESS_CLAIM_TYPE.USDA_HARDINESS_ZONE_BAND,
+    HARDINESS_CLAIM_TYPE.RHS_HARDINESS_RATING
+  ],
   outputFields: ['coldTolerance'],
   nonOutputFields: ['frostSensitivity'],
   applicability:
@@ -132,6 +161,10 @@ export const HARDINESS_ZONE_TO_COLD_TRAITS_CONTRACT = Object.freeze({
     minZone_le_4: 'coldTolerance=high',
     minZone_le_6: 'coldTolerance=medium',
     minZone_le_8: 'coldTolerance=low',
-    minZone_gt_8: 'coldTolerance=very_low'
+    minZone_gt_8: 'coldTolerance=very_low',
+    rhs_H7: 'coldTolerance=high',
+    rhs_H5_H6: 'coldTolerance=medium',
+    rhs_H3_H4: 'coldTolerance=low',
+    rhs_H1_H2: 'coldTolerance=very_low'
   })
 });
