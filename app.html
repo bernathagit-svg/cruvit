@@ -861,6 +861,8 @@
 <script src="scripts/plant-identifier-loader.js?v=20260914b"></script>
 <script src="modules/personal-domain/bootstrap-safe-climate-traits-migration-data-v1.browser.js?v=20260908a"></script>
 <script src="modules/personal-domain/bootstrap-unlocked-six-climate-traits-migration-data-v1.browser.js?v=20260908b"></script>
+<script>window.__CRUVIT_CANONICAL_CLIMATE_BOOTSTRAP={ready:false,code:'NOT_LOADED',plants:{}};</script>
+<script src="/.netlify/functions/catalog-runtime-climate-bootstrap?v=20260926a"></script>
 <script>
 
 /*
@@ -916,6 +918,40 @@ const PLANT_LIBRARY=[
 {slug:'strawberry-guava',name:'Strawberry Guava',he:'גויאבה תותית',aliases:['strawberry guava','psidium cattleyanum','psidium cattleianum','cherry guava','גויאבה תותית'],scientific:'Psidium cattleyanum',icon:'🍓',status:'Evergreen fruit shrub/tree',mark:'✓',tags:['fruit','tree','shrub','sun','גויאבה תותית'],sun:'Full sun to partial sun',water:'Medium once established',growth:'Evergreen shrub or small tree',size:'2–6 m',climate:'Warm-climate fruit shrub; protect young plants from frost',season:'Prune to shape after fruiting',warnings:['Can self-seed in some regions','Fruit drop can be messy','Watch for fruit fly in some areas','Needs space if allowed to grow','Needs pruning to prevent dense growth'],guide:'Strawberry guava is an evergreen fruiting shrub or small tree for warm gardens. It grows best in sun with moderate watering and good drainage. Prune to shape and keep size manageable. Fruit can drop and attract pests, so place thoughtfully. Young plants benefit from frost protection. It can be a useful edible hedge where climate allows.',products:['Fruit tree fertilizer','Mulch','Pruning shears','Fruit fly trap']},
 {slug:'mulberry',name:'Mulberry Tree',he:'תות עץ',aliases:['mulberry','mulberry tree','morus','תות עץ','עץ תות','morus alba','morus nigra'],scientific:'Morus spp.',icon:'🌳',status:'Large fruit tree',mark:'!',tags:['fruit','tree','sun','תות'],sun:'Full sun',water:'Medium when young; drought tolerant once established',growth:'Deciduous fruit tree',size:'5–12 m depending on species/pruning',climate:'Good warm-climate tree with enough space',season:'Prune in dormancy to control size',warnings:['Can become large','Fruit stains paving and attracts birds','Roots can be strong','Needs careful placement'],guide:'Mulberry is a productive deciduous fruit tree that needs full sun and room. Water while establishing; mature trees tolerate dry periods but fruit better with some irrigation. Plant away from paving and parking areas because fruit can stain. Prune in dormancy to control size. Choose fruitless or compact varieties when mess or size is a concern. Give roots space.',products:['Pruning saw','Mulch','Fruit tree fertilizer','Bird netting']}
 ];
+(function applyCanonicalRuntimeClimateOverlay(){
+  const payload=typeof window!=='undefined'?window.__CRUVIT_CANONICAL_CLIMATE_BOOTSTRAP:null;
+  const rows=payload&&payload.ready===true&&payload.plants&&typeof payload.plants==='object'
+    ?payload.plants:{};
+  const applied=[];
+  for(const plant of PLANT_LIBRARY){
+    const slug=String(plant?.slug||'').trim().toLowerCase();
+    const row=rows[slug];
+    if(!row) continue;
+    if(row.climateTraits&&typeof row.climateTraits==='object'){
+      try{ plant.climateTraits=JSON.parse(JSON.stringify(row.climateTraits)); }
+      catch{ plant.climateTraits=row.climateTraits; }
+    }
+    if(row.scientific&&(!plant.scientific||String(plant.scientific).trim()===String(row.scientific).trim())){
+      plant.scientific=row.scientific;
+    }
+    plant.canonicalClimateAuthority={
+      source:'catalog_plants',
+      verificationState:row.verificationState||null,
+      needsReview:row.needsReview===true,
+      updatedAt:row.updatedAt||null
+    };
+    applied.push(slug);
+  }
+  if(typeof window!=='undefined'){
+    window.__cruvitCanonicalRuntimeClimateOverlay={
+      ready:payload?.ready===true,
+      code:payload?.code||'CANONICAL_BOOTSTRAP_UNAVAILABLE',
+      catalogCount:Number(payload?.count)||0,
+      appliedCount:applied.length,
+      appliedSlugs:applied
+    };
+  }
+})();
 const PLANT_INDEX=Object.fromEntries(PLANT_LIBRARY.map(p=>[p.slug,p]));
 /* ── Bounded identity alias remaps (canonical-wins; resolve-on-read) ── */
 const BOOTSTRAP_IDENTITY_ALIAS_TO_CANONICAL={
@@ -6426,6 +6462,18 @@ function smartRecEvaluateSuitability(p){
   }
   const climateProfile=getAppClimateProfile();
   const ctx=smartRecCurrentContext();
+  const fruitRecommendationClimateRequired=Boolean(
+    (Array.isArray(meta.groupIds)&&meta.groupIds.some(g=>/fruit|citrus|berry/i.test(String(g||''))))
+    ||(Array.isArray(p?.tags)&&p.tags.some(t=>['fruit','citrus','berry'].includes(String(t||'').toLowerCase())))
+    ||String(meta.fruitingRequirements||'').trim()
+  );
+  const structuredFruitingClimateReady=Boolean(
+    meta.reproductiveClimate
+    &&typeof meta.reproductiveClimate==='object'
+    &&meta.reproductiveClimate.fruiting
+    &&typeof meta.reproductiveClimate.fruiting==='object'
+  );
+  let positiveRecommendationEligible=!(fruitRecommendationClimateRequired&&!structuredFruitingClimateReady);
   const warnings=[];
   let blocked=false;
   let survivalFit=85;
@@ -6440,6 +6488,9 @@ function smartRecEvaluateSuitability(p){
   let warningPenalty=0;
   const addWarning=(msg,penalty=8)=>{smartRecAddUniqueMessage(warnings,msg);warningPenalty+=penalty;};
   const blockWith=(msg)=>{blocked=true;smartRecAddUniqueMessage(warnings,msg);};
+  if(!positiveRecommendationEligible){
+    addWarning('Structured fruiting-climate evidence is incomplete, so this plant is not eligible for a positive fruit recommendation.',12);
+  }
   const protectionContext=typeof smartRecProtectionContext==='function'?smartRecProtectionContext():{indoorContext:!!ctx.indoorContext};
   const gateApi=typeof hardClimateSurvivalGateApi==='function'?hardClimateSurvivalGateApi():null;
   const frostIndoorShelter=gateApi&&typeof gateApi.isExplicitFrostFreeProtectedContext==='function'
@@ -6658,6 +6709,7 @@ function smartRecEvaluateSuitability(p){
     addStructuredWarning('fruiting',reproductiveClimateGate.fruiting);
   }
 
+  if(blocked||hardSurvivalBlocked) positiveRecommendationEligible=false;
   const suitabilityScore=blocked?0:Math.max(0,Math.round(
     (survivalFit*0.35)+
     (thriveFit*0.20)+
@@ -6677,7 +6729,7 @@ function smartRecEvaluateSuitability(p){
   }
   if(!blocked&&catalogNeedsReview&&recommendationLevel==='excellent') recommendationLevel='good';
   const explanationText=warnings[0]||meta.survivalVsThriveNotes||'';
-  return {suitabilityScore,recommendationLevel,survivalFit,thriveFit,floweringFit,fruitingFit,warnings,explanationText,hardSurvivalBlocked,reproductiveClimateGate};
+  return {suitabilityScore,recommendationLevel,survivalFit,thriveFit,floweringFit,fruitingFit,warnings,explanationText,hardSurvivalBlocked,reproductiveClimateGate,positiveRecommendationEligible};
 }
 
 /**
@@ -6778,12 +6830,13 @@ function smartRecPlantIsBlocked(p){
   if(gi&&typeof gi.isPositiveRecommendationIneligible==='function'){
     return gi.isPositiveRecommendationIneligible({
       hardSurvivalBlocked:s.hardSurvivalBlocked,
+      positiveRecommendationEligible:s.positiveRecommendationEligible,
       recommendationLevel:s.recommendationLevel,
       derivedOverall:d?.overall,
       derivedSurvival:d?.survival
     });
   }
-  return s.recommendationLevel==='blocked'||s.hardSurvivalBlocked===true;
+  return s.positiveRecommendationEligible===false||s.recommendationLevel==='blocked'||s.hardSurvivalBlocked===true;
 }
 
 function smartRecPlantSort(a,b){
