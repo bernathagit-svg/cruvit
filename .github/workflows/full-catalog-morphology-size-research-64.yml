@@ -38,7 +38,12 @@ jobs:
           node --input-type=module <<'NODE'
           import fs from 'node:fs';
           const dir='data/catalog/full-catalog/morphology-size-64';
-          const files=fs.readdirSync(dir).filter(f=>f.endsWith('.json')&&f!=='summary.json');
+          const expected=String(process.env.SLUGS||'').split(',').map(x=>x.trim()).filter(Boolean);
+          if(expected.length!==64) throw new Error('EXPECTED_64_SLUGS');
+          const files=expected.map(slug=>slug+'.json');
+          for(const file of files){
+            if(!fs.existsSync(dir+'/'+file)) throw new Error('MISSING_RESEARCH_FILE:'+file);
+          }
           const docs=files.map(f=>({file:f,doc:JSON.parse(fs.readFileSync(dir+'/'+f,'utf8'))}));
           for(const {file,doc} of docs){
             if(doc?.ok!==true || typeof doc?.canonicalSlug!=='string' || !doc.canonicalSlug){
