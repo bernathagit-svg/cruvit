@@ -1,0 +1,51 @@
+{
+  "contract": "plant-visual-in-garden-vision-qa-summary-v1",
+  "runId": "cruvit-e2e-batch-b-natural-blend-repair-vision-qa-2026-09-25-v1",
+  "createdAt": "2026-09-26",
+  "reviewed": 2,
+  "pass": 1,
+  "uncertain": 0,
+  "fail": 1,
+  "actualSpendUsd": 0.001674,
+  "productionWrites": 0,
+  "registryWrites": 0,
+  "passJobs": [
+    "fig__young__tree__vegetative__v1"
+  ],
+  "failJobs": [
+    "lettuce__mature__default__vegetative__v1"
+  ],
+  "results": {
+    "fig__young__tree__vegetative__v1": {
+      "overall": "PASS",
+      "notes": [
+        "All eight visible integration checks passed.",
+        "Natural Blend repair resolved the prior Fig young integration failure."
+      ]
+    },
+    "lettuce__mature__default__vegetative__v1": {
+      "overall": "FAIL",
+      "failedChecks": [
+        "perspective",
+        "groundContact",
+        "stickerLook",
+        "halo",
+        "sharpnessMatch",
+        "colorTonalMatch",
+        "scaleRealism"
+      ],
+      "passedChecks": [
+        "silhouette"
+      ],
+      "notes": [
+        "Visible rectangular/patch boundary remains around the repaired lettuce composite.",
+        "The failure points to final-composite boundary handling rather than source candidate identity.",
+        "No additional paid Blend or Vision QA call is authorized by this summary."
+      ]
+    }
+  },
+  "nextRoute": {
+    "figYoung": "PROMOTION_READINESS_ELIGIBLE",
+    "lettuce": "NO_SPEND_RECOMPOSITE_REQUIRED"
+  }
+}
