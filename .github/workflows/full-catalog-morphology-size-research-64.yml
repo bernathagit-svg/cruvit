@@ -1,0 +1,83 @@
+name: CRUVIT Full Catalog Morphology Size Research 64
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/full-catalog-morphology-size-research-64.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SLUGS: "artichoke,asparagus,bay-laurel,blackberry,blackcurrant,blueberry,boxwood,breadfruit,broccoli,carrot,chestnut,chinese-wisteria,chives,cilantro,clematis,common-jasmine,common-lilac,common-myrtle,common-thyme,cranberry,crepe-myrtle,dill,durian,elderberry,feijoa,flowering-dogwood,forsythia,french-marigold,garden-pea,garden-peony,garden-sage,gooseberry,green-bean,hazelnut,jujube,lesser-bougainvillea,mangosteen,medlar,nasturtium,okra,oleander,oregano,parsley,pecan,pitanga,plum,quince,raspberry,red-currant,rhubarb,sapodilla,sea-buckthorn,serviceberry,soursop,southern-magnolia,spearmint,spinach,strawberry,sweet-potato,tamarind,turmeric,watermelon,yucca,zucchini"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Fetch authoritative morphology and size evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          dir="data/catalog/full-catalog/morphology-size-64"
+          mkdir -p "$dir"
+          IFS=',' read -ra slugs <<< "$SLUGS"
+          test "${#slugs[@]}" -eq 64
+
+          for slug in "${slugs[@]}"; do
+            curl --fail-with-body --silent --show-error               --retry 2 --retry-delay 1               "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/morphology-size-research?slug=$slug"               -o "$dir/$slug.json"
+          done
+
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const dir='data/catalog/full-catalog/morphology-size-64';
+          const files=fs.readdirSync(dir).filter(f=>f.endsWith('.json')&&f!=='summary.json');
+          const docs=files.map(f=>JSON.parse(fs.readFileSync(dir+'/'+f,'utf8')));
+          const rows=docs.map(d=>({
+            canonicalSlug:d.canonicalSlug,
+            scientific:d.scientific,
+            externalRequests:d.externalRequests??0,
+            sourceId:d.selectedSource?.sourceId||null,
+            sourceUrl:d.selectedSource?.url||null,
+            visualForm:d.result?.visualForm||'unknown',
+            architectureModes:d.result?.architectureModes||[],
+            morphologyReady:d.result?.morphologyReady===true,
+            morphologyEvidenceClass:d.result?.morphologyEvidenceClass||'UNKNOWN',
+            morphologyCode:d.result?.morphologyCode||null,
+            matureSize:d.result?.matureSize||null
+          })).sort((a,b)=>a.canonicalSlug.localeCompare(b.canonicalSlug));
+          const summary={
+            contract:'cruvit-full-catalog-morphology-size-research-64-v1',
+            createdAt:new Date().toISOString(),
+            total:rows.length,
+            morphologyReady:rows.filter(x=>x.morphologyReady).length,
+            sizeReady:rows.filter(x=>x.matureSize?.ready===true).length,
+            bothReady:rows.filter(x=>x.morphologyReady&&x.matureSize?.ready===true).length,
+            unknownMorphology:rows.filter(x=>!x.morphologyReady).map(x=>x.canonicalSlug),
+            unknownSize:rows.filter(x=>x.matureSize?.ready!==true).map(x=>x.canonicalSlug),
+            externalRequests:rows.reduce((n,x)=>n+x.externalRequests,0),
+            paidCalls:0,
+            catalogWrites:0,
+            productionWrites:0,
+            rows
+          };
+          if(summary.total!==64) throw new Error('EXPECTED_64_RESULTS');
+          fs.writeFileSync(dir+'/summary.json',JSON.stringify(summary,null,2)+'\n');
+          console.log(JSON.stringify(summary,null,2));
+          NODE
+
+      - name: Commit evidence
+        run: |
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add data/catalog/full-catalog/morphology-size-64
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "catalog: record full 64-plant morphology and size research"
+          git push origin HEAD:main
