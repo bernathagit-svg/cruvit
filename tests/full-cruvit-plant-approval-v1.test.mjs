@@ -339,6 +339,7 @@ test('legume/cucurbit/melon yield remains reproductive-climate applicable',()=>{
 
 test('source-backed researched-unquantified reproductive state closes research blocker without claiming supported fruiting',()=>{
   const row=baseRow();
+  row.provenance.push({sourceId:'authority-1',source:'authority-1'});
   row.climate_traits.reproductiveClimate={
     contractVersion:'reproductive-climate-v1',
     fruiting:{
@@ -380,6 +381,7 @@ test('researched reproductive state without source lineage is still blocked',()=
 
 test('context-dependent reproductive state with source lineage is research-complete',()=>{
   const row=baseRow();
+  row.provenance.push({sourceId:'authority-1',source:'authority-1'});
   row.climate_traits.reproductiveClimate={
     contractVersion:'reproductive-climate-v1',
     fruiting:{
