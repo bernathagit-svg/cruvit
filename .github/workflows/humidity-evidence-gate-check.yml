@@ -6,6 +6,8 @@ on:
       - '.github/workflows/humidity-evidence-gate-check.yml'
       - 'modules/catalog/humidity-evidence-gate-v1.js'
       - 'tests/humidity-evidence-gate-v1.test.mjs'
+      - 'netlify/functions/humidity-research.mjs'
+      - 'tests/humidity-research-source-discovery-v1.test.mjs'
 permissions:
   contents: read
 jobs:
@@ -17,4 +19,4 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test tests/humidity-evidence-gate-v1.test.mjs
+      - run: node --test tests/humidity-evidence-gate-v1.test.mjs tests/humidity-research-source-discovery-v1.test.mjs
