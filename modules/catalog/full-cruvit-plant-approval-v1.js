@@ -144,6 +144,14 @@ function reproductiveClimateState(runtimePlant){
   const sourceIds=Array.isArray(fruiting?.sourceIds)
     ? fruiting.sourceIds.map(x=>text(x)).filter(Boolean)
     : [];
+  const botanicalSourceIds=new Set(
+    (Array.isArray(runtimePlant?.provenance)?runtimePlant.provenance:[])
+      .map(row=>text(row?.sourceId))
+      .filter(Boolean)
+  );
+  const sourceLineageValid=
+    sourceIds.length>0
+    && sourceIds.every(sourceId=>botanicalSourceIds.has(sourceId));
   const researchedState=[
     'CONTEXT_DEPENDENT',
     'RESEARCHED_UNQUANTIFIED'
@@ -160,7 +168,7 @@ function reproductiveClimateState(runtimePlant){
       || researchedState
     )
     && ['SOURCE_SUPPORTED','HEURISTIC_ASSERTION'].includes(evidenceClass)
-    && sourceIds.length>0
+    && sourceLineageValid
   );
   return {
     applicable:fruitOriented,
@@ -171,6 +179,8 @@ function reproductiveClimateState(runtimePlant){
     evidenceClass:evidenceClass||null,
     evidenceState:evidenceState||null,
     sourceCount:sourceIds.length,
+    sourceLineageValid,
+    missingSourceIds:sourceIds.filter(sourceId=>!botanicalSourceIds.has(sourceId)),
     reason:fruitOriented&&!structured?'FRUITING_REPRODUCTIVE_CLIMATE_EVIDENCE_REQUIRED':null
   };
 }
