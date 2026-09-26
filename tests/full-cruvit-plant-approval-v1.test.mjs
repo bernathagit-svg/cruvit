@@ -33,6 +33,14 @@ function baseRow(){
       floweringOutcomeApplicable:true,
       fruitingOutcomeApplicable:true,
       reproductiveBiology:{requires_pollinator:false},
+      reproductiveClimate:{
+        contractVersion:'reproductive-climate-v1',
+        fruiting:{
+          summerHeatBand:'warm',
+          evidenceClass:'SOURCE_SUPPORTED',
+          sourceIds:['test']
+        }
+      },
       traitEvidenceClasses:{
         frostSensitivity:'SOURCE_SUPPORTED',
         coldTolerance:'SOURCE_SUPPORTED',
@@ -136,4 +144,33 @@ test('shop remains outside botanical approval',()=>{
     sizeAuthorityRegistry:size
   });
   assert.equal(r.modules.shop.applicable,false);
+});
+
+
+test('fruit-oriented recommendation readiness requires structured reproductive climate',()=>{
+  const row=baseRow();
+  delete row.climate_traits.reproductiveClimate;
+  const r=evaluateFullCruvitPlantApproval({
+    catalogRow:row,
+    identityRegistry:identity,
+    designAssetRegistry:{sets:[]},
+    sizeAuthorityRegistry:size
+  });
+  assert.equal(r.modules.smartRecommendations.ready,false);
+  assert.equal(r.modules.smartRecommendations.reproductiveClimate.applicable,true);
+  assert.equal(r.modules.smartRecommendations.reproductiveClimate.ready,false);
+  assert.ok(r.blockingReasons.includes('REPRODUCTIVE_CLIMATE_EVIDENCE_REQUIRED'));
+});
+
+test('fruit-oriented recommendation readiness accepts structured provenance-backed climate',()=>{
+  const r=evaluateFullCruvitPlantApproval({
+    catalogRow:baseRow(),
+    identityRegistry:identity,
+    designAssetRegistry:{sets:[]},
+    sizeAuthorityRegistry:size
+  });
+  assert.equal(r.modules.smartRecommendations.reproductiveClimate.applicable,true);
+  assert.equal(r.modules.smartRecommendations.reproductiveClimate.ready,true);
+  assert.equal(r.modules.smartRecommendations.ready,true);
+  assert.ok(!r.blockingReasons.includes('REPRODUCTIVE_CLIMATE_EVIDENCE_REQUIRED'));
 });
