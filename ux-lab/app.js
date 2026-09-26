@@ -62,6 +62,13 @@ function renderBetween(aIndex,bIndex,t){
   progress=clamp(t,0,1);
   const a=states[aIndex], b=states[bIndex];
   apply(design,a.design,b.design,progress);
+
+  const designVariants=design.querySelectorAll('.variant');
+  const designCenterFrom=aIndex===1?1:0;
+  const designCenterTo=bIndex===1?1:0;
+  const designCenterMix=lerp(designCenterFrom,designCenterTo,progress);
+  if(designVariants[0])designVariants[0].style.opacity=String(1-designCenterMix);
+  if(designVariants[1])designVariants[1].style.opacity=String(designCenterMix);
   apply(garden,a.garden,b.garden,progress);
   apply(doctor,a.doctor,b.doctor,progress);
   apply(plantId,a.plantId,b.plantId,progress);
