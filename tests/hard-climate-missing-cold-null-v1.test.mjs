@@ -40,3 +40,28 @@ test('actual 0C remains high freezing risk',()=>{
   },{lat:32.99,lon:35.22});
   assert.equal(risk,'high');
 });
+
+
+test('high-latitude missing climate stays UNKNOWN and cannot hard-block',()=>{
+  const risk=elevateAmbientFreezingRisk({
+    freezingRisk:'unknown',
+    coldestMonthMeanMinC:null,
+    thermalRegime:'unknown',
+    structuralClimateStatus:'unknown'
+  },{lat:60.3913,lon:5.3221});
+  assert.equal(risk,'unknown');
+
+  const out=evaluateHardClimateSurvival({
+    meta:{frostSensitivity:'high',coldTolerance:'low'},
+    climateProfile:{
+      freezingRisk:'unknown',
+      coldestMonthMeanMinC:null,
+      thermalRegime:'unknown',
+      structuralClimateStatus:'unknown'
+    },
+    protectionContext:{plantingMode:'ground'},
+    coords:{lat:60.3913,lon:5.3221}
+  });
+  assert.equal(out.hardBlocked,false);
+  assert.equal(out.ambientFreezingRisk,'unknown');
+});
