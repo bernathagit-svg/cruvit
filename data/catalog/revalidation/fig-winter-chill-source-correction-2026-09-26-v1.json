@@ -1,0 +1,43 @@
+{
+  "contract": "cruvit-catalog-factual-correction-and-reproductive-migration-v1",
+  "migrationId": "fig-winter-chill-source-correction-2026-09-26-v1",
+  "createdAt": "2026-09-26",
+  "plant": {
+    "slug": "fig",
+    "scientific": "Ficus carica"
+  },
+  "correction": {
+    "field": "needsWinterChill",
+    "before": {
+      "value": false,
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    "after": {
+      "value": true,
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "sourceId": "uf-ifas-hs27-fig"
+    },
+    "reason": "UF/IFAS HS27 explicitly identifies winter chilling for normal reproductive bud development."
+  },
+  "derivedReproductiveClimate": {
+    "flowering": {
+      "requiresCoolSeason": true
+    },
+    "fruiting": {
+      "requiresCoolSeason": true
+    },
+    "evidenceClass": "HEURISTIC_ASSERTION",
+    "transformRef": "winter-chill-to-cool-season-v1@1.0.0"
+  },
+  "writeGuards": {
+    "oldValueMustBeFalse": true,
+    "oldEvidenceClassMustBeHeuristic": true,
+    "reproductiveClimateMustBeMissing": true,
+    "sourceMustNotAlreadyExist": true,
+    "affectedRowCountRequired": 1
+  },
+  "result": {
+    "updatedCount": 1,
+    "paidCalls": 0
+  }
+}
