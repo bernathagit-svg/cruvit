@@ -139,6 +139,8 @@ export function buildClimateObjectKey({
     relative = `climate/${GLOBAL_PACK_ID}/${bake}/manifest.json`;
   } else if (kind === 'global-index') {
     relative = `climate/${GLOBAL_PACK_ID}/${bake}/global-index.json`;
+  } else if (kind === 'deployment-manifest') {
+    relative = `climate/${GLOBAL_PACK_ID}/${bake}/deployment-manifest.json`;
   } else {
     throw new Error(`unknown_object_kind:${kind}`);
   }
@@ -205,6 +207,8 @@ export async function headClimateObject(objectKey, options = {}) {
       objectKey,
       contentLength: Number(out.ContentLength) || 0,
       etag: out.ETag || null,
+      metadata: out.Metadata || {},
+      sha256: out.Metadata?.sha256 || null,
       transport: 'r2'
     };
   } catch (err) {
@@ -314,6 +318,47 @@ export async function fetchClimateObjectBytes(objectKey, options = {}) {
   }
 }
 
+export async function listClimateObjectsByPrefix(prefix, options = {}) {
+  const env = options.env || process.env;
+  applyR2LocalEnvFromFile(env);
+  const status = getR2ConnectionStatus(env);
+  if (!status.ready) return { ok:false, code:status.blocker, missing:status.missing, objects:[] };
+  const keyPrefix = String(prefix || '').replace(/^\/+/, '');
+  try {
+    const { ListObjectsV2Command } = await import('@aws-sdk/client-s3');
+    const client = await getS3Client(env);
+    const objects = [];
+    let token;
+    do {
+      const out = await client.send(new ListObjectsV2Command({
+        Bucket:String(env.R2_BUCKET),
+        Prefix:keyPrefix,
+        ContinuationToken:token,
+        MaxKeys:1000
+      }));
+      for (const row of out.Contents || []) {
+        objects.push({
+          key:row.Key,
+          bytes:Number(row.Size)||0,
+          etag:row.ETag||null,
+          lastModified:row.LastModified?.toISOString?.()||null
+        });
+      }
+      token = out.IsTruncated ? out.NextContinuationToken : undefined;
+    } while (token);
+    return {
+      ok:true,
+      code:'OK',
+      prefix:keyPrefix,
+      objectCount:objects.length,
+      totalBytes:objects.reduce((s,x)=>s+x.bytes,0),
+      objects
+    };
+  } catch (err) {
+    return {ok:false,code:'REMOTE_LIST_FAILED',prefix:keyPrefix,objects:[],error:String(err?.message||err)};
+  }
+}
+
 export async function putClimateObjectBytes(objectKey, bytes, options = {}) {
   const env = options.env || process.env;
   applyR2LocalEnvFromFile(env);
@@ -328,6 +373,18 @@ export async function putClimateObjectBytes(objectKey, bytes, options = {}) {
   if (options.skipIdentical !== false) {
     const head = await headClimateObject(key, { env });
     if (head.ok && head.contentLength === bytes.length) {
+      if (String(head.sha256 || '').toLowerCase() === localSha.toLowerCase()) {
+        return {
+          ok: true,
+          code: 'SKIPPED_IDENTICAL',
+          skipped: true,
+          objectKey: key,
+          transport: 'r2',
+          bytes: bytes.length,
+          sha256: localSha
+        };
+      }
+      // Backward compatibility for older canary objects written before sha256 metadata.
       const remote = await fetchClimateObjectBytes(key, { env, forceR2: true });
       if (remote.ok && sha256Hex(remote.bytes) === localSha) {
         return {
@@ -351,7 +408,11 @@ export async function putClimateObjectBytes(objectKey, bytes, options = {}) {
       Key: key,
       Body: bytes,
       ContentType: options.contentType || 'application/octet-stream',
-      CacheControl: options.cacheControl || contract.cacheControl
+      CacheControl: options.cacheControl || contract.cacheControl,
+      Metadata: {
+        ...(options.metadata && typeof options.metadata === 'object' ? options.metadata : {}),
+        sha256: localSha
+      }
     })
   );
   return {
