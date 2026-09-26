@@ -44,6 +44,31 @@ test('Zinnia gets a materially smaller evidence-based preview scale',()=>{
   assert.ok(r.scaleFactor<0.75);
 });
 
+test('compact rosette with source-supported spread responds more strongly than default damping',()=>{
+  const r=deriveRelativePreviewScale(registry,{
+    canonicalSlug:'lettuce',
+    visualForm:'rosette',
+    architectureMode:'default',
+    growthStage:'mature'
+  });
+  assert.equal(r.ready,true);
+  assert.equal(r.responseProfile,'COMPACT_LOW_FORM');
+  assert.equal(r.responseExponent,0.70);
+  assert.ok(r.scaleFactor>=0.55);
+  assert.ok(r.scaleFactor<=0.60);
+});
+
+test('rosette without size authority stays on neutral factor instead of inheriting Lettuce calibration',()=>{
+  const r=deriveRelativePreviewScale(registry,{
+    canonicalSlug:'pineapple',
+    visualForm:'rosette',
+    architectureMode:'default',
+    growthStage:'mature'
+  });
+  assert.equal(r.ready,false);
+  assert.equal(r.scaleFactor,1);
+});
+
 test('Pomegranate shrub uses shrub presentation rather than tree presentation',()=>{
   const shrub=derivePresentationSizing({
     visualForm:'tree',
