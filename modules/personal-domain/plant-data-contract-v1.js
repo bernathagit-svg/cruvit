@@ -63,14 +63,22 @@ export const PLANT_DATA_REASON = Object.freeze({
   COMPLETE_FOR_CLASS_A: 'COMPLETE_FOR_CLASS_A'
 });
 
-export const CLIMATE_CORE_FIELDS = Object.freeze([
+export const REQUIRED_CLIMATE_CORE_FIELDS = Object.freeze([
   'frostSensitivity',
   'coldTolerance',
   'heatTolerance',
   'sunNeeds',
   'waterNeeds',
-  'humidityTolerance',
   'drainageNeeds'
+]);
+
+export const OPTIONAL_CLIMATE_MODIFIER_FIELDS = Object.freeze([
+  'humidityTolerance'
+]);
+
+export const CLIMATE_CORE_FIELDS = Object.freeze([
+  ...REQUIRED_CLIMATE_CORE_FIELDS,
+  ...OPTIONAL_CLIMATE_MODIFIER_FIELDS
 ]);
 
 /** Material climate for Survival/Growth partial path. */
@@ -90,7 +98,8 @@ export const ALLOWED_EVIDENCE_CLASSES = Object.freeze([
 
 export const PLANT_DATA_FIELD_REQUIREMENTS = Object.freeze({
   identity: Object.freeze(['slug', 'commonName', 'scientific']),
-  climateCore: CLIMATE_CORE_FIELDS,
+  climateCore: REQUIRED_CLIMATE_CORE_FIELDS,
+  climateModifiers: OPTIONAL_CLIMATE_MODIFIER_FIELDS,
   materialClimate: MATERIAL_CLIMATE_FIELDS,
   floweringStance: Object.freeze(['floweringRequirements', 'floweringOutcomeApplicable']),
   fruitingStance: Object.freeze(['fruitingRequirements', 'fruitingOutcomeApplicable']),
@@ -341,7 +350,7 @@ export function classifyPlantDataReadiness(plant, options = {}) {
   const frostOk = corePresence.frostSensitivity === true;
   if (!frostOk) reasons.push(PLANT_DATA_REASON.MISSING_FROST_SENSITIVITY);
 
-  const climateCoreOk = CLIMATE_CORE_FIELDS.every((f) => corePresence[f] === true);
+  const climateCoreOk = REQUIRED_CLIMATE_CORE_FIELDS.every((f) => corePresence[f] === true);
   if (!climateCoreOk && frostOk) reasons.push(PLANT_DATA_REASON.MISSING_CLIMATE_CORE);
 
   const materialOk = MATERIAL_CLIMATE_FIELDS.every((f) => corePresence[f] === true);
@@ -415,10 +424,16 @@ export function classifyPlantDataReadiness(plant, options = {}) {
   let readinessShort = 'D';
   let gate = 'REJECT';
 
+  const mandatorySyntheticDefaults=syntheticDefaults.filter((f)=>
+    REQUIRED_CLIMATE_CORE_FIELDS.includes(f)
+  );
+  const mandatoryUnknownProvenance=unknownProvenance.filter((f)=>
+    REQUIRED_CLIMATE_CORE_FIELDS.includes(f)
+  );
   const ambiguousBlocksA =
     reasons.includes(PLANT_DATA_REASON.SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A) ||
-    reasons.includes(PLANT_DATA_REASON.SYNTHETIC_DEFAULT_CORE_VALUE) ||
-    reasons.includes(PLANT_DATA_REASON.UNKNOWN_FIELD_PROVENANCE);
+    mandatorySyntheticDefaults.length>0 ||
+    mandatoryUnknownProvenance.length>0;
 
   if (!identityOk || !frostOk) {
     readiness = PLANT_DATA_READINESS.D_NOT_PRODUCT_READY;
