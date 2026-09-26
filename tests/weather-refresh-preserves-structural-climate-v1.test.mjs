@@ -13,4 +13,17 @@ test('weather refresh preserves existing structural climate when forecast omits 
   assert.match(body,/existingStructural:loc\.structuralClimate\|\|null/);
   assert.match(body,/structuralClimate:structuralClimate\|\|loc\.structuralClimate\|\|null/);
   assert.doesNotMatch(body,/structuralClimate:structuralClimate\|\|null,/);
+  assert.doesNotMatch(body,/const structuralClimate=result\.structuralClimate\|\|rl\.structuralClimate\|\|null/);
+});
+
+
+test('known structural climate outranks unknown forecast structural payload',()=>{
+  const start=app.indexOf('async function refreshGardenWeather()');
+  const end=app.indexOf('async function refreshGardenSession()',start);
+  const body=app.slice(start,end);
+  const knownBranch=body.indexOf("returnedStructural?.status==='known'");
+  const preserveBranch=body.indexOf("existingStructural?.status==='known'");
+  assert.ok(knownBranch>=0);
+  assert.ok(preserveBranch>knownBranch);
+  assert.match(body,/returnedStructural\|\|existingStructural\|\|null/);
 });
