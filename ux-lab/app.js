@@ -5,70 +5,80 @@ const home=document.getElementById('home');
 const design=document.getElementById('cardDesign');
 const garden=document.getElementById('cardGarden');
 const doctor=document.getElementById('cardDoctor');
+const plantId=document.getElementById('cardPlantId');
 
 let index=0;
 let dragging=false;
 let startX=0;
 let currentX=0;
 let progress=0;
+let fromIndex=0;
+let toIndex=0;
 
 const lerp=(a,b,t)=>a+(b-a)*t;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
-const poses={
-  design:[
-    {l:0,t:12.9,w:30.0,h:73.8},
-    {l:29.2,t:4.2,w:43.2,h:88.0}
-  ],
-  garden:[
-    {l:26.3,t:0.1,w:46.0,h:95.1},
-    {l:0,t:15.0,w:27.4,h:70.2}
-  ],
-  doctor:[
-    {l:73.0,t:14.3,w:27.0,h:72.0},
-    {l:72.7,t:16.0,w:27.3,h:69.4}
-  ]
-};
+const states=[
+  {
+    design:{l:0,t:12.9,w:30.0,h:73.8,o:1},
+    garden:{l:26.3,t:0.1,w:46.0,h:95.1,o:1},
+    doctor:{l:73.0,t:14.3,w:27.0,h:72.0,o:1},
+    plantId:{l:108,t:16,w:27.3,h:69.4,o:0}
+  },
+  {
+    design:{l:29.2,t:4.2,w:43.2,h:88.0,o:1},
+    garden:{l:0,t:15.0,w:27.4,h:70.2,o:1},
+    doctor:{l:72.7,t:16.0,w:27.3,h:69.4,o:1},
+    plantId:{l:108,t:16,w:27.3,h:69.4,o:0}
+  },
+  {
+    design:{l:0,t:15.0,w:27.4,h:70.2,o:1},
+    garden:{l:-31,t:16,w:27.4,h:70.2,o:0},
+    doctor:{l:72.7,t:16.0,w:27.3,h:69.4,o:1},
+    plantId:{l:29.2,t:4.2,w:43.2,h:88.0,o:1}
+  }
+];
 
-function apply(card,pair,t){
-  const a=pair[0], b=pair[1];
+function apply(card,a,b,t){
   card.style.left=lerp(a.l,b.l,t)+'%';
   card.style.top=lerp(a.t,b.t,t)+'%';
   card.style.width=lerp(a.w,b.w,t)+'%';
   card.style.height=lerp(a.h,b.h,t)+'%';
-  const imgs=card.querySelectorAll('.variant');
-  imgs[0].style.opacity=String(1-t);
-  imgs[1].style.opacity=String(t);
+  card.style.opacity=String(lerp(a.o,b.o,t));
 }
 
-function render(t){
+function renderBetween(aIndex,bIndex,t){
   progress=clamp(t,0,1);
-  apply(design,poses.design,progress);
-  apply(garden,poses.garden,progress);
-  apply(doctor,poses.doctor,progress);
+  const a=states[aIndex], b=states[bIndex];
+  apply(design,a.design,b.design,progress);
+  apply(garden,a.garden,b.garden,progress);
+  apply(doctor,a.doctor,b.doctor,progress);
+  apply(plantId,a.plantId,b.plantId,progress);
 
   const depth=0.015*Math.sin(progress*Math.PI);
-  design.style.transform='scale('+(1+depth)+')';
-  garden.style.transform='scale('+(1-depth*0.8)+')';
+  design.style.transform='scale('+(1+depth*0.5)+')';
+  garden.style.transform='scale('+(1-depth*0.5)+')';
   doctor.style.transform='scale('+(1-depth*0.2)+')';
+  plantId.style.transform='scale('+(1+depth)+')';
+}
+
+function renderState(i){
+  renderBetween(i,i,0);
 }
 
 function activate(){
   stage.classList.add('active');
   stage.setAttribute('aria-hidden','false');
-  render(index);
-}
-
-function settleVisible(){
-  stage.classList.add('active');
-  stage.setAttribute('aria-hidden','false');
-  render(index);
+  renderState(index);
 }
 
 function begin(x){
   dragging=true;
   startX=x;
   currentX=x;
+  fromIndex=index;
+  toIndex=index;
+  progress=0;
   surface.classList.add('dragging');
   activate();
 }
@@ -78,23 +88,33 @@ function move(x){
   currentX=x;
   const dx=currentX-startX;
   const w=home.getBoundingClientRect().width;
-  let t=index===0 ? (-dx/w) : (1-dx/w);
-  t=clamp(t,0,1);
-  render(t);
+  if(dx<0 && index<states.length-1){
+    toIndex=index+1;
+  }else if(dx>0 && index>0){
+    toIndex=index-1;
+  }else{
+    toIndex=index;
+  }
+  const t=toIndex===index?0:clamp(Math.abs(dx)/w,0,1);
+  renderBetween(index,toIndex,t);
 }
 
-function animateTo(target){
-  const from=progress;
+function animateTo(commit){
+  const startProgress=progress;
+  const target=commit?1:0;
   const start=performance.now();
   const dur=260;
   function frame(now){
     const u=clamp((now-start)/dur,0,1);
     const eased=1-Math.pow(1-u,3);
-    render(lerp(from,target,eased));
-    if(u<1) requestAnimationFrame(frame);
-    else{
-      index=target===1?1:0;
-      settleVisible();
+    renderBetween(fromIndex,toIndex,lerp(startProgress,target,eased));
+    if(u<1){
+      requestAnimationFrame(frame);
+    }else{
+      if(commit) index=toIndex;
+      renderState(index);
+      stage.classList.add('active');
+      stage.setAttribute('aria-hidden','false');
     }
   }
   requestAnimationFrame(frame);
@@ -104,7 +124,8 @@ function finish(){
   if(!dragging)return;
   dragging=false;
   surface.classList.remove('dragging');
-  animateTo(progress>=0.5?1:0);
+  const canMove=toIndex!==index;
+  animateTo(canMove && progress>=0.5);
 }
 
 surface.addEventListener('pointerdown',e=>{
@@ -132,4 +153,4 @@ surface.addEventListener('touchmove',e=>{
 },{passive:false});
 surface.addEventListener('touchend',finish,{passive:false});
 
-render(0);
+renderState(0);
