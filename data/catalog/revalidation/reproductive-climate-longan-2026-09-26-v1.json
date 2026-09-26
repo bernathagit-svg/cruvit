@@ -1,0 +1,27 @@
+{
+  "contract": "cruvit-reproductive-climate-derived-migration-v1",
+  "migrationId": "reproductive-climate-longan-2026-09-26-v1",
+  "createdAt": "2026-09-26",
+  "plant": {
+    "slug": "longan",
+    "scientific": "Dimocarpus longan",
+    "sourceId": "uf-ifas-longan"
+  },
+  "sourceEvidence": {
+    "authority": "UF/IFAS Extension",
+    "statement": "Reliable production is associated with low non-freezing fall/winter temperatures; high summer temperatures of 27–35°C are best for fruit development."
+  },
+  "output": {
+    "fruiting.requiresCoolSeason": true,
+    "fruiting.summerHeatBand": "hot",
+    "evidenceClass": "HEURISTIC_ASSERTION",
+    "transformRefs": [
+      "explicit-cool-season-production-v1@1.0.0",
+      "qualitative-summer-heat-band-v1@1.0.0"
+    ]
+  },
+  "result": {
+    "updatedCount": 1,
+    "paidCalls": 0
+  }
+}
