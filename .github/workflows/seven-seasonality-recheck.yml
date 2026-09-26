@@ -1,0 +1,77 @@
+name: CRUVIT Seven Seasonality Recheck
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/seven-seasonality-recheck.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Recheck seven unresolved seasonality cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          dir="data/catalog/full-catalog/seasonality-seven"
+          mkdir -p "$dir"
+          slugs=(blueberry broccoli carrot common-jasmine raspberry spearmint strawberry)
+          for slug in "${slugs[@]}"; do
+            curl --fail-with-body --silent --show-error               --retry 2 --retry-delay 1               "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/seasonality-research?slug=$slug"               -o "$dir/$slug.json"
+          done
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const dir='data/catalog/full-catalog/seasonality-seven';
+          const slugs=['blueberry','broccoli','carrot','common-jasmine','raspberry','spearmint','strawberry'];
+          const rows=slugs.map(slug=>{
+            const d=JSON.parse(fs.readFileSync(`${dir}/${slug}.json`,'utf8'));
+            return {
+              canonicalSlug:d.canonicalSlug,
+              scientific:d.scientific,
+              state:d?.result?.state||'UNKNOWN',
+              evidenceClass:d?.result?.evidenceClass||'UNKNOWN',
+              ready:d?.result?.ready===true,
+              code:d?.result?.code||null,
+              externalRequests:d.externalRequests||0,
+              records:Array.isArray(d.records)?d.records.map(r=>({
+                sourceId:r.sourceId||null,
+                state:r.state||'UNKNOWN',
+                code:r.code||null,
+                evidenceClass:r.evidenceClass||'UNKNOWN',
+                sourcePolicyEligible:r.sourcePolicyEligible===true,
+                excerpt:r.excerpt||null,
+                url:r.url||null
+              })):[]
+            };
+          });
+          const summary={
+            contract:'cruvit-seven-seasonality-recheck-v1',
+            createdAt:new Date().toISOString(),
+            total:rows.length,
+            sourceSupportedReady:rows.filter(x=>x.ready&&x.evidenceClass==='SOURCE_SUPPORTED').length,
+            unresolved:rows.filter(x=>!x.ready).map(x=>x.canonicalSlug),
+            contextDependent:rows.filter(x=>x.state==='CONTEXT_DEPENDENT').map(x=>x.canonicalSlug),
+            paidCalls:0,
+            catalogWrites:0,
+            productionWrites:0,
+            rows
+          };
+          fs.writeFileSync(dir+'/summary.json',JSON.stringify(summary,null,2)+'\n');
+          console.log(JSON.stringify(summary,null,2));
+          NODE
+      - name: Commit evidence
+        run: |
+          git config user.name "bernathagit-svg"
+          git config user.email "bernat.hagit@gmail.com"
+          git add data/catalog/full-catalog/seasonality-seven
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "catalog: record seven-plant seasonality recheck"
+          git push origin HEAD:main
