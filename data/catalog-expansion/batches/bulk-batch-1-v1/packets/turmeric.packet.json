@@ -25,6 +25,15 @@
       "url": "https://edis.ifas.ufl.edu/publication/HS1429",
       "authorityTier": "university_extension",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "ncsu-curcuma-longa",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "NC State Extension",
+      "title": "Curcuma longa (Common Turmeric)",
+      "url": "https://plants.ces.ncsu.edu/plants/curcuma-longa/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-09-26"
     }
   ],
   "claims": [
@@ -68,9 +77,11 @@
       "status": "asserted",
       "value": "low",
       "sourceIds": [
-        "uf-ifas-turmeric"
+        "ncsu-curcuma-longa"
       ],
-      "shortExcerpt": "Cold tolerance characterized as low."
+      "shortExcerpt": "USDA Hardiness Zones 8–11; outside winter-hardy areas it is grown as an annual.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
     },
     {
       "claimId": "heat",
