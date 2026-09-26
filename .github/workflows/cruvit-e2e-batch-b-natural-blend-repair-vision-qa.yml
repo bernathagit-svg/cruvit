@@ -22,14 +22,14 @@ jobs:
         run: |
           set -euo pipefail
           for i in $(seq 1 20); do
-            code=$(curl -sS -o /tmp/preflight.json -w '%{http_code}' -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job"               -H 'content-type: application/json'               --data '{"runId":"cruvit-e2e-batch-b-natural-blend-repair-vision-qa-2026-09-25-v1","jobId":"__preflight_invalid_job__"}' || true)
+            curl -sS -o /tmp/preflight.json -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job"               -H 'content-type: application/json'               --data '{"runId":"cruvit-e2e-batch-b-natural-blend-repair-vision-qa-2026-09-25-v1","jobId":"preflight-invalid-job"}' || true
             cat /tmp/preflight.json || true
             if grep -q 'JOB_NOT_IN_PLAN' /tmp/preflight.json; then
               exit 0
             fi
             sleep 15
           done
-          echo "Plan/approval deployment did not become visible"
+          echo "Plan deployment did not become visible"
           exit 1
 
       - name: Fig young repaired composite
