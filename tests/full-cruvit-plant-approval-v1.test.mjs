@@ -14,7 +14,7 @@ function baseRow(){
     aliases:[],
     verification_state:'verified',
     needs_review:false,
-    provenance:[{source:'test'}],
+    provenance:[{sourceId:'test',source:'test'}],
     source_packet:'test-packet',
     media_status:'IMAGE_READY',
     media:{imageStatus:'IMAGE_READY'},
@@ -398,4 +398,23 @@ test('context-dependent reproductive state with source lineage is research-compl
   assert.equal(r.modules.smartRecommendations.reproductiveClimate.ready,true);
   assert.equal(r.modules.smartRecommendations.reproductiveClimate.evidenceState,'CONTEXT_DEPENDENT');
   assert.ok(!r.blockingReasons.includes('REPRODUCTIVE_CLIMATE_EVIDENCE_REQUIRED'));
+});
+
+
+test('reproductive source id must resolve to botanical provenance',()=>{
+  const row=baseRow();
+  row.climate_traits.reproductiveClimate.fruiting.sourceIds=['missing-authority'];
+  const r=evaluateFullCruvitPlantApproval({
+    catalogRow:row,
+    identityRegistry:identity,
+    designAssetRegistry:{sets:[]},
+    sizeAuthorityRegistry:size
+  });
+  assert.equal(r.modules.smartRecommendations.reproductiveClimate.ready,false);
+  assert.equal(r.modules.smartRecommendations.reproductiveClimate.sourceLineageValid,false);
+  assert.deepEqual(
+    r.modules.smartRecommendations.reproductiveClimate.missingSourceIds,
+    ['missing-authority']
+  );
+  assert.ok(r.blockingReasons.includes('REPRODUCTIVE_CLIMATE_EVIDENCE_REQUIRED'));
 });
