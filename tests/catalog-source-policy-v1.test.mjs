@@ -314,3 +314,36 @@ test('growthHabit herbaceous clump accepts explicit Herbaceous + Clumping wordin
   });
   assert.equal(r.mayBeSourceSupported,true);
 });
+
+
+test('leafHabit context-dependent is supported only by explicit mixed semi-state wording',()=>{
+  const ok=evaluateSourceSupportedEligibility({
+    field:'leafHabit',
+    value:'CONTEXT_DEPENDENT',
+    sourceId:'ncsu-jasmine',
+    sourceType:'university_extension',
+    excerpt:'Leaf Characteristics: Deciduous Semi-evergreen.',
+    url:'https://plants.ces.ncsu.edu/plants/jasminum-officinale/',
+    sourceTitle:'Jasminum officinale (Common Jasmine)',
+    sourceInstitution:'NC State Extension',
+    declaredScientificName:'Jasminum officinale',
+    expectedIdentity:{acceptedScientificName:'Jasminum officinale',canonicalSlug:'common-jasmine'},
+    provenanceRetained:true
+  });
+  assert.equal(ok.mayBeSourceSupported,true);
+
+  const bad=evaluateSourceSupportedEligibility({
+    field:'leafHabit',
+    value:'CONTEXT_DEPENDENT',
+    sourceId:'ncsu-jasmine',
+    sourceType:'university_extension',
+    excerpt:'Leaf Characteristics: Deciduous.',
+    url:'https://plants.ces.ncsu.edu/plants/jasminum-officinale/',
+    sourceTitle:'Jasminum officinale (Common Jasmine)',
+    sourceInstitution:'NC State Extension',
+    declaredScientificName:'Jasminum officinale',
+    expectedIdentity:{acceptedScientificName:'Jasminum officinale',canonicalSlug:'common-jasmine'},
+    provenanceRetained:true
+  });
+  assert.equal(bad.mayBeSourceSupported,false);
+});
