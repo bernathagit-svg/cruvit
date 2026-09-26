@@ -6,6 +6,8 @@ on:
     paths:
       - '.github/workflows/pomegranate-three-scenario-live-proof.yml'
       - 'modules/smart-recommendations/pomegranate-norway-suitability-diagnostic.html'
+      - 'app.html'
+      - 'tests/weather-refresh-preserves-structural-climate-v1.test.mjs'
 
 permissions:
   contents: read
@@ -15,6 +17,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify structural climate preservation regression
+        run: node --test tests/weather-refresh-preserves-structural-climate-v1.test.mjs
+
       - name: Wait for diagnostic deploy
         shell: bash
         run: |
