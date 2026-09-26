@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#22351f">
   <title>CRUVIT · Approved Home</title>
-  <link rel="stylesheet" href="./styles.css?v=9">
+  <link rel="stylesheet" href="./styles.css?v=10">
 </head>
 <body>
   <main class="stage">
@@ -16,25 +16,38 @@
         <div class="clean-bg"><img src="/homepage-v1/assets/hero-garden.jpg" alt=""></div>
         <div class="shade"></div>
 
-        <div id="cardDesign" class="card card-design">
-          <img class="variant v0" src="./assets/card-garden-design.png" alt="">
-          <img class="variant v1" src="./assets/card-garden-design-center.png" alt="">
+        <div id="cardDesign" class="card card-design" data-module="design">
+          <img class="asset asset-side-primary" src="./assets/card-garden-design.png" alt="Garden Design">
+          <img class="asset asset-center" src="./assets/card-garden-design-center.png" alt="">
         </div>
 
-        <div id="cardGarden" class="card card-garden">
-          <img class="variant v0" src="./assets/card-my-garden.png" alt="">
-          <img class="variant v1" src="./assets/card-my-garden-side.png" alt="">
+        <div id="cardGarden" class="card card-garden" data-module="garden">
+          <img class="asset asset-center" src="./assets/card-my-garden.png" alt="My Garden">
+          <img class="asset asset-side-primary" src="./assets/card-my-garden-side.png" alt="">
         </div>
 
-        <div id="cardDoctor" class="card card-doctor">
-          <img class="variant v0" src="./assets/card-plant-doctor.png" alt="">
-          <img class="variant v1" src="./assets/card-plant-doctor-side-alt.png" alt="">
+        <div id="cardDoctor" class="card card-doctor" data-module="doctor">
+          <img class="asset asset-side-primary" src="./assets/card-plant-doctor.png" alt="Plant Doctor">
+          <img class="asset asset-side-alt" src="./assets/card-plant-doctor-side-alt.png" alt="">
+          <img class="asset asset-center" src="./assets/doctor-approved-card.webp" alt="">
+        </div>
+
+        <div id="cardSmart" class="card card-smart" data-module="smart">
+          <img class="asset asset-center asset-single" src="./assets/card-smart.webp" alt="Smart Recommendations">
+        </div>
+
+        <div id="cardShop" class="card card-shop" data-module="shop">
+          <img class="asset asset-center asset-single" src="./assets/card-shop.webp" alt="Shop">
+        </div>
+
+        <div id="cardPlantId" class="card card-plant-id" data-module="plantId">
+          <img class="asset asset-center asset-single" src="./assets/card-plant-id.webp" alt="Plant Identification">
         </div>
       </div>
 
       <div id="dragSurface" class="drag-surface" aria-label="Swipe modules"></div>
     </section>
   </main>
-  <script src="./app.js?v=9"></script>
+  <script src="./app.js?v=10"></script>
 </body>
 </html>
