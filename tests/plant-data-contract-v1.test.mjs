@@ -520,7 +520,10 @@ test('Batch 3 dry classification (no ingest)', () => {
   const humidityUnknown = plants.filter(
     (p) => !p.climateTraits?.humidityTolerance
   ).length;
-  assert.ok(humidityUnknown >= 70, `expected humidity gaps, got ${humidityUnknown}`);
+  assert.ok(
+    humidityUnknown >= Math.floor(files.length * 0.5),
+    `expected humidity gaps in current batch, got ${humidityUnknown}/${files.length}`
+  );
 
   const seed = loadSeedPlants();
   const seedSlugs = new Set(seed.map((p) => String(p.slug).toLowerCase()));
