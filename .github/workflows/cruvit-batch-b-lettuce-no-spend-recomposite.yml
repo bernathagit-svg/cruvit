@@ -1,0 +1,39 @@
+name: CRUVIT Batch B Lettuce No-Spend Recomposite
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cruvit-batch-b-lettuce-no-spend-recomposite.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  recomposite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Run Lettuce no-spend Natural Blend recomposite
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://friendly-taiyaki-64aacb.netlify.app/modules/garden-design/cruvit-natural-blend-auto-repair.html?runs=cruvit-e2e-batch-b-lettuce-natural-blend-repair-2026-09-25-v1"
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME"
+          timeout 180s "$CHROME"             --headless=new             --no-sandbox             --disable-gpu             --disable-dev-shm-usage             --window-size=1440,1200             --virtual-time-budget=120000             "$URL" > /tmp/chrome.out 2>/tmp/chrome.err || true
+          echo "--- chrome stdout ---"
+          tail -n 120 /tmp/chrome.out || true
+          echo "--- chrome stderr tail ---"
+          tail -n 80 /tmp/chrome.err || true
+
+      - name: Verify feathered composite evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error             "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/plant-visual-natural-blend-status?runId=cruvit-e2e-batch-b-lettuce-natural-blend-repair-2026-09-25-v1"             -o /tmp/status.json
+          cat /tmp/status.json
+          test "$(jq -r '.compositeEvidence.compositeMode' /tmp/status.json)" = "FEATHERED_EDIT_REGION_V1"
+          test "$(jq -r '.compositeEvidence.compositeProfile' /tmp/status.json)" = "LOW_PLANT_TIGHT_FEATHER_V1"
+          test "$(jq -r '.compositeEvidence.featheredCompositeClientApplied' /tmp/status.json)" = "true"
+          test "$(jq -r '.evidence.actualCostUsd' /tmp/status.json)" != "null"
