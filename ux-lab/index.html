@@ -3,55 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#233423">
-  <title>CRUVIT · Locked Home</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#22351f">
+  <title>CRUVIT · Approved Home</title>
   <link rel="stylesheet" href="./styles.css">
-<style>
-.approved-image-card{padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;overflow:hidden!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-.approved-image-card::after{display:none!important}
-.approved-card-image{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;border-radius:inherit}
-.approved-image-card[data-id="garden"]{width:43.5%!important;height:81%!important;top:6.5%!important;border-radius:4.2vh!important}
-.approved-image-card[data-id="design"].is-left,.approved-image-card[data-id="doctor"].is-right{width:28.5%!important;height:68%!important;top:18%!important;border-radius:3.6vh!important}
-</style></head>
+</head>
 <body>
-  <main class="home-shell" aria-label="CRUVIT Home">
-    <section class="home-screen">
-      <img class="home-bg" src="/homepage-v1/assets/hero-garden.jpg" alt="">
-      <div class="home-overlay"></div>
-
-      <header class="home-header">
-        <div class="brand-row">
-          <span class="leaf-mark">♥</span>
-          <span class="brand-name">CRUVIT</span>
-        </div>
-        <div class="header-actions">
-          <button class="round-btn" aria-label="Language">◎</button>
-          <button class="round-btn" aria-label="Profile">○</button>
-          <button class="premium-btn" aria-label="Premium"><span>♛</span> Premium</button>
-        </div>
-      </header>
-
-      <section class="hero-copy">
-        <div class="eyebrow">ONE UNIFIED ADAPTIVE GARDEN INTELLIGENCE SYSTEM</div>
-        <h1>Your garden is unique.<br>Your intelligence should be too.</h1>
-        <p>Plan · Identify · Solve · Grow · Shop · All in one place</p>
-      </section>
-
-      <section class="carousel-wrap" aria-label="CRUVIT modules">
-        <div class="carousel" id="carousel"></div>
-        <div class="dots" id="dots"></div>
-      </section>
-
-      <nav class="bottom-nav" aria-label="Primary">
-        <button class="nav-item active"><span class="nav-icon">⌂</span><span>Home</span></button>
-        <button class="nav-item"><span class="nav-icon">♧</span><span>My Garden</span></button>
-        <button class="nav-add" aria-label="Add">＋</button>
-        <button class="nav-item"><span class="nav-icon">♢</span><span>Notifications</span><i class="notify-dot"></i></button>
-        <button class="nav-item"><span class="nav-icon">☰</span><span>More</span></button>
-      </nav>
+  <main class="stage" aria-label="CRUVIT Home">
+    <section class="approved-home">
+      <img class="approved-reference" src="./assets/home-approved-reference.png" alt="CRUVIT approved Home screen">
+      <button class="hotspot hotspot-left" aria-label="Garden Design"></button>
+      <button class="hotspot hotspot-center" aria-label="My Garden"></button>
+      <button class="hotspot hotspot-right" aria-label="Plant Doctor"></button>
     </section>
   </main>
   <script src="./app.js"></script>
