@@ -34,3 +34,33 @@ test('cultivar-specific humidity evidence cannot become species trait',()=>{
   assert.equal(r.value,null);
   assert.equal(r.evidenceClass,'UNKNOWN');
 });
+
+
+test('NC State structured Resistance To Challenges humidity is source-supported high',()=>{
+  const e=extractHumidityEvidence(
+    'Landscape: Resistance To Challenges: Deer Diseases Foot Traffic Heat Humidity Insect Pests Rabbits Wet Soil Problems: Weedy'
+  );
+  assert.equal(e.ok,true);
+  assert.equal(e.kind,'DIRECT_HIGH_TOLERANCE');
+  const r=deriveHumidityTrait(e);
+  assert.equal(r.value,'high');
+  assert.equal(r.evidenceClass,'SOURCE_SUPPORTED');
+});
+
+test('hot humid preferred growing conditions are direct source-supported evidence',()=>{
+  const e=extractHumidityEvidence(
+    'Common turmeric grows best in hot, humid conditions with full sun in the morning and afternoon shade.'
+  );
+  assert.equal(e.ok,true);
+  const r=deriveHumidityTrait(e);
+  assert.equal(r.value,'high');
+  assert.equal(r.evidenceClass,'SOURCE_SUPPORTED');
+});
+
+test('structured humidity resistance stays blocked when context is cultivar-specific',()=>{
+  const e=extractHumidityEvidence(
+    'The Alpha cultivar Resistance To Challenges: Heat Humidity Wet Soil.'
+  );
+  assert.equal(e.ok,false);
+  assert.equal(e.kind,'CONTEXT_SPECIFIC_CULTIVAR_OR_HYBRID');
+});
