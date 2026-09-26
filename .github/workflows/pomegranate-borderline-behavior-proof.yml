@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/pomegranate-borderline-behavior-proof.yml'
+      - 'modules/suitability/hard-climate-survival-gate-v1.js'
+      - 'tests/hard-climate-missing-cold-null-v1.test.mjs'
 
 permissions:
   contents: read
@@ -14,6 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Verify missing-cold regression
+        run: node --test tests/hard-climate-missing-cold-null-v1.test.mjs
 
       - name: Probe covered CRUVIT locations
         shell: bash
