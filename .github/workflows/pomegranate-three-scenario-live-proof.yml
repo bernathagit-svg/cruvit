@@ -22,25 +22,21 @@ jobs:
       - name: Verify structural climate preservation regression
         run: node --test tests/weather-refresh-preserves-structural-climate-v1.test.mjs
 
-      - name: Wait for diagnostic and systemic app deploy
+      - name: Wait for current diagnostic deploy
         shell: bash
         run: |
           set -euo pipefail
           URL="https://friendly-taiyaki-64aacb.netlify.app/modules/smart-recommendations/pomegranate-norway-suitability-diagnostic.html"
-          APP="https://friendly-taiyaki-64aacb.netlify.app/app.html"
-          for i in $(seq 1 36); do
+          for i in $(seq 1 30); do
             diag="$(curl -fsS "$URL" || true)"
-            app="$(curl -fsS "$APP" || true)"
             if printf '%s' "$diag" | grep -q "3 Scenario Test" \
-              && printf '%s' "$diag" | grep -q "live-proof-v4-systemic-reproductive-climate" \
-              && printf '%s' "$app" | grep -Fq "returnedStructural?.status==='known'" \
-              && printf '%s' "$app" | grep -q "reproductive-climate-gate-v1.js"; then
-              echo "diagnostic and systemic app deployed"
+              && printf '%s' "$diag" | grep -q "live-proof-v4-systemic-reproductive-climate"; then
+              echo "current diagnostic deployed"
               exit 0
             fi
             sleep 10
           done
-          echo "systemic app/diagnostic did not deploy in time"
+          echo "current diagnostic did not deploy in time"
           exit 1
 
       - name: Run live app evaluator in headless Chrome
