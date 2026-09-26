@@ -1,0 +1,51 @@
+{
+  "contract": "cruvit-reproductive-climate-derived-migration-v1",
+  "migrationId": "reproductive-climate-winter-chill-21-2026-09-26-v1",
+  "createdAt": "2026-09-26",
+  "sourceProposalRun": "36234153962",
+  "sourceCatalogRevalidationRun": "36233879171",
+  "transform": {
+    "inputField": "needsWinterChill",
+    "requiredInputValue": true,
+    "requiredInputStatus": "asserted",
+    "requiredSourceIds": true,
+    "output": [
+      "reproductiveClimate.flowering.requiresCoolSeason=true",
+      "reproductiveClimate.fruiting.requiresCoolSeason=true"
+    ],
+    "outputEvidenceClass": "HEURISTIC_ASSERTION",
+    "transformRef": "winter-chill-to-cool-season-v1@1.0.0",
+    "evidenceInflationForbidden": true
+  },
+  "guards": {
+    "onlyWhenReproductiveClimateMissing": true,
+    "sourceIdsMustBeNonEmpty": true,
+    "noPaidCalls": true,
+    "noExternalResearch": true,
+    "noTemperatureInference": true,
+    "noSummerHeatBandInference": true
+  },
+  "plants": [
+    "apple",
+    "apricot",
+    "blackberry",
+    "blackcurrant",
+    "blueberry",
+    "chestnut",
+    "cranberry",
+    "elderberry",
+    "english-walnut",
+    "hazelnut",
+    "jujube",
+    "medlar",
+    "peach",
+    "pear",
+    "pecan",
+    "persimmon",
+    "pitanga",
+    "plum",
+    "raspberry",
+    "sea-buckthorn",
+    "serviceberry"
+  ]
+}
