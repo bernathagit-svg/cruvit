@@ -45,6 +45,55 @@ export function sourceIdentityMatches(body, scientificName){
   return hay.includes(parts[0]+' '+parts[1]) || hay.includes(parts[0]+' x '+parts[1]);
 }
 
+function structuredBlock(raw,label,nextLabels){
+  const next=nextLabels.map(x=>x.replace(/[.*+?^$()|[\]\\]/g,'\\function excerptAround(raw, index, radius=150){')).join('|');
+  const re=new RegExp(label+'\\s*:\\s*([\\s\\S]{1,260}?)(?=(?:'+next+')\\s*:|$)','i');
+  const m=re.exec(raw);
+  return m ? text(m[1]).replace(/\\s+/g,' ').trim() : '';
+}
+
+function leafHabitHits(raw){
+  const lower=raw.toLowerCase();
+  const hits=[];
+  const patterns=[
+    {state:LEAF_HABIT_STATE.SEMI_DECIDUOUS,re:/\\bsemi[- ]?deciduous\\b/g},
+    {state:LEAF_HABIT_STATE.SEMI_EVERGREEN,re:/\\bsemi[- ]?evergreen\\b/g},
+    {state:LEAF_HABIT_STATE.DECIDUOUS,re:/\\bdeciduous\\b/g},
+    {state:LEAF_HABIT_STATE.EVERGREEN,re:/\\bevergreen\\b/g}
+  ];
+  for(const p of patterns){
+    for(const match of lower.matchAll(p.re)){
+      hits.push({state:p.state,index:match.index,excerpt:excerptAround(raw,match.index)});
+    }
+  }
+  return hits.filter(h=>{
+    if(h.state===LEAF_HABIT_STATE.DECIDUOUS){
+      return !hits.some(x=>x.state===LEAF_HABIT_STATE.SEMI_DECIDUOUS && Math.abs(x.index-h.index)<12);
+    }
+    if(h.state===LEAF_HABIT_STATE.EVERGREEN){
+      return !hits.some(x=>x.state===LEAF_HABIT_STATE.SEMI_EVERGREEN && Math.abs(x.index-h.index)<12);
+    }
+    return true;
+  });
+}
+
+function classifyLeafHabitHits(hits){
+  const states=[...new Set(hits.map(x=>x.state))];
+  if(states.length===0) return {ok:false,state:LEAF_HABIT_STATE.UNKNOWN,code:'EXPLICIT_LEAF_HABIT_NOT_FOUND',excerpt:null,hits:[]};
+  const deciduousFamily=states.filter(x=>[LEAF_HABIT_STATE.DECIDUOUS,LEAF_HABIT_STATE.SEMI_DECIDUOUS].includes(x));
+  const evergreenFamily=states.filter(x=>[LEAF_HABIT_STATE.EVERGREEN,LEAF_HABIT_STATE.SEMI_EVERGREEN].includes(x));
+  if(deciduousFamily.length && evergreenFamily.length){
+    return {ok:false,state:LEAF_HABIT_STATE.CONFLICT,code:'LEAF_HABIT_CONFLICT',excerpt:null,hits};
+  }
+  const state=states.includes(LEAF_HABIT_STATE.SEMI_DECIDUOUS)
+    ? LEAF_HABIT_STATE.SEMI_DECIDUOUS
+    : states.includes(LEAF_HABIT_STATE.SEMI_EVERGREEN)
+      ? LEAF_HABIT_STATE.SEMI_EVERGREEN
+      : states[0];
+  const hit=hits.find(x=>x.state===state);
+  return {ok:true,state,code:'EXPLICIT_LEAF_HABIT_FOUND',excerpt:hit?.excerpt||null,hits};
+}
+
 function excerptAround(raw, index, radius=150){
   const start=Math.max(0,index-radius);
   const end=Math.min(raw.length,index+radius);
@@ -56,51 +105,26 @@ export function extractExplicitLeafHabit(body, scientificName){
   if(!sourceIdentityMatches(raw, scientificName)){
     return {ok:false,state:LEAF_HABIT_STATE.UNKNOWN,code:'IDENTITY_MISMATCH',excerpt:null};
   }
-  const lower=raw.toLowerCase();
-  const hits=[];
-  const patterns=[
-    {state:LEAF_HABIT_STATE.SEMI_DECIDUOUS,re:/\bsemi[- ]?deciduous\b/g},
-    {state:LEAF_HABIT_STATE.SEMI_EVERGREEN,re:/\bsemi[- ]?evergreen\b/g},
-    {state:LEAF_HABIT_STATE.DECIDUOUS,re:/\bdeciduous\b/g},
-    {state:LEAF_HABIT_STATE.EVERGREEN,re:/\bevergreen\b/g}
-  ];
-  for(const p of patterns){
-    for(const match of lower.matchAll(p.re)){
-      hits.push({state:p.state,index:match.index,excerpt:excerptAround(raw,match.index)});
+
+  // Prefer the source's structured Leaf Characteristics field when present.
+  // This avoids false conflicts caused by unrelated evergreen/deciduous wording
+  // elsewhere on long horticultural pages.
+  const structuredLeaf=structuredBlock(raw,'Leaf Characteristics',[
+    'Habit/Form','Leaf Color','Leaf Feel','Leaf Type','Leaf Arrangement',
+    'Leaf Shape','Leaf Margin','Leaf Size','Leaf Description','Flower Description',
+    'Fruit Description','Stem Description','Growth Rate','Maintenance','Cultural Conditions'
+  ]);
+  if(structuredLeaf){
+    const structured=classifyLeafHabitHits(leafHabitHits(structuredLeaf));
+    if(structured.code!=='EXPLICIT_LEAF_HABIT_NOT_FOUND'){
+      return {...structured,authority:'STRUCTURED_LEAF_CHARACTERISTICS'};
     }
   }
 
-  // Avoid double-counting "semi-deciduous" also as "deciduous".
-  const normalizedHits=hits.filter(h=>{
-    if(h.state===LEAF_HABIT_STATE.DECIDUOUS){
-      return !hits.some(x=>x.state===LEAF_HABIT_STATE.SEMI_DECIDUOUS && Math.abs(x.index-h.index)<12);
-    }
-    if(h.state===LEAF_HABIT_STATE.EVERGREEN){
-      return !hits.some(x=>x.state===LEAF_HABIT_STATE.SEMI_EVERGREEN && Math.abs(x.index-h.index)<12);
-    }
-    return true;
-  });
-
-  const states=[...new Set(normalizedHits.map(x=>x.state))];
-  if(states.length===0){
-    return {ok:false,state:LEAF_HABIT_STATE.UNKNOWN,code:'EXPLICIT_LEAF_HABIT_NOT_FOUND',excerpt:null,hits:[]};
-  }
-
-  const deciduousFamily=states.filter(x=>[LEAF_HABIT_STATE.DECIDUOUS,LEAF_HABIT_STATE.SEMI_DECIDUOUS].includes(x));
-  const evergreenFamily=states.filter(x=>[LEAF_HABIT_STATE.EVERGREEN,LEAF_HABIT_STATE.SEMI_EVERGREEN].includes(x));
-  if(deciduousFamily.length && evergreenFamily.length){
-    return {ok:false,state:LEAF_HABIT_STATE.CONFLICT,code:'LEAF_HABIT_CONFLICT',excerpt:null,hits:normalizedHits};
-  }
-
-  // Prefer the more specific semi-* state if present.
-  const state=states.includes(LEAF_HABIT_STATE.SEMI_DECIDUOUS)
-    ? LEAF_HABIT_STATE.SEMI_DECIDUOUS
-    : states.includes(LEAF_HABIT_STATE.SEMI_EVERGREEN)
-      ? LEAF_HABIT_STATE.SEMI_EVERGREEN
-      : states[0];
-
-  const hit=normalizedHits.find(x=>x.state===state);
-  return {ok:true,state,code:'EXPLICIT_LEAF_HABIT_FOUND',excerpt:hit?.excerpt||null,hits:normalizedHits};
+  return {
+    ...classifyLeafHabitHits(leafHabitHits(raw)),
+    authority:'PAGE_WIDE_EXPLICIT_WORDING'
+  };
 }
 
 export function combineLeafHabitEvidence(records=[]){
