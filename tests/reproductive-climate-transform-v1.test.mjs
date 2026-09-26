@@ -1,6 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {warmSeasonFruitingTransform} from '../modules/suitability/reproductive-climate-transform-v1.js';
+import {
+  warmSeasonFruitingTransform,
+  explicitCoolSeasonFruitingTransform,
+  qualitativeSummerHeatFruitingTransform
+} from '../modules/suitability/reproductive-climate-transform-v1.js';
 
 test('explicit warm-season fruit crop maps to warm fruiting band at heuristic strength',()=>{
   const r=warmSeasonFruitingTransform({
@@ -35,6 +39,37 @@ test('source lineage is mandatory',()=>{
 test('generic warm adjective is not enough',()=>{
   const r=warmSeasonFruitingTransform({
     sourceText:'Prefers a warm location',
+    fruitProductionRelevant:true,
+    sourceIds:['authority-1']
+  });
+  assert.equal(r.eligible,false);
+});
+
+
+test('explicit low non-freezing fall/winter production signal maps to cool-season requirement',()=>{
+  const r=explicitCoolSeasonFruitingTransform({
+    sourceText:'Longans produce more reliably in areas characterized by low non-freezing temperatures and a dry period during the fall and winter.',
+    fruitProductionRelevant:true,
+    sourceIds:['authority-1']
+  });
+  assert.equal(r.eligible,true);
+  assert.equal(r.field,'reproductiveClimate.fruiting.requiresCoolSeason');
+  assert.equal(r.value,true);
+});
+
+test('high summer temperatures for fruit development map to hot summer band',()=>{
+  const r=qualitativeSummerHeatFruitingTransform({
+    sourceText:'High summer temperatures are best for fruit development.',
+    fruitProductionRelevant:true,
+    sourceIds:['authority-1']
+  });
+  assert.equal(r.eligible,true);
+  assert.equal(r.value,'hot');
+});
+
+test('generic tropical label alone cannot authorize summer heat band',()=>{
+  const r=qualitativeSummerHeatFruitingTransform({
+    sourceText:'A tropical fruit tree.',
     fruitProductionRelevant:true,
     sourceIds:['authority-1']
   });
