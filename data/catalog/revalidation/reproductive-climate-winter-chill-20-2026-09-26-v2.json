@@ -1,0 +1,52 @@
+{
+  "contract": "cruvit-reproductive-climate-derived-migration-v1",
+  "migrationId": "reproductive-climate-winter-chill-20-2026-09-26-v2",
+  "createdAt": "2026-09-26",
+  "supersedes": "reproductive-climate-winter-chill-21-2026-09-26-v1",
+  "correction": {
+    "removed": [
+      "pitanga"
+    ],
+    "reason": "Live canonical catalog has needsWinterChill=false for pitanga; transform precondition requires true."
+  },
+  "transform": {
+    "inputField": "needsWinterChill",
+    "requiredInputValue": true,
+    "output": [
+      "reproductiveClimate.flowering.requiresCoolSeason=true",
+      "reproductiveClimate.fruiting.requiresCoolSeason=true"
+    ],
+    "outputEvidenceClass": "HEURISTIC_ASSERTION",
+    "transformRef": "winter-chill-to-cool-season-v1@1.0.0",
+    "evidenceLineage": "DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM"
+  },
+  "writeGuards": {
+    "canonicalCatalogPreconditionRequired": true,
+    "reproductiveClimateMustBeMissing": true,
+    "supportingSourceIdRequired": true,
+    "affectedRowCountMustEqual": 20,
+    "paidCalls": 0
+  },
+  "plants": [
+    "apple",
+    "apricot",
+    "blackberry",
+    "blackcurrant",
+    "blueberry",
+    "chestnut",
+    "cranberry",
+    "elderberry",
+    "english-walnut",
+    "hazelnut",
+    "jujube",
+    "medlar",
+    "peach",
+    "pear",
+    "pecan",
+    "persimmon",
+    "plum",
+    "raspberry",
+    "sea-buckthorn",
+    "serviceberry"
+  ]
+}
