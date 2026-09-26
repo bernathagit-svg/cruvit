@@ -6,6 +6,7 @@ const design=document.getElementById('cardDesign');
 const garden=document.getElementById('cardGarden');
 const doctor=document.getElementById('cardDoctor');
 const plantId=document.getElementById('cardPlantId');
+const smart=document.getElementById('cardSmart');
 
 let index=0;
 let dragging=false;
@@ -23,19 +24,29 @@ const states=[
     design:{l:0,t:12.9,w:30.0,h:73.8,o:1},
     garden:{l:26.3,t:0.1,w:46.0,h:95.1,o:1},
     doctor:{l:73.0,t:14.3,w:27.0,h:72.0,o:1},
-    plantId:{l:108,t:16,w:27.3,h:69.4,o:0}
+    plantId:{l:108,t:16,w:27.3,h:69.4,o:0},
+    smart:{l:140,t:16,w:27.3,h:69.4,o:0}
   },
   {
     design:{l:29.2,t:4.2,w:43.2,h:88.0,o:1},
     garden:{l:0,t:15.0,w:27.4,h:70.2,o:1},
     doctor:{l:72.7,t:16.0,w:27.3,h:69.4,o:1},
-    plantId:{l:108,t:16,w:27.3,h:69.4,o:0}
+    plantId:{l:108,t:16,w:27.3,h:69.4,o:0},
+    smart:{l:140,t:16,w:27.3,h:69.4,o:0}
   },
   {
     design:{l:0,t:15.0,w:27.4,h:70.2,o:1},
     garden:{l:-31,t:16,w:27.4,h:70.2,o:0},
     doctor:{l:72.7,t:16.0,w:27.3,h:69.4,o:1},
-    plantId:{l:29.2,t:4.2,w:43.2,h:88.0,o:1}
+    plantId:{l:29.2,t:4.2,w:43.2,h:88.0,o:1},
+    smart:{l:108,t:16,w:27.3,h:69.4,o:0}
+  },
+  {
+    design:{l:-31,t:16,w:27.4,h:70.2,o:0},
+    garden:{l:-63,t:16,w:27.4,h:70.2,o:0},
+    doctor:{l:0,t:16,w:27.3,h:69.4,o:1},
+    plantId:{l:72.7,t:16,w:27.3,h:69.4,o:1},
+    smart:{l:29.2,t:4.2,w:43.2,h:88.0,o:1}
   }
 ];
 
@@ -54,12 +65,14 @@ function renderBetween(aIndex,bIndex,t){
   apply(garden,a.garden,b.garden,progress);
   apply(doctor,a.doctor,b.doctor,progress);
   apply(plantId,a.plantId,b.plantId,progress);
+  apply(smart,a.smart,b.smart,progress);
 
   const depth=0.015*Math.sin(progress*Math.PI);
   design.style.transform='scale('+(1+depth*0.5)+')';
   garden.style.transform='scale('+(1-depth*0.5)+')';
   doctor.style.transform='scale('+(1-depth*0.2)+')';
-  plantId.style.transform='scale('+(1+depth)+')';
+  plantId.style.transform='scale('+(1+depth*0.6)+')';
+  smart.style.transform='scale('+(1+depth)+')';
 }
 
 function renderState(i){
