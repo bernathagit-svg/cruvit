@@ -1,14 +1,14 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>CRUVIT · Pomegranate Norway Suitability Diagnostic</title>
+<title>CRUVIT · Pomegranate 3-Scenario Suitability Diagnostic</title>
 <style>
 body{font:14px/1.45 ui-monospace,monospace;background:#0e1511;color:#e7f0e9;padding:20px}
 pre{white-space:pre-wrap;background:#162019;padding:16px;border-radius:12px}
 iframe{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 </style>
-<h1>CRUVIT · Pomegranate × Norway</h1>
+<h1>CRUVIT · Pomegranate · 3 Scenario Test</h1>
 <pre id="out">RUNNING</pre>
-<iframe id="app" src="../../app.html?cruvitSuitabilityDiagnostic=1"></iframe>
+<iframe id="app" src="../../app.html?cruvitSuitabilityDiagnostic=3scenarios"></iframe>
 <script>
 (async()=>{
   const out=document.getElementById('out');
@@ -16,77 +16,149 @@ iframe{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
   const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   await new Promise(r=>frame.addEventListener('load',r,{once:true}));
   const w=frame.contentWindow;
-  for(let i=0;i<80;i++){
-    if(w.cruvitSpecificPlantSuitability) break;
+  for(let i=0;i<120;i++){
+    if(w.cruvitSpecificPlantSuitability && typeof w.cruvitDeriveSpecificPlantOutcomes==='function') break;
     await sleep(250);
   }
   const api=w.cruvitSpecificPlantSuitability;
   if(!api) throw new Error('SPECIFIC_PLANT_SUITABILITY_API_NOT_READY');
 
+  const findPlant=()=>{
+    const hits=api.search('Punica granatum');
+    return hits.find(p=>String(p.scientific||'').toLowerCase()==='punica granatum')
+      || hits.find(p=>String(p.slug||'').toLowerCase()==='pomegranate')
+      || hits[0] || null;
+  };
+  const plant=findPlant();
+  if(!plant) throw new Error('POMEGRANATE_NOT_FOUND');
+
   const cases=[
-    {id:'bergen',label:'Bergen, Norway',climate:'Cool temperate',lat:60.3913,lon:5.3221},
-    {id:'tromso',label:'Tromsø, Norway',climate:'Cool temperate',lat:69.6492,lon:18.9553}
+    {
+      id:'bergen-outdoor',
+      label:'Bergen, Norway',
+      climate:'Cool temperate',
+      lat:60.3913, lon:5.3221,
+      area:{context:{plantingMode:'ground',sunExposure:'full-sun',windExposure:'exposed'}},
+      structuralClimate:{
+        status:'known',
+        broadClimateOverride:'cool-temperate',
+        freezingRisk:'high',
+        thermalRegime:'frost-prone',
+        structuralColdRisk:'high',
+        humiditySignal:'high',
+        evidence:{coldestMonthMeanMinC:-1,annualPrecipitationMm:2250}
+      }
+    },
+    {
+      id:'bergen-frost-free-greenhouse',
+      label:'Bergen, Norway',
+      climate:'Cool temperate',
+      lat:60.3913, lon:5.3221,
+      area:{context:{plantingMode:'greenhouse',sunExposure:'full-sun',windExposure:'sheltered'}},
+      structuralClimate:{
+        status:'known',
+        broadClimateOverride:'cool-temperate',
+        freezingRisk:'high',
+        thermalRegime:'frost-prone',
+        structuralColdRisk:'high',
+        humiditySignal:'high',
+        evidence:{coldestMonthMeanMinC:-1,annualPrecipitationMm:2250}
+      }
+    },
+    {
+      id:'san-francisco-cool-summer',
+      label:'San Francisco, California, USA',
+      climate:'Mediterranean',
+      lat:37.7749, lon:-122.4194,
+      area:{context:{plantingMode:'ground',sunExposure:'full-sun',windExposure:'sheltered'}},
+      structuralClimate:{
+        status:'known',
+        broadClimateOverride:'mediterranean',
+        freezingRisk:'low',
+        thermalRegime:'cool-seasonal',
+        structuralColdRisk:'low',
+        humiditySignal:'medium',
+        evidence:{coldestMonthMeanMinC:8,warmestMonthMeanMaxC:21,annualPrecipitationMm:600}
+      }
+    }
   ];
+
   const results=[];
   for(const c of cases){
+    w.cruvitGardenAreasV1={
+      getCachedAreas:()=>[c.area]
+    };
     await api.setAppLocation({
       label:c.label,
       rawInput:c.label,
       resolvedCity:c.label.split(',')[0],
-      country:'Norway',
-      countryCode:'NO',
+      country:c.id.startsWith('bergen')?'Norway':'USA',
+      countryCode:c.id.startsWith('bergen')?'NO':'US',
       climate:c.climate,
       lat:c.lat,
       lon:c.lon,
       source:'manual',
-      provider:'diagnostic'
+      provider:'diagnostic',
+      structuralClimate:c.structuralClimate
     },{skipServerPersist:true});
-    await sleep(250);
-    const hits=api.search('Punica granatum');
-    const plant=hits.find(p=>String(p.scientific||'').toLowerCase()==='punica granatum')
-      || hits.find(p=>String(p.slug||'').toLowerCase()==='pomegranate')
-      || hits[0] || null;
-    if(!plant) throw new Error('POMEGRANATE_NOT_FOUND_'+c.id);
+    await sleep(500);
+
     const suitability=api.evaluate(plant);
     const climateProfile=api.getAppClimateProfile();
     const meta=api.getClimateMetaForPlant(plant);
-    const outcomes=typeof w.cruvitDeriveSpecificPlantOutcomes==='function'
-      ?w.cruvitDeriveSpecificPlantOutcomes({
-        meta,climateProfile,suitability,plant,protectedGrowing:false
-      })
-      :null;
+    const protection=w.CruvitHardClimateSurvivalGate?.isExplicitFrostFreeProtectedContext
+      ? w.CruvitHardClimateSurvivalGate.isExplicitFrostFreeProtectedContext({
+          plantingMode:c.area.context.plantingMode,
+          greenhouse:c.area.context.plantingMode==='greenhouse',
+          frostFreeProtected:c.area.context.plantingMode==='greenhouse'
+        })
+      : false;
+    const outcomes=w.cruvitDeriveSpecificPlantOutcomes({
+      meta,climateProfile,suitability,plant,protectedGrowing:protection
+    });
+
     results.push({
-      case:c,
+      id:c.id,
+      environment:{
+        location:c.label,
+        plantingMode:c.area.context.plantingMode,
+        protectedGrowing:protection
+      },
       plant:{
         slug:plant.slug||null,
-        name:plant.name||null,
         scientific:plant.scientific||null
       },
-      climateMeta:meta?{
-        frostSensitivity:meta.frostSensitivity||null,
-        coldTolerance:meta.coldTolerance||null,
-        heatTolerance:meta.heatTolerance||null,
-        groupIds:meta.groupIds||[],
-        needsReview:meta.needsReview===true
-      }:null,
+      climateMeta:{
+        frostSensitivity:meta?.frostSensitivity||null,
+        coldTolerance:meta?.coldTolerance||null,
+        heatTolerance:meta?.heatTolerance||null,
+        humidityTolerance:meta?.humidityTolerance||null,
+        groupIds:meta?.groupIds||[]
+      },
       climateProfile:{
-        locationLabel:climateProfile?.locationLabel||null,
-        climateLabel:climateProfile?.climateLabel||null,
         broadClimate:climateProfile?.broadClimate||null,
         freezingRisk:climateProfile?.freezingRisk||null,
-        structuralFreezingRisk:climateProfile?.structuralFreezingRisk||null,
         thermalRegime:climateProfile?.thermalRegime||null,
         coldestMonthMeanMinC:climateProfile?.coldestMonthMeanMinC??null,
-        locationConfidence:climateProfile?.locationConfidence||null,
-        climateConfidence:climateProfile?.climateConfidence||null,
-        isFrostFreeGrowingClimate:climateProfile?.isFrostFreeGrowingClimate===true
+        isFrostFreeGrowingClimate:climateProfile?.isFrostFreeGrowingClimate===true,
+        humiditySignal:climateProfile?.humiditySignal||null
       },
-      suitability,
+      suitability:{
+        suitabilityScore:suitability?.suitabilityScore??null,
+        recommendationLevel:suitability?.recommendationLevel||null,
+        survivalFit:suitability?.survivalFit??null,
+        thriveFit:suitability?.thriveFit??null,
+        floweringFit:suitability?.floweringFit??null,
+        fruitingFit:suitability?.fruitingFit??null,
+        hardSurvivalBlocked:suitability?.hardSurvivalBlocked===true,
+        warnings:suitability?.warnings||[],
+        explanationText:suitability?.explanationText||null
+      },
       outcomes
     });
   }
-  out.textContent=JSON.stringify({ok:true,engine:'live-app-production-evaluator',results},null,2);
+  out.textContent='DONE\n'+JSON.stringify({ok:true,engine:'live-app-production-evaluator',results},null,2);
 })().catch(err=>{
- document.getElementById('out').textContent=JSON.stringify({ok:false,error:String(err?.message||err)},null,2);
+ document.getElementById('out').textContent='DONE\n'+JSON.stringify({ok:false,error:String(err?.stack||err?.message||err)},null,2);
 });
 </script>
