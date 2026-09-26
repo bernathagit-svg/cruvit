@@ -1,0 +1,53 @@
+name: CRUVIT E2E Batch B Natural Blend Repair Vision QA
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cruvit-e2e-batch-b-natural-blend-repair-vision-qa.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      BASE_URL: https://friendly-taiyaki-64aacb.netlify.app
+      RUN_ID: cruvit-e2e-batch-b-natural-blend-repair-vision-qa-2026-09-25-v1
+    steps:
+      - name: Wait for approval artifact deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 20); do
+            code=$(curl -sS -o /tmp/preflight.json -w '%{http_code}' -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job"               -H 'content-type: application/json'               --data '{"runId":"cruvit-e2e-batch-b-natural-blend-repair-vision-qa-2026-09-25-v1","jobId":"__preflight_invalid_job__"}' || true)
+            cat /tmp/preflight.json || true
+            if grep -q 'JOB_NOT_IN_PLAN' /tmp/preflight.json; then
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "Plan/approval deployment did not become visible"
+          exit 1
+
+      - name: Fig young repaired composite
+        continue-on-error: true
+        run: |
+          mkdir -p execution-results
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job"             -H 'content-type: application/json'             --data '{"runId":"cruvit-e2e-batch-b-natural-blend-repair-vision-qa-2026-09-25-v1","jobId":"fig__young__tree__vegetative__v1"}'             | tee execution-results/01-fig-young.json
+
+      - name: Lettuce repaired composite
+        continue-on-error: true
+        run: |
+          curl --fail-with-body --silent --show-error -X POST "$BASE_URL/.netlify/functions/plant-visual-in-garden-vision-qa-job"             -H 'content-type: application/json'             --data '{"runId":"cruvit-e2e-batch-b-natural-blend-repair-vision-qa-2026-09-25-v1","jobId":"lettuce__mature__default__vegetative__v1"}'             | tee execution-results/02-lettuce.json
+
+      - name: Upload Vision QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cruvit-e2e-batch-b-natural-blend-repair-vision-qa
+          path: execution-results/
+          if-no-files-found: warn
+          retention-days: 30
