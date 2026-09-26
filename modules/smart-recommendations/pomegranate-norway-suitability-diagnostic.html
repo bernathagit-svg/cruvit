@@ -1,0 +1,92 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CRUVIT · Pomegranate Norway Suitability Diagnostic</title>
+<style>
+body{font:14px/1.45 ui-monospace,monospace;background:#0e1511;color:#e7f0e9;padding:20px}
+pre{white-space:pre-wrap;background:#162019;padding:16px;border-radius:12px}
+iframe{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+</style>
+<h1>CRUVIT · Pomegranate × Norway</h1>
+<pre id="out">RUNNING</pre>
+<iframe id="app" src="../../app.html?cruvitSuitabilityDiagnostic=1"></iframe>
+<script>
+(async()=>{
+  const out=document.getElementById('out');
+  const frame=document.getElementById('app');
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  await new Promise(r=>frame.addEventListener('load',r,{once:true}));
+  const w=frame.contentWindow;
+  for(let i=0;i<80;i++){
+    if(w.cruvitSpecificPlantSuitability) break;
+    await sleep(250);
+  }
+  const api=w.cruvitSpecificPlantSuitability;
+  if(!api) throw new Error('SPECIFIC_PLANT_SUITABILITY_API_NOT_READY');
+
+  const cases=[
+    {id:'bergen',label:'Bergen, Norway',climate:'Cool temperate',lat:60.3913,lon:5.3221},
+    {id:'tromso',label:'Tromsø, Norway',climate:'Cool temperate',lat:69.6492,lon:18.9553}
+  ];
+  const results=[];
+  for(const c of cases){
+    await api.setAppLocation({
+      label:c.label,
+      rawInput:c.label,
+      resolvedCity:c.label.split(',')[0],
+      country:'Norway',
+      countryCode:'NO',
+      climate:c.climate,
+      lat:c.lat,
+      lon:c.lon,
+      source:'manual',
+      provider:'diagnostic'
+    },{skipServerPersist:true});
+    await sleep(250);
+    const hits=api.search('Punica granatum');
+    const plant=hits.find(p=>String(p.scientific||'').toLowerCase()==='punica granatum')
+      || hits.find(p=>String(p.slug||'').toLowerCase()==='pomegranate')
+      || hits[0] || null;
+    if(!plant) throw new Error('POMEGRANATE_NOT_FOUND_'+c.id);
+    const suitability=api.evaluate(plant);
+    const climateProfile=api.getAppClimateProfile();
+    const meta=api.getClimateMetaForPlant(plant);
+    const outcomes=typeof w.cruvitDeriveSpecificPlantOutcomes==='function'
+      ?w.cruvitDeriveSpecificPlantOutcomes({
+        meta,climateProfile,suitability,plant,protectedGrowing:false
+      })
+      :null;
+    results.push({
+      case:c,
+      plant:{
+        slug:plant.slug||null,
+        name:plant.name||null,
+        scientific:plant.scientific||null
+      },
+      climateMeta:meta?{
+        frostSensitivity:meta.frostSensitivity||null,
+        coldTolerance:meta.coldTolerance||null,
+        heatTolerance:meta.heatTolerance||null,
+        groupIds:meta.groupIds||[],
+        needsReview:meta.needsReview===true
+      }:null,
+      climateProfile:{
+        locationLabel:climateProfile?.locationLabel||null,
+        climateLabel:climateProfile?.climateLabel||null,
+        broadClimate:climateProfile?.broadClimate||null,
+        freezingRisk:climateProfile?.freezingRisk||null,
+        structuralFreezingRisk:climateProfile?.structuralFreezingRisk||null,
+        thermalRegime:climateProfile?.thermalRegime||null,
+        coldestMonthMeanMinC:climateProfile?.coldestMonthMeanMinC??null,
+        locationConfidence:climateProfile?.locationConfidence||null,
+        climateConfidence:climateProfile?.climateConfidence||null,
+        isFrostFreeGrowingClimate:climateProfile?.isFrostFreeGrowingClimate===true
+      },
+      suitability,
+      outcomes
+    });
+  }
+  out.textContent=JSON.stringify({ok:true,engine:'live-app-production-evaluator',results},null,2);
+})().catch(err=>{
+ document.getElementById('out').textContent=JSON.stringify({ok:false,error:String(err?.message||err)},null,2);
+});
+</script>
