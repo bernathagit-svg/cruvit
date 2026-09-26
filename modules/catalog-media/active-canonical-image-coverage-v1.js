@@ -143,6 +143,29 @@ export function resolveCanonicalImageSlug(rawSlug, maps) {
   return key;
 }
 
+function exactLicensedRegistryCacheMedia(root, entry) {
+  const slug = String(entry?.canonicalSlug || '').trim().toLowerCase();
+  const scientific = String(entry?.acceptedScientificName || '').trim();
+  if (!slug || !scientific || entry?.needsReview === true) return null;
+  if (/\bspp\.?\b/i.test(scientific) || /^various\b/i.test(scientific)) return null;
+  const cacheDir = path.join(root, 'data', 'catalog-media', 'cache');
+  if (!fs.existsSync(cacheDir)) return null;
+  const prefix = slug + '__';
+  const files = fs.readdirSync(cacheDir)
+    .filter((name) => name.startsWith(prefix) && name.endsWith('__v1.0.0.json'))
+    .sort();
+  for (const name of files) {
+    const doc = readJson(path.join(cacheDir, name));
+    if (String(doc?.scientific || '').trim().toLowerCase() !== scientific.toLowerCase()) continue;
+    const plant = { slug, scientific, identityScope: 'species' };
+    const approved = isApprovedCatalogMediaRecord(doc?.media, plant);
+    if (String(doc?.status || '') === RUNTIME_IMAGE_READY && approved.ok) {
+      return doc.media;
+    }
+  }
+  return null;
+}
+
 function mediaStatusForPlant(plant) {
   if (!plant) return { imageStatus: null, approved: false, reason: 'missing-plant' };
   const media = plant.media || plant.catalogMedia || null;
@@ -232,11 +255,34 @@ export function buildActiveCanonicalImageCoverage(repoRoot = DEFAULT_ROOT) {
     );
   }
 
+  // A species may become a canonical identity after being split from a legacy
+  // generic alias even when the static PLANT_LIBRARY / seed surface has not yet
+  // gained a separate row. Such identities are allowed into active media coverage
+  // only when the identity registry is resolved AND an exact-scientific licensed
+  // cache record already passes the runtime media contract. No web search, no
+  // license inference, and no generic-image inheritance is permitted here.
+  for (const entry of registry.canonicalIdentities || []) {
+    const slug = String(entry?.canonicalSlug || '').trim().toLowerCase();
+    const scientific = String(entry?.acceptedScientificName || '').trim();
+    if (!slug || identities.has(slug) || entry?.needsReview === true || !scientific) continue;
+    const registryMedia = exactLicensedRegistryCacheMedia(root, entry);
+    if (!registryMedia) continue;
+    identities.set(slug, {
+      slug,
+      name: entry?.localizedNames?.en?.primary?.[0] || slug,
+      scientific,
+      layers: new Set(['identity-registry-cache']),
+      seedPlant: null,
+      libraryPlant: null,
+      registryMedia
+    });
+  }
+
   const records = [...identities.values()]
     .sort((a, b) => a.slug.localeCompare(b.slug))
     .map((id) => {
       const seedPlant = seedBySlug.get(id.slug) || null;
-      const indexRecord = indexMedia[id.slug] || null;
+      const indexRecord = id.registryMedia || indexMedia[id.slug] || null;
       const plantForMedia = seedPlant
         ? seedPlant
         : {
@@ -270,6 +316,7 @@ export function buildActiveCanonicalImageCoverage(repoRoot = DEFAULT_ROOT) {
         layers: [...id.layers].sort(),
         inLibrary: !!id.libraryPlant,
         inSeed: !!seedPlant,
+        inRegistryCache: !!id.registryMedia,
         imageStatus: coverage.imageStatus,
         approved: coverage.approved,
         reason: coverage.reason || null,
