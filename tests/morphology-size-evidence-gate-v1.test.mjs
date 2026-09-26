@@ -30,3 +30,24 @@ test('annual vegetable does not silently become herbaceous form',()=>{
   assert.equal(r.morphologyReady,false);
   assert.equal(r.matureSize.ready,true);
 });
+
+
+test('strips HTML wrappers before structured morphology parsing',()=>{
+  const r=extractStructuredMorphologyAndSize(
+    '<dt>Plant Type:</dt><dd><span>Perennial</span></dd><dd><span>Shrub</span></dd><dt>Leaf Characteristics:</dt><dd>Deciduous</dd><dt>Habit/Form:</dt><dd><span>Erect</span></dd><dd><span>Multi-stemmed</span></dd><dt>Growth Rate:</dt><dd>Rapid</dd> Height: 6 ft. 0 in. - 12 ft. 0 in. Width: 6 ft. 0 in. - 10 ft. 0 in.'
+  );
+  assert.equal(r.plantType,'Perennial Shrub');
+  assert.equal(r.habitForm,'Erect Multi-stemmed');
+  assert.equal(r.visualForm,'shrub');
+  assert.equal(r.morphologyReady,true);
+});
+
+test('maps explicit ground cover morphology to groundcover visual form',()=>{
+  const r=extractStructuredMorphologyAndSize(
+    '<dt>Plant Type:</dt><dd>Edible</dd><dd>Ground Cover</dd><dt>Leaf Characteristics:</dt><dd>Deciduous</dd><dt>Habit/Form:</dt><dd>Clumping</dd><dt>Growth Rate:</dt><dd>Rapid</dd> Height: 0 ft. 6 in. - 1 ft. 0 in. Width: 1 ft. 0 in. - 2 ft. 0 in.'
+  );
+  assert.equal(r.visualForm,'groundcover');
+  assert.equal(r.morphologyCode,'EXPLICIT_GROUNDCOVER');
+  assert.equal(r.morphologyEvidenceClass,'SOURCE_SUPPORTED');
+  assert.equal(r.matureSize.ready,true);
+});
