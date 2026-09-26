@@ -139,3 +139,23 @@ test('best fruit quality with heat maps to hot band',()=>{
   assert.equal(r.eligible,true);
   assert.equal(r.value,'hot');
 });
+
+
+test('negated winter chill wording cannot create a cool-season requirement',()=>{
+  const r=explicitCoolSeasonFruitingTransform({
+    sourceText:'Strictly tropical; dry/cool cues described are not temperate winter chill-hour requirements.',
+    fruitProductionRelevant:true,
+    sourceIds:['authority-1']
+  });
+  assert.equal(r.eligible,false);
+});
+
+test('explicit cool-season wording still wins when a separate chill phrase is negated',()=>{
+  const r=explicitCoolSeasonFruitingTransform({
+    sourceText:'Cool-season annual sown in cool weather; not a perennial chill crop.',
+    fruitProductionRelevant:true,
+    sourceIds:['authority-1']
+  });
+  assert.equal(r.eligible,true);
+  assert.equal(r.value,true);
+});
