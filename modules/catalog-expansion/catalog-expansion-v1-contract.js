@@ -272,6 +272,46 @@ export function validateCatalogExpansionPacket(packet) {
       );
     }
     validateQuantitativeClaims(claims, sourceIds, errors);
+
+    // Reproductive Climate V1 semantic validation.
+    const allowedHeatBands = new Set(['cool','mild','warm','hot','very_hot']);
+    const allowedRcFields = new Set([
+      'reproductiveClimate.flowering.requiresFrostFree',
+      'reproductiveClimate.flowering.requiresCoolSeason',
+      'reproductiveClimate.flowering.summerHeatBand',
+      'reproductiveClimate.flowering.minWarmestMonthMeanMaxC',
+      'reproductiveClimate.fruiting.requiresFrostFree',
+      'reproductiveClimate.fruiting.requiresCoolSeason',
+      'reproductiveClimate.fruiting.summerHeatBand',
+      'reproductiveClimate.fruiting.minWarmestMonthMeanMaxC'
+    ]);
+    for (const claim of claims) {
+      const field = String(claim?.field || '');
+      if (!field.startsWith('reproductiveClimate.')) continue;
+      if (!allowedRcFields.has(field)) {
+        fail(errors, `claim ${claim.claimId}: unsupported reproductiveClimate field ${field}`);
+        continue;
+      }
+      if (claim.status !== 'asserted') continue;
+      if (field.endsWith('.requiresFrostFree') || field.endsWith('.requiresCoolSeason')) {
+        if (typeof claim.value !== 'boolean') {
+          fail(errors, `claim ${claim.claimId}: ${field} must be boolean`);
+        }
+      } else if (field.endsWith('.summerHeatBand')) {
+        const band = String(claim.value || '').trim().toLowerCase().replace(/-/g,'_');
+        if (!allowedHeatBands.has(band)) {
+          fail(errors, `claim ${claim.claimId}: ${field} must be cool|mild|warm|hot|very_hot`);
+        }
+      } else if (field.endsWith('.minWarmestMonthMeanMaxC')) {
+        const n = Number(claim.value);
+        if (!Number.isFinite(n) || n < -10 || n > 60) {
+          fail(errors, `claim ${claim.claimId}: ${field} must be a plausible Celsius number`);
+        }
+      }
+      if (!claim.evidenceClass) {
+        fail(errors, `claim ${claim.claimId}: reproductiveClimate assertions require evidenceClass`);
+      }
+    }
   }
 
   const image = packet.image;
