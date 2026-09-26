@@ -279,3 +279,38 @@ test('growthHabit groundcover accepts explicit Ground Cover source wording',()=>
   assert.equal(r.mayBeSourceSupported,true);
   assert.equal(r.evidenceClass,EVIDENCE_CLASS.SOURCE_SUPPORTED);
 });
+
+
+test('growthHabit climber accepts explicit Vine source wording',()=>{
+  const r=evaluateSourceSupportedEligibility({
+    field:'growthHabit',
+    value:'climber',
+    sourceId:'ncsu-jasminum-officinale',
+    sourceType:'university_extension',
+    excerpt:'Plant Type: Perennial Vine Woody Plant.',
+    url:'https://plants.ces.ncsu.edu/plants/jasminum-officinale/',
+    sourceTitle:'Jasminum officinale (Common Jasmine)',
+    sourceInstitution:'NC State Extension',
+    declaredScientificName:'Jasminum officinale',
+    expectedIdentity:{acceptedScientificName:'Jasminum officinale',canonicalSlug:'common-jasmine'},
+    provenanceRetained:true
+  });
+  assert.equal(r.mayBeSourceSupported,true);
+});
+
+test('growthHabit herbaceous clump accepts explicit Herbaceous + Clumping wording',()=>{
+  const r=evaluateSourceSupportedEligibility({
+    field:'growthHabit',
+    value:'herbaceous-clump',
+    sourceId:'ncsu-allium-schoenoprasum',
+    sourceType:'university_extension',
+    excerpt:'Plant Type: Herbaceous Perennial. Habit/Form: Clumping Erect.',
+    url:'https://plants.ces.ncsu.edu/plants/allium-schoenoprasum/',
+    sourceTitle:'Allium schoenoprasum (Chives)',
+    sourceInstitution:'NC State Extension',
+    declaredScientificName:'Allium schoenoprasum',
+    expectedIdentity:{acceptedScientificName:'Allium schoenoprasum',canonicalSlug:'chives'},
+    provenanceRetained:true
+  });
+  assert.equal(r.mayBeSourceSupported,true);
+});
