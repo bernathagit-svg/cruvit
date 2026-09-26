@@ -202,12 +202,12 @@ export function catalogRowToRuntimePlant(row) {
       : {};
   const leafHabit =
     String(canonicalSeasonalityEvidence.evidenceClass || '').toUpperCase() === 'SOURCE_SUPPORTED'
-      && ['DECIDUOUS', 'EVERGREEN'].includes(String(canonicalSeasonalityEvidence.state || '').toUpperCase())
+      && ['DECIDUOUS', 'EVERGREEN', 'CONTEXT_DEPENDENT'].includes(String(canonicalSeasonalityEvidence.state || '').toUpperCase())
       ? canonicalSeasonalityEvidence
       : designLeafHabit;
   const sourceSupportedLeafHabit =
     String(leafHabit.evidenceClass || '').toUpperCase() === 'SOURCE_SUPPORTED'
-      && ['DECIDUOUS', 'EVERGREEN'].includes(String(leafHabit.state || '').toUpperCase())
+      && ['DECIDUOUS', 'EVERGREEN', 'CONTEXT_DEPENDENT'].includes(String(leafHabit.state || '').toUpperCase())
       ? String(leafHabit.state).toLowerCase()
       : '';
 
