@@ -1,0 +1,45 @@
+name: CRUVIT Pomegranate Borderline Climate Probe
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/pomegranate-borderline-climate-probe.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Resolve real Coordinate Climate V2 profiles
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import path from 'node:path';
+          import {
+            resolveGardenStructuralClimateFromCoordinateV2
+          } from './modules/personal-domain/coordinate-climate-garden-hydrate-v2.js';
+          const DATA=path.resolve('data/coordinate-climate/v2');
+          const cases=[
+            {id:'san-francisco',lat:37.7749,lon:-122.4194,label:'San Francisco'},
+            {id:'seattle',lat:47.6062,lon:-122.3321,label:'Seattle'},
+            {id:'falmouth',lat:50.1526,lon:-5.0663,label:'Falmouth, Cornwall'},
+            {id:'lisbon',lat:38.7223,lon:-9.1393,label:'Lisbon'}
+          ];
+          for(const c of cases){
+            const r=resolveGardenStructuralClimateFromCoordinateV2(c.lat,c.lon,{
+              dataRoot:DATA,
+              enqueuePrep:false,
+              label:c.label
+            });
+            console.log(JSON.stringify({
+              id:c.id,
+              ok:r.ok,
+              lookupSource:r.lookupSource||null,
+              structural:r.structuralClimate||null
+            }));
+          }
+          NODE
