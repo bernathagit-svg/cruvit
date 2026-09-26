@@ -1,0 +1,82 @@
+name: CRUVIT Pomegranate Norway Suitability Proof
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/pomegranate-norway-suitability-proof.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Evaluate production hard-climate gate
+        run: |
+          node --input-type=module <<'NODE'
+          import {
+            evaluateHardClimateSurvival,
+            applyHardClimateSurvivalToFits,
+            enforceSurvivalDownstreamCaps
+          } from './modules/suitability/hard-climate-survival-gate-v1.js';
+
+          const meta={
+            frostSensitivity:'high',
+            coldTolerance:'low',
+            heatTolerance:'high',
+            humidityTolerance:'medium',
+            groupIds:['mediterranean-fruit']
+          };
+
+          const cases=[
+            {
+              id:'bergen',
+              coords:{lat:60.3913,lon:5.3221},
+              climateProfile:{
+                broadClimate:'cool-temperate',
+                freezingRisk:'high',
+                coldestMonthMeanMinC:-1,
+                thermalRegime:'frost-prone',
+                structuralClimateStatus:'known',
+                isFrostFreeGrowingClimate:false
+              }
+            },
+            {
+              id:'tromso',
+              coords:{lat:69.6492,lon:18.9553},
+              climateProfile:{
+                broadClimate:'cool-temperate',
+                freezingRisk:'high',
+                coldestMonthMeanMinC:-6,
+                thermalRegime:'frost-prone',
+                structuralClimateStatus:'known',
+                isFrostFreeGrowingClimate:false
+              }
+            }
+          ];
+
+          for(const c of cases){
+            const verdict=evaluateHardClimateSurvival({
+              meta,
+              climateProfile:c.climateProfile,
+              protectionContext:{plantingMode:'ground'},
+              coords:c.coords
+            });
+            let fits=applyHardClimateSurvivalToFits({
+              survivalFit:85,thriveFit:80,floweringFit:70,fruitingFit:70,heatColdFit:80,blocked:false
+            },verdict);
+            fits=enforceSurvivalDownstreamCaps(fits);
+            const recommendationLevel=fits.blocked?'blocked':'not-blocked';
+            const suitabilityScore=fits.blocked?0:null;
+            console.log(JSON.stringify({
+              id:c.id,
+              verdict,
+              fits,
+              recommendationLevel,
+              suitabilityScore
+            }));
+          }
+          NODE
