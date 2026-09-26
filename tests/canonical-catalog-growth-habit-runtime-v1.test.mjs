@@ -68,3 +68,17 @@ test('unverified architecture mode support is ignored',()=>{
   });
   assert.deepEqual(architectureModesForPlant(p),['shrub']);
 });
+
+
+test('annual/biennial lifecycle derived from catalog tags does not require dormant asset', async()=>{
+  const { classifyDormantState } = await import('../modules/garden-design/asset-factory-v1/design-asset-visual-states-v1.js');
+  for(const tag of ['annual','biennial']){
+    const out=classifyDormantState({
+      slug:'crop-'+tag,
+      tags:['vegetable',tag],
+      climateTraits:{designMetadata:{tags:['vegetable',tag]}}
+    },'unknown');
+    assert.equal(out.state,'NOT_REQUIRED',tag);
+    assert.equal(out.reasonCode,'ANNUAL_OR_BIENNIAL_NO_DORMANT_ASSET',tag);
+  }
+});

@@ -35,3 +35,20 @@ test('conflicting source-supported habits never auto-resolve',()=>{
   assert.equal(out.ready,false);
   assert.equal(out.state,'CONFLICT');
 });
+
+
+test('structured Leaf Characteristics outranks unrelated page-wide evergreen wording',()=>{
+  const body='<html><h1>Rubus idaeus</h1><p>Related evergreen species are also discussed.</p><div>Leaf Characteristics: Deciduous Habit/Form: Arching Erect</div></html>';
+  const out=extractExplicitLeafHabit(body,'Rubus idaeus');
+  assert.equal(out.ok,true);
+  assert.equal(out.state,'DECIDUOUS');
+  assert.equal(out.authority,'STRUCTURED_LEAF_CHARACTERISTICS');
+});
+
+test('structured Leaf Characteristics conflict remains fail-closed',()=>{
+  const body='<html><h1>Testus plantus</h1><div>Leaf Characteristics: Deciduous Evergreen Habit/Form: Erect</div></html>';
+  const out=extractExplicitLeafHabit(body,'Testus plantus');
+  assert.equal(out.ok,false);
+  assert.equal(out.state,'CONFLICT');
+  assert.equal(out.authority,'STRUCTURED_LEAF_CHARACTERISTICS');
+});
