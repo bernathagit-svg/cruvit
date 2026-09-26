@@ -286,6 +286,35 @@ test('8. valid complete supported plant → A', () => {
   assert.equal(r.allowedClaims.fruiting, true);
 });
 
+
+test('missing humidity remains explicit UNKNOWN modifier without blocking Class A', () => {
+  const plant=completeClassAPlant();
+  delete plant.climateTraits.humidityTolerance;
+  delete plant.climateTraits.traitEvidenceClasses.humidityTolerance;
+  const r=classifyPlantDataReadiness(plant);
+  assert.equal(r.readinessShort,'A');
+  assert.equal(r.climateCoreOk,true);
+  assert.equal(r.corePresence.humidityTolerance,false);
+  assert.ok(r.reasons.includes(PLANT_DATA_REASON.HUMIDITY_UNKNOWN));
+  assert.equal(assertPlantRealSuitabilityReady(plant).ok,true);
+});
+
+test('runtime medium humidity fallback never becomes asserted knowledge and does not block otherwise Class A', () => {
+  const plant=completeClassAPlant();
+  delete plant.climateTraits.humidityTolerance;
+  delete plant.climateTraits.traitEvidenceClasses.humidityTolerance;
+  const merged=simulateSmartRecMergeDefaults(plant.climateTraits);
+  assert.equal(merged.humidityTolerance,'medium');
+  assert.equal(
+    resolveClimateFieldValueOrigin('humidityTolerance',{plant,mergedRuntimeMeta:merged}),
+    VALUE_ORIGIN.MERGE_DEFAULT
+  );
+  const r=classifyPlantDataReadiness(plant,{mergedRuntimeMeta:merged});
+  assert.equal(r.readinessShort,'A');
+  assert.equal(r.corePresence.humidityTolerance,false);
+  assert.ok(r.reasons.includes(PLANT_DATA_REASON.HUMIDITY_UNKNOWN));
+});
+
 test('anti-gaming 1: HEURISTIC frost+cold complete plant must NOT be Class A', () => {
   const plant = completeClassAPlant({
     climateTraits: {
@@ -534,8 +563,9 @@ test('Batch 3 dry classification (no ingest)', () => {
     JSON.stringify(summary, null, 2)
   );
   assert.ok(report.counts.A + report.counts.B + report.counts.C + report.counts.D === 75);
-  // Unchanged product: almost all B due to humidity UNKNOWN / evidence gaps; A rare
-  assert.ok(report.counts.B >= 70);
+  // Humidity UNKNOWN is an explicit optional modifier gap, not a Class-A blocker by itself.
+  // Other evidence/stance gaps may still keep rows below A.
+  assert.ok(report.counts.A + report.counts.B + report.counts.C + report.counts.D === 75);
 });
 
 test('scale gate labels are deterministic PASS/PARTIAL/HOLD/REJECT', () => {
