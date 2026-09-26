@@ -15,6 +15,11 @@ export const REPRODUCTIVE_CLIMATE_STATUS=Object.freeze({
   UNKNOWN:'unknown'
 });
 
+export const REPRODUCTIVE_CLIMATE_EVIDENCE_STATE=Object.freeze({
+  CONTEXT_DEPENDENT:'CONTEXT_DEPENDENT',
+  RESEARCHED_UNQUANTIFIED:'RESEARCHED_UNQUANTIFIED'
+});
+
 export const SUMMER_HEAT_BAND_MIN_C=Object.freeze({
   cool:18,
   mild:21,
@@ -43,6 +48,26 @@ function warmest(env={}){
   for(const v of vals){const n=finite(v);if(n!=null)return n;}
   return null;
 }
+function drySeasonSignal(env={}){
+  const vals=[
+    env.drySeasonSignal,
+    env.structuralClimate?.drySeasonSignal,
+    env.structuralPersistencePreview?.drySeasonSignal,
+    env.coordinateClimateV2?.structuralPersistencePreview?.drySeasonSignal
+  ];
+  for(const v of vals) if(v===true||v===false) return v;
+  return null;
+}
+function absoluteMinimumTemperatureC(env={}){
+  const vals=[
+    env.absoluteMinimumTemperatureC,
+    env.extremeMinimumTemperatureC,
+    env.structuralClimate?.evidence?.absoluteMinimumTemperatureC,
+    env.coordinateClimateV2?.evidence?.absoluteMinimumTemperatureC
+  ];
+  for(const v of vals){const n=finite(v);if(n!=null)return n;}
+  return null;
+}
 function result(status,reason=null,evidence=null,extra={}){
   return Object.freeze({status,reason,evidence,...extra});
 }
@@ -61,6 +86,10 @@ export function evaluateReproductiveClimatePhase({
   }
 
   const evidenceClass=String(req.evidenceClass||'UNKNOWN').toUpperCase();
+  const evidenceState=String(req.evidenceState||'').toUpperCase();
+  const contextKeys=Array.isArray(req.contextKeys)
+    ? req.contextKeys.map(x=>String(x||'').trim()).filter(Boolean)
+    : [];
   const frostFree=climateProfile.isFrostFreeGrowingClimate===true || protectedGrowing===true;
   if(req.requiresFrostFree===true && !frostFree){
     return result(
@@ -82,6 +111,60 @@ export function evaluateReproductiveClimatePhase({
       'negative:requires-cool-season',
       {evidenceClass}
     );
+  }
+
+  if(norm(req.seasonalInductionCue)==='cool_or_dry'){
+    const cool=climateProfile.coolSeasonSignal;
+    const dry=drySeasonSignal(climateProfile);
+    if(cool!==true && dry!==true){
+      if(cool===false && dry===false){
+        return result(
+          evidenceClass==='SOURCE_SUPPORTED'
+            ? REPRODUCTIVE_CLIMATE_STATUS.UNRELIABLE
+            : REPRODUCTIVE_CLIMATE_STATUS.CONSTRAINED,
+          'Reliable '+phase+' requires a cool or dry seasonal induction signal.',
+          'negative:seasonal-induction-cool-or-dry',
+          {evidenceClass,seasonalInductionCue:'cool_or_dry'}
+        );
+      }
+      return result(
+        REPRODUCTIVE_CLIMATE_STATUS.UNKNOWN,
+        'A cool-or-dry reproductive induction requirement is known, but the site signal is incomplete.',
+        'incomplete:seasonal-induction-cool-or-dry',
+        {
+          evidenceClass,
+          seasonalInductionCue:'cool_or_dry',
+          missing:[
+            ...(cool==null?['coolSeasonSignal']:[]),
+            ...(dry==null?['drySeasonSignal']:[])
+          ]
+        }
+      );
+    }
+  }
+
+  const minEvent=finite(req.minReproductiveEventC);
+  if(minEvent!=null){
+    const absoluteMin=absoluteMinimumTemperatureC(climateProfile);
+    if(absoluteMin==null){
+      if(!(frostFree && minEvent<=0)){
+        return result(
+          REPRODUCTIVE_CLIMATE_STATUS.UNKNOWN,
+          'A reproductive cold-event threshold is known, but site extreme-minimum evidence is unavailable.',
+          'incomplete:absolute-minimum-temperature',
+          {evidenceClass,requiredMinReproductiveEventC:minEvent,missing:['absoluteMinimumTemperatureC']}
+        );
+      }
+    }else if(absoluteMin<minEvent){
+      return result(
+        evidenceClass==='SOURCE_SUPPORTED'
+          ? REPRODUCTIVE_CLIMATE_STATUS.UNRELIABLE
+          : REPRODUCTIVE_CLIMATE_STATUS.CONSTRAINED,
+        'Cold events fall below the structured '+phase+' reproductive threshold.',
+        'negative:reproductive-cold-event',
+        {evidenceClass,observedAbsoluteMinimumTemperatureC:absoluteMin,requiredMinReproductiveEventC:minEvent}
+      );
+    }
   }
 
   const explicitMin=finite(req.minWarmestMonthMeanMaxC);
@@ -118,11 +201,39 @@ export function evaluateReproductiveClimatePhase({
     }
   }
 
+  const hasEvaluableRequirement=Boolean(
+    req.requiresFrostFree===true
+    || req.requiresCoolSeason===true
+    || norm(req.seasonalInductionCue)==='cool_or_dry'
+    || minEvent!=null
+    || minSummer!=null
+  );
+
+  if(!hasEvaluableRequirement){
+    if(evidenceState===REPRODUCTIVE_CLIMATE_EVIDENCE_STATE.CONTEXT_DEPENDENT){
+      return result(
+        REPRODUCTIVE_CLIMATE_STATUS.UNKNOWN,
+        'Reproductive climate evidence is source-backed but depends on unresolved plant context.',
+        'researched:context-dependent',
+        {evidenceClass,evidenceState,missingContext:contextKeys}
+      );
+    }
+    if(evidenceState===REPRODUCTIVE_CLIMATE_EVIDENCE_STATE.RESEARCHED_UNQUANTIFIED){
+      return result(
+        REPRODUCTIVE_CLIMATE_STATUS.UNKNOWN,
+        'Reproductive climate research is complete, but no defensible universal threshold is quantified.',
+        'researched:unquantified',
+        {evidenceClass,evidenceState}
+      );
+    }
+  }
+
   return result(REPRODUCTIVE_CLIMATE_STATUS.SUPPORTED,null,'positive:structured-reproductive-climate-match',{
     evidenceClass,
     observedWarmestMonthMeanMaxC:warmest(climateProfile),
     summerHeatBand:band||null,
-    requiredMinC:minSummer
+    requiredMinC:minSummer,
+    evidenceState:evidenceState||null
   });
 }
 
@@ -165,6 +276,7 @@ export function applyReproductiveClimateToFits(state={},gate={}){
 const api={
   REPRODUCTIVE_CLIMATE_GATE_VERSION,
   REPRODUCTIVE_CLIMATE_STATUS,
+  REPRODUCTIVE_CLIMATE_EVIDENCE_STATE,
   SUMMER_HEAT_BAND_MIN_C,
   evaluateReproductiveClimatePhase,
   evaluateReproductiveClimateGate,
