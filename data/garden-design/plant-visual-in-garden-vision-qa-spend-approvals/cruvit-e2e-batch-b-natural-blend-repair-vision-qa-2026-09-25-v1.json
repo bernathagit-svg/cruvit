@@ -1,0 +1,35 @@
+{
+  "contract": "plant-visual-in-garden-vision-qa-spend-approval-v1",
+  "runId": "cruvit-e2e-batch-b-natural-blend-repair-vision-qa-2026-09-25-v1",
+  "approved": true,
+  "approvedAt": "2026-09-26",
+  "approvalSource": "owner explicitly approved CRUVIT E2E Batch B Natural Blend Repair Vision QA up to USD 0.04, 2 calls, no retries",
+  "provider": "openai-responses-api",
+  "model": "gpt-5.6-luna",
+  "maxCalls": 2,
+  "maxRetries": 0,
+  "perCallReserveUsd": 0.01,
+  "maxSpendUsd": 0.04,
+  "jobIds": [
+    "fig__young__tree__vegetative__v1",
+    "lettuce__mature__default__vegetative__v1"
+  ],
+  "allowedActions": [
+    "read exact repaired final-composite JPEG bytes from candidate R2",
+    "send one repaired renderer composite plus expected plant metadata to vision QA model",
+    "write repair verification Vision QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "imageGenerationAllowed": false,
+  "imageMutationAllowed": false,
+  "carryForward": false,
+  "previousApprovalReuse": false,
+  "notes": [
+    "Approval applies only to the two Natural Blend repaired Batch B final composites.",
+    "Exactly two Vision QA calls are authorized.",
+    "No retry calls are authorized.",
+    "No Blend rerun, image generation, or image mutation is authorized.",
+    "No Production R2 promotion or registry mutation is authorized."
+  ]
+}
