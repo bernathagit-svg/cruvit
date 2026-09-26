@@ -140,15 +140,27 @@ function reproductiveClimateState(runtimePlant){
   const fruiting=rc&&typeof rc==='object'&&rc.fruiting&&typeof rc.fruiting==='object'
     ?rc.fruiting:null;
   const evidenceClass=text(fruiting?.evidenceClass).toUpperCase();
+  const evidenceState=text(fruiting?.evidenceState).toUpperCase();
+  const sourceIds=Array.isArray(fruiting?.sourceIds)
+    ? fruiting.sourceIds.map(x=>text(x)).filter(Boolean)
+    : [];
+  const researchedState=[
+    'CONTEXT_DEPENDENT',
+    'RESEARCHED_UNQUANTIFIED'
+  ].includes(evidenceState);
   const structured=Boolean(
     fruiting
     && (
       fruiting.summerHeatBand
       || fruiting.minWarmestMonthMeanMaxC!=null
+      || fruiting.minReproductiveEventC!=null
       || fruiting.requiresFrostFree===true
       || fruiting.requiresCoolSeason===true
+      || text(fruiting.seasonalInductionCue).toLowerCase()==='cool_or_dry'
+      || researchedState
     )
     && ['SOURCE_SUPPORTED','HEURISTIC_ASSERTION'].includes(evidenceClass)
+    && sourceIds.length>0
   );
   return {
     applicable:fruitOriented,
@@ -157,6 +169,8 @@ function reproductiveClimateState(runtimePlant){
     contractVersion:rc?.contractVersion||null,
     fruitingStructured:structured,
     evidenceClass:evidenceClass||null,
+    evidenceState:evidenceState||null,
+    sourceCount:sourceIds.length,
     reason:fruitOriented&&!structured?'FRUITING_REPRODUCTIVE_CLIMATE_EVIDENCE_REQUIRED':null
   };
 }
