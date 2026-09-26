@@ -98,7 +98,10 @@
     "zucchini": "taxon:cucurbita-pepo",
     "pitanga": "taxon:eugenia-uniflora",
     "sapodilla": "taxon:manilkara-zapota",
-    "tamarind": "taxon:tamarindus-indica"
+    "tamarind": "taxon:tamarindus-indica",
+    "common-myrtle": "taxon:myrtus-communis",
+    "forsythia": "taxon:forsythia-x-intermedia",
+    "rhubarb": "taxon:rheum-rhabarbarum"
   },
   "expectedAccounting": {
     "RUNTIME_AUTHORITY_READY": 13,
@@ -1909,6 +1912,50 @@
       "contextSeparableHeight": false
     },
     {
+      "botanicalTaxonId": "taxon:forsythia-x-intermedia",
+      "canonicalSlugAliases": [
+        "forsythia"
+      ],
+      "scientificName": "Forsythia × intermedia",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "forsythia__rhs-forsythia-genus-guide__mature-size-full-catalog-v1",
+      "selectedSpreadEvidenceRef": "forsythia__rhs-forsythia-genus-guide__mature-size-full-catalog-v1",
+      "selectedSource": "forsythia__rhs-forsythia-genus-guide__mature-size-full-catalog-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 1.5,
+          "max": 2.5
+        },
+        "spreadM": {
+          "min": 1.5,
+          "max": 2.5
+        }
+      },
+      "provenanceEvidenceIds": [
+        "forsythia__rhs-forsythia-genus-guide__mature-size-full-catalog-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
       "botanicalTaxonId": "taxon:fragaria-x-ananassa",
       "canonicalSlugAliases": [
         "strawberry"
@@ -2689,6 +2736,50 @@
       "meterTruth": false
     },
     {
+      "botanicalTaxonId": "taxon:myrtus-communis",
+      "canonicalSlugAliases": [
+        "common-myrtle"
+      ],
+      "scientificName": "Myrtus communis",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "common-myrtle__rhs-myrtus-communis__mature-size-full-catalog-v1",
+      "selectedSpreadEvidenceRef": "common-myrtle__rhs-myrtus-communis__mature-size-full-catalog-v1",
+      "selectedSource": "common-myrtle__rhs-myrtus-communis__mature-size-full-catalog-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.5,
+          "max": 1
+        },
+        "spreadM": {
+          "min": 0.1,
+          "max": 0.5
+        }
+      },
+      "provenanceEvidenceIds": [
+        "common-myrtle__rhs-myrtus-communis__mature-size-full-catalog-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
       "botanicalTaxonId": "taxon:nephelium-lappaceum",
       "canonicalSlugAliases": [
         "rambutan"
@@ -3333,6 +3424,50 @@
       "runtimeWired": false,
       "botanicalEvidenceRemainsValid": true,
       "mayChooseUniversalPersonalGardenSize": false
+    },
+    {
+      "botanicalTaxonId": "taxon:rheum-rhabarbarum",
+      "canonicalSlugAliases": [
+        "rhubarb"
+      ],
+      "scientificName": "Rheum rhabarbarum",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "rhubarb__rhs-rheum-rhabarbarum__mature-size-full-catalog-v1",
+      "selectedSpreadEvidenceRef": "rhubarb__rhs-rheum-rhabarbarum__mature-size-full-catalog-v1",
+      "selectedSource": "rhubarb__rhs-rheum-rhabarbarum__mature-size-full-catalog-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.1,
+          "max": 0.5
+        },
+        "spreadM": {
+          "min": 0.1,
+          "max": 0.5
+        }
+      },
+      "provenanceEvidenceIds": [
+        "rhubarb__rhs-rheum-rhabarbarum__mature-size-full-catalog-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
     },
     {
       "botanicalTaxonId": "taxon:salvia-officinalis",
