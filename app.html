@@ -3846,7 +3846,7 @@ async function refreshGardenWeather(){
       climate:nextClimate,
       country:String(rl.country||loc.country||'').trim(),
       timezone:String(rl.timezone||loc.timezone||'').trim(),
-      structuralClimate:structuralClimate||null,
+      structuralClimate:structuralClimate||loc.structuralClimate||null,
       structuralAcquisitionMs:null,
       climateAuthorityCode:result.code||null,
       updatedAt:new Date().toISOString()
