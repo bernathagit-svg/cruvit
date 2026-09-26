@@ -13,7 +13,7 @@ import {
 } from './hardiness-evidence-claims-v1.js';
 
 export const HARDINESS_ZONE_TO_COLD_TRAITS_ID = 'hardiness-zone-to-cold-traits-v1';
-export const HARDINESS_ZONE_TO_COLD_TRAITS_VERSION = '1.0.0';
+export const HARDINESS_ZONE_TO_COLD_TRAITS_VERSION = '1.1.0';
 export const HARDINESS_ZONE_TO_COLD_TRAITS_REF = `${HARDINESS_ZONE_TO_COLD_TRAITS_ID}@${HARDINESS_ZONE_TO_COLD_TRAITS_VERSION}`;
 
 export const HARDINESS_ZONE_TO_COLD_REASON = Object.freeze({
