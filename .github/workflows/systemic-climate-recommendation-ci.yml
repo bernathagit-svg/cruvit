@@ -11,11 +11,15 @@ on:
       - 'modules/personal-domain/coordinate-climate-global-object-storage-v1.js'
       - 'modules/catalog-expansion/catalog-expansion-v1-contract.js'
       - 'modules/catalog/full-cruvit-plant-approval-v1.js'
+      - 'scripts/coordinate-climate-v2-upload-r2.mjs'
+      - 'data/coordinate-climate/v2/coverage/object-storage-contract.json'
       - 'data/catalog-expansion/batches/bulk-batch-3-v1/packets/pomegranate.packet.json'
       - 'app.html'
       - 'tests/reproductive-climate-gate-v1.test.mjs'
       - 'tests/reproductive-climate-packet-materialization-v1.test.mjs'
       - 'tests/hard-climate-missing-cold-null-v1.test.mjs'
+      - 'tests/global-climate-deployment-readiness-contract-v1.test.mjs'
+      - 'tests/full-cruvit-plant-approval-v1.test.mjs'
       - '.github/workflows/systemic-climate-recommendation-ci.yml'
 
 permissions:
@@ -27,6 +31,28 @@ jobs:
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
-      - name: Run systemic climate and recommendation suite
+
+      - name: Run self-contained systemic climate and recommendation suite
         run: |
-          node --test             tests/hard-climate-missing-cold-null-v1.test.mjs             tests/hard-climate-survival-gate-v1.test.mjs             tests/reproductive-climate-gate-v1.test.mjs             tests/reproductive-climate-false-warm-v1.test.mjs             tests/reproductive-climate-packet-materialization-v1.test.mjs             tests/specific-plant-suitability-v1-contract.test.mjs             tests/smart-rec-suitability-authority-v1.test.mjs             tests/smart-rec-garden-intelligence-v1.test.mjs             tests/garden-suitability-core-accuracy-v1.test.mjs             tests/weather-refresh-preserves-structural-climate-v1.test.mjs             tests/full-cruvit-plant-approval-v1.test.mjs
+          node --test \
+            tests/hard-climate-missing-cold-null-v1.test.mjs \
+            tests/hard-climate-survival-gate-v1.test.mjs \
+            tests/reproductive-climate-gate-v1.test.mjs \
+            tests/reproductive-climate-false-warm-v1.test.mjs \
+            tests/reproductive-climate-packet-materialization-v1.test.mjs \
+            tests/specific-plant-suitability-v1-contract.test.mjs \
+            tests/smart-rec-garden-intelligence-v1.test.mjs \
+            tests/weather-refresh-preserves-structural-climate-v1.test.mjs \
+            tests/full-cruvit-plant-approval-v1.test.mjs \
+            tests/global-climate-deployment-readiness-contract-v1.test.mjs
+
+      - name: Prove full-corpus integration is explicitly blocked in clean runner
+        run: |
+          node scripts/coordinate-climate-v2-upload-r2.mjs plan > /tmp/climate-plan.json
+          cat /tmp/climate-plan.json
+          node --input-type=module - <<'NODE'
+          import fs from 'node:fs';
+          const x=JSON.parse(fs.readFileSync('/tmp/climate-plan.json','utf8'));
+          if(x.localCorpusReady!==false) throw new Error('expected clean runner to lack 61,964 local tile corpus');
+          if(x.verdict!=='BLOCKED') throw new Error('missing full corpus must remain BLOCKED');
+          NODE
