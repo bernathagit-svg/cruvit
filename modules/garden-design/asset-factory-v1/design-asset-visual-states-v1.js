@@ -165,6 +165,33 @@ export function architectureModesForPlant(plant = {}) {
   const slug = slugify(plant.canonicalSlug || plant.slug);
   const multi = MULTI_FORM_ARCHITECTURE_CONTRACTS[slug];
   if (multi) return [...multi.supportedVisualForms];
+
+  const traits = plant?.climateTraits && typeof plant.climateTraits === 'object'
+    ? plant.climateTraits
+    : {};
+  const morphologyEvidenceClass = String(
+    traits?.traitEvidenceClasses?.growthHabit
+    || traits?.designMetadata?.morphologyEvidenceClass
+    || plant?.designMetadata?.morphologyEvidenceClass
+    || ''
+  ).toUpperCase();
+  const sourceBackedModes = morphologyEvidenceClass === 'SOURCE_SUPPORTED'
+    ? (
+        plant?.designMetadata?.architectureModeSupport
+        || traits?.designMetadata?.architectureModeSupport
+        || []
+      )
+    : [];
+  const allowedModes = new Set(['tree','shrub','climber','palm','default']);
+  const normalizedModes = Array.isArray(sourceBackedModes)
+    ? [...new Set(
+        sourceBackedModes
+          .map((x) => String(x || '').trim().toLowerCase())
+          .filter((x) => allowedModes.has(x))
+      )]
+    : [];
+  if (normalizedModes.length) return normalizedModes;
+
   const form = classifyDesignVisualForm(plant).visualForm;
   if (form === DESIGN_VISUAL_FORMS.SHRUB || form === DESIGN_VISUAL_FORMS.SUBSHRUB) return ['shrub'];
   if (form === DESIGN_VISUAL_FORMS.TREE) return ['tree'];
