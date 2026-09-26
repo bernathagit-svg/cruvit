@@ -1,0 +1,32 @@
+name: CRUVIT Systemic Climate Recommendation CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'modules/suitability/**'
+      - 'modules/personal-domain/specific-plant-suitability-contract.js'
+      - 'modules/personal-domain/coordinate-climate-garden-hydrate-v2.js'
+      - 'modules/personal-domain/coordinate-climate-global-deployment-readiness-v1.js'
+      - 'modules/personal-domain/coordinate-climate-global-object-storage-v1.js'
+      - 'modules/catalog-expansion/catalog-expansion-v1-contract.js'
+      - 'modules/catalog/full-cruvit-plant-approval-v1.js'
+      - 'data/catalog-expansion/batches/bulk-batch-3-v1/packets/pomegranate.packet.json'
+      - 'app.html'
+      - 'tests/reproductive-climate-gate-v1.test.mjs'
+      - 'tests/reproductive-climate-packet-materialization-v1.test.mjs'
+      - 'tests/hard-climate-missing-cold-null-v1.test.mjs'
+      - '.github/workflows/systemic-climate-recommendation-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  systemic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run systemic climate and recommendation suite
+        run: |
+          node --test             tests/hard-climate-missing-cold-null-v1.test.mjs             tests/hard-climate-survival-gate-v1.test.mjs             tests/reproductive-climate-gate-v1.test.mjs             tests/reproductive-climate-false-warm-v1.test.mjs             tests/reproductive-climate-packet-materialization-v1.test.mjs             tests/specific-plant-suitability-v1-contract.test.mjs             tests/smart-rec-suitability-authority-v1.test.mjs             tests/smart-rec-garden-intelligence-v1.test.mjs             tests/garden-suitability-core-accuracy-v1.test.mjs             tests/weather-refresh-preserves-structural-climate-v1.test.mjs             tests/full-cruvit-plant-approval-v1.test.mjs
