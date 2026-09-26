@@ -143,3 +143,55 @@ test('merge refuses duplicate slug unless replaceExisting', () => {
   assert.equal(ok.ok, true);
   assert.equal(ok.action, 'replaced');
 });
+
+
+test('systemic reproductive climate transforms materialize only from explicit source-backed evidence', () => {
+  const cases = [
+    {
+      rel: ['data','catalog-expansion','batches','bulk-batch-1-v1','packets','acerola.packet.json'],
+      check(item) {
+        assert.equal(item.climateTraits.reproductiveClimate.fruiting.requiresFrostFree, true);
+        assert.equal(
+          item.climateTraits.reproductiveClimate.fruiting.transformRef,
+          'explicit-frost-free-fruiting-requirement-v1@1.0.0'
+        );
+      }
+    },
+    {
+      rel: ['data','catalog-expansion','batches','bulk-batch-3-v1','packets','garden-pea.packet.json'],
+      check(item) {
+        assert.equal(item.climateTraits.reproductiveClimate.fruiting.requiresCoolSeason, true);
+        assert.equal(
+          item.climateTraits.reproductiveClimate.fruiting.transformRef,
+          'explicit-cool-season-production-v1@1.0.0'
+        );
+      }
+    },
+    {
+      rel: ['data','catalog-expansion','batches','bulk-batch-1-v1','packets','durian.packet.json'],
+      check(item) {
+        assert.equal(item.climateTraits.reproductiveClimate.fruiting.summerHeatBand, 'warm');
+        assert.equal(
+          item.climateTraits.reproductiveClimate.fruiting.transformRef,
+          'qualitative-summer-heat-band-v1@1.0.0'
+        );
+      }
+    }
+  ];
+
+  for (const entry of cases) {
+    const packet = JSON.parse(fs.readFileSync(path.join(ROOT, ...entry.rel), 'utf8'));
+    const v = validateCatalogExpansionPacket(packet);
+    assert.equal(v.ok, true, v.errors.join('; '));
+    const m = materializePlantCatalogItemFromPacket(packet);
+    assert.equal(m.ok, true);
+    entry.check(m.item);
+  }
+});
+
+test('materializer does not invent a fruiting climate requirement when source evidence is insufficient', () => {
+  const packet = loadPacket();
+  const m = materializePlantCatalogItemFromPacket(packet);
+  assert.equal(m.ok, true);
+  assert.equal(m.item.climateTraits.reproductiveClimate, undefined);
+});
