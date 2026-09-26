@@ -35,6 +35,7 @@ import {
   prioritizeHardFrostLimiters,
   survivalFitIsHardCapped
 } from '../suitability/hard-climate-survival-gate-v1.js';
+import { evaluateReproductiveClimateGate } from '../suitability/reproductive-climate-gate-v1.js';
 
 export { atmosphericHumidityMismatchForLowTolerancePlant };
 export {
@@ -404,6 +405,13 @@ export function structuralEnvironmentFromClimateProfile(climateProfile = {}) {
   const coldRaw = merged.coldestMonthMeanMinC ?? climateProfile.coldestMonthMeanMinC;
   const coldestMonthMeanMinC =
     coldRaw == null || coldRaw === '' ? null : Number(coldRaw);
+  const warmRaw =
+    merged.warmestMonthMeanMaxC ??
+    merged.structuralClimate?.evidence?.warmestMonthMeanMaxC ??
+    climateProfile.warmestMonthMeanMaxC ??
+    climateProfile.structuralClimate?.evidence?.warmestMonthMeanMaxC;
+  const warmestMonthMeanMaxC =
+    warmRaw == null || warmRaw === '' ? null : Number(warmRaw);
   const freezingFromBands = structuralFreezingRiskFromBroadClimate(
     broad === 'highland-tropical' ? 'tropical' : broad
   );
@@ -524,6 +532,7 @@ export function structuralEnvironmentFromClimateProfile(climateProfile = {}) {
       null,
     structuralColdRisk: merged.structuralColdRisk || climateProfile.structuralColdRisk || 'unknown',
     coldestMonthMeanMinC,
+    warmestMonthMeanMaxC,
     annualPrecipitationMm:
       merged.annualPrecipitationMm ?? climateProfile.annualPrecipitationMm ?? null,
     annualPetMm: merged.annualPetMm ?? climateProfile.annualPetMm ?? null,
@@ -1463,6 +1472,40 @@ export function deriveSpecificPlantOutcomes({
   }
   if (fruitEval.unknownGap) unknownGaps.push(fruitEval.unknownGap);
 
+  // Structured reproductive climate authority.
+  // When present, this outranks prose-derived reproductive climate interpretation.
+  const reproductiveClimateGate = evaluateReproductiveClimateGate({
+    meta,
+    climateProfile: env,
+    protectedGrowing: sheltered
+  });
+  if (meta?.reproductiveClimate?.flowering) {
+    const rf = reproductiveClimateGate.flowering;
+    if (rf.status === 'unreliable') flowering = SPECIFIC_OUTCOME_STATUS.UNLIKELY;
+    else if (rf.status === 'constrained') flowering = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    else if (rf.status === 'unknown') flowering = SPECIFIC_OUTCOME_STATUS.UNKNOWN;
+    else if (rf.status === 'supported' && flowering === SPECIFIC_OUTCOME_STATUS.UNKNOWN) {
+      flowering = SPECIFIC_OUTCOME_STATUS.SUPPORTED;
+    }
+    if (rf.reason && !limiting.includes(rf.reason)) limiting.push(rf.reason);
+    if (rf.status === 'unknown' && rf.missing) {
+      for (const gap of rf.missing) if (!unknownGaps.includes(gap)) unknownGaps.push(gap);
+    }
+  }
+  if (meta?.reproductiveClimate?.fruiting) {
+    const rr = reproductiveClimateGate.fruiting;
+    if (rr.status === 'unreliable') fruiting = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
+    else if (rr.status === 'constrained') fruiting = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    else if (rr.status === 'unknown') fruiting = SPECIFIC_OUTCOME_STATUS.UNKNOWN;
+    else if (rr.status === 'supported' && fruiting === SPECIFIC_OUTCOME_STATUS.UNKNOWN) {
+      fruiting = SPECIFIC_OUTCOME_STATUS.SUPPORTED;
+    }
+    if (rr.reason && !limiting.includes(rr.reason)) limiting.push(rr.reason);
+    if (rr.status === 'unknown' && rr.missing) {
+      for (const gap of rr.missing) if (!unknownGaps.includes(gap)) unknownGaps.push(gap);
+    }
+  }
+
   // Evidence-strength propagation: heuristic/unknown traits cannot authorize confident truth.
   const strength = applyEvidenceStrengthPropagation({
     meta,
@@ -1494,7 +1537,8 @@ export function deriveSpecificPlantOutcomes({
     fruitOriented: fruitFailCtx || chillRequired,
     reproductiveEvidence: {
       flowering: flowerEval.evidence,
-      fruiting: fruitEval.evidence
+      fruiting: fruitEval.evidence,
+      structuredClimateGate: reproductiveClimateGate
     },
     climateConfidence: confidenceBundle,
     moistureOrPrecipDependent:
