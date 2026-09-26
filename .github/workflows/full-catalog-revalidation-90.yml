@@ -13,301 +13,46 @@ jobs:
   revalidate:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      ALL_SLUGS: "acerola,apple,apricot,artichoke,asparagus,bay-laurel,bigleaf-hydrangea,blackberry,blackcurrant,blue-gum,blueberry,borage,boxwood,breadfruit,broccoli,cacao,carob,carrot,chestnut,chinese-wisteria,chives,cilantro,clematis,common-jasmine,common-lilac,common-myrtle,common-thyme,cranberry,crepe-myrtle,dill,durian,elderberry,english-lavender,english-walnut,feijoa,fig,flowering-dogwood,forsythia,french-marigold,garden-pea,garden-peony,garden-sage,ginkgo,gooseberry,grapefruit,green-bean,hazelnut,jaboticaba,jujube,lesser-bougainvillea,lettuce,longan,loquat,mangosteen,medlar,nasturtium,okra,oleander,oregano,parsley,peach,pear,pecan,persimmon,pitanga,plum,pomegranate,quince,raspberry,red-currant,rhubarb,sapodilla,sea-buckthorn,serviceberry,silver-birch,soursop,southern-magnolia,spearmint,spinach,strawberry,sweet-cherry,sweet-orange,sweet-potato,tamarind,turmeric,watermelon,white-sapote,yucca,zinnia,zucchini"
     steps:
+      - name: Build 90-plant payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '%s' "$ALL_SLUGS" | tr ',' '\n' | jq -R -s '
+            split("\n")
+            | map(select(length>0))
+            | {items: map({canonicalSlug:.})}
+          ' > /tmp/payload.json
+          jq -e '.items|length == 90' /tmp/payload.json >/dev/null
+          jq '{slugs:[.items[].canonicalSlug]}' /tmp/payload.json > /tmp/approval-payload.json
+
       - name: Run live Plant Intake Engine for all 90 plants
         shell: bash
         run: |
           set -euo pipefail
-          cat > /tmp/payload.json <<'JSON'
-{
-  "items": [
-    {
-      "canonicalSlug": "acerola"
-    },
-    {
-      "canonicalSlug": "apple"
-    },
-    {
-      "canonicalSlug": "apricot"
-    },
-    {
-      "canonicalSlug": "artichoke"
-    },
-    {
-      "canonicalSlug": "asparagus"
-    },
-    {
-      "canonicalSlug": "bay-laurel"
-    },
-    {
-      "canonicalSlug": "bigleaf-hydrangea"
-    },
-    {
-      "canonicalSlug": "blackberry"
-    },
-    {
-      "canonicalSlug": "blackcurrant"
-    },
-    {
-      "canonicalSlug": "blue-gum"
-    },
-    {
-      "canonicalSlug": "blueberry"
-    },
-    {
-      "canonicalSlug": "borage"
-    },
-    {
-      "canonicalSlug": "boxwood"
-    },
-    {
-      "canonicalSlug": "breadfruit"
-    },
-    {
-      "canonicalSlug": "broccoli"
-    },
-    {
-      "canonicalSlug": "cacao"
-    },
-    {
-      "canonicalSlug": "carob"
-    },
-    {
-      "canonicalSlug": "carrot"
-    },
-    {
-      "canonicalSlug": "chestnut"
-    },
-    {
-      "canonicalSlug": "chinese-wisteria"
-    },
-    {
-      "canonicalSlug": "chives"
-    },
-    {
-      "canonicalSlug": "cilantro"
-    },
-    {
-      "canonicalSlug": "clematis"
-    },
-    {
-      "canonicalSlug": "common-jasmine"
-    },
-    {
-      "canonicalSlug": "common-lilac"
-    },
-    {
-      "canonicalSlug": "common-myrtle"
-    },
-    {
-      "canonicalSlug": "common-thyme"
-    },
-    {
-      "canonicalSlug": "cranberry"
-    },
-    {
-      "canonicalSlug": "crepe-myrtle"
-    },
-    {
-      "canonicalSlug": "dill"
-    },
-    {
-      "canonicalSlug": "durian"
-    },
-    {
-      "canonicalSlug": "elderberry"
-    },
-    {
-      "canonicalSlug": "english-lavender"
-    },
-    {
-      "canonicalSlug": "english-walnut"
-    },
-    {
-      "canonicalSlug": "feijoa"
-    },
-    {
-      "canonicalSlug": "fig"
-    },
-    {
-      "canonicalSlug": "flowering-dogwood"
-    },
-    {
-      "canonicalSlug": "forsythia"
-    },
-    {
-      "canonicalSlug": "french-marigold"
-    },
-    {
-      "canonicalSlug": "garden-pea"
-    },
-    {
-      "canonicalSlug": "garden-peony"
-    },
-    {
-      "canonicalSlug": "garden-sage"
-    },
-    {
-      "canonicalSlug": "ginkgo"
-    },
-    {
-      "canonicalSlug": "gooseberry"
-    },
-    {
-      "canonicalSlug": "grapefruit"
-    },
-    {
-      "canonicalSlug": "green-bean"
-    },
-    {
-      "canonicalSlug": "hazelnut"
-    },
-    {
-      "canonicalSlug": "jaboticaba"
-    },
-    {
-      "canonicalSlug": "jujube"
-    },
-    {
-      "canonicalSlug": "lesser-bougainvillea"
-    },
-    {
-      "canonicalSlug": "lettuce"
-    },
-    {
-      "canonicalSlug": "longan"
-    },
-    {
-      "canonicalSlug": "loquat"
-    },
-    {
-      "canonicalSlug": "mangosteen"
-    },
-    {
-      "canonicalSlug": "medlar"
-    },
-    {
-      "canonicalSlug": "nasturtium"
-    },
-    {
-      "canonicalSlug": "okra"
-    },
-    {
-      "canonicalSlug": "oleander"
-    },
-    {
-      "canonicalSlug": "oregano"
-    },
-    {
-      "canonicalSlug": "parsley"
-    },
-    {
-      "canonicalSlug": "peach"
-    },
-    {
-      "canonicalSlug": "pear"
-    },
-    {
-      "canonicalSlug": "pecan"
-    },
-    {
-      "canonicalSlug": "persimmon"
-    },
-    {
-      "canonicalSlug": "pitanga"
-    },
-    {
-      "canonicalSlug": "plum"
-    },
-    {
-      "canonicalSlug": "pomegranate"
-    },
-    {
-      "canonicalSlug": "quince"
-    },
-    {
-      "canonicalSlug": "raspberry"
-    },
-    {
-      "canonicalSlug": "red-currant"
-    },
-    {
-      "canonicalSlug": "rhubarb"
-    },
-    {
-      "canonicalSlug": "sapodilla"
-    },
-    {
-      "canonicalSlug": "sea-buckthorn"
-    },
-    {
-      "canonicalSlug": "serviceberry"
-    },
-    {
-      "canonicalSlug": "silver-birch"
-    },
-    {
-      "canonicalSlug": "soursop"
-    },
-    {
-      "canonicalSlug": "southern-magnolia"
-    },
-    {
-      "canonicalSlug": "spearmint"
-    },
-    {
-      "canonicalSlug": "spinach"
-    },
-    {
-      "canonicalSlug": "strawberry"
-    },
-    {
-      "canonicalSlug": "sweet-cherry"
-    },
-    {
-      "canonicalSlug": "sweet-orange"
-    },
-    {
-      "canonicalSlug": "sweet-potato"
-    },
-    {
-      "canonicalSlug": "tamarind"
-    },
-    {
-      "canonicalSlug": "turmeric"
-    },
-    {
-      "canonicalSlug": "watermelon"
-    },
-    {
-      "canonicalSlug": "white-sapote"
-    },
-    {
-      "canonicalSlug": "yucca"
-    },
-    {
-      "canonicalSlug": "zinnia"
-    },
-    {
-      "canonicalSlug": "zucchini"
-    }
-  ]
-}
-JSON
-          curl --fail-with-body --silent --show-error             -X POST "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/cruvit-plant-intake-engine"             -H 'content-type: application/json'             --data-binary @/tmp/payload.json             -o /tmp/intake.json
-          jq '.' /tmp/intake.json
+          curl --fail-with-body --silent --show-error \
+            -X POST "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/cruvit-plant-intake-engine" \
+            -H 'content-type: application/json' \
+            --data-binary @/tmp/payload.json \
+            -o /tmp/intake.json
           jq -e '.ok == true' /tmp/intake.json >/dev/null
           jq -e '.total == 90' /tmp/intake.json >/dev/null
+          jq '{ok,total,byStage,counts,paidCallsExecuted,catalogWritesExecuted,productionWritesExecuted,registryWritesExecuted}' /tmp/intake.json
 
       - name: Run full approval authority for all 90 plants
         shell: bash
         run: |
           set -euo pipefail
-          jq '{slugs:[.items[].canonicalSlug]}' /tmp/payload.json > /tmp/approval-payload.json
-          curl --fail-with-body --silent --show-error             -X POST "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/full-cruvit-plant-approval?compact=1"             -H 'content-type: application/json'             --data-binary @/tmp/approval-payload.json             -o /tmp/approval.json
-          jq '.' /tmp/approval.json
+          curl --fail-with-body --silent --show-error \
+            -X POST "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/full-cruvit-plant-approval?compact=1" \
+            -H 'content-type: application/json' \
+            --data-binary @/tmp/approval-payload.json \
+            -o /tmp/approval.json
           jq -e '.ok == true' /tmp/approval.json >/dev/null
           jq -e '.total == 90' /tmp/approval.json >/dev/null
+          jq '{ok,total,approved,blocked,byStatus,blockerCounts}' /tmp/approval.json
 
       - name: Build revalidation summary
         shell: bash
@@ -316,7 +61,10 @@ JSON
           mkdir -p artifacts
           cp /tmp/intake.json artifacts/intake.json
           cp /tmp/approval.json artifacts/full-approval.json
-          jq -n             --slurpfile intake /tmp/intake.json             --slurpfile approval /tmp/approval.json             '{
+          jq -n \
+            --slurpfile intake /tmp/intake.json \
+            --slurpfile approval /tmp/approval.json \
+            '{
               runId:"cruvit-full-catalog-revalidation-90-2026-09-26-v1",
               total:90,
               intake:{
