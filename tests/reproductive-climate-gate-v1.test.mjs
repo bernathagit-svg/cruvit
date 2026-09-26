@@ -65,3 +65,69 @@ test('source-supported numeric summer minimum can mark severe deficit unreliable
   });
   assert.equal(g.fruiting.status,'unreliable');
 });
+
+
+test('researched unquantified evidence remains UNKNOWN rather than becoming supported',()=>{
+  const m={reproductiveClimate:{fruiting:{
+    evidenceState:'RESEARCHED_UNQUANTIFIED',
+    evidenceClass:'SOURCE_SUPPORTED',
+    sourceIds:['authority-1']
+  }}};
+  const g=evaluateReproductiveClimateGate({meta:m,climateProfile:{}});
+  assert.equal(g.fruiting.status,'unknown');
+  assert.equal(g.fruiting.evidence,'researched:unquantified');
+});
+
+test('context-dependent reproductive evidence remains UNKNOWN and exposes missing context',()=>{
+  const m={reproductiveClimate:{fruiting:{
+    evidenceState:'CONTEXT_DEPENDENT',
+    contextKeys:['cultivar','bearingType'],
+    evidenceClass:'SOURCE_SUPPORTED',
+    sourceIds:['authority-1']
+  }}};
+  const g=evaluateReproductiveClimateGate({meta:m,climateProfile:{}});
+  assert.equal(g.fruiting.status,'unknown');
+  assert.deepEqual(g.fruiting.missingContext,['cultivar','bearingType']);
+});
+
+test('cool-or-dry induction is supported by either climate signal',()=>{
+  const m={reproductiveClimate:{fruiting:{
+    seasonalInductionCue:'cool_or_dry',
+    evidenceClass:'HEURISTIC_ASSERTION',
+    sourceIds:['authority-1']
+  }}};
+  const cool=evaluateReproductiveClimateGate({
+    meta:m,climateProfile:{coolSeasonSignal:true,drySeasonSignal:false}
+  });
+  assert.equal(cool.fruiting.status,'supported');
+  const dry=evaluateReproductiveClimateGate({
+    meta:m,climateProfile:{coolSeasonSignal:false,drySeasonSignal:true}
+  });
+  assert.equal(dry.fruiting.status,'supported');
+});
+
+test('cool-or-dry induction stays UNKNOWN when dry-season signal is missing',()=>{
+  const m={reproductiveClimate:{fruiting:{
+    seasonalInductionCue:'cool_or_dry',
+    evidenceClass:'SOURCE_SUPPORTED',
+    sourceIds:['authority-1']
+  }}};
+  const g=evaluateReproductiveClimateGate({
+    meta:m,climateProfile:{coolSeasonSignal:false}
+  });
+  assert.equal(g.fruiting.status,'unknown');
+  assert.ok(g.fruiting.missing.includes('drySeasonSignal'));
+});
+
+test('reproductive cold-event threshold does not misuse monthly mean minimum',()=>{
+  const m={reproductiveClimate:{fruiting:{
+    minReproductiveEventC:-2.2,
+    evidenceClass:'SOURCE_SUPPORTED',
+    sourceIds:['authority-1']
+  }}};
+  const g=evaluateReproductiveClimateGate({
+    meta:m,climateProfile:{coldestMonthMeanMinC:5,isFrostFreeGrowingClimate:false}
+  });
+  assert.equal(g.fruiting.status,'unknown');
+  assert.ok(g.fruiting.missing.includes('absoluteMinimumTemperatureC'));
+});
