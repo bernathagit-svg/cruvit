@@ -56,6 +56,9 @@ on:
       - 'data/garden-design/plant-visual-natural-blend-spend-approvals/**'
       - 'data/garden-design/plant-visual-natural-blend-spend-proposals/**'
       - 'tests/plant-visual-natural-blend-v1.test.mjs'
+      - 'tests/plant-visual-natural-blend-recomposite-v1.test.mjs'
+      - 'modules/garden-design/cruvit-natural-blend-auto-repair.html'
+      - 'netlify/functions/plant-visual-natural-blend-composite-store.mjs'
       - 'tests/garden-design-natural-blend-lifecycle-v1.test.mjs'
       - 'modules/garden-design/asset-factory-v1/plant-visual-promotion-readiness-v1.js'
       - 'scripts/plant-visual-promotion-readiness-v1.mjs'
@@ -188,6 +191,9 @@ jobs:
 
       - name: Test generic Natural Blend repair
         run: node --test tests/plant-visual-natural-blend-generic-v1.test.mjs
+
+      - name: Test no-spend Natural Blend recomposite
+        run: node --test tests/plant-visual-natural-blend-recomposite-v1.test.mjs
 
       - name: Test Natural Blend patch lifecycle
         run: node --test tests/garden-design-natural-blend-lifecycle-v1.test.mjs
