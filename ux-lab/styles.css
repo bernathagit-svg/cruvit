@@ -150,3 +150,68 @@ linear-gradient(180deg,rgba(27,45,29,.24) 0%,rgba(27,45,29,.20) 22%,rgba(27,45,2
 @media(max-aspect-ratio:2/3){
   .home-screen{width:100vw;height:150vw}
 }
+
+/* APPROVED CARD VISUALS — locked to owner reference */
+.module-card{background:rgba(245,242,232,.12)}
+.module-card .visual{overflow:hidden}
+.module-card[data-id="garden"] .card-copy,
+.module-card[data-id="design"] .card-copy,
+.module-card[data-id="doctor"] .card-copy{z-index:6}
+
+/* My Garden: tree + calendar, no screenshot */
+.approved-garden{
+  background:
+    radial-gradient(circle at 50% 33%,rgba(248,244,214,.42),transparent 37%),
+    linear-gradient(180deg,rgba(255,255,255,.08),rgba(43,70,43,.12));
+}
+.garden-tree{position:absolute;left:50%;top:43%;width:62%;height:55%;transform:translate(-50%,-50%)}
+.trunk{position:absolute;left:46%;bottom:10%;width:11%;height:47%;background:linear-gradient(90deg,#5e422d,#7e5b38 45%,#4d3526);border-radius:58% 42% 16% 14%;transform:rotate(-2deg);box-shadow:inset -6px 0 8px rgba(0,0,0,.18)}
+.trunk:before,.trunk:after{content:"";position:absolute;bottom:58%;width:18%;height:48%;background:#65462e;border-radius:999px;transform-origin:bottom}
+.trunk:before{left:-26%;transform:rotate(-35deg)} .trunk:after{right:-24%;transform:rotate(34deg)}
+.crown{position:absolute;background:radial-gradient(circle at 40% 30%,#98a55a 0 18%,#657845 48%,#405b38 77%);border-radius:50%;filter:drop-shadow(0 5px 8px rgba(24,47,27,.14))}
+.c1{width:42%;height:36%;left:12%;top:18%}.c2{width:42%;height:36%;right:11%;top:16%}.c3{width:48%;height:41%;left:26%;top:5%}.c4{width:31%;height:28%;left:3%;top:35%}.c5{width:32%;height:28%;right:2%;top:34%}
+.garden-bed{position:absolute;left:19%;right:18%;bottom:27%;height:15%;display:flex;justify-content:space-between;align-items:end}
+.garden-bed span{width:23%;height:82%;border-radius:60% 60% 35% 35%;background:radial-gradient(circle at 50% 20%,#b9c876,#81945d 55%,#586f46);filter:drop-shadow(0 4px 4px rgba(0,0,0,.08))}
+.calendar-icon{position:absolute;left:59%;top:54%;width:31%;height:29%;border-radius:14%;background:linear-gradient(180deg,#f1eee5 0 68%,#dfe8d8 68%);border:1px solid rgba(255,255,255,.72);box-shadow:0 1.3vh 2.7vh rgba(0,0,0,.18)}
+.ring{position:absolute;top:-9%;width:12%;height:18%;border:3px solid #6c6254;border-bottom:0;border-radius:999px 999px 0 0}.r1{left:24%}.r2{right:24%}
+.cal-grid{position:absolute;left:14%;top:30%;width:44%;height:33%;border:2px solid #c4cdbd;background:
+linear-gradient(90deg,transparent 31%,#c4cdbd 31% 34%,transparent 34% 65%,#c4cdbd 65% 68%,transparent 68%),
+linear-gradient(180deg,transparent 47%,#c4cdbd 47% 52%,transparent 52%)}
+.calendar-icon b{position:absolute;right:12%;bottom:2%;font-size:3.2vh;color:#5d8a4c}
+
+/* Garden Design: explicit phone-based AR design */
+.approved-design{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.08),rgba(57,77,54,.04)),
+    radial-gradient(circle at 45% 34%,rgba(224,240,199,.22),transparent 38%);
+}
+.phone-shell{position:absolute;left:51%;top:42%;width:49%;height:55%;transform:translate(-50%,-50%);border:.64vh solid #171c18;border-radius:2.6vh;background:#111;box-shadow:0 1.4vh 3.3vh rgba(0,0,0,.25);overflow:hidden}
+.phone-screen{position:absolute;inset:0;background:url('/homepage-v1/assets/sanctuary-cta.jpg') center/cover}
+.phone-notch{position:absolute;z-index:3;top:.35vh;left:50%;transform:translateX(-50%);width:38%;height:6%;border-radius:999px;background:#101512}
+.placement-box{position:absolute;z-index:4;left:29%;right:24%;bottom:24%;height:31%;border:.32vh solid #5fe8a3;border-radius:1.2vh;box-shadow:0 0 1.5vh rgba(83,230,159,.45)}
+.finger{position:absolute;z-index:5;right:-4%;bottom:-5%;width:28%;height:44%;border-radius:60% 50% 35% 35%;background:linear-gradient(145deg,#edc2aa,#c98f75);transform:rotate(-18deg);box-shadow:0 .7vh 1.8vh rgba(0,0,0,.18)}
+.plant-rail{position:absolute;left:8%;top:30%;width:15%;height:43%;border-radius:1.4vh;background:rgba(244,242,234,.76);display:flex;flex-direction:column;justify-content:space-around;align-items:center;box-shadow:0 .9vh 2.2vh rgba(0,0,0,.12)}
+.plant-rail span{width:62%;aspect-ratio:1;border-radius:40%;background:radial-gradient(circle,#7d9957,#536e45)}
+.rail-cypress{border-radius:50% 50% 30% 30%!important;clip-path:polygon(50% 0,78% 100%,22% 100%)}
+.rail-flower{background:radial-gradient(circle at 50% 55%,#f1539a 0 18%,#bd1d68 19% 42%,#5e7b45 43%)!important}
+.rail-lavender{background:linear-gradient(180deg,#7c63a8,#5c477e 55%,#668153 56%)!important}
+.rail-agave{clip-path:polygon(50% 0,62% 38%,100% 48%,67% 61%,78% 100%,50% 70%,23% 100%,34% 61%,0 48%,38% 38%);background:#668b6a!important}
+
+/* Plant Doctor: 3D leaf + magnifier */
+.approved-doctor{background:radial-gradient(circle at 48% 39%,rgba(188,215,135,.22),transparent 45%)}
+.doctor-leaf{left:50%;top:43%;width:48%;height:58%;transform:translate(-50%,-50%) rotate(-10deg)}
+.doctor-leaf:before{content:"";position:absolute;left:49%;top:6%;bottom:8%;width:2%;background:rgba(223,238,192,.36);transform:rotate(9deg)}
+.spot{position:absolute;width:8%;aspect-ratio:1;border-radius:50%;background:#a86131;box-shadow:0 0 0 .25vh rgba(152,83,40,.18)}
+.s1{left:45%;top:28%}.s2{right:19%;top:48%}.s3{left:30%;bottom:18%}
+.vein{position:absolute;height:.3vh;background:rgba(221,236,193,.23);transform-origin:left center}
+.v1{left:48%;top:36%;width:31%;transform:rotate(-27deg)}.v2{left:48%;top:51%;width:27%;transform:rotate(31deg)}.v3{left:31%;top:56%;width:22%;transform:rotate(152deg)}
+.magnifier{position:absolute;left:59%;top:40%;width:35%;aspect-ratio:1}
+.lens{position:absolute;inset:0;border:.9vh solid #d9d5c7;border-radius:50%;background:rgba(255,255,255,.12);box-shadow:0 .5vh 1.5vh rgba(0,0,0,.18),inset 0 0 0 .2vh rgba(255,255,255,.46)}
+.handle{position:absolute;width:15%;height:82%;right:-24%;bottom:-64%;border-radius:999px;background:linear-gradient(#d6d0c0,#697b57);transform:rotate(-44deg);transform-origin:top center}
+
+/* Side-card geometry from approved mockup */
+.module-card.is-left,.module-card.is-right{border-radius:3.6vh}
+.module-card.is-left .card-copy,.module-card.is-right .card-copy{left:8%;right:8%;bottom:7%}
+.module-card.is-left h2,.module-card.is-right h2{font-size:clamp(17px,2.2vh,31px)}
+.module-card.is-left p,.module-card.is-right p{font-size:clamp(9px,1.15vh,16px);margin-right:16%}
+.module-card.is-left .arrow,.module-card.is-right .arrow{width:clamp(34px,4.6vh,64px);height:clamp(34px,4.6vh,64px);font-size:clamp(21px,2.8vh,38px)}
