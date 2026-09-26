@@ -20,11 +20,37 @@ async function fetchBounded(url){
   const buf=Buffer.from(await res.arrayBuffer()),max=1_500_000;
   return {ok:res.ok&&/html|text|xml/i.test(contentType||'text/html'),status:res.status,body:buf.slice(0,max).toString('utf8'),truncated:buf.length>max};
 }
-function identityMatches(body,scientific){
-  const raw=String(body||'').replace(/<[^>]+>/g,' ').replace(/&times;|&#215;/gi,'×').replace(/\s+/g,' ').toLowerCase();
-  const sci=String(scientific||'').toLowerCase().replace(/×/g,'x').replace(/\s+/g,' ').trim();
-  const parts=sci.split(' ').filter(Boolean).filter(x=>x!=='x');
-  return parts.length>=2 && (raw.includes(parts[0]+' '+parts[1]) || raw.includes(parts[0]+' × '+parts[1]) || raw.includes(parts[0]+' x '+parts[1]));
+function identityText(value){
+  return String(value||'')
+    .replace(/<[^>]+>/g,' ')
+    .replace(/&times;|&#215;/gi,'×')
+    .replace(/×/g,' x ')
+    .replace(/\s+/g,' ')
+    .trim()
+    .toLowerCase();
+}
+function scientificIdentityPair(scientific){
+  const parts=identityText(scientific)
+    .split(' ')
+    .filter(Boolean)
+    .filter(x=>x!=='x');
+  return parts.length>=2 ? [parts[0],parts[1]] : [];
+}
+function textHasScientificPair(value,scientific){
+  const pair=scientificIdentityPair(scientific);
+  if(pair.length<2) return false;
+  const raw=identityText(value);
+  return raw.includes(pair[0]+' '+pair[1])
+    || raw.includes(pair[0]+' x '+pair[1]);
+}
+export function morphologySourceIdentityMatch({body='',scientific='',sourceTitle=''}={}){
+  if(textHasScientificPair(body,scientific)){
+    return {ok:true,authority:'LIVE_SOURCE_BODY'};
+  }
+  if(textHasScientificPair(sourceTitle,scientific)){
+    return {ok:true,authority:'CATALOG_SOURCE_TITLE'};
+  }
+  return {ok:false,authority:null};
 }
 
 export default async(req)=>{
@@ -37,14 +63,22 @@ export default async(req)=>{
   for(const source of sources){
     let fetched; try{fetched=await fetchBounded(source.url);externalRequests+=1;}catch(err){records.push({...source,ok:false,code:'SOURCE_FETCH_FAILED'});continue;}
     if(!fetched.ok){records.push({...source,ok:false,code:'SOURCE_FETCH_UNUSABLE',httpStatus:fetched.status});continue;}
-    if(!identityMatches(fetched.body,scientific)){records.push({...source,ok:false,code:'IDENTITY_MISMATCH'});continue;}
+    const identityMatch=morphologySourceIdentityMatch({
+      body:fetched.body,
+      scientific,
+      sourceTitle:source.title
+    });
+    if(!identityMatch.ok){
+      records.push({...source,ok:false,code:'IDENTITY_MISMATCH',identityMatchAuthority:null});
+      continue;
+    }
     const evidence=extractStructuredMorphologyAndSize(fetched.body);
     const morphPolicy=evidence.morphologyReady ? evaluateSourceSupportedEligibility({
       field:'growthHabit',value:evidence.visualForm,sourceId:source.sourceId,sourceType:source.sourceType||source.authorityTier,authorityTier:source.authorityTier,
       excerpt:[evidence.plantType,evidence.habitForm].filter(Boolean).join(' | '),url:source.url,sourceTitle:source.title,sourceInstitution:source.institution,
       declaredScientificName:scientific,expectedIdentity:{acceptedScientificName:scientific,scientific,canonicalSlug:slug,slug},provenanceRetained:true
     }) : {mayBeSourceSupported:false,evidenceClass:'UNKNOWN',reasons:['morphology_not_resolved']};
-    records.push({...source,ok:true,httpStatus:fetched.status,truncated:fetched.truncated,evidence,morphologySourceSupported:morphPolicy.mayBeSourceSupported===true,morphologyPolicyReasons:morphPolicy.reasons||[]});
+    records.push({...source,ok:true,httpStatus:fetched.status,truncated:fetched.truncated,identityMatchAuthority:identityMatch.authority,evidence,morphologySourceSupported:morphPolicy.mayBeSourceSupported===true,morphologyPolicyReasons:morphPolicy.reasons||[]});
   }
   const usable=records.find(x=>x.ok&&x.morphologySourceSupported&&x.evidence?.morphologyReady)
     || records.find(x=>x.ok&&x.evidence?.matureSize?.ready)

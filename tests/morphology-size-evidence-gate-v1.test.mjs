@@ -51,3 +51,35 @@ test('maps explicit ground cover morphology to groundcover visual form',()=>{
   assert.equal(r.morphologyEvidenceClass,'SOURCE_SUPPORTED');
   assert.equal(r.matureSize.ready,true);
 });
+
+
+test('morphology research identity match may use exact catalog source title', async()=>{
+  const { morphologySourceIdentityMatch } = await import('../netlify/functions/morphology-size-research.mjs');
+  const r=morphologySourceIdentityMatch({
+    body:'RHS page shell without rendered botanical heading',
+    scientific:'Ribes nigrum',
+    sourceTitle:'Ribes nigrum (blackcurrant)'
+  });
+  assert.deepEqual(r,{ok:true,authority:'CATALOG_SOURCE_TITLE'});
+});
+
+test('generic source title cannot bypass source-body identity guard', async()=>{
+  const { morphologySourceIdentityMatch } = await import('../netlify/functions/morphology-size-research.mjs');
+  const r=morphologySourceIdentityMatch({
+    body:'unrelated publication content',
+    scientific:'Artocarpus altilis',
+    sourceTitle:'Breadfruit Growing in the Florida Home Landscape'
+  });
+  assert.deepEqual(r,{ok:false,authority:null});
+});
+
+test('hybrid multiplication sign normalizes for morphology source identity', async()=>{
+  const { morphologySourceIdentityMatch } = await import('../netlify/functions/morphology-size-research.mjs');
+  const r=morphologySourceIdentityMatch({
+    body:'',
+    scientific:'Forsythia × intermedia',
+    sourceTitle:'Forsythia × intermedia'
+  });
+  assert.equal(r.ok,true);
+  assert.equal(r.authority,'CATALOG_SOURCE_TITLE');
+});
