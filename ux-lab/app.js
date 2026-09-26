@@ -1,5 +1,3 @@
-[Reading 138 lines from start (total: 138 lines, 0 remaining)]
-
 const baseScreen=document.getElementById('baseScreen');
 const stage=document.getElementById('carouselStage');
 const surface=document.getElementById('dragSurface');
@@ -7,9 +5,6 @@ const home=document.getElementById('home');
 const design=document.getElementById('cardDesign');
 const garden=document.getElementById('cardGarden');
 const doctor=document.getElementById('cardDoctor');
-
-const exact0='./assets/home-approved-reference.png';
-const exact1='./assets/home-garden-design-centered.png';
 
 let index=0;
 let dragging=false;
@@ -64,12 +59,10 @@ function activate(){
   render(index);
 }
 
-function deactivate(){
-  // Keep the independent-card stage visible at its settled endpoint.
-  // This avoids a blank frame/state swap after drag.
+function settleVisible(){
   stage.classList.add('active');
   stage.setAttribute('aria-hidden','false');
-  baseScreen.style.visibility='visible';
+  render(index);
 }
 
 function begin(x){
@@ -101,8 +94,7 @@ function animateTo(target){
     if(u<1) requestAnimationFrame(frame);
     else{
       index=target===1?1:0;
-      render(index);
-      deactivate();
+      settleVisible();
     }
   }
   requestAnimationFrame(frame);
@@ -141,5 +133,3 @@ surface.addEventListener('touchmove',e=>{
 surface.addEventListener('touchend',finish,{passive:false});
 
 render(0);
-
-[executed on device: חגית (5c07beb2-4e22-49cd-b84d-fbf06778d313)]
