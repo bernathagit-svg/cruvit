@@ -84,8 +84,9 @@
     },
     {
       "canonicalSlug": "blueberry",
-      "needsReview": true,
-      "notes": "Genus-level catalog scientific name (Vaccinium spp.); species not reliably determined. acceptedScientificName omitted pending editorial review before allocation."
+      "needsReview": false,
+      "notes": "Identity reconciled from verified canonical catalog packet blueberry-bulk-batch-3-v1 and source-backed NCSU botanical provenance. Supersedes legacy genus-level Vaccinium spp. hold.",
+      "acceptedScientificName": "Vaccinium corymbosum"
     },
     {
       "canonicalSlug": "borage",
@@ -96,10 +97,7 @@
     {
       "canonicalSlug": "bougainvillea",
       "needsReview": true,
-      "notes": "Inline catalog scientific is genus-level (Bougainvillea spp.); Garden Design manifest lists species 'Bougainvillea spectabilis'. acceptedScientificName omitted pending editorial reconciliation.",
-      "aliasSlugs": [
-        "lesser-bougainvillea"
-      ]
+      "notes": "Inline catalog scientific is genus-level (Bougainvillea spp.); Garden Design manifest lists species 'Bougainvillea spectabilis'. acceptedScientificName omitted pending editorial reconciliation."
     },
     {
       "canonicalSlug": "breadfruit",
@@ -163,6 +161,12 @@
       "canonicalSlug": "coffee",
       "acceptedScientificName": "Coffea arabica",
       "needsReview": false
+    },
+    {
+      "canonicalSlug": "common-jasmine",
+      "acceptedScientificName": "Jasminum officinale",
+      "needsReview": false,
+      "notes": "Species-level canonical identity from verified packet common-jasmine-bulk-batch-3-v1 and NCSU botanical provenance. Removed from generic jasmine alias set."
     },
     {
       "canonicalSlug": "common-lilac",
@@ -372,10 +376,7 @@
     {
       "canonicalSlug": "jasmine",
       "needsReview": true,
-      "notes": "Genus-level catalog scientific name (Jasminum spp.); species not reliably determined. acceptedScientificName omitted pending editorial review before allocation.",
-      "aliasSlugs": [
-        "common-jasmine"
-      ]
+      "notes": "Genus-level catalog scientific name (Jasminum spp.); species not reliably determined. acceptedScientificName omitted pending editorial review before allocation."
     },
     {
       "canonicalSlug": "kiwi",
@@ -415,6 +416,12 @@
       "canonicalSlug": "lemongrass",
       "acceptedScientificName": "Cymbopogon citratus",
       "needsReview": false
+    },
+    {
+      "canonicalSlug": "lesser-bougainvillea",
+      "acceptedScientificName": "Bougainvillea glabra",
+      "needsReview": false,
+      "notes": "Species-level canonical identity from verified packet lesser-bougainvillea-bulk-batch-3-v1 and NCSU botanical provenance. Removed from generic bougainvillea alias set."
     },
     {
       "canonicalSlug": "lettuce",
@@ -475,10 +482,7 @@
     {
       "canonicalSlug": "mint",
       "needsReview": true,
-      "notes": "Genus-level catalog scientific name (Mentha spp.); species not reliably determined. acceptedScientificName omitted pending editorial review before allocation.",
-      "aliasSlugs": [
-        "spearmint"
-      ]
+      "notes": "Genus-level catalog scientific name (Mentha spp.); species not reliably determined. acceptedScientificName omitted pending editorial review before allocation."
     },
     {
       "canonicalSlug": "monstera",
@@ -603,8 +607,9 @@
       "aliasSlugs": [
         "plum-tree"
       ],
-      "needsReview": true,
-      "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. Both records use genus-level 'Prunus spp.' (also Prunus domestica / Prunus salicina in aliases); acceptedScientificName omitted because it is not reliable at species level. Needs review before assigning a species."
+      "needsReview": false,
+      "notes": "Identity reconciled to the current verified canonical catalog plant Prunus domestica from packet plum-bulk-batch-3-v1. Legacy generic plum/plum-tree ambiguity is resolved for this canonical slug; Prunus salicina must remain a distinct future canonical identity if added.",
+      "acceptedScientificName": "Prunus domestica"
     },
     {
       "canonicalSlug": "plumeria",
@@ -674,6 +679,12 @@
       "notes": "Catalog Expansion V1 acceptance ingest from packet southern-magnolia-bulk-batch-1-v1."
     },
     {
+      "canonicalSlug": "spearmint",
+      "acceptedScientificName": "Mentha spicata",
+      "needsReview": false,
+      "notes": "Species-level canonical identity from verified packet spearmint-bulk-batch-3-v1 and NCSU botanical provenance. Removed from generic mint alias set."
+    },
+    {
       "canonicalSlug": "spinach",
       "acceptedScientificName": "Spinacia oleracea",
       "needsReview": false,
@@ -689,11 +700,6 @@
       "acceptedScientificName": "Fragaria × ananassa",
       "needsReview": false,
       "notes": "Catalog Expansion V1 acceptance ingest from packet strawberry-wave1-selective-v1."
-    },
-    {
-      "canonicalSlug": "strelitzia",
-      "acceptedScientificName": "Strelitzia reginae",
-      "needsReview": false
     },
     {
       "canonicalSlug": "strawberry-guava",
@@ -720,6 +726,11 @@
       ],
       "needsReview": false,
       "notes": "Verified species-level identity. Psidium cattleyanum is the accepted scientific name and Psidium cattleianum is retained as a scientific synonym. Distinct from guava (Psidium guajava). The two inline strawberry-guava catalog rows remain duplicated for a separate catalog-deduplication phase."
+    },
+    {
+      "canonicalSlug": "strelitzia",
+      "acceptedScientificName": "Strelitzia reginae",
+      "needsReview": false
     },
     {
       "canonicalSlug": "succulent",
