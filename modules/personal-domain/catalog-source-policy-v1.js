@@ -263,6 +263,15 @@ function excerptSupportsValue(excerpt, value, field) {
   }
   if (!valueStr) return /frost|cold|heat|humid|water|sun|drain|chill|flower|fruit|species|scientific|hardiness/i.test(ex);
   if (ex.toLowerCase().includes(valueStr.toLowerCase())) return true;
+  if (['growthHabit','habit','growthForm'].includes(f)) {
+    const normMorph = (s) => String(s || '')
+      .toLowerCase()
+      .replace(/ground\s+cover/g,'groundcover')
+      .replace(/[-_/]+/g,' ')
+      .replace(/\s+/g,' ')
+      .trim();
+    if (normMorph(ex).includes(normMorph(valueStr))) return true;
+  }
   return /frost|cold|heat|humid|water|sun|drain|chill|flower|fruit|species|scientific|hardiness/i.test(ex);
 }
 
