@@ -45,7 +45,11 @@ export function qualitativeSummerHeatFruitingTransform({
   if(!fruitProductionRelevant || !ids.length) return {eligible:false,reason:'PRECONDITION_NOT_MET'};
   let band=null;
   if(/\b(?:high summer temperatures?|hot summers?|hot[, ]+(?:dry|humid))\b/.test(text)) band='hot';
-  else if(/\b(?:long warm season|warm summers?|warm season)\b/.test(text)) band='warm';
+  else if(
+    /\b(?:long warm season|warm summers?|warm season)\b/.test(text)
+    || /\bwarm conditions?\b.*\b(?:fruit|ripen|ripening)\b/.test(text)
+    || /\b(?:fruit|ripen|ripening)\b.*\bwarm conditions?\b/.test(text)
+  ) band='warm';
   if(!band) return {eligible:false,reason:'SUMMER_HEAT_NOT_EXPLICIT'};
   return {
     eligible:true,
