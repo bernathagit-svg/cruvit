@@ -30,7 +30,7 @@ jobs:
           for i in $(seq 1 30); do
             diag="$(curl -fsS "$URL" || true)"
             if printf '%s' "$diag" | grep -q "3 Scenario Test" \
-              && printf '%s' "$diag" | grep -q "live-proof-v4-systemic-reproductive-climate"; then
+              && printf '%s' "$diag" | grep -q "live-proof-v5-canonical-climate-bootstrap"; then
               echo "current diagnostic deployed"
               exit 0
             fi
