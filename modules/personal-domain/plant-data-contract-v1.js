@@ -270,13 +270,59 @@ export function hasFloweringStance(plant = {}) {
   return { ready: false, applicable: null };
 }
 
+function sourceLinkedNonFruitingPurpose(plant = {}) {
+  const t = traitsOf(plant);
+  const prov = t?.traitProvenance?.tags;
+  if (
+    String(prov?.status || '').toLowerCase() !== 'asserted'
+    || !Array.isArray(prov?.sourceIds)
+    || prov.sourceIds.length === 0
+  ) {
+    return null;
+  }
+  const evidenceClass = String(prov?.evidenceClass || '').toUpperCase();
+  if (!['SOURCE_SUPPORTED','HEURISTIC_ASSERTION'].includes(evidenceClass)) return null;
+
+  const excerpt = String(prov?.shortExcerpt || '').toLowerCase();
+  const m = excerpt.match(/catalog tags:\s*([^.;]+)/i);
+  if (!m) return null;
+  const tags = m[1]
+    .split(',')
+    .map((x) => x.trim())
+    .filter(Boolean);
+  const fruitPurpose = tags.some((tag) =>
+    ['fruit','citrus','berry','fruit-tree','orchard','melon','cucurbit','legume'].includes(tag)
+  );
+  const explicitNonFruitPurpose = tags.some((tag) =>
+    ['ornamental','herb','foliage','cut-flower','edible-flower','root','leafy'].includes(tag)
+  );
+  if (!explicitNonFruitPurpose || fruitPurpose) return null;
+  return {
+    authority: 'SOURCE_LINKED_NON_FRUIT_PURPOSE_TAGS',
+    sourceIds: [...prov.sourceIds],
+    evidenceClass,
+    tags
+  };
+}
+
 export function hasFruitingStance(plant = {}) {
   const t = traitsOf(plant);
   if (t.fruitingOutcomeApplicable === false || plant.fruitingOutcomeApplicable === false) {
-    return { ready: true, applicable: false };
+    return { ready: true, applicable: false, authority: 'EXPLICIT_OUTCOME_NOT_APPLICABLE' };
   }
   const text = String(t.fruitingRequirements || plant.fruitingRequirements || '').trim();
   if (text) return { ready: true, applicable: true, text };
+  const nonFruit = sourceLinkedNonFruitingPurpose(plant);
+  if (nonFruit) {
+    return {
+      ready: true,
+      applicable: false,
+      authority: nonFruit.authority,
+      sourceIds: nonFruit.sourceIds,
+      evidenceClass: nonFruit.evidenceClass,
+      purposeTags: nonFruit.tags
+    };
+  }
   return { ready: false, applicable: null };
 }
 
