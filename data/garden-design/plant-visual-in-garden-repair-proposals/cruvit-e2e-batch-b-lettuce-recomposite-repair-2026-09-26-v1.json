@@ -1,0 +1,28 @@
+{
+  "contract": "plant-visual-in-garden-repair-proposal-v1",
+  "proposalId": "cruvit-e2e-batch-b-lettuce-recomposite-repair-2026-09-26-v1",
+  "createdAt": "2026-09-26",
+  "sourceRunId": "cruvit-e2e-batch-b-natural-blend-repair-vision-qa-2026-09-25-v1",
+  "jobId": "lettuce__mature__default__vegetative__v1",
+  "canonicalSlug": "lettuce",
+  "repairClass": "FINAL_COMPOSITE_BOUNDARY_AND_LOW_PLANT_INTEGRATION",
+  "rootCause": "Binary rounded-rectangle alpha in the client hard-composite stage can expose a scene patch around low/compact plants.",
+  "repair": {
+    "reuseExistingNaturalBlendOutput": true,
+    "newImageGeneration": false,
+    "newNaturalBlendProviderCall": false,
+    "compositeBoundaryMode": "FEATHERED_EDIT_REGION_V1",
+    "compositeProfile": "LOW_PLANT_TIGHT_FEATHER_V1",
+    "tighterEditRegion": true,
+    "featheredBoundary": true
+  },
+  "paidCallsAuthorized": 0,
+  "maxRetries": 0,
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "notes": [
+    "This repair must reuse the already-recorded Natural Blend output evidence.",
+    "The existing source candidate and source garden capture remain immutable.",
+    "A new paid Vision QA call, if needed after recomposite, requires separate owner approval."
+  ]
+}
