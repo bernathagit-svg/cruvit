@@ -261,8 +261,18 @@ function excerptSupportsValue(excerpt, value, field) {
     if (valueStr && ex.toLowerCase().includes(valueStr.toLowerCase())) return true;
     return /frost|freez|killed to the ground|winter.?kill|tender/i.test(ex);
   }
-  if (!valueStr) return /frost|cold|heat|humid|water|sun|drain|chill|flower|fruit|species|scientific|hardiness/i.test(ex);
+  if (!valueStr) return /frost|cold|heat|humid|water|sun|drain|chill|flower|fruit|species|scientific|hardiness|leaf|deciduous|evergreen/i.test(ex);
   if (ex.toLowerCase().includes(valueStr.toLowerCase())) return true;
+  if (f==='leafHabit') {
+    const leafText=ex.toLowerCase();
+    const normalizedLeafValue=valueStr.toLowerCase().replace(/_/g,'-');
+    if (normalizedLeafValue==='context-dependent') {
+      const deciduous=/\bdeciduous\b|\bsemi[- ]?deciduous\b/.test(leafText);
+      const evergreen=/\bevergreen\b|\bsemi[- ]?evergreen\b/.test(leafText);
+      const semi=/\bsemi[- ]?(deciduous|evergreen)\b/.test(leafText);
+      if (deciduous&&evergreen&&semi) return true;
+    }
+  }
   if (['growthHabit','habit','growthForm'].includes(f)) {
     const normMorph = (s) => String(s || '')
       .toLowerCase()
