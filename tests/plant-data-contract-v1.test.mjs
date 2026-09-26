@@ -373,6 +373,27 @@ test('anti-gaming 1: HEURISTIC frost+cold complete plant must NOT be Class A', (
   assert.equal(assertPlantRealSuitabilityReady(plant).ok, false);
 });
 
+test('source-supported cold plus provenanced heuristic frost may be Class A data-ready', () => {
+  const plant = completeClassAPlant({
+    climateTraits: {
+      traitEvidenceClasses: {
+        frostSensitivity: 'HEURISTIC_ASSERTION',
+        coldTolerance: 'SOURCE_SUPPORTED',
+        heatTolerance: 'HEURISTIC_ASSERTION',
+        humidityTolerance: 'HEURISTIC_ASSERTION',
+        sunNeeds: 'SOURCE_SUPPORTED',
+        waterNeeds: 'SOURCE_SUPPORTED',
+        drainageNeeds: 'SOURCE_SUPPORTED',
+        floweringRequirements: 'SOURCE_SUPPORTED',
+        fruitingRequirements: 'SOURCE_SUPPORTED'
+      }
+    }
+  });
+  const r = classifyPlantDataReadiness(plant);
+  assert.equal(r.readinessShort, 'A');
+  assert.equal(r.gate, 'PASS');
+});
+
 test('anti-gaming 2: SOURCE_SUPPORTED frost+cold otherwise complete → may be Class A', () => {
   const plant = completeClassAPlant();
   assert.equal(plant.climateTraits.traitEvidenceClasses.frostSensitivity, 'SOURCE_SUPPORTED');
