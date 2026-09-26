@@ -108,7 +108,7 @@ test('full approval fails closed when visual production coverage is missing',()=
   assert.ok(r.blockingReasons.includes('REQUIRED_VISUAL_VARIANTS_MISSING'));
 });
 
-test('explicit UNKNOWN climate cannot become full suitability approval',()=>{
+test('explicit UNKNOWN humidity stays unknown but does not manufacture a suitability blocker',()=>{
   const row=baseRow();
   row.climate_traits.humidityTolerance=null;
   row.climate_traits.traitEvidenceClasses.humidityTolerance='UNKNOWN';
@@ -119,9 +119,9 @@ test('explicit UNKNOWN climate cannot become full suitability approval',()=>{
     designAssetRegistry:{sets:[]},
     sizeAuthorityRegistry:size
   });
-  assert.equal(r.approved,false);
-  assert.ok(r.blockingReasons.includes('REAL_SUITABILITY_ENRICHMENT_REQUIRED'));
-  assert.equal(r.modules.climateAndSuitability.readinessClass,'B');
+  assert.equal(r.modules.climateAndSuitability.readinessClass,'A');
+  assert.ok(!r.blockingReasons.includes('REAL_SUITABILITY_ENRICHMENT_REQUIRED'));
+  assert.ok(r.modules.climateAndSuitability.readinessReasons.includes('HUMIDITY_UNKNOWN'));
 });
 
 test('visual factory readiness alone never equals full CRUVIT approval',()=>{
