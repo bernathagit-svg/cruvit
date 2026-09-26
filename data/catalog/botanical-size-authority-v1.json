@@ -110,7 +110,13 @@
     "raspberry": "taxon:rubus-idaeus",
     "carrot": "taxon:daucus-carota-subsp-sativus",
     "jujube": "taxon:ziziphus-jujuba",
-    "parsley": "taxon:petroselinum-crispum"
+    "parsley": "taxon:petroselinum-crispum",
+    "blackcurrant": "taxon:ribes-nigrum",
+    "gooseberry": "taxon:ribes-uva-crispa",
+    "medlar": "taxon:mespilus-germanica",
+    "quince": "taxon:cydonia-oblonga",
+    "red-currant": "taxon:ribes-rubrum",
+    "sea-buckthorn": "taxon:hippophae-rhamnoides"
   },
   "expectedAccounting": {
     "RUNTIME_AUTHORITY_READY": 13,
@@ -1611,6 +1617,50 @@
       "runtimeWired": false
     },
     {
+      "botanicalTaxonId": "taxon:cydonia-oblonga",
+      "canonicalSlugAliases": [
+        "quince"
+      ],
+      "scientificName": "Cydonia oblonga",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "quince__rhs-cydonia-oblonga-current__mature-size-full-catalog-v1",
+      "selectedSpreadEvidenceRef": "quince__rhs-cydonia-oblonga-current__mature-size-full-catalog-v1",
+      "selectedSource": "quince__rhs-cydonia-oblonga-current__mature-size-full-catalog-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 2.5,
+          "max": 4
+        },
+        "spreadM": {
+          "min": 2.5,
+          "max": 4
+        }
+      },
+      "provenanceEvidenceIds": [
+        "quince__rhs-cydonia-oblonga-current__mature-size-full-catalog-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
       "botanicalTaxonId": "taxon:cynara-cardunculus-var-scolymus",
       "canonicalSlugAliases": [
         "artichoke"
@@ -2308,6 +2358,50 @@
       "mayChooseUniversalPersonalGardenSize": false
     },
     {
+      "botanicalTaxonId": "taxon:hippophae-rhamnoides",
+      "canonicalSlugAliases": [
+        "sea-buckthorn"
+      ],
+      "scientificName": "Hippophae rhamnoides",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "sea-buckthorn__rhs-hippophae-rhamnoides-current__mature-size-full-catalog-v1",
+      "selectedSpreadEvidenceRef": "sea-buckthorn__rhs-hippophae-rhamnoides-current__mature-size-full-catalog-v1",
+      "selectedSource": "sea-buckthorn__rhs-hippophae-rhamnoides-current__mature-size-full-catalog-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 4,
+          "max": 8
+        },
+        "spreadM": {
+          "min": 4,
+          "max": 8
+        }
+      },
+      "provenanceEvidenceIds": [
+        "sea-buckthorn__rhs-hippophae-rhamnoides-current__mature-size-full-catalog-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
       "botanicalTaxonId": "taxon:hydrangea-macrophylla",
       "canonicalSlugAliases": [
         "bigleaf-hydrangea"
@@ -2906,6 +3000,50 @@
       },
       "provenanceEvidenceIds": [
         "spearmint__ncsu__mature-size-full64-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:mespilus-germanica",
+      "canonicalSlugAliases": [
+        "medlar"
+      ],
+      "scientificName": "Mespilus germanica",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "medlar__rhs-mespilus-germanica-current__mature-size-full-catalog-v1",
+      "selectedSpreadEvidenceRef": "medlar__rhs-mespilus-germanica-current__mature-size-full-catalog-v1",
+      "selectedSource": "medlar__rhs-mespilus-germanica-current__mature-size-full-catalog-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 4,
+          "max": 8
+        },
+        "spreadM": {
+          "min": 4,
+          "max": 8
+        }
+      },
+      "provenanceEvidenceIds": [
+        "medlar__rhs-mespilus-germanica-current__mature-size-full-catalog-v1"
       ],
       "conflictingEvidenceIds": null,
       "partialAnchor": null,
@@ -3767,6 +3905,138 @@
       },
       "provenanceEvidenceIds": [
         "rhubarb__rhs-rheum-rhabarbarum__mature-size-full-catalog-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:ribes-nigrum",
+      "canonicalSlugAliases": [
+        "blackcurrant"
+      ],
+      "scientificName": "Ribes nigrum",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "blackcurrant__rhs-ribes-nigrum-current__mature-size-full-catalog-v1",
+      "selectedSpreadEvidenceRef": "blackcurrant__rhs-ribes-nigrum-current__mature-size-full-catalog-v1",
+      "selectedSource": "blackcurrant__rhs-ribes-nigrum-current__mature-size-full-catalog-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 1,
+          "max": 1.5
+        },
+        "spreadM": {
+          "min": 1,
+          "max": 1.5
+        }
+      },
+      "provenanceEvidenceIds": [
+        "blackcurrant__rhs-ribes-nigrum-current__mature-size-full-catalog-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:ribes-rubrum",
+      "canonicalSlugAliases": [
+        "red-currant"
+      ],
+      "scientificName": "Ribes rubrum",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "red-currant__rhs-ribes-rubrum-current__mature-size-full-catalog-v1",
+      "selectedSpreadEvidenceRef": "red-currant__rhs-ribes-rubrum-current__mature-size-full-catalog-v1",
+      "selectedSource": "red-currant__rhs-ribes-rubrum-current__mature-size-full-catalog-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 1.5,
+          "max": 2.5
+        },
+        "spreadM": {
+          "min": 1,
+          "max": 1.5
+        }
+      },
+      "provenanceEvidenceIds": [
+        "red-currant__rhs-ribes-rubrum-current__mature-size-full-catalog-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:ribes-uva-crispa",
+      "canonicalSlugAliases": [
+        "gooseberry"
+      ],
+      "scientificName": "Ribes uva-crispa",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "gooseberry__rhs-ribes-uva-crispa-current__mature-size-full-catalog-v1",
+      "selectedSpreadEvidenceRef": "gooseberry__rhs-ribes-uva-crispa-current__mature-size-full-catalog-v1",
+      "selectedSource": "gooseberry__rhs-ribes-uva-crispa-current__mature-size-full-catalog-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 1,
+          "max": 1.5
+        },
+        "spreadM": {
+          "min": 1,
+          "max": 1.5
+        }
+      },
+      "provenanceEvidenceIds": [
+        "gooseberry__rhs-ribes-uva-crispa-current__mature-size-full-catalog-v1"
       ],
       "conflictingEvidenceIds": null,
       "partialAnchor": null,
