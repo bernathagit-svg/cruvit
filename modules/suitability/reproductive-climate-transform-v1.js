@@ -18,10 +18,15 @@ export function explicitCoolSeasonFruitingTransform({
   const text=norm(sourceText);
   const ids=Array.isArray(sourceIds)?sourceIds.map(x=>String(x||'').trim()).filter(Boolean):[];
   if(!fruitProductionRelevant || !ids.length) return {eligible:false,reason:'PRECONDITION_NOT_MET'};
+  const explicitCoolSeason=/\bcool[ -]?season\b/.test(text);
+  const negatedChill=(
+    /\b(?:no|not|without)\b.{0,50}\b(?:winter[ -]?)?chill(?:ing)?\b/.test(text)
+    || /\b(?:does not|doesn't|do not|don't) require\b.{0,30}\bchill(?:ing)?\b/.test(text)
+  );
   const explicit=(
-    /\bcool[ -]?season\b/.test(text)
-    || (/\b(?:fall|winter)\b/.test(text) && /\blow non[ -]?freezing temperatures?\b/.test(text))
-    || (/\bwinter\b/.test(text) && /\bchill(?:ing)?\b/.test(text))
+    explicitCoolSeason
+    || (!negatedChill && /\b(?:fall|winter)\b/.test(text) && /\blow non[ -]?freezing temperatures?\b/.test(text))
+    || (!negatedChill && /\bwinter\b/.test(text) && /\bchill(?:ing)?\b/.test(text))
   );
   if(!explicit) return {eligible:false,reason:'COOL_SEASON_NOT_EXPLICIT'};
   return {
