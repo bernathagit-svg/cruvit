@@ -335,3 +335,67 @@ test('legume/cucurbit/melon yield remains reproductive-climate applicable',()=>{
     assert.equal(out.applicable,true,row.slug);
   }
 });
+
+
+test('source-backed researched-unquantified reproductive state closes research blocker without claiming supported fruiting',()=>{
+  const row=baseRow();
+  row.climate_traits.reproductiveClimate={
+    contractVersion:'reproductive-climate-v1',
+    fruiting:{
+      evidenceState:'RESEARCHED_UNQUANTIFIED',
+      evidenceClass:'SOURCE_SUPPORTED',
+      sourceIds:['authority-1']
+    }
+  };
+  const r=evaluateFullCruvitPlantApproval({
+    catalogRow:row,
+    identityRegistry:identity,
+    designAssetRegistry:{sets:[]},
+    sizeAuthorityRegistry:size
+  });
+  assert.equal(r.modules.smartRecommendations.reproductiveClimate.ready,true);
+  assert.equal(r.modules.smartRecommendations.reproductiveClimate.evidenceState,'RESEARCHED_UNQUANTIFIED');
+  assert.ok(!r.blockingReasons.includes('REPRODUCTIVE_CLIMATE_EVIDENCE_REQUIRED'));
+});
+
+test('researched reproductive state without source lineage is still blocked',()=>{
+  const row=baseRow();
+  row.climate_traits.reproductiveClimate={
+    contractVersion:'reproductive-climate-v1',
+    fruiting:{
+      evidenceState:'RESEARCHED_UNQUANTIFIED',
+      evidenceClass:'SOURCE_SUPPORTED',
+      sourceIds:[]
+    }
+  };
+  const r=evaluateFullCruvitPlantApproval({
+    catalogRow:row,
+    identityRegistry:identity,
+    designAssetRegistry:{sets:[]},
+    sizeAuthorityRegistry:size
+  });
+  assert.equal(r.modules.smartRecommendations.reproductiveClimate.ready,false);
+  assert.ok(r.blockingReasons.includes('REPRODUCTIVE_CLIMATE_EVIDENCE_REQUIRED'));
+});
+
+test('context-dependent reproductive state with source lineage is research-complete',()=>{
+  const row=baseRow();
+  row.climate_traits.reproductiveClimate={
+    contractVersion:'reproductive-climate-v1',
+    fruiting:{
+      evidenceState:'CONTEXT_DEPENDENT',
+      contextKeys:['cultivar'],
+      evidenceClass:'SOURCE_SUPPORTED',
+      sourceIds:['authority-1']
+    }
+  };
+  const r=evaluateFullCruvitPlantApproval({
+    catalogRow:row,
+    identityRegistry:identity,
+    designAssetRegistry:{sets:[]},
+    sizeAuthorityRegistry:size
+  });
+  assert.equal(r.modules.smartRecommendations.reproductiveClimate.ready,true);
+  assert.equal(r.modules.smartRecommendations.reproductiveClimate.evidenceState,'CONTEXT_DEPENDENT');
+  assert.ok(!r.blockingReasons.includes('REPRODUCTIVE_CLIMATE_EVIDENCE_REQUIRED'));
+});
