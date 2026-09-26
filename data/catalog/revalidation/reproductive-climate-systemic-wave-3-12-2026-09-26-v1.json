@@ -1,0 +1,83 @@
+{
+  "contract": "cruvit-reproductive-climate-derived-migration-v1",
+  "migrationId": "reproductive-climate-systemic-wave-3-12-2026-09-26-v1",
+  "createdAt": "2026-09-26",
+  "policy": {
+    "plantSpecificLogicForbidden": true,
+    "existingStructuredDataMustBeAbsent": true,
+    "assertedSourceIdsRequired": true,
+    "derivedEvidenceClass": "HEURISTIC_ASSERTION",
+    "noPaidCalls": true,
+    "noSilentInference": true
+  },
+  "transforms": [
+    {
+      "transformRef": "explicit-frost-free-fruiting-requirement-v1@1.0.0",
+      "rule": "fruit-production evidence explicitly states frost-free conditions",
+      "output": "reproductiveClimate.fruiting.requiresFrostFree=true",
+      "plants": [
+        "acerola",
+        "breadfruit",
+        "jaboticaba",
+        "mangosteen",
+        "soursop"
+      ]
+    },
+    {
+      "transformRef": "winter-chill-to-cool-season-v1@1.0.0",
+      "rule": "asserted needsWinterChill=true with source lineage",
+      "outputs": [
+        "reproductiveClimate.flowering.requiresCoolSeason=true",
+        "reproductiveClimate.fruiting.requiresCoolSeason=true"
+      ],
+      "plants": [
+        "gooseberry",
+        "red-currant",
+        "sweet-cherry"
+      ]
+    },
+    {
+      "transformRef": "explicit-cool-season-production-v1@1.0.0",
+      "rule": "source-linked evidence explicitly identifies crop as cool-season",
+      "output": "reproductiveClimate.fruiting.requiresCoolSeason=true",
+      "plants": [
+        "garden-pea"
+      ]
+    },
+    {
+      "transformRef": "qualitative-summer-heat-band-v1@1.0.0",
+      "rule": "fruit-production evidence explicitly links production/quality to strictly tropical, warm-climate, or heat conditions",
+      "output": "reproductiveClimate.fruiting.summerHeatBand",
+      "plants": [
+        {
+          "slug": "durian",
+          "value": "warm"
+        },
+        {
+          "slug": "pitanga",
+          "value": "warm"
+        },
+        {
+          "slug": "grapefruit",
+          "value": "hot"
+        }
+      ]
+    }
+  ],
+  "writeGuards": {
+    "reproductiveClimateMustBeMissing": true,
+    "scientificIdentityUntouched": true,
+    "sourceIdsRequired": true,
+    "assertedEvidenceRequired": true,
+    "exactAffectedRowCountRequired": 12
+  },
+  "engineChanges": {
+    "transformModule": "modules/suitability/reproductive-climate-transform-v1.js",
+    "intakeMaterializer": "modules/catalog-expansion/catalog-expansion-v1-contract.js",
+    "automaticForFuturePackets": true
+  },
+  "result": {
+    "updatedCount": 12,
+    "paidCalls": 0
+  }
+}
