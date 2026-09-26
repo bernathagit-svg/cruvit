@@ -4,7 +4,7 @@ import { normalizeCatalogSourceType } from '../../modules/personal-domain/catalo
 
 function json(status,body){return new Response(JSON.stringify(body),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'private, no-store','x-robots-tag':'noindex, nofollow'}});}
 function safeSlug(v){const s=String(v||'').trim().toLowerCase();return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(s)?s:'';}
-function generatedNcsuSpeciesSource(scientific,slug){
+export function generatedNcsuSpeciesSource(scientific,slug){
   const raw=String(scientific||'').trim();
   const parts=raw.split(/\s+/).filter(Boolean);
   if(parts.length!==2 || /×|\bvar\.?\b|\bsubsp\.?\b|\bcv\.?\b/i.test(raw)) return null;
