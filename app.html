@@ -6707,6 +6707,19 @@ function smartRecEvaluateSuitability(p){
     };
     addStructuredWarning('flowering',reproductiveClimateGate.flowering);
     addStructuredWarning('fruiting',reproductiveClimateGate.fruiting);
+
+    // Purpose-sensitive eligibility: survival is not the same as a useful edible recommendation.
+    // For edible/fruit intent, fruiting must be structurally SUPPORTED.
+    if(ctx.edibleIntent && fruitRecommendationClimateRequired){
+      const fruitingClimateStatus=String(reproductiveClimateGate?.fruiting?.status||'unknown').toLowerCase();
+      if(fruitingClimateStatus!=='supported'){
+        positiveRecommendationEligible=false;
+        smartRecAddUniqueMessage(
+          warnings,
+          'Fruiting climate is not reliable enough for an edible-first recommendation here.'
+        );
+      }
+    }
   }
 
   if(blocked||hardSurvivalBlocked) positiveRecommendationEligible=false;
