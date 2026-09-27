@@ -1,0 +1,35 @@
+{
+  "contract": "plant-visual-owner-review-routing-v1",
+  "reviewId": "cruvit-full-catalog-batch1-blue-gum-young-in-garden-owner-review-2026-09-27-v1",
+  "createdAt": "2026-09-27",
+  "sourceRunId": "cruvit-full-catalog-batch1-in-garden-vision-qa-2026-09-27-v1",
+  "batchId": "cruvit-full-catalog-visual-completion-batch1-2026-09-27-v1",
+  "reason": "IN_GARDEN_VISION_QA_UNCERTAIN_STICKER_LOOK_AND_HALO",
+  "jobCount": 1,
+  "jobs": [
+    {
+      "jobId": "blue-gum__young__tree__vegetative__v1",
+      "canonicalSlug": "blue-gum",
+      "decisionRequired": true,
+      "uncertainChecks": [
+        "stickerLook",
+        "halo"
+      ],
+      "passedChecks": [
+        "perspective",
+        "groundContact",
+        "sharpnessMatch",
+        "colorTonalMatch",
+        "scaleRealism",
+        "silhouette"
+      ]
+    }
+  ],
+  "allowedOwnerDecisions": [
+    "PASS",
+    "HOLD"
+  ],
+  "regenerationOnUncertaintyForbidden": true,
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false
+}
