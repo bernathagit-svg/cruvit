@@ -46,7 +46,13 @@ export default async(req)=>{
       Metadata:{sha256:expected,'cruvit-global-bake-id':BAKE}
     });
     const url=await getSignedUrl(s3,cmd,{expiresIn:900});
-    results.push({name,key,action:'PUT',bytes,url,headers:{'content-type':'application/gzip','x-amz-checksum-sha256':checksum}});
+    results.push({name,key,action:'PUT',bytes,url,headers:{
+      'content-type':'application/gzip',
+      'cache-control':'public, max-age=31536000, immutable',
+      'x-amz-checksum-sha256':checksum,
+      'x-amz-meta-sha256':expected,
+      'x-amz-meta-cruvit-global-bake-id':BAKE
+    }});
   }
   return json(200,{ok:true,contract:'cruvit-global-climate-upload-sign-v1',globalBakeId:BAKE,authorityCount:names.length,results});
 };
