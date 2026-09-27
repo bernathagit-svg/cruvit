@@ -57,12 +57,29 @@ const states=[
   }
 ];
 
+function poseAngle(pose){
+  if(pose.o<=0)return 0;
+  if(pose.w>=40)return 0;
+  if(pose.l<=5)return 7;
+  if(pose.l>=65 && pose.l<100)return -7;
+  return 0;
+}
+
 function apply(card,a,b,t){
-  card.style.left=lerp(a.l,b.l,t)+'%';
-  card.style.top=lerp(a.t,b.t,t)+'%';
-  card.style.width=lerp(a.w,b.w,t)+'%';
-  card.style.height=lerp(a.h,b.h,t)+'%';
+  const left=lerp(a.l,b.l,t);
+  const top=lerp(a.t,b.t,t);
+  const width=lerp(a.w,b.w,t);
+  const height=lerp(a.h,b.h,t);
+  card.style.left=left+'%';
+  card.style.top=top+'%';
+  card.style.width=width+'%';
+  card.style.height=height+'%';
   card.style.opacity=String(lerp(a.o,b.o,t));
+
+  const fromAngle=poseAngle(a);
+  const toAngle=poseAngle(b);
+  const angle=lerp(fromAngle,toAngle,t);
+  card.style.transform='perspective(1200px) rotateY('+angle+'deg)';
 }
 
 function renderBetween(aIndex,bIndex,t){
@@ -81,12 +98,7 @@ function renderBetween(aIndex,bIndex,t){
   apply(plantId,a.plantId,b.plantId,progress);
   apply(smart,a.smart,b.smart,progress);
 
-  const depth=0.015*Math.sin(progress*Math.PI);
-  design.style.transform='scale('+(1+depth*0.5)+')';
-  garden.style.transform='scale('+(1-depth*0.5)+')';
-  doctor.style.transform='scale('+(1-depth*0.2)+')';
-  plantId.style.transform='scale('+(1+depth*0.6)+')';
-  smart.style.transform='scale('+(1+depth)+')';
+
 }
 
 function renderState(i){
