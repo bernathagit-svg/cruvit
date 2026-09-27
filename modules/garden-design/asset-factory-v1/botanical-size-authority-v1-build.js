@@ -19,6 +19,7 @@ import {
   botanicalSizeAuthorityPath,
   validateBotanicalSizeAuthority
 } from './botanical-size-authority-v1.js';
+import { selectSameSourceStructuredDimensionsRecord } from './tree-size-source-precedence-v1.js';
 
 function allEvidence() {
   return [...mapPilotRecordsToWave(), ...WAVE_NEW_EVIDENCE_RECORDS];
@@ -51,6 +52,8 @@ function pickCompleteRangeRecord(rows) {
   if (!complete.length) return null;
   const keys = new Set(complete.map(rangeKey));
   if (keys.size > 1) {
+    const structured = selectSameSourceStructuredDimensionsRecord(complete);
+    if (structured) return structured;
     throw new Error(`ready-range-conflict:${complete.map((row) => row.recordId).join(',')}`);
   }
   return complete[0];
