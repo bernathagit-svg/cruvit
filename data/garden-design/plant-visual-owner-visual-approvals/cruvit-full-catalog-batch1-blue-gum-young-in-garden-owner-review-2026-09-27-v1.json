@@ -1,0 +1,34 @@
+{
+  "contract": "plant-visual-owner-visual-approval-v1",
+  "manifestId": "cruvit-full-catalog-batch1-blue-gum-young-in-garden-owner-review-2026-09-27-v1",
+  "approvedAt": "2026-09-27",
+  "approvalSource": "owner explicitly approved Owner PASS for Blue Gum young after reviewing the real-garden production-renderer capture",
+  "ownerDecision": "PASS_OWNER_VISUAL_GATES",
+  "scope": {
+    "exactJobIds": [
+      "blue-gum__young__tree__vegetative__v1"
+    ],
+    "jobCount": 1
+  },
+  "visualAssessment": {
+    "ownerReviewedProductionRendererCaptures": true,
+    "realSavedGardenPhotoUsed": true,
+    "allPassed": true,
+    "assetBytesChanged": false
+  },
+  "priorGates": {
+    "geometryQa": "PASS",
+    "inGardenVisionQa": "UNCERTAIN_STICKER_LOOK_AND_HALO_NO_FAIL",
+    "technicalQa": "PASS",
+    "framingQa": "PASS"
+  },
+  "promotionAuthorized": false,
+  "allowedNextActions": [
+    "include Blue Gum young as owner-resolved In-Garden PASS in zero-write production promotion readiness",
+    "run candidate readback/checksum preflight"
+  ],
+  "prohibitedNextActions": [
+    "promote assets to Production R2 without separate explicit owner authorization",
+    "mutate design asset registry before verified Production readback"
+  ]
+}
