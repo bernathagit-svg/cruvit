@@ -199,3 +199,31 @@ test('morphology research combines morphology from one source with mature size f
   assert.equal(selected.evidence.matureSize.ready,true);
   assert.equal(selected.selectedSource.sourceId,'size-source');
 });
+
+
+test('parses explicit crown diameter as horizontal spread',()=>{
+  const r=extractStructuredMorphologyAndSize(
+    'Durio zibethinus Tree Height 20-26 m Crown Diameter 17.25-20.5 m'
+  );
+  assert.equal(r.matureSize.ready,true);
+  assert.deepEqual(r.matureSize.heightM,{min:20,max:26});
+  assert.deepEqual(r.matureSize.spreadM,{min:17.25,max:20.5});
+});
+
+test('parses diameter of crown with decimal commas',()=>{
+  const r=extractStructuredMorphologyAndSize(
+    'Artocarpus altilis plant height 16,7-17,9 m, diameter of crown 6,1-8,8 m'
+  );
+  assert.equal(r.matureSize.ready,true);
+  assert.deepEqual(r.matureSize.heightM,{min:16.7,max:17.9});
+  assert.deepEqual(r.matureSize.spreadM,{min:6.1,max:8.8});
+});
+
+test('does not invent spread from a single crown diameter',()=>{
+  const r=extractStructuredMorphologyAndSize(
+    'Annona muricata Height: 3-10 m Crown Diameter: 3.5 m'
+  );
+  assert.equal(r.matureSize.ready,false);
+  assert.deepEqual(r.matureSize.heightM,{min:3,max:10});
+  assert.equal(r.matureSize.spreadM,null);
+});
