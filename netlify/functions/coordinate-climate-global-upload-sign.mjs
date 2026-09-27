@@ -31,7 +31,10 @@ export default async(req)=>{
     if(!(bytes>0)) return json(409,{ok:false,code:'BYTE_COUNT_REQUIRED',name});
     const key=TILE_PREFIX+name;
     const head=await headClimateObject(key);
-    if(head.ok&&String(head.sha256||'').toLowerCase()===expected&&Number(head.contentLength)===bytes){
+    let nativeChecksumHex='';
+    try{nativeChecksumHex=head?.checksumSHA256?Buffer.from(String(head.checksumSHA256),'base64').toString('hex'):'';}catch{}
+    const checksumMatches=String(head?.sha256||'').toLowerCase()===expected||nativeChecksumHex===expected;
+    if(head.ok&&checksumMatches&&Number(head.contentLength)===bytes){
       results.push({name,key,action:'SKIP_IDENTICAL',bytes});
       continue;
     }

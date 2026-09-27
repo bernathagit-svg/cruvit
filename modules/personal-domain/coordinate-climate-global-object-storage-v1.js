@@ -209,6 +209,7 @@ export async function headClimateObject(objectKey, options = {}) {
       etag: out.ETag || null,
       metadata: out.Metadata || {},
       sha256: out.Metadata?.sha256 || null,
+      checksumSHA256: out.ChecksumSHA256 || null,
       transport: 'r2'
     };
   } catch (err) {
