@@ -32,7 +32,9 @@ test('runtime authority buckets are exclusive for 41 taxa and full-size does not
   assert.equal(cypress.FULL_SIZE_READY, true);
   assert.equal(cypress.runtimeAuthority, RUNTIME_AUTHORITY.CONFLICT_HOLD);
   assert.equal(magnolia.FULL_SIZE_READY, true);
-  assert.equal(magnolia.runtimeAuthority, RUNTIME_AUTHORITY.CONFLICT_HOLD);
+  assert.equal(magnolia.runtimeAuthority, RUNTIME_AUTHORITY.READY);
+  assert.equal(magnolia.conflictReviewOutcome, 'STRUCTURED_DIMENSIONS_PRECEDENCE');
+  assert.equal(summary.structuredSameSourcePrecedenceApplied, true);
   const map = slugToBotanicalTaxonId();
   assert.equal(map.orange, 'taxon:citrus-sinensis');
   assert.equal(map['sweet-orange'], 'taxon:citrus-sinensis');
