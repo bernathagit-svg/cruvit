@@ -2883,22 +2883,28 @@
       "scientificName": "Magnolia grandiflora",
       "architectureMode": "tree",
       "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_CONFLICT_HOLD",
-      "defaultPreviewScenario": null,
-      "selectedHeightEvidenceRef": null,
-      "selectedSpreadEvidenceRef": null,
-      "selectedSource": null,
-      "normalizedRange": null,
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "southern-magnolia__ncsu__landscape-dimensions",
+      "selectedSpreadEvidenceRef": "southern-magnolia__ncsu__landscape-dimensions",
+      "selectedSource": "southern-magnolia__ncsu__landscape-dimensions",
+      "normalizedRange": {
+        "heightM": {
+          "min": 18.288,
+          "max": 24.384
+        },
+        "spreadM": {
+          "min": 9.144,
+          "max": 15.24
+        }
+      },
       "provenanceEvidenceIds": [
         "southern-magnolia__ncsu__landscape-dimensions",
         "southern-magnolia__ncsu__landscape-prose-spread"
       ],
-      "conflictingEvidenceIds": [
-        "southern-magnolia__ncsu__landscape-dimensions",
-        "southern-magnolia__ncsu__landscape-prose-spread"
-      ],
+      "conflictingEvidenceIds": null,
       "partialAnchor": null,
-      "spreadSourceSupported": false,
+      "spreadSourceSupported": true,
       "HEIGHT_SCALE_READY": true,
       "SPREAD_SCALE_READY": true,
       "unknownFields": [],
@@ -2910,9 +2916,14 @@
         "notFinalPersonalGardenSize": false,
         "reasons": []
       },
-      "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
+      "gardenDesignFallback": null,
       "authorityVersion": "botanical-size-authority-v1",
-      "runtimeWired": false
+      "runtimeWired": false,
+      "resolvedConflictEvidenceIds": [
+        "southern-magnolia__ncsu__landscape-dimensions",
+        "southern-magnolia__ncsu__landscape-prose-spread"
+      ],
+      "conflictResolution": "SAME_SOURCE_STRUCTURED_FIELD_PRECEDENCE"
     },
     {
       "botanicalTaxonId": "taxon:malpighia-emarginata",
