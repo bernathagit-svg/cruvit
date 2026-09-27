@@ -11,6 +11,7 @@ import {
   mapPilotRecordsToWave
 } from './tree-size-evidence-wave-v1.js';
 import { WAVE_NEW_EVIDENCE_RECORDS } from './tree-size-evidence-wave-v1-records.js';
+import { selectSameSourceStructuredDimensionsRecord } from './tree-size-source-precedence-v1.js';
 
 export const TREE_SIZE_PRODUCTION_AUTHORITY_GATE_VERSION = 'tree-size-production-authority-gate-v1';
 
@@ -167,7 +168,8 @@ function sourceIdsForScenario(records, scenario) {
 
 function classifyOne(row, records) {
   const review = reviewForTaxon(row.botanicalTaxonId);
-  const hold = Boolean(review && HOLD_OUTCOMES.has(review.outcome));
+  const structuredPrecedence = selectSameSourceStructuredDimensionsRecord(records);
+  const hold = Boolean(review && HOLD_OUTCOMES.has(review.outcome) && !structuredPrecedence);
   const userContext = Boolean(row.CULTIVAR_OR_ROOTSTOCK_INPUT_NEEDED);
   const gap = row.status === 'EVIDENCE_GAP' || (!row.HEIGHT_SCALE_READY && !row.SPREAD_SCALE_READY);
   const defaultScenario = hold || gap ? null : row.recommendedGenericPreviewScenario || null;
@@ -196,7 +198,7 @@ function classifyOne(row, records) {
     defaultPreviewScenario: defaultScenario,
     mayDriveExactPersonalGardenDefault: runtimeAuthority === RUNTIME_AUTHORITY.READY,
     cultivarOrRootstockSensitive: userContext,
-    conflictReviewOutcome: review?.outcome || null,
+    conflictReviewOutcome: structuredPrecedence ? 'STRUCTURED_DIMENSIONS_PRECEDENCE' : (review?.outcome || null),
     unknownFields: row.unknownFields,
     selectedEvidenceIds: sourceIdsForScenario(records, defaultScenario),
     applyRuntimeDefaultNow: false,
