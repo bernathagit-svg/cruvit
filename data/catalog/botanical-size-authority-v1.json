@@ -116,7 +116,10 @@
     "medlar": "taxon:mespilus-germanica",
     "quince": "taxon:cydonia-oblonga",
     "red-currant": "taxon:ribes-rubrum",
-    "sea-buckthorn": "taxon:hippophae-rhamnoides"
+    "sea-buckthorn": "taxon:hippophae-rhamnoides",
+    "common-jasmine": "taxon:jasminum-officinale",
+    "garden-peony": "taxon:paeonia-lactiflora",
+    "green-bean": "taxon:phaseolus-vulgaris"
   },
   "expectedAccounting": {
     "RUNTIME_AUTHORITY_READY": 13,
@@ -2490,6 +2493,50 @@
       "runtimeWired": false
     },
     {
+      "botanicalTaxonId": "taxon:jasminum-officinale",
+      "canonicalSlugAliases": [
+        "common-jasmine"
+      ],
+      "scientificName": "Jasminum officinale",
+      "architectureMode": "climber",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "common-jasmine__rhs-jasminum-officinale-current__mature-size-full-catalog-v1",
+      "selectedSpreadEvidenceRef": "common-jasmine__rhs-jasminum-officinale-current__mature-size-full-catalog-v1",
+      "selectedSource": "common-jasmine__rhs-jasminum-officinale-current__mature-size-full-catalog-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 4,
+          "max": 8
+        },
+        "spreadM": {
+          "min": 1.5,
+          "max": 2.5
+        }
+      },
+      "provenanceEvidenceIds": [
+        "common-jasmine__rhs-jasminum-officinale-current__mature-size-full-catalog-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
       "botanicalTaxonId": "taxon:juglans-regia",
       "canonicalSlugAliases": [
         "english-walnut"
@@ -3320,6 +3367,50 @@
       "runtimeWired": false
     },
     {
+      "botanicalTaxonId": "taxon:paeonia-lactiflora",
+      "canonicalSlugAliases": [
+        "garden-peony"
+      ],
+      "scientificName": "Paeonia lactiflora",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "garden-peony__rhs-paeonia-lactiflora-wild-current__mature-size-full-catalog-v1",
+      "selectedSpreadEvidenceRef": "garden-peony__rhs-paeonia-lactiflora-wild-current__mature-size-full-catalog-v1",
+      "selectedSource": "garden-peony__rhs-paeonia-lactiflora-wild-current__mature-size-full-catalog-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.5,
+          "max": 1
+        },
+        "spreadM": {
+          "min": 0.5,
+          "max": 1
+        }
+      },
+      "provenanceEvidenceIds": [
+        "garden-peony__rhs-paeonia-lactiflora-wild-current__mature-size-full-catalog-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
       "botanicalTaxonId": "taxon:persea-americana",
       "canonicalSlugAliases": [
         "avocado"
@@ -3388,6 +3479,50 @@
       },
       "provenanceEvidenceIds": [
         "parsley__ncsu-petroselinum-crispum__mature-size-full-catalog-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:phaseolus-vulgaris",
+      "canonicalSlugAliases": [
+        "green-bean"
+      ],
+      "scientificName": "Phaseolus vulgaris",
+      "architectureMode": "climber",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "green-bean__rhs-phaseolus-vulgaris-current__mature-size-full-catalog-v1",
+      "selectedSpreadEvidenceRef": "green-bean__rhs-phaseolus-vulgaris-current__mature-size-full-catalog-v1",
+      "selectedSource": "green-bean__rhs-phaseolus-vulgaris-current__mature-size-full-catalog-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 2.5,
+          "max": 4
+        },
+        "spreadM": {
+          "min": 0.5,
+          "max": 1
+        }
+      },
+      "provenanceEvidenceIds": [
+        "green-bean__rhs-phaseolus-vulgaris-current__mature-size-full-catalog-v1"
       ],
       "conflictingEvidenceIds": null,
       "partialAnchor": null,
