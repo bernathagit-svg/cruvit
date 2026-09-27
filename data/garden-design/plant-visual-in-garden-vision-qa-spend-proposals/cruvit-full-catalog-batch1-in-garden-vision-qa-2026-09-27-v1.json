@@ -1,0 +1,35 @@
+{
+  "contract": "plant-visual-in-garden-vision-qa-spend-proposal-v1",
+  "runId": "cruvit-full-catalog-batch1-in-garden-vision-qa-2026-09-27-v1",
+  "createdAt": "2026-09-27",
+  "provider": "openai-responses-api",
+  "model": "gpt-5.6-luna",
+  "jobCount": 7,
+  "maxCalls": 7,
+  "maxRetries": 0,
+  "perCallReserveUsd": 0.01,
+  "proposedMaxSpendUsd": 0.11,
+  "rationale": [
+    "Batch 1 has 7 geometry-pass in-garden captures on the real saved Garden Design source photo.",
+    "Prior CRUVIT in-garden runs show actual spend well below one cent per call.",
+    "USD 0.11 preserves conservative bounded headroom for 7 high-detail calls."
+  ],
+  "jobIds": [
+    "bay-laurel__mature__shrub__vegetative__v1",
+    "blackcurrant__mature__shrub__vegetative__v1",
+    "blackcurrant__mature__shrub__fruiting__v1",
+    "blue-gum__young__tree__vegetative__v1",
+    "common-lilac__mature__shrub__vegetative__v1",
+    "common-myrtle__mature__shrub__vegetative__v1",
+    "common-thyme__mature__shrub__vegetative__v1"
+  ],
+  "allowedActions": [
+    "read exact in-garden QA capture bytes from candidate R2",
+    "send one renderer capture plus expected plant metadata to vision QA model",
+    "write in-garden vision QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "imageGenerationAllowed": false,
+  "imageMutationAllowed": false
+}
