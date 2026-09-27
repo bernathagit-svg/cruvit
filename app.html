@@ -4090,7 +4090,7 @@ async function saveLocationFromModal(){
       lat:resolved.lat,
       lon:resolved.lon,
       country:resolved.country||'',
-      climate:climate||resolved.climate||'Mediterranean',
+      climate:resolved.climate||'',
       source:pendingGeoLocation?.source==='geolocation'?'geolocation':'manual'
     });
   }catch(err){
@@ -4101,10 +4101,30 @@ async function saveLocationFromModal(){
 async function saveGardenLocation(loc,options){
   const opts=options&&typeof options==='object'?options:{};
   const current=ensureGardenLocation();
-  const next=Object.assign({},current,loc,{updatedAt:new Date().toISOString()});
+  const incoming=loc&&typeof loc==='object'?loc:{};
+  const incomingLat=Number(incoming.lat);
+  const incomingLon=Number(incoming.lon);
+  const currentLat=Number(current.lat);
+  const currentLon=Number(current.lon);
+  const incomingLabel=String(incoming.label||'').trim();
+  const currentLabel=String(current.label||'').trim();
+  const locationChanged=(incomingLabel&&incomingLabel!==currentLabel)
+    ||(Number.isFinite(incomingLat)&&(!Number.isFinite(currentLat)||incomingLat!==currentLat))
+    ||(Number.isFinite(incomingLon)&&(!Number.isFinite(currentLon)||incomingLon!==currentLon));
+  const staleReset=locationChanged?{
+    climate:'',
+    structuralClimate:null,
+    structuralAcquisitionMs:null,
+    climateAuthorityCode:null
+  }:{};
+  const next=Object.assign({},current,staleReset,incoming,{updatedAt:new Date().toISOString()});
   data.gardenLocation=next;
   data.location=next.label;
-  data.climate=next.climate||current.climate||'Mediterranean';
+  data.climate=next.climate||'';
+  if(locationChanged){
+    data.weather=null;
+    delete data.weatherFetchError;
+  }
   setLocationStatus('Fetching local weather forecast…');
   try{
     const result=await refreshGardenWeather();
@@ -4235,7 +4255,6 @@ async function setAppLocation(partial,options){
   const current=ensureGardenLocation();
   const label=String(p.label||p.resolvedCity||p.rawInput||current.label||'').trim();
   const derived=deriveLabelParts(label);
-  const climate=String(p.climate||p.broadClimateLabel||current.climate||'').trim();
   const coords=p.coordinates&&typeof p.coordinates==='object'?p.coordinates:{};
   const lat=p.lat!=null?p.lat:coords.lat;
   const lon=p.lon!=null?p.lon:coords.lon;
@@ -4244,16 +4263,17 @@ async function setAppLocation(partial,options){
   const locationChanged=label!==String(current.label||'').trim()
     ||(nextLat!=null&&nextLat!==Number(current.lat))
     ||(nextLon!=null&&nextLon!==Number(current.lon));
+  const climate=String(p.climate||p.broadClimateLabel||(locationChanged?'':current.climate)||'').trim();
   const payload={
     label:label||current.label,
-    climate:climate||current.climate,
-    rawInput:String(p.rawInput||current.rawInput||'').trim(),
-    resolvedCity:String(p.resolvedCity||p.name||current.resolvedCity||derived.resolvedCity||'').trim(),
-    region:String(p.region||current.region||derived.region||'').trim(),
-    country:String(p.country||current.country||derived.countryFromLabel||'').trim(),
-    countryCode:String(p.countryCode||current.countryCode||'').trim(),
-    timezone:String(p.timezone||current.timezone||'').trim(),
-    provider:String(p.provider||current.provider||'').trim(),
+    climate,
+    rawInput:String(p.rawInput||(locationChanged?'':current.rawInput)||'').trim(),
+    resolvedCity:String(p.resolvedCity||p.name||(locationChanged?'':current.resolvedCity)||derived.resolvedCity||'').trim(),
+    region:String(p.region||(locationChanged?'':current.region)||derived.region||'').trim(),
+    country:String(p.country||(locationChanged?'':current.country)||derived.countryFromLabel||'').trim(),
+    countryCode:String(p.countryCode||(locationChanged?'':current.countryCode)||'').trim(),
+    timezone:String(p.timezone||(locationChanged?'':current.timezone)||'').trim(),
+    provider:String(p.provider||(locationChanged?'':current.provider)||'').trim(),
     source:p.source!=null&&String(p.source).trim()
       ?String(p.source).trim()
       :(locationChanged?'manual':String(current.source||'').trim()||'manual')
@@ -4263,7 +4283,11 @@ async function setAppLocation(partial,options){
   // Guardrails V1: hydrate/reuse server-persisted structural climate when present.
   if(p.structuralClimate&&typeof p.structuralClimate==='object'){
     payload.structuralClimate=p.structuralClimate;
-  }else if(!locationChanged&&current.structuralClimate){
+  }else if(locationChanged){
+    payload.structuralClimate=null;
+    payload.structuralAcquisitionMs=null;
+    payload.climateAuthorityCode=null;
+  }else if(current.structuralClimate){
     payload.structuralClimate=current.structuralClimate;
   }
   return saveGardenLocation(payload,options);
@@ -6461,6 +6485,28 @@ function smartRecEvaluateSuitability(p){
     };
   }
   const climateProfile=getAppClimateProfile();
+  const structuralClimateKnown=Boolean(
+    climateProfile?.structuralClimateStatus==='known'
+    &&climateProfile?.structuralClimate
+    &&climateProfile.structuralClimate.status==='known'
+  );
+  if(!structuralClimateKnown){
+    const reason='Long-term climate authority is unavailable for these coordinates, so CRUVIT will not make a positive location-based recommendation yet.';
+    return {
+      suitabilityScore:50,
+      recommendationLevel:'borderline',
+      survivalFit:50,
+      thriveFit:50,
+      floweringFit:50,
+      fruitingFit:50,
+      warnings:[reason],
+      explanationText:reason,
+      hardSurvivalBlocked:false,
+      reproductiveClimateGate:null,
+      positiveRecommendationEligible:false,
+      climateAuthorityUnavailable:true
+    };
+  }
   const ctx=smartRecCurrentContext();
   const fruitRecommendationClimateRequired=Boolean(
     (Array.isArray(meta.groupIds)&&meta.groupIds.some(g=>/fruit|citrus|berry/i.test(String(g||''))))
