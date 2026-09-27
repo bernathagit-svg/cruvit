@@ -1,0 +1,47 @@
+{
+  "contract": "size-conflict-resolution-v1",
+  "createdAt": "2026-09-27",
+  "canonicalSlug": "southern-magnolia",
+  "botanicalTaxonId": "taxon:magnolia-grandiflora",
+  "sourceUrl": "https://plants.ces.ncsu.edu/plants/magnolia-grandiflora/",
+  "sourceProvider": "North Carolina State University Extension Gardener",
+  "previousState": "RUNTIME_AUTHORITY_CONFLICT_HOLD",
+  "resolvedState": "RUNTIME_AUTHORITY_READY",
+  "rule": "SAME_SOURCE_STRUCTURED_DIMENSIONS_OVER_PROSE",
+  "conditions": {
+    "sameExactSource": true,
+    "sameHeightRange": true,
+    "structuredDimensionsPresent": true,
+    "horizontalRangesDiffer": true,
+    "averagingUsed": false
+  },
+  "selected": {
+    "evidenceId": "southern-magnolia__ncsu__landscape-dimensions",
+    "originalWording": "Dimensions: Height: 60 ft. 0 in. - 80 ft. 0 in. Width: 30 ft. 0 in. - 50 ft. 0 in.",
+    "normalizedRange": {
+      "heightM": {
+        "min": 18.288,
+        "max": 24.384
+      },
+      "spreadM": {
+        "min": 9.144,
+        "max": 15.24
+      }
+    }
+  },
+  "retainedNonSelectedEvidence": {
+    "evidenceId": "southern-magnolia__ncsu__landscape-prose-spread",
+    "originalWording": "It typically grows to 60 to 80 feet tall with a pyramidal to rounded crown, a spread of 20 to 40 feet wide, and a trunk diameter of 3 feet.",
+    "normalizedRange": {
+      "heightM": {
+        "min": 18.288,
+        "max": 24.384
+      },
+      "spreadM": {
+        "min": 6.096,
+        "max": 12.192
+      }
+    }
+  },
+  "safety": "Different-source conflicts and differing-height same-source conflicts remain unresolved by this rule."
+}
