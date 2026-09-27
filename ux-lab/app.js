@@ -8,7 +8,7 @@ const doctor=document.getElementById('cardDoctor');
 const plantId=document.getElementById('cardPlantId');
 const smart=document.getElementById('cardSmart');
 
-let index=0;
+let index=1;
 let dragging=false;
 let startX=0;
 let currentX=0;
@@ -21,16 +21,16 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
 const states=[
   {
-    design:{l:0,t:12.9,w:30.0,h:73.8,o:1},
-    garden:{l:26.3,t:0.1,w:46.0,h:95.1,o:1},
-    doctor:{l:73.0,t:14.3,w:27.0,h:72.0,o:1},
+    design:{l:29.2,t:4.2,w:43.2,h:88.0,o:1},
+    garden:{l:0,t:15.0,w:27.4,h:70.2,o:1},
+    doctor:{l:72.7,t:16.0,w:27.3,h:69.4,o:1},
     plantId:{l:108,t:16,w:27.3,h:69.4,o:0},
     smart:{l:140,t:16,w:27.3,h:69.4,o:0}
   },
   {
-    design:{l:29.2,t:4.2,w:43.2,h:88.0,o:1},
-    garden:{l:0,t:15.0,w:27.4,h:70.2,o:1},
-    doctor:{l:72.7,t:16.0,w:27.3,h:69.4,o:1},
+    design:{l:0,t:12.9,w:30.0,h:73.8,o:1},
+    garden:{l:26.3,t:0.1,w:46.0,h:95.1,o:1},
+    doctor:{l:73.0,t:14.3,w:27.0,h:72.0,o:1},
     plantId:{l:108,t:16,w:27.3,h:69.4,o:0},
     smart:{l:140,t:16,w:27.3,h:69.4,o:0}
   },
@@ -71,8 +71,8 @@ function renderBetween(aIndex,bIndex,t){
   apply(design,a.design,b.design,progress);
 
   const designVariants=design.querySelectorAll('.variant');
-  const designCenterFrom=aIndex===1?1:0;
-  const designCenterTo=bIndex===1?1:0;
+  const designCenterFrom=aIndex===0?1:0;
+  const designCenterTo=bIndex===0?1:0;
   const designCenterMix=lerp(designCenterFrom,designCenterTo,progress);
   if(designVariants[0])designVariants[0].style.opacity=String(1-designCenterMix);
   if(designVariants[1])designVariants[1].style.opacity=String(designCenterMix);
