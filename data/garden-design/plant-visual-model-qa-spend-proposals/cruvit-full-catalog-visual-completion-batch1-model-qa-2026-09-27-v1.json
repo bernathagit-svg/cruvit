@@ -1,0 +1,35 @@
+{
+  "contract": "plant-visual-model-qa-spend-proposal-v1",
+  "runId": "cruvit-full-catalog-visual-completion-batch1-model-qa-2026-09-27-v1",
+  "createdAt": "2026-09-27",
+  "provider": "openai-responses-api",
+  "model": "gpt-5.6-luna",
+  "maxCalls": 7,
+  "maxRetries": 0,
+  "perCallReserveUsd": 0.01,
+  "proposedMaxSpendUsd": 0.12,
+  "jobIds": [
+    "bay-laurel__mature__shrub__vegetative__v1",
+    "blackcurrant__mature__shrub__vegetative__v1",
+    "blackcurrant__mature__shrub__fruiting__v1",
+    "blue-gum__young__tree__vegetative__v1",
+    "common-lilac__mature__shrub__vegetative__v1",
+    "common-myrtle__mature__shrub__vegetative__v1",
+    "common-thyme__mature__shrub__vegetative__v1"
+  ],
+  "allowedActions": [
+    "read exact candidate PNG bytes from candidate R2",
+    "send one candidate image plus expected metadata to vision QA model",
+    "write model QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "imageGenerationAllowed": false,
+  "imageMutationAllowed": false,
+  "notes": [
+    "Only the 7 Batch 1 candidates with Technical PASS + Framing PASS are admitted.",
+    "Blue Gum mature is excluded because Framing QA failed top-padding-too-small.",
+    "No retries are proposed.",
+    "$0.12 cap is conservative relative to prior CRUVIT Model QA envelopes."
+  ]
+}
