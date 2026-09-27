@@ -1,0 +1,40 @@
+{
+  "contract": "plant-visual-in-garden-vision-qa-spend-approval-v1",
+  "runId": "cruvit-full-catalog-batch1-in-garden-vision-qa-2026-09-27-v1",
+  "approved": true,
+  "approvedAt": "2026-09-27",
+  "approvalSource": "owner explicitly approved CRUVIT Full Catalog Visual Completion · Batch 1 In-Garden Vision QA up to USD 0.11, 7 calls, no retries",
+  "provider": "openai-responses-api",
+  "model": "gpt-5.6-luna",
+  "maxCalls": 7,
+  "maxRetries": 0,
+  "perCallReserveUsd": 0.01,
+  "maxSpendUsd": 0.11,
+  "jobIds": [
+    "bay-laurel__mature__shrub__vegetative__v1",
+    "blackcurrant__mature__shrub__vegetative__v1",
+    "blackcurrant__mature__shrub__fruiting__v1",
+    "blue-gum__young__tree__vegetative__v1",
+    "common-lilac__mature__shrub__vegetative__v1",
+    "common-myrtle__mature__shrub__vegetative__v1",
+    "common-thyme__mature__shrub__vegetative__v1"
+  ],
+  "allowedActions": [
+    "read exact in-garden QA capture bytes from candidate R2",
+    "send one renderer capture plus expected plant metadata to vision QA model",
+    "write in-garden vision QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "imageGenerationAllowed": false,
+  "imageMutationAllowed": false,
+  "carryForward": false,
+  "previousApprovalReuse": false,
+  "notes": [
+    "Approval applies only to CRUVIT Full Catalog Visual Completion Batch 1 In-Garden Vision QA.",
+    "No retry calls are authorized.",
+    "No image generation or mutation is authorized.",
+    "No Production R2 promotion is authorized.",
+    "No design asset registry mutation is authorized."
+  ]
+}
