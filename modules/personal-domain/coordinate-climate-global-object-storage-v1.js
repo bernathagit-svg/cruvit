@@ -198,7 +198,8 @@ export async function headClimateObject(objectKey, options = {}) {
     const out = await client.send(
       new HeadObjectCommand({
         Bucket: String(env.R2_BUCKET),
-        Key: String(objectKey).replace(/^\/+/, '')
+        Key: String(objectKey).replace(/^\/+/, ''),
+        ChecksumMode: 'ENABLED'
       })
     );
     return {
