@@ -7,6 +7,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { selectSameSourceStructuredDimensionsRecord } from '../modules/garden-design/asset-factory-v1/tree-size-source-precedence-v1.js';
 import {
   CONFLICT_REVIEW_FROM_EXISTING_EVIDENCE,
   RUNTIME_AUTHORITY,
@@ -46,4 +47,28 @@ test('runtime authority buckets are exclusive for 41 taxa and full-size does not
   assert.equal(summary.writeAuthorityRegistryNow, false);
   assert.ok(CONFLICT_REVIEW_FROM_EXISTING_EVIDENCE.every((row) => row.newSourcing === 0 && row.averaged === false));
   assert.equal(buildAuthorityGateSummary().spend.imageGeneration, 0);
+});
+
+
+test('same-source structured Dimensions outrank prose only under strict matching conditions', () => {
+  const structured={
+    evidenceClass:'SOURCE_SUPPORTED_RANGE',
+    sourceUrl:'https://example.edu/tree',
+    sourceIdentifier:'same',
+    heightMinM:18.288,heightMaxM:24.384,
+    spreadMinM:9.144,spreadMaxM:15.24,
+    originalSourceWording:'Dimensions: Height: 60 ft. 0 in. - 80 ft. 0 in. Width: 30 ft. 0 in. - 50 ft. 0 in.'
+  };
+  const prose={
+    ...structured,
+    spreadMinM:6.096,spreadMaxM:12.192,
+    originalSourceWording:'It typically grows to 60 to 80 feet tall with a spread of 20 to 40 feet wide.'
+  };
+  assert.equal(selectSameSourceStructuredDimensionsRecord([structured,prose]),structured);
+
+  const otherSource={...prose,sourceUrl:'https://other.edu/tree',sourceIdentifier:'other'};
+  assert.equal(selectSameSourceStructuredDimensionsRecord([structured,otherSource]),null);
+
+  const differentHeight={...prose,heightMinM:15,heightMaxM:22};
+  assert.equal(selectSameSourceStructuredDimensionsRecord([structured,differentHeight]),null);
 });
