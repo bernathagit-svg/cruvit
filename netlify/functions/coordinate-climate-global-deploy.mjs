@@ -69,7 +69,7 @@ async function uploadBatch(body){
     if(actualHash!==expected.sha256) return {status:409,body:{ok:false,code:'INTEGRITY_MISMATCH',name}};
     if(expected.bytes!=null&&bytes.length!==expected.bytes) return {status:409,body:{ok:false,code:'SIZE_MISMATCH',name}};
     const key=TILE_PREFIX+name;
-    const out=await putClimateObjectBytes(key,bytes,{contentType:'application/gzip',cacheControl:'public, max-age=31536000, immutable',skipIdentical:true,metadata:{'cruvit-global-bake-id':BAKE}});
+    const out=await putClimateObjectBytes(key,bytes,{contentType:'application/gzip',cacheControl:'public, max-age=31536000, immutable',skipIdentical:false,metadata:{sha256:expected.sha256||expected,'cruvit-global-bake-id':BAKE}});
     if(!out.ok) return {status:502,body:{ok:false,code:'R2_WRITE_FAILED',name,r2Code:out.code}};
     results.push({name,ok:true,code:out.code,skipped:out.skipped===true,bytes:bytes.length});
   }
@@ -107,6 +107,7 @@ async function finalize(){
     version:'1.0.0',
     globalReady:true,
     globalBakeId:BAKE,
+    manifestSha256:manifest.manifestSha256||null,
     expectedLandTileCount:AUTH.size,
     verifiedRemoteTileCount:actualNames.size,
     expectedRemoteObjectCount:AUTH.size+2,

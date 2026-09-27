@@ -26,10 +26,15 @@ export default async(req)=>{
     const name=String(f?.name||'').trim();
     const claimedHash=String(f?.sha256||'').toLowerCase();
     const bytes=Number(f?.bytes);
-    const expected=String(authority?.[name]||'').toLowerCase();
-    if(!tileName(name)||!hash(expected)) return json(403,{ok:false,code:'FILE_NOT_IN_AUTHORITY',name});
+    const record=authority?.[name];
+    const expected=String(typeof record==='string'?record:record?.sha256||'').toLowerCase();
+    const expectedMd5=String(record?.md5||'').toLowerCase();
+    const expectedBytes=Number(record?.bytes);
+    const claimedMd5=String(f?.md5||'').toLowerCase();
+    if(!tileName(name)||!hash(expected)||!(/^[a-f0-9]{32}$/i.test(expectedMd5))) return json(403,{ok:false,code:'FILE_NOT_IN_AUTHORITY',name});
     if(claimedHash!==expected) return json(409,{ok:false,code:'HASH_NOT_AUTHORIZED',name});
-    if(!(bytes>0)) return json(409,{ok:false,code:'BYTE_COUNT_REQUIRED',name});
+    if(claimedMd5!==expectedMd5) return json(409,{ok:false,code:'MD5_NOT_AUTHORIZED',name});
+    if(!(bytes>0)||bytes!==expectedBytes) return json(409,{ok:false,code:'BYTE_COUNT_MISMATCH',name,expectedBytes});
     const key=TILE_PREFIX+name;
     const head=await headClimateObject(key);
     if(head.ok){
@@ -52,23 +57,23 @@ export default async(req)=>{
       }
       return json(409,{ok:false,code:'REMOTE_OBJECT_HASH_CONFLICT',name});
     }
-    const checksum=Buffer.from(expected,'hex').toString('base64');
+    const contentMd5=Buffer.from(expectedMd5,'hex').toString('base64');
     const cmd=new PutObjectCommand({
       Bucket:env('R2_BUCKET'),
       Key:key,
       ContentType:'application/gzip',
       ContentLength:bytes,
-      ChecksumSHA256:checksum,
+      ContentMD5:contentMd5,
+      IfNoneMatch:'*',
       CacheControl:'public, max-age=31536000, immutable',
-      Metadata:{sha256:expected,'cruvit-global-bake-id':BAKE}
+      Metadata:{sha256:expected,md5:expectedMd5,'cruvit-global-bake-id':BAKE}
     });
     const url=await getSignedUrl(s3,cmd,{expiresIn:900});
     results.push({name,key,action:'PUT',bytes,url,headers:{
       'content-type':'application/gzip',
       'cache-control':'public, max-age=31536000, immutable',
-      'x-amz-checksum-sha256':checksum,
-      'x-amz-meta-sha256':expected,
-      'x-amz-meta-cruvit-global-bake-id':BAKE
+      'content-md5':contentMd5,
+      'if-none-match':'*'
     }});
   }
   return json(200,{ok:true,contract:'cruvit-global-climate-upload-sign-v1',globalBakeId:BAKE,authorityCount:names.length,results});
