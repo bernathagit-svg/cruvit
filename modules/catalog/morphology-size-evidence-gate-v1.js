@@ -39,6 +39,9 @@ function parseFeetInches(ft, inch){
 }
 
 function parseRange(raw,label){
+  // Some peer-reviewed horticultural papers use decimal commas (e.g. 16,7–17,9 m).
+  // Normalize only digit-comma-digit tokens; ordinary punctuation remains untouched.
+  raw=String(raw||'').replace(/(\d),(\d)/g,'$1.$2');
   const exactFeetInches=new RegExp(
     label+'\\s*:\\s*([0-9.]+)\\s*ft\\.\\s*([0-9.]+)\\s*in\\.\\s*-\\s*([0-9.]+)\\s*ft\\.\\s*([0-9.]+)\\s*in\\.',
     'i'
@@ -149,7 +152,12 @@ export function extractStructuredMorphologyAndSize(excerpt=''){
   }
 
   const heightM=parseRange(raw,'Height');
-  const spreadM=parseRange(raw,'Width') || parseRange(raw,'Spread');
+  // Crown diameter is the horizontal canopy dimension and is accepted as
+  // spread only when the source publishes an explicit two-ended range.
+  const spreadM=parseRange(raw,'Width')
+    || parseRange(raw,'Spread')
+    || parseRange(raw,'Crown Diameter')
+    || parseRange(raw,'Diameter of Crown');
 
   return Object.freeze({
     version:MORPHOLOGY_SIZE_EVIDENCE_GATE_VERSION,
