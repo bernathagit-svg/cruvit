@@ -119,7 +119,8 @@
     "sea-buckthorn": "taxon:hippophae-rhamnoides",
     "common-jasmine": "taxon:jasminum-officinale",
     "garden-peony": "taxon:paeonia-lactiflora",
-    "green-bean": "taxon:phaseolus-vulgaris"
+    "green-bean": "taxon:phaseolus-vulgaris",
+    "soursop": "taxon:annona-muricata"
   },
   "expectedAccounting": {
     "RUNTIME_AUTHORITY_READY": 13,
@@ -473,6 +474,52 @@
       "authorityVersion": "botanical-size-authority-v1",
       "runtimeWired": false,
       "meterTruth": false
+    },
+    {
+      "botanicalTaxonId": "taxon:annona-muricata",
+      "canonicalSlugAliases": [
+        "soursop"
+      ],
+      "scientificName": "Annona muricata",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "soursop__pslbg-annona-muricata-size__mature-size-full-catalog-v1",
+      "selectedSpreadEvidenceRef": "soursop__pslbg-annona-muricata-size__mature-size-full-catalog-v1",
+      "selectedSource": "soursop__pslbg-annona-muricata-size__mature-size-full-catalog-v1",
+      "normalizedRange": {
+        "heightM": {
+          "min": 4.572,
+          "max": 6.096
+        },
+        "spreadM": {
+          "min": 3.6576,
+          "max": 4.572
+        },
+        "ready": true,
+        "evidenceClass": "SOURCE_SUPPORTED"
+      },
+      "provenanceEvidenceIds": [
+        "soursop__pslbg-annona-muricata-size__mature-size-full-catalog-v1"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": false,
+        "reasons": []
+      },
+      "gardenDesignFallback": null,
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false
     },
     {
       "botanicalTaxonId": "taxon:artocarpus-altilis",
