@@ -281,14 +281,17 @@ export function buildAuthorityGateSummary() {
   const slugMap = slugToBotanicalTaxonId();
   const fullDoesNotOverride =
     cypress?.FULL_SIZE_READY === true
-    && cypress?.runtimeAuthority === RUNTIME_AUTHORITY.CONFLICT_HOLD
-    && magnolia?.FULL_SIZE_READY === true
-    && magnolia?.runtimeAuthority === RUNTIME_AUTHORITY.CONFLICT_HOLD;
+    && cypress?.runtimeAuthority === RUNTIME_AUTHORITY.CONFLICT_HOLD;
+  const structuredSameSourcePrecedenceApplied =
+    magnolia?.FULL_SIZE_READY === true
+    && magnolia?.runtimeAuthority === RUNTIME_AUTHORITY.READY
+    && magnolia?.conflictReviewOutcome === 'STRUCTURED_DIMENSIONS_PRECEDENCE';
   const onePrimary = authority.every((row) => Object.values(RUNTIME_AUTHORITY).includes(row.runtimeAuthority));
   const pass =
     exclusive
     && onePrimary
     && fullDoesNotOverride
+    && structuredSameSourcePrecedenceApplied
     && citrus.length === 1
     && slugMap.orange === 'taxon:citrus-sinensis'
     && slugMap['sweet-orange'] === 'taxon:citrus-sinensis'
@@ -310,6 +313,7 @@ export function buildAuthorityGateSummary() {
     RUNTIME_AUTHORITY_CONFLICT_HOLD: bucket(authority, RUNTIME_AUTHORITY.CONFLICT_HOLD),
     RUNTIME_AUTHORITY_EVIDENCE_GAP: bucket(authority, RUNTIME_AUTHORITY.EVIDENCE_GAP),
     fullSizeReadyDoesNotOverrideConflict: fullDoesNotOverride,
+    structuredSameSourcePrecedenceApplied,
     orangeSweetOrangeSameTaxon: slugMap.orange === slugMap['sweet-orange'],
     spend: { openaiCalls: 0, imageGeneration: 0, paidBotanicalAcquisitionUsd: 0, additionalSpendUsd: 0, newSourcing: 0 }
   };
