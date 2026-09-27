@@ -138,3 +138,36 @@ test('does not invent metric range from RHS single maximum wording',()=>{
   assert.equal(r.matureSize.heightM,null);
   assert.equal(r.matureSize.spreadM,null);
 });
+
+
+test('approved packet research sources outrank stale canonical sources', async()=>{
+  const { mergeMorphologyResearchSources } = await import('../netlify/functions/morphology-size-research.mjs');
+  const row={
+    climate_traits:{plantKnowledge:{sources:[
+      {sourceId:'old-source',url:'https://example.com/old',title:'Old source',authorityTier:'horticultural_society'}
+    ]}},
+    provenance:[]
+  };
+  const packetSources=[
+    {sourceId:'new-source',url:'https://example.com/new',title:'New source',authorityTier:'horticultural_society'}
+  ];
+  const sources=mergeMorphologyResearchSources(row,packetSources);
+  assert.equal(sources[0].sourceId,'new-source');
+  assert.equal(sources[1].sourceId,'old-source');
+});
+
+test('approved packet research source overlay deduplicates identical URLs', async()=>{
+  const { mergeMorphologyResearchSources } = await import('../netlify/functions/morphology-size-research.mjs');
+  const row={
+    climate_traits:{plantKnowledge:{sources:[
+      {sourceId:'canonical-copy',url:'https://example.com/same',title:'Canonical copy',authorityTier:'university_extension'}
+    ]}},
+    provenance:[]
+  };
+  const packetSources=[
+    {sourceId:'packet-copy',url:'https://example.com/same',title:'Packet copy',authorityTier:'university_extension'}
+  ];
+  const sources=mergeMorphologyResearchSources(row,packetSources);
+  assert.equal(sources.length,1);
+  assert.equal(sources[0].sourceId,'packet-copy');
+});
