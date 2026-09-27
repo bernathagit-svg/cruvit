@@ -1,0 +1,213 @@
+{
+  "contract": "plant-visual-production-wave-execution-manifest-v1",
+  "runId": "cruvit-full-catalog-visual-completion-batch1-2026-09-27-v1",
+  "createdAt": "2026-09-27",
+  "source": {
+    "planner": "plant-visual-variant-gap-plan-v1",
+    "selectionRule": "Eight exact generationAllowed=true required variants; excludes scale-context jobs, owner-review-only jobs, identity-blocked rows, and already-covered variants.",
+    "canonicalSlugs": [
+      "bay-laurel",
+      "blackcurrant",
+      "blue-gum",
+      "common-lilac",
+      "common-myrtle",
+      "common-thyme"
+    ]
+  },
+  "bounded": true,
+  "jobCount": 8,
+  "plantCount": 6,
+  "canonicalSlugs": [
+    "bay-laurel",
+    "blackcurrant",
+    "blue-gum",
+    "common-lilac",
+    "common-myrtle",
+    "common-thyme"
+  ],
+  "candidateStorage": {
+    "backend": "cloudflare-r2",
+    "bucketEnv": "PLANT_VISUAL_R2_CANDIDATES_BUCKET",
+    "immutableKeyPattern": "candidates/{runId}/{canonicalSlug}/{assetId}__{sha256}.png"
+  },
+  "executionPolicy": {
+    "provider": "openai-images-api",
+    "model": "gpt-image-2",
+    "maxJobs": 8,
+    "maxCalls": 8,
+    "maxRetries": 0,
+    "registryWritesAllowed": false,
+    "productionWritesAllowed": false,
+    "ownerSpendApprovalRequired": true,
+    "approvalArtifactContract": "plant-visual-production-wave-spend-approval-v1",
+    "fullPlantOnboardingRequiredBeforePaidGeneration": true
+  },
+  "spendPreflight": {
+    "mediumJobs": 8,
+    "highJobs": 0,
+    "projectedMediumCallUsd": 0.091,
+    "projectedMaximumSpendUsd": 0.728,
+    "label": "PREAPPROVAL_ESTIMATE_NOT_LIVE_QUOTE"
+  },
+  "jobs": [
+    {
+      "jobId": "bay-laurel__mature__shrub__vegetative__v1",
+      "canonicalSlug": "bay-laurel",
+      "scientific": "Laurus nobilis",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "reason": "BASELINE_MATURE_VEGETATIVE",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "blackcurrant__mature__shrub__vegetative__v1",
+      "canonicalSlug": "blackcurrant",
+      "scientific": "Ribes nigrum",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "reason": "BASELINE_MATURE_VEGETATIVE",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "blackcurrant__mature__shrub__fruiting__v1",
+      "canonicalSlug": "blackcurrant",
+      "scientific": "Ribes nigrum",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "fruiting",
+      "reason": "FRUITING_VISUALLY_SIGNIFICANT",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "FRUITING_VISUALLY_SIGNIFICANT"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "blue-gum__mature__tree__vegetative__v1",
+      "canonicalSlug": "blue-gum",
+      "scientific": "Eucalyptus globulus",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "reason": "BASELINE_MATURE_VEGETATIVE",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "blue-gum__young__tree__vegetative__v1",
+      "canonicalSlug": "blue-gum",
+      "scientific": "Eucalyptus globulus",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "young",
+      "phenology": "vegetative",
+      "reason": "GROWTH_ARCHITECTURE_CHANGE",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "GROWTH_ARCHITECTURE_CHANGE"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "common-lilac__mature__shrub__vegetative__v1",
+      "canonicalSlug": "common-lilac",
+      "scientific": "Syringa vulgaris",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "reason": "BASELINE_MATURE_VEGETATIVE",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "common-myrtle__mature__shrub__vegetative__v1",
+      "canonicalSlug": "common-myrtle",
+      "scientific": "Myrtus communis",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "reason": "BASELINE_MATURE_VEGETATIVE",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "placementScaleHold": false
+    },
+    {
+      "jobId": "common-thyme__mature__shrub__vegetative__v1",
+      "canonicalSlug": "common-thyme",
+      "scientific": "Thymus vulgaris",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "reason": "BASELINE_MATURE_VEGETATIVE",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "placementScaleHold": false
+    }
+  ],
+  "excludedJobs": [],
+  "safety": {
+    "noDuplicateGeneration": true,
+    "noFakeSeasonVariants": true,
+    "evergreenDormantGenerationForbidden": true,
+    "fullPlantOnboardingRequired": true
+  }
+}
