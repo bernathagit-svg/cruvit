@@ -7,9 +7,10 @@ const garden=document.getElementById('cardGarden');
 const doctor=document.getElementById('cardDoctor');
 const plantId=document.getElementById('cardPlantId');
 const smart=document.getElementById('cardSmart');
+const shop=document.getElementById('cardShop');
 
-const cards=[design,garden,doctor,plantId,smart];
-const keys=['design','garden','doctor','plantId','smart'];
+const cards=[design,garden,doctor,plantId,smart,shop];
+const keys=['design','garden','doctor','plantId','smart','shop'];
 
 let index=1;
 let dragging=false;
