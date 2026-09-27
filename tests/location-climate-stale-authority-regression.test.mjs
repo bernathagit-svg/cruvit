@@ -27,6 +27,15 @@ test('setAppLocation does not inherit prior location climate metadata after coor
   assert.match(src,/payload\.structuralClimate=null/);
 });
 
+test('confirmed location with missing climate must not fall back to Western Galilee Mediterranean',()=>{
+  const start=app.indexOf('function ensureGardenLocation()');
+  const end=app.indexOf('function gardenLocationLabel()',start);
+  const src=app.slice(start,end);
+  assert.match(src,/mayUseLegacyDefaultClimate/);
+  assert.match(src,/locationSource==='default'/);
+  assert.doesNotMatch(src,/if\(!data\.gardenLocation\.climate\) data\.gardenLocation\.climate=legacyClimate\|\|DEFAULT_GARDEN_LOCATION\.climate/);
+});
+
 test('missing structural climate authority cannot yield a positive location recommendation',()=>{
   const start=app.indexOf('function smartRecEvaluateSuitability(p)');
   const end=app.indexOf('/**\n * Specific Plant Suitability Check V1',start);

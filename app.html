@@ -3713,7 +3713,11 @@ function ensureGardenLocation(){
     };
   }
   if(!data.gardenLocation.label) data.gardenLocation.label=legacyLabel||DEFAULT_GARDEN_LOCATION.label;
-  if(!data.gardenLocation.climate) data.gardenLocation.climate=legacyClimate||DEFAULT_GARDEN_LOCATION.climate;
+  const locationSource=String(data.gardenLocation.source||'').trim().toLowerCase();
+  const mayUseLegacyDefaultClimate=!locationSource||locationSource==='default';
+  if(!data.gardenLocation.climate&&mayUseLegacyDefaultClimate){
+    data.gardenLocation.climate=legacyClimate||DEFAULT_GARDEN_LOCATION.climate;
+  }
   if(!Number.isFinite(Number(data.gardenLocation.lat))) data.gardenLocation.lat=DEFAULT_GARDEN_LOCATION.lat;
   if(!Number.isFinite(Number(data.gardenLocation.lon))) data.gardenLocation.lon=DEFAULT_GARDEN_LOCATION.lon;
   data.location=data.gardenLocation.label;
