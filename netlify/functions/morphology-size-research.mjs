@@ -95,6 +95,16 @@ export function morphologySourceIdentityMatch({body='',scientific='',sourceTitle
   }
   return {ok:false,authority:null};
 }
+export function selectMorphologySizeResearchResult(records=[]){
+  const morphology=records.find(x=>x.ok&&x.morphologySourceSupported&&x.evidence?.morphologyReady)||null;
+  const size=records.find(x=>x.ok&&x.evidence?.matureSize?.ready)||null;
+  if(!morphology&&!size) return null;
+  const base=(morphology||size).evidence;
+  const evidence=size
+    ? {...base,matureSize:size.evidence.matureSize}
+    : base;
+  return {evidence,selectedSource:size||morphology};
+}
 
 export default async(req)=>{
   if(req.method!=='GET') return json(405,{ok:false,code:'METHOD_NOT_ALLOWED'});
@@ -124,9 +134,8 @@ export default async(req)=>{
     }) : {mayBeSourceSupported:false,evidenceClass:'UNKNOWN',reasons:['morphology_not_resolved']};
     records.push({...source,ok:true,httpStatus:fetched.status,truncated:fetched.truncated,identityMatchAuthority:identityMatch.authority,evidence,morphologySourceSupported:morphPolicy.mayBeSourceSupported===true,morphologyPolicyReasons:morphPolicy.reasons||[]});
   }
-  const usable=records.find(x=>x.ok&&x.morphologySourceSupported&&x.evidence?.morphologyReady)
-    || records.find(x=>x.ok&&x.evidence?.matureSize?.ready)
-    || null;
-  return json(200,{ok:true,version:'morphology-size-research-v1',canonicalSlug:slug,scientific,externalRequests,maxExternalRequests:3,paidCalls:0,catalogWrites:0,result:usable?usable.evidence:null,selectedSource:usable?{sourceId:usable.sourceId,url:usable.url,title:usable.title,institution:usable.institution}:null,records});
+  const selected=selectMorphologySizeResearchResult(records);
+  const source=selected?.selectedSource||null;
+  return json(200,{ok:true,version:'morphology-size-research-v1',canonicalSlug:slug,scientific,externalRequests,maxExternalRequests:3,paidCalls:0,catalogWrites:0,result:selected?selected.evidence:null,selectedSource:source?{sourceId:source.sourceId,url:source.url,title:source.title,institution:source.institution}:null,records});
 };
 export const config={path:'/.netlify/functions/morphology-size-research'};
