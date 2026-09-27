@@ -120,7 +120,8 @@
     "common-jasmine": "taxon:jasminum-officinale",
     "garden-peony": "taxon:paeonia-lactiflora",
     "green-bean": "taxon:phaseolus-vulgaris",
-    "soursop": "taxon:annona-muricata"
+    "soursop": "taxon:annona-muricata",
+    "blackberry": "taxon:rubus-fruticosus"
   },
   "expectedAccounting": {
     "RUNTIME_AUTHORITY_READY": 13,
@@ -4237,6 +4238,50 @@
       "gardenDesignFallback": null,
       "authorityVersion": "botanical-size-authority-v1",
       "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:rubus-fruticosus",
+      "canonicalSlugAliases": [
+        "blackberry"
+      ],
+      "scientificName": "Rubus fruticosus",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "defaultPreviewScenario": null,
+      "selectedHeightEvidenceRef": null,
+      "selectedSpreadEvidenceRef": null,
+      "selectedSource": null,
+      "normalizedRange": null,
+      "provenanceEvidenceIds": [
+        "blackberry__rhs__oregon-thornless-size-context",
+        "blackberry__rhs__ouachita-size-context",
+        "blackberry__rhs__black-satin-size-context"
+      ],
+      "conflictingEvidenceIds": null,
+      "partialAnchor": null,
+      "spreadSourceSupported": false,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": true,
+        "rootstockSensitive": false,
+        "cultivarVariable": true,
+        "maintainedForm": true,
+        "notFinalPersonalGardenSize": true,
+        "reasons": [
+          "cultivar sensitive",
+          "cultivar variable",
+          "maintained/trained form variable",
+          "not final personal garden size"
+        ]
+      },
+      "gardenDesignFallback": "Estimated size + manual resize",
+      "authorityVersion": "botanical-size-authority-v1",
+      "runtimeWired": false,
+      "botanicalEvidenceRemainsValid": true,
+      "mayChooseUniversalPersonalGardenSize": false
     },
     {
       "botanicalTaxonId": "taxon:rubus-idaeus",
