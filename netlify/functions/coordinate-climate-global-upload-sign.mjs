@@ -2,7 +2,8 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import authority from '../../data/coordinate-climate/v2/coverage/global-v1/upload-authority-map.json' with { type:'json' };
 import manifest from '../../data/coordinate-climate/v2/coverage/global-v1/manifest.json' with { type:'json' };
-import { headClimateObject } from '../../modules/personal-domain/coordinate-climate-global-object-storage-v1.js';
+import crypto from 'node:crypto';
+import { headClimateObject, fetchClimateObjectBytes } from '../../modules/personal-domain/coordinate-climate-global-object-storage-v1.js';
 
 const BAKE=String(manifest.globalBakeId||'');
 const TILE_PREFIX='climate/global-v1/'+BAKE+'/tiles/';
@@ -31,12 +32,25 @@ export default async(req)=>{
     if(!(bytes>0)) return json(409,{ok:false,code:'BYTE_COUNT_REQUIRED',name});
     const key=TILE_PREFIX+name;
     const head=await headClimateObject(key);
-    let nativeChecksumHex='';
-    try{nativeChecksumHex=head?.checksumSHA256?Buffer.from(String(head.checksumSHA256),'base64').toString('hex'):'';}catch{}
-    const checksumMatches=String(head?.sha256||'').toLowerCase()===expected||nativeChecksumHex===expected;
-    if(head.ok&&checksumMatches&&Number(head.contentLength)===bytes){
-      results.push({name,key,action:'SKIP_IDENTICAL',bytes});
-      continue;
+    if(head.ok){
+      if(Number(head.contentLength)!==bytes) return json(409,{ok:false,code:'REMOTE_OBJECT_SIZE_CONFLICT',name,expectedBytes:bytes,remoteBytes:Number(head.contentLength)});
+      let remoteMatches=false;
+      const metadataHash=String(head?.sha256||'').toLowerCase();
+      let nativeChecksumHex='';
+      try{nativeChecksumHex=head?.checksumSHA256?Buffer.from(String(head.checksumSHA256),'base64').toString('hex'):'';}catch{}
+      if(metadataHash===expected||nativeChecksumHex===expected){
+        remoteMatches=true;
+      }else{
+        const remote=await fetchClimateObjectBytes(key,{env:process.env,forceR2:true,timeoutMs:12000});
+        if(!remote.ok) return json(502,{ok:false,code:'REMOTE_VERIFY_FETCH_FAILED',name,remoteCode:remote.code});
+        const remoteHash=crypto.createHash('sha256').update(remote.bytes).digest('hex');
+        remoteMatches=remoteHash===expected;
+      }
+      if(remoteMatches){
+        results.push({name,key,action:'SKIP_IDENTICAL',bytes});
+        continue;
+      }
+      return json(409,{ok:false,code:'REMOTE_OBJECT_HASH_CONFLICT',name});
     }
     const checksum=Buffer.from(expected,'hex').toString('base64');
     const cmd=new PutObjectCommand({
