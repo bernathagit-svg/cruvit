@@ -4,15 +4,58 @@ import { evaluateSourceSupportedEligibility, normalizeCatalogSourceType } from '
 
 function json(status,body){return new Response(JSON.stringify(body),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'private, no-store','x-robots-tag':'noindex, nofollow'}});}
 function safeSlug(v){const s=String(v||'').trim().toLowerCase();return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(s)?s:'';}
-function dedupeSources(row){
+function normalizeSource(s){
+  const url=String(s?.url||'').trim();
+  if(!url) return null;
+  return {
+    sourceId:String(s?.sourceId||'').trim()||null,
+    url,
+    title:s?.title||null,
+    institution:s?.institution||s?.publisher||null,
+    sourceType:normalizeCatalogSourceType(s?.sourceType||s?.authorityTier)||null,
+    authorityTier:s?.authorityTier||null
+  };
+}
+export function mergeMorphologyResearchSources(row,packetSources=[]){
   const ct=row?.climate_traits||{},pk=ct?.plantKnowledge||{};
-  const list=[...(Array.isArray(pk.sources)?pk.sources:[]),...(Array.isArray(row?.provenance)?row.provenance:[])];
+  const list=[
+    ...(Array.isArray(packetSources)?packetSources:[]),
+    ...(Array.isArray(pk.sources)?pk.sources:[]),
+    ...(Array.isArray(row?.provenance)?row.provenance:[])
+  ];
   const seen=new Set(),out=[];
-  for(const s of list){
-    const url=String(s?.url||'').trim(); if(!url||seen.has(url)) continue; seen.add(url);
-    out.push({sourceId:String(s?.sourceId||'').trim()||null,url,title:s?.title||null,institution:s?.institution||s?.publisher||null,sourceType:normalizeCatalogSourceType(s?.sourceType||s?.authorityTier)||null,authorityTier:s?.authorityTier||null});
+  for(const raw of list){
+    const s=normalizeSource(raw);
+    if(!s||seen.has(s.url)) continue;
+    seen.add(s.url);
+    out.push(s);
   }
   return out.slice(0,3);
+}
+function packetCandidates(slug){
+  return [
+    `data/catalog-expansion/batches/bulk-batch-1-v1/packets/${slug}.packet.json`,
+    `data/catalog-expansion/batches/bulk-batch-2-v1/packets/${slug}.packet.json`,
+    `data/catalog-expansion/batches/bulk-batch-3-v1/packets/${slug}.packet.json`,
+    `data/catalog-expansion/batches/wave1-selective-v1/packets/${slug}.packet.json`
+  ];
+}
+async function fetchApprovedPacketSources(req,slug){
+  for(const packetPath of packetCandidates(slug)){
+    let res;
+    try{
+      res=await fetch(new URL('/'+packetPath,req.url),{headers:{'cache-control':'no-cache'}});
+    }catch{
+      continue;
+    }
+    if(!res.ok) continue;
+    let packet;
+    try{packet=await res.json();}catch{continue;}
+    if(packet?.identity?.canonicalSlug!==slug) continue;
+    if(packet?.humanApproval?.approvedForIngest!==true) continue;
+    return Array.isArray(packet?.sources)?packet.sources:[];
+  }
+  return [];
 }
 async function fetchBounded(url){
   const res=await fetch(url,{headers:{'user-agent':'CRUVIT-MorphologySizeResearch/1.0 (+https://github.com/bernathagit-svg/cruvit)',accept:'text/html,text/plain,application/xhtml+xml'},redirect:'follow'});
@@ -59,7 +102,8 @@ export default async(req)=>{
   if(!slug) return json(400,{ok:false,code:'SLUG_REQUIRED'});
   let row=null; try{row=await fetchCanonicalCatalogRow(slug);}catch(err){return json(503,{ok:false,code:'CANONICAL_CATALOG_READ_FAILED',errorName:err?.message||null});}
   if(!row) return json(404,{ok:false,code:'CANONICAL_CATALOG_RECORD_MISSING'});
-  const scientific=String(row.scientific_name||'').trim(),sources=dedupeSources(row),records=[]; let externalRequests=0;
+  const packetSources=await fetchApprovedPacketSources(req,slug);
+  const scientific=String(row.scientific_name||'').trim(),sources=mergeMorphologyResearchSources(row,packetSources),records=[]; let externalRequests=0;
   for(const source of sources){
     let fetched; try{fetched=await fetchBounded(source.url);externalRequests+=1;}catch(err){records.push({...source,ok:false,code:'SOURCE_FETCH_FAILED'});continue;}
     if(!fetched.ok){records.push({...source,ok:false,code:'SOURCE_FETCH_UNUSABLE',httpStatus:fetched.status});continue;}
