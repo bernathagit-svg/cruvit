@@ -171,3 +171,31 @@ test('approved packet research source overlay deduplicates identical URLs', asyn
   assert.equal(sources.length,1);
   assert.equal(sources[0].sourceId,'packet-copy');
 });
+
+
+test('morphology research combines morphology from one source with mature size from another', async()=>{
+  const { selectMorphologySizeResearchResult } = await import('../netlify/functions/morphology-size-research.mjs');
+  const records=[
+    {
+      sourceId:'size-source',ok:true,morphologySourceSupported:false,
+      evidence:{
+        morphologyReady:false,
+        visualForm:'unknown',
+        matureSize:{heightM:{min:4,max:8},spreadM:{min:1.5,max:2.5},ready:true,evidenceClass:'SOURCE_SUPPORTED'}
+      }
+    },
+    {
+      sourceId:'morph-source',ok:true,morphologySourceSupported:true,
+      evidence:{
+        morphologyReady:true,
+        visualForm:'climber',
+        architectureModes:['climber'],
+        matureSize:{heightM:null,spreadM:null,ready:false,evidenceClass:'UNKNOWN'}
+      }
+    }
+  ];
+  const selected=selectMorphologySizeResearchResult(records);
+  assert.equal(selected.evidence.visualForm,'climber');
+  assert.equal(selected.evidence.matureSize.ready,true);
+  assert.equal(selected.selectedSource.sourceId,'size-source');
+});
