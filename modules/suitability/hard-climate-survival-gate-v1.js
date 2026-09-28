@@ -10,7 +10,7 @@
  * Not a second climate engine: callers still use smartRecEvaluateSuitability.
  * Not plant- or place-specific.
  */
-export const HARD_CLIMATE_SURVIVAL_GATE_VERSION = '1.1.3';
+export const HARD_CLIMATE_SURVIVAL_GATE_VERSION = '1.1.4';
 
 const RISK_RANK = Object.freeze({ unknown: 0, low: 1, medium: 2, high: 3 });
 
@@ -189,7 +189,11 @@ export function evaluateHardClimateSurvival({
     frostHard ||
     (coldLow && (frostHard || frostSens === 'medium' || frostSens === ''));
 
-  if (frostHard && ambientRisk !== 'low' && ambientRisk !== 'unknown') {
+  // A medium freeze-risk signal can come from a coldest-month mean minimum below 5°C.
+  // That is meaningful caution, but it is not by itself proof of lethal frost.
+  // Reserve the hard survival block for high / lethal ambient evidence; softer
+  // medium-risk constraints are handled by the plant-discriminated baseline.
+  if (frostHard && ambientRisk === 'high') {
     return Object.assign({}, base, {
       hardBlocked: true,
       reason: 'Frost risk is too high for this plant.',
