@@ -27,6 +27,7 @@ export default async(req)=>{
   if(names.length!==Number(manifest.tileCount)) return json(500,{ok:false,code:'AUTHORITY_COUNT_MISMATCH',authorityCount:names.length,manifestTileCount:Number(manifest.tileCount)});
   let body={}; try{body=await req.json()}catch{return json(400,{ok:false,code:'JSON_REQUIRED'})}
   const files=Array.isArray(body.files)?body.files:[];
+  const assumeMissing=body.assumeMissing===true;
   if(!files.length||files.length>100) return json(400,{ok:false,code:'FILES_1_TO_100_REQUIRED'});
   const s3=client();
   let results;
@@ -47,7 +48,7 @@ export default async(req)=>{
     if(claimedMd5!==expectedMd5){const e=new Error('MD5_NOT_AUTHORIZED');e.http=409;e.payload={name};throw e;}
     if(!(bytes>0)||bytes!==expectedBytes){const e=new Error('BYTE_COUNT_MISMATCH');e.http=409;e.payload={name,expectedBytes};throw e;}
     const key=TILE_PREFIX+name;
-    const head=await headClimateObject(key);
+    const head=assumeMissing?{ok:false,code:'ASSUME_MISSING_FASTPATH'}:await headClimateObject(key);
     if(head.ok){
       if(Number(head.contentLength)!==bytes){const e=new Error('REMOTE_OBJECT_SIZE_CONFLICT');e.http=409;e.payload={name,expectedBytes:bytes,remoteBytes:Number(head.contentLength)};throw e;}
       let remoteMatches=false;
@@ -87,6 +88,6 @@ export default async(req)=>{
   }catch(err){
     return json(Number(err?.http)||500,{ok:false,code:String(err?.message||'SIGNER_FAILED'),...(err?.payload||{})});
   }
-  return json(200,{ok:true,contract:'cruvit-global-climate-upload-sign-v1.1',globalBakeId:BAKE,authorityCount:names.length,results});
+  return json(200,{ok:true,contract:'cruvit-global-climate-upload-sign-v1.2',globalBakeId:BAKE,authorityCount:names.length,assumeMissing,results});
 };
 export const config={path:'/.netlify/functions/coordinate-climate-global-upload-sign',timeout:20};
