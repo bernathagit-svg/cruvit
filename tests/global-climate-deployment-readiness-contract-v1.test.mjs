@@ -14,8 +14,11 @@ test('full R2 uploader is executable rather than checkpoint stub',()=>{
   assert.doesNotMatch(uploader,/FULL_UPLOAD_NOT_EXECUTED_IN_THIS_CHECKPOINT/);
 });
 
-test('GLOBAL_READY requires verified deployment manifest',()=>{
+test('GLOBAL_READY requires the authoritative full bake, not a self-declared partial manifest',()=>{
   assert.match(readiness,/deployment-manifest/);
+  assert.match(readiness,/GLOBAL_CLIMATE_AUTHORITATIVE_BAKE_CONTRACT/);
+  assert.match(readiness,/expectedLandTileCount:61964/);
+  assert.match(readiness,/authoritativeBakeMatches/);
   assert.match(readiness,/verifiedRemoteTileCount/);
   assert.match(readiness,/FULL_REMOTE_KEY_SET_MATCH/);
   assert.match(readiness,/PARTIAL_COVERAGE/);

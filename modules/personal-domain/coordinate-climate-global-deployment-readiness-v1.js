@@ -12,7 +12,12 @@ import {
 } from './coordinate-climate-global-object-storage-v1.js';
 import { GLOBAL_BAKE_ID_DEFAULT } from './coordinate-climate-global-lookup-v2.js';
 
-export const GLOBAL_CLIMATE_DEPLOYMENT_READINESS_VERSION='global-climate-deployment-readiness-v1';
+export const GLOBAL_CLIMATE_DEPLOYMENT_READINESS_VERSION='global-climate-deployment-readiness-v1.1';
+export const GLOBAL_CLIMATE_AUTHORITATIVE_BAKE_CONTRACT=Object.freeze({
+  globalBakeId:'bake-2026-09-01-global-v1-vpd-scale',
+  manifestSha256:'a5994b1184cf3fd62eefbd764a7362a234d40db762345124f967773732a3a5b1',
+  expectedLandTileCount:61964
+});
 export const GLOBAL_CLIMATE_COVERAGE_STATE=Object.freeze({
   GLOBAL_READY:'GLOBAL_READY',
   PARTIAL_COVERAGE:'PARTIAL_COVERAGE',
@@ -76,11 +81,18 @@ export async function readGlobalClimateDeploymentReadiness({
 
   const expected=Number(manifest.expectedLandTileCount);
   const verified=Number(manifest.verifiedRemoteTileCount);
+  const bakeContract=GLOBAL_CLIMATE_AUTHORITATIVE_BAKE_CONTRACT;
+  const authoritativeBakeMatches=
+    String(globalBakeId)===bakeContract.globalBakeId
+    &&String(manifest.globalBakeId||'')===bakeContract.globalBakeId
+    &&String(manifest.manifestSha256||'')===bakeContract.manifestSha256
+    &&expected===bakeContract.expectedLandTileCount
+    &&verified===bakeContract.expectedLandTileCount;
   const ready=
     manifest.kind==='cruvit-global-climate-r2-deployment-v1'
     &&manifest.globalReady===true
-    &&String(manifest.globalBakeId||'')===String(globalBakeId)
-    &&Number.isInteger(expected)&&expected>0
+    &&authoritativeBakeMatches
+    &&Number.isInteger(expected)&&expected===bakeContract.expectedLandTileCount
     &&verified===expected
     &&manifest.verification==='FULL_REMOTE_KEY_SET_MATCH';
 
@@ -93,6 +105,8 @@ export async function readGlobalClimateDeploymentReadiness({
     deploymentManifestKey:key,
     expectedLandTileCount:Number.isFinite(expected)?expected:null,
     verifiedRemoteTileCount:Number.isFinite(verified)?verified:null,
+    authoritativeBakeContract:bakeContract,
+    authoritativeBakeMatches,
     completedAt:manifest.completedAt||null
   };
   cache=out;cacheAt=now;return out;
