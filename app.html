@@ -6359,16 +6359,29 @@ function smartRecClimateProfile(){
     structuralColdRisk:structuralClimate?.structuralColdRisk||null
   };
   const isFrostFreeGrowingClimate=climateSuitabilityV1IsFrostFreeGrowingClimate(frostFreeArgs);
-  const alwaysHot=thermalRegime==='year-round-warm'
-    ||(resolvedBroad==='tropical'&&isFrostFreeGrowingClimate&&thermalRegime!=='cool-highland'&&thermalRegime!=='cool-seasonal'&&thermalRegime!=='frost-prone')
-    ||(Number.isFinite(forecastPeak)&&forecastPeak>=30&&Number.isFinite(forecastLow)&&forecastLow>=18&&thermalRegime!=='cool-highland'&&thermalRegime!=='cool-seasonal');
-  const coolSeasonSignal=resolvedBroad==='temperate'||resolvedBroad==='cool-temperate'||resolvedBroad==='mediterranean'||resolvedBroad==='highland-tropical'
-    ||thermalRegime==='cool-highland'||thermalRegime==='cool-seasonal'||thermalRegime==='frost-prone'
-    ||(Number.isFinite(Number(coldestMonthMeanMinC))&&Number(coldestMonthMeanMinC)<10)
-    ||(Number.isFinite(forecastLow)&&forecastLow<=12);
-  const drySeasonSignal=resolvedBroad==='mediterranean'||resolvedBroad==='arid'
-    ||structuralClimate?.drySeasonSignal===true
-    ||alerts.includes('dry-heat');
+  const structuralKnown=structuralClimate?.status==='known';
+  const structuralAlwaysHot=
+    structuralKnown && typeof structuralClimate?.alwaysHot==='boolean'
+      ? structuralClimate.alwaysHot
+      : null;
+  const alwaysHot=structuralAlwaysHot!=null
+    ?structuralAlwaysHot
+    :thermalRegime==='year-round-warm'
+      ||(resolvedBroad==='tropical'&&isFrostFreeGrowingClimate&&thermalRegime!=='cool-highland'&&thermalRegime!=='cool-seasonal'&&thermalRegime!=='frost-prone')
+      ||(Number.isFinite(forecastPeak)&&forecastPeak>=30&&Number.isFinite(forecastLow)&&forecastLow>=18&&thermalRegime!=='cool-highland'&&thermalRegime!=='cool-seasonal');
+  const structuralCoolSeason=
+    structuralKnown && typeof structuralClimate?.coolSeasonSignal==='boolean'
+      ? structuralClimate.coolSeasonSignal
+      : null;
+  const coolSeasonSignal=structuralCoolSeason!=null
+    ?structuralCoolSeason
+    :resolvedBroad==='temperate'||resolvedBroad==='cool-temperate'||resolvedBroad==='mediterranean'||resolvedBroad==='highland-tropical'
+      ||thermalRegime==='cool-highland'||thermalRegime==='cool-seasonal'||thermalRegime==='frost-prone'
+      ||(Number.isFinite(Number(coldestMonthMeanMinC))&&Number(coldestMonthMeanMinC)<10)
+      ||(Number.isFinite(forecastLow)&&forecastLow<=12);
+  const drySeasonSignal=structuralKnown
+    ?structuralClimate?.drySeasonSignal===true
+    :resolvedBroad==='mediterranean'||resolvedBroad==='arid'||alerts.includes('dry-heat');
   let humiditySignal=resolvedBroad==='tropical'?'high':(resolvedBroad==='highland-tropical'?'medium':(resolvedBroad==='subtropical'?'medium':((resolvedBroad==='mediterranean'||resolvedBroad==='arid')?'low':'medium')));
   if(structuralClimate?.status==='known'&&structuralClimate.humiditySignal){
     humiditySignal=structuralClimate.humiditySignal;
