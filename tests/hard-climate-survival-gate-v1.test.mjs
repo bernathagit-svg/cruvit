@@ -25,6 +25,7 @@ import {
   suppressStrongBandsWhenHardFrost
 } from '../modules/suitability/hard-climate-survival-gate-v1.js';
 import { formatSmartRecOutcomeBand } from '../modules/smart-recommendations/smart-rec-garden-intelligence-v1.js';
+import { assessPlantClimateColdSurvival } from '../modules/personal-domain/plant-climate-suitability-baseline-v1.js';
 import {
   resolveGardenStructuralClimateFromCoordinateV2,
   resetCoordinateClimateRuntimeCounters,
@@ -281,6 +282,46 @@ test('cool-seasonal winters are not treated as lethal frost when month-min stays
     ALPINE_FREEZE
   );
   assert.equal(tropical.verdict.hardBlocked, true);
+});
+
+test('medium freeze risk from monthly mean minima is caution, not lethal-frost proof', () => {
+  const mediumSignal = {
+    freezingRisk: 'medium',
+    coldestMonthMeanMinC: 4.9,
+    thermalRegime: 'cool-seasonal',
+    isFrostFreeGrowingClimate: false,
+    structuralClimateStatus: 'known'
+  };
+  assert.equal(elevateAmbientFreezingRisk(mediumSignal), 'medium');
+  const verdict = evaluateHardClimateSurvival({
+    meta: TENDER,
+    climateProfile: mediumSignal,
+    protectionContext: { plantingMode: 'ground' }
+  });
+  assert.equal(verdict.hardBlocked, false);
+
+  const baseline = assessPlantClimateColdSurvival(TENDER, mediumSignal);
+  assert.equal(baseline.survivalHint, 'constrained');
+  assert.equal(baseline.authority, 'frostSensitivity-high-medium-risk-bounded');
+  assert.ok(baseline.survivalFit > 25);
+});
+
+test('high freeze risk still hard-blocks the same tender plant', () => {
+  const highSignal = {
+    freezingRisk: 'high',
+    coldestMonthMeanMinC: -0.1,
+    thermalRegime: 'frost-prone',
+    isFrostFreeGrowingClimate: false,
+    structuralClimateStatus: 'known'
+  };
+  const verdict = evaluateHardClimateSurvival({
+    meta: TENDER,
+    climateProfile: highSignal,
+    protectionContext: { plantingMode: 'ground' }
+  });
+  assert.equal(verdict.hardBlocked, true);
+  const baseline = assessPlantClimateColdSurvival(TENDER, highSignal);
+  assert.equal(baseline.survivalHint, 'unreliable');
 });
 
 test('H. UNKNOWN / missing frost evidence is not optimistic in a freezing climate', () => {
