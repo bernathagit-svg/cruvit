@@ -12,6 +12,13 @@ function json(status,body){return new Response(JSON.stringify(body),{status,head
 function tileName(s){return /^chelsa30s-t64_\d+_\d+\.cctb\.gz$/.test(String(s||''))}
 function hash(s){return /^[a-f0-9]{64}$/i.test(String(s||''))}
 function client(){return new S3Client({region:'auto',endpoint:'https://'+env('R2_ACCOUNT_ID')+'.r2.cloudflarestorage.com',credentials:{accessKeyId:env('R2_ACCESS_KEY_ID'),secretAccessKey:env('R2_SECRET_ACCESS_KEY')}})}
+async function mapLimit(items,limit,fn){
+  const out=new Array(items.length);let next=0;
+  const workers=Array.from({length:Math.min(limit,items.length)},async()=>{
+    while(true){const i=next++;if(i>=items.length)return;out[i]=await fn(items[i],i)}
+  });
+  await Promise.all(workers);return out;
+}
 
 export default async(req)=>{
   if(req.method!=='POST') return json(405,{ok:false,code:'POST_REQUIRED'});
@@ -21,8 +28,10 @@ export default async(req)=>{
   let body={}; try{body=await req.json()}catch{return json(400,{ok:false,code:'JSON_REQUIRED'})}
   const files=Array.isArray(body.files)?body.files:[];
   if(!files.length||files.length>100) return json(400,{ok:false,code:'FILES_1_TO_100_REQUIRED'});
-  const s3=client(); const results=[];
-  for(const f of files){
+  const s3=client();
+  let results;
+  try{
+    results=await mapLimit(files,20,async(f)=>{
     const name=String(f?.name||'').trim();
     const claimedHash=String(f?.sha256||'').toLowerCase();
     const bytes=Number(f?.bytes);
@@ -31,14 +40,16 @@ export default async(req)=>{
     const expectedMd5=String(record?.md5||'').toLowerCase();
     const expectedBytes=Number(record?.bytes);
     const claimedMd5=String(f?.md5||'').toLowerCase();
-    if(!tileName(name)||!hash(expected)||!(/^[a-f0-9]{32}$/i.test(expectedMd5))) return json(403,{ok:false,code:'FILE_NOT_IN_AUTHORITY',name});
-    if(claimedHash!==expected) return json(409,{ok:false,code:'HASH_NOT_AUTHORIZED',name});
-    if(claimedMd5!==expectedMd5) return json(409,{ok:false,code:'MD5_NOT_AUTHORIZED',name});
-    if(!(bytes>0)||bytes!==expectedBytes) return json(409,{ok:false,code:'BYTE_COUNT_MISMATCH',name,expectedBytes});
+    if(!tileName(name)||!hash(expected)||!(/^[a-f0-9]{32}$/i.test(expectedMd5))){
+      const e=new Error('FILE_NOT_IN_AUTHORITY');e.http=403;e.payload={name};throw e;
+    }
+    if(claimedHash!==expected){const e=new Error('HASH_NOT_AUTHORIZED');e.http=409;e.payload={name};throw e;}
+    if(claimedMd5!==expectedMd5){const e=new Error('MD5_NOT_AUTHORIZED');e.http=409;e.payload={name};throw e;}
+    if(!(bytes>0)||bytes!==expectedBytes){const e=new Error('BYTE_COUNT_MISMATCH');e.http=409;e.payload={name,expectedBytes};throw e;}
     const key=TILE_PREFIX+name;
     const head=await headClimateObject(key);
     if(head.ok){
-      if(Number(head.contentLength)!==bytes) return json(409,{ok:false,code:'REMOTE_OBJECT_SIZE_CONFLICT',name,expectedBytes:bytes,remoteBytes:Number(head.contentLength)});
+      if(Number(head.contentLength)!==bytes){const e=new Error('REMOTE_OBJECT_SIZE_CONFLICT');e.http=409;e.payload={name,expectedBytes:bytes,remoteBytes:Number(head.contentLength)};throw e;}
       let remoteMatches=false;
       const metadataHash=String(head?.sha256||'').toLowerCase();
       let nativeChecksumHex='';
@@ -47,15 +58,12 @@ export default async(req)=>{
         remoteMatches=true;
       }else{
         const remote=await fetchClimateObjectBytes(key,{env:process.env,forceR2:true,timeoutMs:12000});
-        if(!remote.ok) return json(502,{ok:false,code:'REMOTE_VERIFY_FETCH_FAILED',name,remoteCode:remote.code});
+        if(!remote.ok){const e=new Error('REMOTE_VERIFY_FETCH_FAILED');e.http=502;e.payload={name,remoteCode:remote.code};throw e;}
         const remoteHash=crypto.createHash('sha256').update(remote.bytes).digest('hex');
         remoteMatches=remoteHash===expected;
       }
-      if(remoteMatches){
-        results.push({name,key,action:'SKIP_IDENTICAL',bytes});
-        continue;
-      }
-      return json(409,{ok:false,code:'REMOTE_OBJECT_HASH_CONFLICT',name});
+      if(remoteMatches) return {name,key,action:'SKIP_IDENTICAL',bytes};
+      const e=new Error('REMOTE_OBJECT_HASH_CONFLICT');e.http=409;e.payload={name};throw e;
     }
     const contentMd5=Buffer.from(expectedMd5,'hex').toString('base64');
     const cmd=new PutObjectCommand({
@@ -69,13 +77,16 @@ export default async(req)=>{
       Metadata:{sha256:expected,md5:expectedMd5,'cruvit-global-bake-id':BAKE}
     });
     const url=await getSignedUrl(s3,cmd,{expiresIn:900});
-    results.push({name,key,action:'PUT',bytes,url,headers:{
+    return {name,key,action:'PUT',bytes,url,headers:{
       'content-type':'application/gzip',
       'cache-control':'public, max-age=31536000, immutable',
       'content-md5':contentMd5,
       'if-none-match':'*'
-    }});
+    }};
+    });
+  }catch(err){
+    return json(Number(err?.http)||500,{ok:false,code:String(err?.message||'SIGNER_FAILED'),...(err?.payload||{})});
   }
-  return json(200,{ok:true,contract:'cruvit-global-climate-upload-sign-v1',globalBakeId:BAKE,authorityCount:names.length,results});
+  return json(200,{ok:true,contract:'cruvit-global-climate-upload-sign-v1.1',globalBakeId:BAKE,authorityCount:names.length,results});
 };
 export const config={path:'/.netlify/functions/coordinate-climate-global-upload-sign',timeout:20};
