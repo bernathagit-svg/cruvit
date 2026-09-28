@@ -19,7 +19,10 @@ export const IMAGE_BLOCKED = 'IMAGE_BLOCKED';
 /** Wave 1 species packets collapsed onto existing canonicals — never separate image authority. */
 export const SPECIES_ALIAS_ONTO_CANONICAL = Object.freeze({
   'english-lavender': 'lavender',
+  spearmint: 'mint',
+  'common-jasmine': 'jasmine',
   'bigleaf-hydrangea': 'hydrangea',
+  'lesser-bougainvillea': 'bougainvillea',
   'bell-pepper': 'sweet-pepper'
 });
 
@@ -164,6 +167,26 @@ function exactLicensedCacheMedia(root, { slug, scientific } = {}) {
     }
   }
   return null;
+}
+
+export function resolveActiveCanonicalCatalogMedia(repoRoot = DEFAULT_ROOT, record = {}) {
+  const root = repoRoot;
+  const slug = String(record?.slug || '').trim().toLowerCase();
+  const scientific = String(record?.scientific || '').trim();
+  if (!slug) return null;
+
+  const seedDoc = readJson(path.join(root, 'data', 'plants.seed.json'));
+  const seedPlant = (seedDoc.plants || []).find((p) => String(p?.slug || '').trim().toLowerCase() === slug) || null;
+  const indexMedia = seedDoc.catalogMediaByCanonicalSlug?.[slug] || null;
+  const seedMedia = seedPlant?.media || seedPlant?.catalogMedia || null;
+  if (seedMedia?.imageStatus === IMAGE_BLOCKED) return seedMedia;
+  if (seedMedia && isApprovedCatalogMediaRecord(seedMedia, seedPlant).ok) return seedMedia;
+  if (indexMedia?.imageStatus === IMAGE_BLOCKED) return indexMedia;
+  if (indexMedia) {
+    const plant = seedPlant || { slug, scientific, identityScope: 'species' };
+    if (isApprovedCatalogMediaRecord(indexMedia, plant).ok) return indexMedia;
+  }
+  return exactLicensedCacheMedia(root, { slug, scientific });
 }
 
 function approvedPacketIdentities(root) {

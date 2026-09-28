@@ -26,7 +26,8 @@ import {
   HIGH_VISIBILITY_GAPS,
   SPECIES_ALIAS_ONTO_CANONICAL,
   WAVE1_NEW_SEED_SLUGS,
-  buildActiveCanonicalImageCoverage
+  buildActiveCanonicalImageCoverage,
+  resolveActiveCanonicalCatalogMedia
 } from '../modules/catalog-media/active-canonical-image-coverage-v1.js';
 import {
   mayPromoteUserMediaToCatalogImage,
@@ -62,7 +63,7 @@ function catalogIndexFromCoverage() {
   const plantIndex = {};
   for (const r of coverage.records) {
     const seedP = seedBySlug.get(r.slug) || {};
-    const media = seedP.media || seed.catalogMediaByCanonicalSlug?.[r.slug] || null;
+    const media = resolveActiveCanonicalCatalogMedia(ROOT, r);
     plantIndex[r.slug] = {
       slug: r.slug,
       name: r.name,
