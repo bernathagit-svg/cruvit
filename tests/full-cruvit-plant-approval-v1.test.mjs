@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import {
   evaluateFullCruvitPlantApproval,
   classifyFruitProductionIntent,
@@ -96,6 +97,15 @@ const size={
     SPREAD_SCALE_READY:true
   }]
 };
+
+test('live full approval hydrates approved-packet design metadata before variant planning',()=>{
+  const source=fs.readFileSync(
+    new URL('../netlify/functions/full-cruvit-plant-approval.mjs',import.meta.url),
+    'utf8'
+  );
+  assert.match(source,/hydrateDesignMetadataFromApprovedPacket\(req,row\)/);
+  assert.match(source,/catalogRow:effectiveRow/);
+});
 
 test('full approval fails closed when visual production coverage is missing',()=>{
   const r=evaluateFullCruvitPlantApproval({
