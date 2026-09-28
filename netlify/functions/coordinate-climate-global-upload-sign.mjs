@@ -28,7 +28,7 @@ export default async(req)=>{
   let body={}; try{body=await req.json()}catch{return json(400,{ok:false,code:'JSON_REQUIRED'})}
   const files=Array.isArray(body.files)?body.files:[];
   const assumeMissing=body.assumeMissing===true;
-  if(!files.length||files.length>100) return json(400,{ok:false,code:'FILES_1_TO_100_REQUIRED'});
+  if(!files.length||files.length>200) return json(400,{ok:false,code:'FILES_1_TO_200_REQUIRED'});
   const s3=client();
   let results;
   try{
