@@ -3,6 +3,7 @@ import {
   summarizeFullCruvitPlantApproval
 } from '../../modules/catalog/full-cruvit-plant-approval-v1.js';
 import { fetchCanonicalCatalogRow } from './_plant-full-onboarding-gate-v1.mjs';
+import { hydrateDesignMetadataFromApprovedPacket } from './_catalog-design-metadata-v1.mjs';
 
 function json(status,body){
   return new Response(JSON.stringify(body),{
@@ -60,6 +61,8 @@ export default async(req)=>{
     catch(err){
       return json(503,{ok:false,code:'CANONICAL_CATALOG_READ_FAILED',canonicalSlug:slug,errorName:err?.message||null});
     }
+    const hydrated=await hydrateDesignMetadataFromApprovedPacket(req,row);
+    const effectiveRow=hydrated.row || row;
     const id=(identityRegistry?.canonicalIdentities||[]).find(x=>
       String(x?.canonicalSlug||'').toLowerCase()===slug
       || (x?.aliasSlugs||[]).some(a=>String(a||'').toLowerCase()===slug)
@@ -67,7 +70,7 @@ export default async(req)=>{
     const mediaSlug=String(id?.canonicalSlug||slug).toLowerCase();
     const mediaRecord=(catalogMediaCoverage?.records||[]).find(x=>String(x?.slug||'').toLowerCase()===mediaSlug)||null;
     evaluations.push(evaluateFullCruvitPlantApproval({
-      catalogRow:row,
+      catalogRow:effectiveRow,
       identityRegistry,
       designAssetRegistry,
       sizeAuthorityRegistry,
