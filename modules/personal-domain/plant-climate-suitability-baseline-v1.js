@@ -17,7 +17,7 @@ import {
   frostSensitivityIsHard
 } from '../suitability/hard-climate-survival-gate-v1.js';
 
-export const PLANT_CLIMATE_SUITABILITY_BASELINE_VERSION = '1.1.0-false-warm-repair';
+export const PLANT_CLIMATE_SUITABILITY_BASELINE_VERSION = '1.1.1-medium-freeze-evidence';
 
 function frostOf(meta) {
   return String(meta?.frostSensitivity || '').toLowerCase();
@@ -82,11 +82,11 @@ export function assessPlantClimateColdSurvival(meta, climateProfile = {}) {
     };
   }
 
-  if (frostSensitivityIsHard(frost) && freezingRisk !== 'low' && freezingRisk !== '') {
+  if (frostSensitivityIsHard(frost) && freezingRisk === 'high') {
     return {
       survivalHint: 'unreliable',
       confidence: extremes ? 'high' : 'medium',
-      reason: 'High frostSensitivity conflicts with non-low freezingRisk.',
+      reason: 'High frostSensitivity conflicts with high freezingRisk.',
       survivalFit: 25,
       thriveFit: 25,
       authority: 'frostSensitivity-high'
@@ -95,7 +95,7 @@ export function assessPlantClimateColdSurvival(meta, climateProfile = {}) {
   if (
     frostSensitivityIsHard(frost) &&
     climateProfile?.isFrostFreeGrowingClimate === false &&
-    ((freezingRisk !== 'low' && freezingRisk !== '') || plantRequiresYearRoundWarmClimate(meta))
+    (freezingRisk === 'high' || plantRequiresYearRoundWarmClimate(meta))
   ) {
     return {
       survivalHint: 'unreliable',
@@ -104,6 +104,18 @@ export function assessPlantClimateColdSurvival(meta, climateProfile = {}) {
       survivalFit: 25,
       thriveFit: 30,
       authority: 'frostSensitivity-high-not-frost-free'
+    };
+  }
+
+  if (frostSensitivityIsHard(frost) && freezingRisk === 'medium') {
+    return {
+      survivalHint: 'constrained',
+      confidence: extremes ? 'medium' : 'low',
+      reason:
+        'High frost sensitivity plus medium freezing risk is treated as conditional; monthly mean minima alone do not prove lethal frost.',
+      survivalFit: 55,
+      thriveFit: 50,
+      authority: 'frostSensitivity-high-medium-risk-bounded'
     };
   }
 
