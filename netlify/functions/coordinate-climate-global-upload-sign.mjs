@@ -32,7 +32,7 @@ export default async(req)=>{
   const s3=client();
   let results;
   try{
-    results=await mapLimit(files,40,async(f)=>{
+    results=await mapLimit(files,80,async(f)=>{
     const name=String(f?.name||'').trim();
     const claimedHash=String(f?.sha256||'').toLowerCase();
     const bytes=Number(f?.bytes);
