@@ -770,6 +770,103 @@ export function buildCoordinateClimateProfileV2({
 }
 
 /**
+ * Derive monthly dry-season structure from authoritative P/PET series.
+ * A dry season is not inferred from annual "dry-subhumid" alone.
+ */
+export function deriveCoordinateDrySeasonStructure(profile = {}) {
+  const pr = profile.monthlyPrecipMm || profile.monthly?.precipMm || [];
+  const pet = profile.monthlyPetMm || profile.monthly?.petMm || [];
+  if (!Array.isArray(pr) || !Array.isArray(pet) || pr.length < 12 || pet.length < 12) {
+    return { known: false, drySeasonSignal: null, dryMonthCount: null, maxConsecutiveDryMonths: null };
+  }
+  const dry = [];
+  for (let i = 0; i < 12; i++) {
+    const p = Number(pr[i]);
+    const e = Number(pet[i]);
+    if (!Number.isFinite(p) || !Number.isFinite(e) || e <= 0) {
+      return { known: false, drySeasonSignal: null, dryMonthCount: null, maxConsecutiveDryMonths: null };
+    }
+    dry.push(p / e < 0.5);
+  }
+  const dryMonthCount = dry.filter(Boolean).length;
+  let maxRun = 0;
+  let run = 0;
+  for (let i = 0; i < 24; i++) {
+    if (dry[i % 12]) {
+      run += 1;
+      maxRun = Math.max(maxRun, Math.min(run, 12));
+    } else {
+      run = 0;
+    }
+  }
+  return {
+    known: true,
+    drySeasonSignal: maxRun >= 3,
+    dryMonthCount,
+    maxConsecutiveDryMonths: maxRun
+  };
+}
+
+/**
+ * Conservative dry-summer signal based on the Köppen-style precipitation relation:
+ * driest warm-half month <40 mm and <1/3 of wettest cool-half month.
+ * This prevents every "cool-seasonal" climate from being mislabeled Mediterranean.
+ */
+export function deriveMediterraneanDrySummerSignal(profile = {}) {
+  const pr = profile.monthlyPrecipMm || profile.monthly?.precipMm || [];
+  const lat = Number(profile.coordinate?.lat ?? profile.lat);
+  if (!Array.isArray(pr) || pr.length < 12 || !Number.isFinite(lat)) {
+    return { known: false, drySummer: null };
+  }
+  const vals = pr.slice(0, 12).map(Number);
+  if (vals.some((v) => !Number.isFinite(v))) return { known: false, drySummer: null };
+  // Mediterranean dry-summer classification is not applied inside the deep tropics.
+  if (Math.abs(lat) < 20) return { known: true, drySummer: false, reason: 'low-latitude' };
+  const warmHalf = lat >= 0 ? [3, 4, 5, 6, 7, 8] : [9, 10, 11, 0, 1, 2];
+  const coolHalf = lat >= 0 ? [9, 10, 11, 0, 1, 2] : [3, 4, 5, 6, 7, 8];
+  const minWarm = Math.min(...warmHalf.map((i) => vals[i]));
+  const maxCool = Math.max(...coolHalf.map((i) => vals[i]));
+  const drySummer = minWarm < 40 && minWarm * 3 < maxCool;
+  return { known: true, drySummer, minWarmMonthPrecipMm: minWarm, maxCoolMonthPrecipMm: maxCool };
+}
+
+/**
+ * Broad climate is derived from multiple independent structural signals.
+ * Thermal regime alone must never imply Mediterranean.
+ */
+export function deriveBroadClimateOverrideFromCoordinateProfile(profile = {}) {
+  const moisture = String(profile.aridityMoistureRegime || 'unknown');
+  const thermal = String(profile.thermalRegime || 'unknown');
+  const lat = Number(profile.coordinate?.lat ?? profile.lat);
+  const cold = Number(profile.coldestMonthMeanMinC);
+  const drySummer = deriveMediterraneanDrySummerSignal(profile);
+  if (moisture === 'hyper-arid' || moisture === 'arid') return 'arid';
+  if (profile.highlandModifier === true || thermal === 'cool-highland') return 'highland-tropical';
+  // Climate-pattern highland signal: tropical latitude but not a year-round-warm thermal regime.
+  // This is not an elevation measurement and does not set highlandModifier.
+  if (
+    Number.isFinite(lat) &&
+    Math.abs(lat) <= 23.5 &&
+    (thermal === 'cool-seasonal' || thermal === 'mild-seasonal') &&
+    Number.isFinite(cold) &&
+    cold < 16
+  ) {
+    return 'highland-tropical';
+  }
+  if (thermal === 'year-round-warm') return 'tropical';
+  if (thermal === 'frost-prone') return 'temperate';
+  if (
+    drySummer.drySummer === true &&
+    (thermal === 'cool-seasonal' || thermal === 'mild-seasonal')
+  ) {
+    return 'mediterranean';
+  }
+  if (thermal === 'cool-seasonal') return 'temperate';
+  if (thermal === 'mild-seasonal') return 'subtropical';
+  return null;
+}
+
+/**
  * Serialize CoordinateClimateProfile V2 into existing Garden structural climate blob
  * (reuse location_structural_climate columns — do not create a second source of truth).
  */
@@ -804,22 +901,14 @@ export function coordinateClimateProfileToStructuralPersistence(profile) {
   }
 
   const moisture = String(profile.aridityMoistureRegime || 'unknown');
-  let broadClimateOverride = null;
-  if (moisture === 'hyper-arid' || moisture === 'arid') broadClimateOverride = 'arid';
-  else if (profile.highlandModifier === true) broadClimateOverride = 'highland-tropical';
-  else if (profile.thermalRegime === 'year-round-warm') broadClimateOverride = 'tropical';
-  else if (profile.thermalRegime === 'frost-prone') broadClimateOverride = 'temperate';
-  else if (profile.thermalRegime === 'cool-highland') broadClimateOverride = 'highland-tropical';
-  else if (profile.thermalRegime === 'cool-seasonal') broadClimateOverride = 'mediterranean';
-
+  const broadClimateOverride = deriveBroadClimateOverrideFromCoordinateProfile(profile);
+  const dryStructure = deriveCoordinateDrySeasonStructure(profile);
+  const drySummer = deriveMediterraneanDrySummerSignal(profile);
   const drySeasonSignal =
-    moisture === 'hyper-arid' ||
-    moisture === 'arid' ||
-    moisture === 'semi-arid' ||
-    moisture === 'dry-subhumid'
-      ? true
-      : moisture === 'humid'
-        ? false
+    dryStructure.known
+      ? dryStructure.drySeasonSignal
+      : moisture === 'hyper-arid' || moisture === 'arid' || moisture === 'semi-arid'
+        ? true
         : null;
 
   return {
@@ -833,9 +922,24 @@ export function coordinateClimateProfileToStructuralPersistence(profile) {
     freezingRisk: profile.freezingRisk,
     broadClimateOverride,
     drySeasonSignal,
+    drySummerSignal: drySummer.drySummer ?? null,
+    alwaysHot: profile.alwaysHot === true,
+    coolSeasonSignal: profile.coolSeasonSignal === true,
     thermalRegime: profile.thermalRegime || 'unknown',
-    elevationM: profile.elevationM,
+    elevationM:
+      profile.elevationM != null && profile.elevationM !== '' && Number.isFinite(Number(profile.elevationM))
+        ? Number(profile.elevationM)
+        : null,
+    terrainAuthorityStatus:
+      profile.elevationM != null && profile.elevationM !== '' && Number.isFinite(Number(profile.elevationM))
+        ? 'known'
+        : 'unavailable-in-global-bake',
     evidence: {
+      dryMonthCount: dryStructure.dryMonthCount,
+      maxConsecutiveDryMonths: dryStructure.maxConsecutiveDryMonths,
+      drySummerSignal: drySummer.drySummer ?? null,
+      minWarmMonthPrecipMm: drySummer.minWarmMonthPrecipMm ?? null,
+      maxCoolMonthPrecipMm: drySummer.maxCoolMonthPrecipMm ?? null,
       coldestMonthMeanMinC: profile.coldestMonthMeanMinC,
       warmestMonthMeanMaxC: profile.warmestMonthMeanMaxC,
       annualPrecipitationMm: profile.annualPrecipitationMm,
