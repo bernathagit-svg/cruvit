@@ -1416,15 +1416,15 @@ export function deriveSpecificPlantOutcomes({
       evidenceHints.usedWarmNeed = true;
       evidenceHints.growthFields.push('frostSensitivity');
     } else {
-      // Cool-seasonal / arid / highland alone must NOT force Constrained for non-tropical plants
+      // Cool-seasonal / arid / highland alone must NOT force Constrained for non-tropical plants.
+      // Neutral/unknown humidity is not material evidence unless a mismatch branch above used it.
       growth = review ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED : SPECIFIC_OUTCOME_STATUS.SUPPORTED;
       if (meta?.frostSensitivity) evidenceHints.growthFields.push('frostSensitivity');
-      if (meta?.humidityTolerance) evidenceHints.growthFields.push('humidityTolerance');
     }
   } else if (Number.isFinite(thriveFit)) {
     growth = review ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED : SPECIFIC_OUTCOME_STATUS.SUPPORTED;
     if (meta?.frostSensitivity) evidenceHints.growthFields.push('frostSensitivity');
-    if (meta?.humidityTolerance) evidenceHints.growthFields.push('humidityTolerance');
+    // Neutral/unknown humidity is not material evidence unless a mismatch branch above used it.
   } else {
     growth = SPECIFIC_OUTCOME_STATUS.UNKNOWN;
     unknownGaps.push('growth-evidence');
