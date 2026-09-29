@@ -6528,7 +6528,6 @@ function smartRecEvaluateSuitability(p){
   const fruitRecommendationClimateRequired=Boolean(
     (Array.isArray(meta.groupIds)&&meta.groupIds.some(g=>/fruit|citrus|berry/i.test(String(g||''))))
     ||(Array.isArray(p?.tags)&&p.tags.some(t=>['fruit','citrus','berry'].includes(String(t||'').toLowerCase())))
-    ||String(meta.fruitingRequirements||'').trim()
   );
   const structuredFruitingClimateReady=Boolean(
     meta.reproductiveClimate
