@@ -15,6 +15,7 @@ import {
   buildSmartRecCardModel,
   buildSmartRecCatalogBySlug,
   compareSmartRecRecommendationRank,
+  alignSmartRecSuitabilityWithValidatedOutcomes,
   isPositiveRecommendationIneligible,
   ownedCanonicalSlugSet,
   resolveSmartRecCanonicalSlug,
