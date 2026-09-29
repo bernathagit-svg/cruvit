@@ -603,6 +603,24 @@ export function hasPositiveFruitingEvidence(meta) {
   return !!(meta && String(meta.fruitingRequirements || '').trim());
 }
 
+/** Recommendation-purpose fruit identity: fruit/citrus/berry only; generic edible is not fruit. */
+export function isFruitRecommendationOriented(meta, plant) {
+  const groupIds = Array.isArray(meta?.groupIds) ? meta.groupIds : [];
+  if (
+    groupIds.some((id) => {
+      const key = String(id || '').toLowerCase();
+      return key.includes('fruit') || key.includes('citrus') || key.includes('berry');
+    })
+  ) {
+    return true;
+  }
+  const tags = Array.isArray(plant?.tags) ? plant.tags : [];
+  return tags.some((tag) => {
+    const key = String(tag || '').toLowerCase();
+    return key === 'fruit' || key === 'citrus' || key === 'berry';
+  });
+}
+
 /** Failure-context for fruiting (frost rules) may use fruit groups / tags / notes. */
 export function hasFruitingFailureContext(meta, plant) {
   if (hasPositiveFruitingEvidence(meta)) return true;
@@ -1534,7 +1552,7 @@ export function deriveSpecificPlantOutcomes({
     suitability: s,
     sheltered,
     needsReview: review,
-    fruitOriented: fruitFailCtx || chillRequired,
+    fruitOriented: isFruitRecommendationOriented(meta, plant),
     reproductiveEvidence: {
       flowering: flowerEval.evidence,
       fruiting: fruitEval.evidence,
