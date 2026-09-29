@@ -5,6 +5,7 @@ import globalIndex from '../../data/coordinate-climate/v2/coverage/global-v1/glo
 import {
   putClimateObjectBytes,
   listClimateObjectsByPrefix,
+  listClimateObjectsPage,
   headClimateObject,
   buildClimateObjectKey
 } from '../../modules/personal-domain/coordinate-climate-global-object-storage-v1.js';
@@ -88,6 +89,59 @@ async function uploadSpecials(){
   return {status:200,body:{ok:true,results}};
 }
 
+async function finalizeStep(body){
+  if(AUTH.size!==Number(manifest.tileCount)) return {status:500,body:{ok:false,code:'AUTHORITY_COUNT_MISMATCH',authority:AUTH.size,manifest:Number(manifest.tileCount)}};
+  const verifiedSoFar=Number(body?.verifiedSoFar)||0;
+  if(!Number.isInteger(verifiedSoFar)||verifiedSoFar<0||verifiedSoFar>AUTH.size) return {status:400,body:{ok:false,code:'BAD_VERIFIED_COUNT'}};
+  const page=await listClimateObjectsPage(TILE_PREFIX,{continuationToken:body?.continuationToken||undefined,maxKeys:1000});
+  if(!page.ok) return {status:502,body:{ok:false,code:'REMOTE_LIST_FAILED',remoteCode:page.code,error:page.error||null}};
+  const unexpected=[];
+  const sizeMismatch=[];
+  let validCount=0;
+  for(const row of page.objects||[]){
+    const name=String(row.key||'').slice(TILE_PREFIX.length);
+    if(!tileName(name)){unexpected.push(name||row.key);continue}
+    const expected=AUTH.get(name);
+    if(!expected){unexpected.push(name);continue}
+    if(expected.bytes!=null&&Number(row.bytes)!==Number(expected.bytes)){sizeMismatch.push({name,expected:expected.bytes,actual:Number(row.bytes)});continue}
+    validCount++;
+  }
+  const verified=verifiedSoFar+validCount;
+  if(unexpected.length||sizeMismatch.length){
+    return {status:409,body:{ok:false,code:'REMOTE_SET_MISMATCH',verifiedSoFar,validCount,verified,unexpectedCount:unexpected.length,sizeMismatchCount:sizeMismatch.length,unexpectedSample:unexpected.slice(0,20),sizeMismatchSample:sizeMismatch.slice(0,20)}};
+  }
+  if(page.isTruncated){
+    return {status:200,body:{ok:true,code:'FINALIZE_CONTINUE',globalBakeId:BAKE,pageCount:(page.objects||[]).length,validCount,verified,expected:AUTH.size,continuationToken:page.nextContinuationToken}};
+  }
+  if(verified!==AUTH.size){
+    return {status:409,body:{ok:false,code:'FULL_KEY_SET_NOT_READY',expected:AUTH.size,actual:verified,missingCount:Math.max(0,AUTH.size-verified),unexpectedCount:0}};
+  }
+  const [mh,ih]=await Promise.all([headClimateObject(ROOT_PREFIX+'manifest.json'),headClimateObject(ROOT_PREFIX+'global-index.json')]);
+  if(!mh.ok||!ih.ok) return {status:409,body:{ok:false,code:'SPECIAL_OBJECTS_MISSING',manifest:mh.ok,index:ih.ok}};
+  const deployment={
+    kind:'cruvit-global-climate-r2-deployment-v1',
+    version:'1.0.0',
+    globalReady:true,
+    globalBakeId:BAKE,
+    manifestSha256:manifest.manifestSha256||null,
+    expectedLandTileCount:AUTH.size,
+    verifiedRemoteTileCount:verified,
+    expectedRemoteObjectCount:AUTH.size+2,
+    verifiedRemoteObjectCount:verified+2,
+    verification:'FULL_REMOTE_KEY_SET_AND_SIZE_MATCH',
+    manifestObjectKey:ROOT_PREFIX+'manifest.json',
+    globalIndexObjectKey:ROOT_PREFIX+'global-index.json',
+    completedAt:new Date().toISOString(),
+    source:'coordinate-climate-global-deploy-v1-paged-finalize'
+  };
+  const key=buildClimateObjectKey({kind:'deployment-manifest',globalBakeId:BAKE});
+  const wrote=await putClimateObjectBytes(key,Buffer.from(JSON.stringify(deployment,null,2)),{contentType:'application/json',cacheControl:'no-cache',skipIdentical:false,metadata:{'cruvit-global-bake-id':BAKE}});
+  if(!wrote.ok) return {status:502,body:{ok:false,code:'DEPLOYMENT_MANIFEST_WRITE_FAILED',remoteCode:wrote.code}};
+  clearGlobalClimateDeploymentReadinessCache();
+  const readiness=await readGlobalClimateDeploymentReadiness({force:true,globalBakeId:BAKE});
+  return {status:readiness.globalReady?200:409,body:{ok:readiness.globalReady===true,code:readiness.globalReady?'GLOBAL_READY':'READINESS_NOT_GLOBAL',verified,expected:AUTH.size,deployment,readiness}};
+}
+
 async function finalize(){
   if(AUTH.size!==Number(manifest.tileCount)) return {status:500,body:{ok:false,code:'AUTHORITY_COUNT_MISMATCH'}};
   const listing=await listClimateObjectsByPrefix(TILE_PREFIX);
@@ -133,6 +187,7 @@ export default async(req)=>{
   let out;
   if(action==='upload-batch') out=await uploadBatch(body);
   else if(action==='upload-specials') out=await uploadSpecials();
+  else if(action==='finalize-step') out=await finalizeStep(body);
   else if(action==='finalize') out=await finalize();
   else return json(400,{ok:false,code:'UNKNOWN_ACTION'});
   return json(out.status,out.body);
