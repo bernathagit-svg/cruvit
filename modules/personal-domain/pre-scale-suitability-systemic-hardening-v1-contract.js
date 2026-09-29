@@ -460,7 +460,9 @@ export function applyPreScaleSystemicDemotions({
 
   const extremes = extremesAuthorityGapDemotesSurvivalPositive(meta, climateProfile);
   if (extremes.demote && (next === 'good' || next === 'excellent')) {
-    next = 'borderline';
+    // Missing absolute-extreme authority limits confidence; it is not evidence of climate mismatch.
+    // Cap only the strongest claim and preserve a supported general-fit recommendation.
+    if (next === 'excellent') next = 'good';
     warnings.push(extremes.reason);
   }
 
@@ -476,7 +478,9 @@ export function applyPreScaleSystemicDemotions({
     chill.confidence === 'qualitative-cool-season-only' &&
     (next === 'good' || next === 'excellent')
   ) {
-    next = 'borderline';
+    // Qualitative chill evidence constrains fruiting confidence, not general survival/growth climate fit.
+    // Explicit fruit intent is handled by the purpose policy using the Fruiting outcome.
+    if (next === 'excellent') next = 'good';
     warnings.push(chill.note);
   }
 
