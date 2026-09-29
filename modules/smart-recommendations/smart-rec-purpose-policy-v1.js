@@ -377,6 +377,9 @@ export function applyPurposePolicyToSuitability(suitability = {}, derived = null
   // into a climate false-negative.
   if (explicitPurpose) {
     next.recommendationLevel = capRecommendationLevelForPurpose(next.recommendationLevel, purposeFit);
+    if (purposeFit.status !== PURPOSE_FIT_STATUS.SUITABLE) {
+      next.positiveRecommendationEligible = false;
+    }
   }
   if (purposeFit.status === PURPOSE_FIT_STATUS.BLOCKED) {
     next.hardSurvivalBlocked = next.hardSurvivalBlocked === true || derived?.survival === 'unreliable';
