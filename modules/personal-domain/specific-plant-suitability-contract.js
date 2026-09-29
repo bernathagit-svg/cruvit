@@ -820,7 +820,7 @@ export function evaluateFloweringFromCatalogEvidence({
       evidence: 'negative:survival-failure-blocks-normal-flowering'
     };
   }
-  if (!sheltered && frostSensitivityIsHard(frostSensitivity) && freezingRisk !== 'low') {
+  if (!sheltered && frostSensitivityIsHard(frostSensitivity) && freezingRisk === 'high') {
     return {
       status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
       limiting: 'Frost risk is too high for reliable flowering.',
@@ -855,6 +855,13 @@ export function evaluateFloweringFromCatalogEvidence({
       status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
       limiting: `Coldest-month mean lows (~${coldest}°C) are below sourced flowering minimum (~${minTempC}°C).`,
       evidence: `negative:min-temp:${minTempC}C`
+    };
+  }
+  if (!sheltered && frostSensitivityIsHard(frostSensitivity) && freezingRisk === 'medium') {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.CONSTRAINED,
+      limiting: 'Seasonal frost risk may reduce or interrupt flowering; cold-event protection can improve reliability.',
+      evidence: 'partial:medium-freezing-risk'
     };
   }
 
@@ -947,16 +954,22 @@ export function evaluateFloweringFromCatalogEvidence({
     if (
       !sheltered &&
       (
-        freezingRisk === 'medium' ||
         freezingRisk === 'high' ||
         (coldest != null && coldest < DAMAGING_COLD_MONTH_MEAN_MIN_C) ||
-        /cool-seasonal|frost-prone|cool-highland/.test(thermal)
+        /frost-prone|cool-highland/.test(thermal)
       )
     ) {
       return {
         status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
         limiting: 'Climate has material cold evidence that conflicts with sourced warm flowering needs.',
         evidence: 'negative:material-cold-vs-warm-flowering'
+      };
+    }
+    if (!sheltered && (freezingRisk === 'medium' || thermal === 'cool-seasonal')) {
+      return {
+        status: SPECIFIC_OUTCOME_STATUS.CONSTRAINED,
+        limiting: 'Seasonal cold may reduce flowering reliability relative to sourced warm-climate needs.',
+        evidence: 'partial:seasonal-cold-vs-warm-flowering'
       };
     }
   }
