@@ -1311,9 +1311,13 @@ export function deriveSpecificPlantOutcomes({
     usedVpd: false
   };
 
-  if (!sheltered && frostSensitivityIsHard(frostSensitivity) && freezingRisk !== 'low') {
+  if (!sheltered && frostSensitivityIsHard(frostSensitivity) && freezingRisk === 'high') {
     survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
     limiting.push('Frost risk is too high for this plant.');
+    evidenceHints.survivalFields.push('frostSensitivity');
+  } else if (!sheltered && frostSensitivityIsHard(frostSensitivity) && freezingRisk === 'medium') {
+    survival = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    limiting.push('Seasonal frost risk constrains reliable outdoor performance; protection may be needed during cold events.');
     evidenceHints.survivalFields.push('frostSensitivity');
   } else if (!sheltered && moistureMismatchForHighHumidityPlant(meta, env)) {
     survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
