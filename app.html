@@ -6799,7 +6799,13 @@ function smartRecEvaluateSuitability(p){
     }
     const addStructuredWarning=(phase,res)=>{
       if(!res||!res.reason)return;
-      if(res.status==='constrained'||res.status==='unreliable') addWarning(res.reason, phase==='fruiting'?10:8);
+      if(res.status==='constrained'||res.status==='unreliable'){
+        const purposePenaltyActive=phase==='fruiting'
+          ?(ctx.edibleIntent&&fruitRecommendationClimateRequired)
+          :ctx.floweringIntent;
+        if(purposePenaltyActive) addWarning(res.reason,phase==='fruiting'?10:8);
+        else smartRecAddUniqueMessage(warnings,res.reason);
+      }
     };
     addStructuredWarning('flowering',reproductiveClimateGate.flowering);
     addStructuredWarning('fruiting',reproductiveClimateGate.fruiting);
