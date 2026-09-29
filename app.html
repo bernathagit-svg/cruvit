@@ -1006,18 +1006,26 @@ function resolveBootstrapPlantSlug(slug){
     Object.keys(payload.plants).forEach(slug=>{
       const plant=PLANT_INDEX[slug];
       if(!plant) return;
-      // Do not overwrite non-migration canonical traits (seed attach path / future).
-      if(plant.climateTraits&&!STRUCTURAL_KINDS[plant.climateTraits.migration?.kind]){
-        const t=plant.climateTraits;
-        const hasReal=t&&typeof t==='object'&&(
-          t.frostSensitivity!=null||t.coldTolerance!=null||t.heatTolerance!=null||
-          t.sunNeeds!=null||t.waterNeeds!=null||t.humidityTolerance!=null||t.drainageNeeds!=null||
-          (Array.isArray(t.groupIds)&&t.groupIds.length)||t.traitEvidenceClasses||t.reproductiveBiology
-        );
-        if(hasReal) return;
-      }
       const next=payload.plants[slug]&&payload.plants[slug].climateTraits;
       if(!next||typeof next!=='object') return;
+      // Canonical catalog authority always wins over migration payloads.
+      if(plant.canonicalClimateAuthority?.source==='catalog_plants') return;
+      if(plant.climateTraits&&!STRUCTURAL_KINDS[plant.climateTraits.migration?.kind]){
+        const t=plant.climateTraits;
+        const sourceSupportedCount=(traits)=>{
+          const classes=traits&&typeof traits==='object'?traits.traitEvidenceClasses:null;
+          if(!classes||typeof classes!=='object') return 0;
+          return Object.values(classes).filter(v=>String(v||'').toUpperCase()==='SOURCE_SUPPORTED').length;
+        };
+        const currentStrength=sourceSupportedCount(t);
+        const incomingStrength=sourceSupportedCount(next);
+        const currentIsLegacy=
+          String(t?.migration?.kind||'').startsWith('wave1-')||
+          Object.values(t?.traitEvidenceClasses||{}).some(v=>String(v||'').toUpperCase()==='LEGACY_ASSERTED_METADATA');
+        // Keep an existing non-migration payload only when it is at least as authoritative.
+        if(!currentIsLegacy&&currentStrength>=incomingStrength) return;
+        if(currentIsLegacy&&incomingStrength<=currentStrength) return;
+      }
       plant.climateTraits=next;
       applied.push(slug);
     });
