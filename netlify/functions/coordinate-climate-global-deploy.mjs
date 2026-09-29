@@ -128,7 +128,7 @@ async function finalizeStep(body){
     verifiedRemoteTileCount:verified,
     expectedRemoteObjectCount:AUTH.size+2,
     verifiedRemoteObjectCount:verified+2,
-    verification:'FULL_REMOTE_KEY_SET_AND_SIZE_MATCH',
+    verification:'FULL_REMOTE_KEY_SET_MATCH',
     manifestObjectKey:ROOT_PREFIX+'manifest.json',
     globalIndexObjectKey:ROOT_PREFIX+'global-index.json',
     completedAt:new Date().toISOString(),
