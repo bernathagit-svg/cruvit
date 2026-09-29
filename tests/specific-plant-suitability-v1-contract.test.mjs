@@ -21,6 +21,7 @@ import {
   reportCacaoCatalogStatus,
   reportCoconutCatalogStatus,
   runSpecificPlantSuitabilityEvaluation,
+  structuralEnvironmentFromClimateProfile,
   searchCatalogPlantsForSpecificCheck,
   yehiamLocationAliasSupportedInSource
 } from '../modules/personal-domain/specific-plant-suitability-contract.js';
@@ -109,6 +110,32 @@ function climateTropicalFrostFree() {
     isFrostFreeGrowingClimate: true
   };
 }
+
+test('0. explicit climate authority booleans preserve false instead of being re-inferred', () => {
+  const env = structuralEnvironmentFromClimateProfile({
+    broadClimate: 'highland-tropical',
+    thermalRegime: 'cool-seasonal',
+    coldestMonthMeanMinC: 8.65,
+    freezingRisk: 'low',
+    alwaysHot: false,
+    coolSeasonSignal: false,
+    drySeasonSignal: false,
+    structuralClimateStatus: 'known'
+  });
+  assert.equal(env.alwaysHot, false);
+  assert.equal(env.coolSeasonSignal, false);
+  assert.equal(env.drySeasonSignal, false);
+
+  const inferred = structuralEnvironmentFromClimateProfile({
+    broadClimate: 'mediterranean',
+    thermalRegime: 'cool-seasonal',
+    coldestMonthMeanMinC: 8,
+    freezingRisk: 'low',
+    structuralClimateStatus: 'known'
+  });
+  assert.equal(inferred.coolSeasonSignal, true);
+  assert.equal(inferred.drySeasonSignal, true);
+});
 
 test('1. high frost-sensitive tropical + non-frost-free Garden is NOT overall Borderline', () => {
   const { plant, meta } = coconutPlantAndMeta();
