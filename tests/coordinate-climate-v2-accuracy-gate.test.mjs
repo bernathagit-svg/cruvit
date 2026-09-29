@@ -48,7 +48,7 @@ test('PART A: confidence dimensions are explicit (not one opaque high)', () => {
   assert.equal(conf.dimensions.LOCAL_REPRESENTATIVENESS, 'low');
   assert.notEqual(conf.dimensions.SOURCE_DATA_INTEGRITY, conf.dimensions.LOCAL_REPRESENTATIVENESS);
   assert.equal(conf.overall, 'low');
-  assert.ok(yehiam.confidenceDimensions?.LOCAL_REPRESENTATIVENESS === 'low');
+  assert.equal(qa.confidence?.dimensions?.LOCAL_REPRESENTATIVENESS, 'low');
 });
 
 test('PART B/C: Yehiam preserve CHELSA + demote representativeness', () => {
