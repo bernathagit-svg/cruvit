@@ -376,6 +376,23 @@ test('F3. explicit fruit intent still caps a constrained fruiting outcome', () =
   assert.match(aligned.purpose.source, /^user/);
   assert.equal(aligned.purposeFit.status, PURPOSE_FIT_STATUS.CONDITIONAL);
   assert.equal(aligned.recommendationLevel, 'borderline');
+  assert.equal(aligned.positiveRecommendationEligible, false);
+});
+
+test('F4. explicit evidence-limited purpose is not a positive recommendation', () => {
+  const plant = {
+    slug: 'probe-explicit-unknown-fruit',
+    tags: ['fruit', 'tree'],
+    climateTraits: { groupIds: ['mediterranean-fruit'] }
+  };
+  const aligned = alignSmartRecSuitabilityWithValidatedOutcomes(
+    { recommendationLevel: 'good', suitabilityScore: 90, hardSurvivalBlocked: false, positiveRecommendationEligible: true },
+    { survival: 'reliable', growth: 'supported', flowering: 'unknown', fruiting: 'unknown', overall: 'good' },
+    { plant, meta: plant.climateTraits, intent: { answers: { q9: 'food-herbs' } } }
+  );
+  assert.equal(aligned.purposeFit.status, PURPOSE_FIT_STATUS.EVIDENCE_LIMITED);
+  assert.equal(aligned.recommendationLevel, 'borderline');
+  assert.equal(aligned.positiveRecommendationEligible, false);
 });
 
 test('G. explicit user purpose outranks default catalog purpose', () => {
