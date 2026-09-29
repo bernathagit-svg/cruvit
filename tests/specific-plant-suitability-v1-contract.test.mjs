@@ -793,3 +793,93 @@ test('partial metadata plant stays UNKNOWN on reproductive dimensions', () => {
   assert.equal(outcomes.fruiting, SPECIFIC_OUTCOME_STATUS.UNKNOWN);
   assert.equal(outcomes.overall, 'blocked');
 });
+
+test('hyper-arid + medium water + unknown irrigation constrains growth instead of strong Good', () => {
+  const meta = {
+    frostSensitivity: 'medium',
+    coldTolerance: 'medium',
+    heatTolerance: 'medium',
+    waterNeeds: 'medium',
+    traitEvidenceClasses: {
+      frostSensitivity: 'SOURCE_SUPPORTED',
+      coldTolerance: 'SOURCE_SUPPORTED',
+      heatTolerance: 'HEURISTIC_ASSERTION',
+      waterNeeds: 'SOURCE_SUPPORTED'
+    }
+  };
+  const climateProfile = {
+    broadClimate: 'arid',
+    freezingRisk: 'low',
+    isFrostFreeGrowingClimate: true,
+    moistureRegime: 'hyper-arid',
+    structuralClimateStatus: 'known',
+    coldestMonthMeanMinC: 8,
+    warmestMonthMeanMaxC: 36
+  };
+  const suitability = {
+    recommendationLevel: 'good',
+    survivalFit: 85,
+    thriveFit: 80,
+    warnings: [],
+    explanationText: ''
+  };
+  const unknown = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile,
+    suitability,
+    plant: { slug: 'medium-water-demo', climateTraits: meta },
+    gardenContext: { irrigationType: 'unknown', irrigationReliability: 'unknown' }
+  });
+  assert.equal(unknown.survival, SPECIFIC_OUTCOME_STATUS.RELIABLE);
+  assert.equal(unknown.growth, SPECIFIC_OUTCOME_STATUS.CONSTRAINED);
+  assert.equal(unknown.overall, 'borderline');
+  assert.ok(unknown.limitingFactors.some((x) => /irrigation reliability is unknown/i.test(String(x))));
+
+  const irrigated = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile,
+    suitability,
+    plant: { slug: 'medium-water-demo', climateTraits: meta },
+    gardenContext: { irrigationType: 'drip', irrigationReliability: 'high' }
+  });
+  assert.equal(irrigated.growth, SPECIFIC_OUTCOME_STATUS.SUPPORTED);
+  assert.equal(irrigated.overall, 'good');
+});
+
+test('hyper-arid does not penalize low-water plant when irrigation is unknown', () => {
+  const meta = {
+    frostSensitivity: 'medium',
+    coldTolerance: 'medium',
+    heatTolerance: 'high',
+    waterNeeds: 'low',
+    traitEvidenceClasses: {
+      frostSensitivity: 'SOURCE_SUPPORTED',
+      coldTolerance: 'SOURCE_SUPPORTED',
+      heatTolerance: 'SOURCE_SUPPORTED',
+      waterNeeds: 'SOURCE_SUPPORTED'
+    }
+  };
+  const outcomes = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile: {
+      broadClimate: 'arid',
+      freezingRisk: 'low',
+      isFrostFreeGrowingClimate: true,
+      moistureRegime: 'hyper-arid',
+      structuralClimateStatus: 'known',
+      coldestMonthMeanMinC: 8,
+      warmestMonthMeanMaxC: 36
+    },
+    suitability: {
+      recommendationLevel: 'good',
+      survivalFit: 85,
+      thriveFit: 80,
+      warnings: [],
+      explanationText: ''
+    },
+    plant: { slug: 'low-water-demo', climateTraits: meta },
+    gardenContext: { irrigationType: 'unknown', irrigationReliability: 'unknown' }
+  });
+  assert.equal(outcomes.growth, SPECIFIC_OUTCOME_STATUS.SUPPORTED);
+  assert.equal(outcomes.overall, 'good');
+});
