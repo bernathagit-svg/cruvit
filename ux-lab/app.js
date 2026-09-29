@@ -11,6 +11,8 @@ const shop=document.getElementById('cardShop');
 
 const cards=[design,garden,doctor,plantId,smart,shop];
 const keys=['design','garden','doctor','plantId','smart','shop'];
+cards.forEach((card,i)=>{const v=document.createElement('video');v.src=card.dataset.motion;v.muted=true;v.playsInline=true;v.preload='metadata';card.dataset.ratio=i===1?'720/1280':'834/1112';card.appendChild(v);card._motion=v;if(card.dataset.breakoutImage){const b=document.createElement('img');b.src=card.dataset.breakoutImage;b.className='breakout-image';b.alt='';card.appendChild(b);card._breakoutImage=b;}});
+function playCenterMotion(){cards.forEach((card,i)=>{const v=card._motion;if(!v)return;v.pause();if(i!==index){try{v.currentTime=0}catch{}}});const v=cards[index]?._motion;if(v){try{v.currentTime=0}catch{};v.play().catch(()=>{});}}
 
 let index=1;
 let dragging=false;
@@ -24,11 +26,11 @@ const lerp=(a,b,t)=>a+(b-a)*t;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
 const POSES={
-  left:{l:0,t:12.9,w:30.0,h:73.8,o:1,a:7},
-  center:{l:26.3,t:0.1,w:46.0,h:95.1,o:1,a:0},
-  right:{l:73.0,t:14.3,w:27.0,h:72.0,o:1,a:-7},
-  offLeft:{l:-35,t:16,w:27.0,h:69.4,o:0,a:7},
-  offRight:{l:108,t:16,w:27.0,h:69.4,o:0,a:-7}
+  left:{l:-10.5,t:11.4,w:34,h:82.5,o:1,a:7},
+  center:{l:24,t:1.7,w:52,h:95.9,o:1,a:0},
+  right:{l:76.7,t:11.4,w:34,h:82.5,o:1,a:-7},
+  offLeft:{l:-45,t:13,w:29,h:72,o:0,a:7},
+  offRight:{l:116,t:13,w:29,h:72,o:0,a:-7}
 };
 
 function poseFor(cardIndex,centerIndex){
@@ -48,14 +50,17 @@ const states=keys.map((_,centerIndex)=>{
 });
 
 function apply(card,a,b,t){
+  const w=lerp(a.w,b.w,t);
+  const h=lerp(a.h,b.h,t);
   card.style.left=lerp(a.l,b.l,t)+'%';
   card.style.top=lerp(a.t,b.t,t)+'%';
-  card.style.width=lerp(a.w,b.w,t)+'%';
-  card.style.height=lerp(a.h,b.h,t)+'%';
+  card.style.width=w+'%';
+  card.style.height=h+'%';
+  card.style.aspectRatio='auto';
   card.style.opacity=String(lerp(a.o,b.o,t));
   const angle=lerp(a.a,b.a,t);
   card.style.transform='perspective(1200px) rotateY('+angle+'deg)';
-  card.style.zIndex=String(Math.round(lerp(a.w,b.w,t)));
+  card.style.zIndex=String(Math.round(w));
 }
 
 function renderBetween(aIndex,bIndex,t){
@@ -73,6 +78,15 @@ function renderBetween(aIndex,bIndex,t){
   const designCenterMix=lerp(designCenterFrom,designCenterTo,progress);
   if(designVariants[0])designVariants[0].style.opacity=String(1-designCenterMix);
   if(designVariants[1])designVariants[1].style.opacity=String(designCenterMix);
+  if(design._motion)design._motion.style.opacity=String(designCenterMix);
+
+  const gardenVariants=garden.querySelectorAll('.variant');
+  const gardenCenterFrom=aIndex===1?1:0;
+  const gardenCenterTo=bIndex===1?1:0;
+  const gardenCenterMix=lerp(gardenCenterFrom,gardenCenterTo,progress);
+  if(gardenVariants[0])gardenVariants[0].style.opacity=String(gardenCenterMix);
+  if(gardenVariants[1])gardenVariants[1].style.opacity=String(1-gardenCenterMix);
+  if(garden._motion)garden._motion.style.opacity=String(gardenCenterMix);
 }
 
 function renderState(i){
@@ -130,6 +144,7 @@ function animateTo(commit){
     }else{
       if(commit)index=toIndex;
       renderState(index);
+      if(commit)setTimeout(playCenterMotion,80);
       stage.classList.add('active');
       stage.setAttribute('aria-hidden','false');
     }
@@ -172,3 +187,4 @@ surface.addEventListener('touchmove',e=>{
 surface.addEventListener('touchend',finish,{passive:false});
 
 renderState(index);
+setTimeout(playCenterMotion,700);
