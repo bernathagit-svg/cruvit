@@ -624,6 +624,11 @@ function plantHasYearRoundWarmEstablishmentNeed(meta) {
  * Applies only when plant evidence authorizes year-round-warm / tropical need.
  * Frost-sensitive Mediterranean plants are gated by freeze, not the 10°C tropical band.
  */
+function plantHasStrictYearRoundWarmSurvivalNeed(meta) {
+  const groups = Array.isArray(meta?.groupIds) ? meta.groupIds : [];
+  return groups.includes('warm-climate-palm') || groups.includes('hot-dry-palm');
+}
+
 export function outdoorDamagingColdUnsupported(meta, climateProfile) {
   const frost = String(meta?.frostSensitivity || '').toLowerCase();
   const cold = String(meta?.coldTolerance || '').toLowerCase();
@@ -633,7 +638,22 @@ export function outdoorDamagingColdUnsupported(meta, climateProfile) {
   if (raw == null || raw === '') return false;
   const c = Number(raw);
   if (!Number.isFinite(c)) return false;
-  return c < DAMAGING_COLD_MONTH_MEAN_MIN_C;
+  if (c <= 5) return true;
+  return c < DAMAGING_COLD_MONTH_MEAN_MIN_C && plantHasStrictYearRoundWarmSurvivalNeed(meta);
+}
+
+export function outdoorChillingColdConstrained(meta, climateProfile) {
+  const frost = String(meta?.frostSensitivity || '').toLowerCase();
+  const cold = String(meta?.coldTolerance || '').toLowerCase();
+  if (!frostSensitivityIsHard(frost) || !coldToleranceIsLow(cold)) return false;
+  if (!plantHasYearRoundWarmEstablishmentNeed(meta)) return false;
+  if (plantHasStrictYearRoundWarmSurvivalNeed(meta)) return false;
+  const raw = climateProfile?.coldestMonthMeanMinC;
+  if (raw == null || raw === '') return false;
+  const c = Number(raw);
+  if (!Number.isFinite(c)) return false;
+  const risk = String(climateProfile?.freezingRisk || '').toLowerCase();
+  return c > 5 && c < DAMAGING_COLD_MONTH_MEAN_MIN_C && risk !== 'medium' && risk !== 'high';
 }
 
 export function moistureMismatchForHighHumidityPlant(meta, climateProfile) {
