@@ -11,6 +11,7 @@ import {
   isFrostFreeGrowingClimateFromStructural,
   moistureMismatchForHighHumidityPlant,
   outdoorDamagingColdUnsupported,
+  outdoorChillingColdConstrained,
   thermalRegimeFromStructuralEvidence
 } from './structural-climate-authority-v1.js';
 import { applyRepresentativenessToSuitabilityClaim } from './coordinate-climate-confidence-v2-contract.js';
@@ -843,6 +844,14 @@ export function evaluateFloweringFromCatalogEvidence({
       evidence: 'negative:damaging-cold'
     };
   }
+  if (!sheltered && outdoorChillingColdConstrained(meta, env)) {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.CONSTRAINED,
+      limiting: `Coldest-month mean lows (~${coldest}°C) can constrain flowering for a warm-tropical plant even without damaging frost.`,
+      evidence: 'partial:cool-winter-chilling'
+    };
+  }
+
   if (!sheltered && moistureMismatchForHighHumidityPlant(meta, env)) {
     return {
       status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
@@ -1350,6 +1359,13 @@ export function deriveSpecificPlantOutcomes({
     survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
     limiting.push(
       `Coldest-month mean lows (~${env.coldestMonthMeanMinC}°C) are below the warm tropical reliability band; damaging cold can occur without literal frost.`
+    );
+    evidenceHints.survivalFields.push('frostSensitivity', 'coldTolerance');
+    if (isWarmTropicalFrostSensitiveGroup(meta)) evidenceHints.usedTropicalGroup = true;
+  } else if (!sheltered && outdoorChillingColdConstrained(meta, env)) {
+    survival = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    limiting.push(
+      `Coldest-month mean lows (~${env.coldestMonthMeanMinC}°C) create chilling stress for this warm-tropical plant, but low freezing risk does not justify a hard survival failure.`
     );
     evidenceHints.survivalFields.push('frostSensitivity', 'coldTolerance');
     if (isWarmTropicalFrostSensitiveGroup(meta)) evidenceHints.usedTropicalGroup = true;
