@@ -918,6 +918,14 @@ const PLANT_LIBRARY=[
 {slug:'strawberry-guava',name:'Strawberry Guava',he:'גויאבה תותית',aliases:['strawberry guava','psidium cattleyanum','psidium cattleianum','cherry guava','גויאבה תותית'],scientific:'Psidium cattleyanum',icon:'🍓',status:'Evergreen fruit shrub/tree',mark:'✓',tags:['fruit','tree','shrub','sun','גויאבה תותית'],sun:'Full sun to partial sun',water:'Medium once established',growth:'Evergreen shrub or small tree',size:'2–6 m',climate:'Warm-climate fruit shrub; protect young plants from frost',season:'Prune to shape after fruiting',warnings:['Can self-seed in some regions','Fruit drop can be messy','Watch for fruit fly in some areas','Needs space if allowed to grow','Needs pruning to prevent dense growth'],guide:'Strawberry guava is an evergreen fruiting shrub or small tree for warm gardens. It grows best in sun with moderate watering and good drainage. Prune to shape and keep size manageable. Fruit can drop and attract pests, so place thoughtfully. Young plants benefit from frost protection. It can be a useful edible hedge where climate allows.',products:['Fruit tree fertilizer','Mulch','Pruning shears','Fruit fly trap']},
 {slug:'mulberry',name:'Mulberry Tree',he:'תות עץ',aliases:['mulberry','mulberry tree','morus','תות עץ','עץ תות','morus alba','morus nigra'],scientific:'Morus spp.',icon:'🌳',status:'Large fruit tree',mark:'!',tags:['fruit','tree','sun','תות'],sun:'Full sun',water:'Medium when young; drought tolerant once established',growth:'Deciduous fruit tree',size:'5–12 m depending on species/pruning',climate:'Good warm-climate tree with enough space',season:'Prune in dormancy to control size',warnings:['Can become large','Fruit stains paving and attracts birds','Roots can be strong','Needs careful placement'],guide:'Mulberry is a productive deciduous fruit tree that needs full sun and room. Water while establishing; mature trees tolerate dry periods but fruit better with some irrigation. Plant away from paving and parking areas because fruit can stain. Prune in dormancy to control size. Choose fruitless or compact varieties when mess or size is a concern. Give roots space.',products:['Pruning saw','Mulch','Fruit tree fertilizer','Bird netting']}
 ];
+const BOOTSTRAP_IDENTITY_ALIAS_TO_CANONICAL={
+  'apple-tree':'apple','pear-tree':'pear','peach-tree':'peach','plum-tree':'plum',
+  'fig-tree':'fig','grape-vine':'grapevine','passion-fruit':'passionfruit'
+};
+const SPECIES_PACKET_ALIAS_TO_CANONICAL={
+  'english-lavender':'lavender','spearmint':'mint','common-jasmine':'jasmine',
+  'bigleaf-hydrangea':'hydrangea','lesser-bougainvillea':'bougainvillea','bell-pepper':'sweet-pepper'
+};
 (function applyCanonicalRuntimeClimateOverlay(){
   const payload=typeof window!=='undefined'?window.__CRUVIT_CANONICAL_CLIMATE_BOOTSTRAP:null;
   const rows=payload&&payload.ready===true&&payload.plants&&typeof payload.plants==='object'
@@ -925,7 +933,10 @@ const PLANT_LIBRARY=[
   const applied=[];
   for(const plant of PLANT_LIBRARY){
     const slug=String(plant?.slug||'').trim().toLowerCase();
-    const row=rows[slug];
+    const packetAlias=Object.keys(SPECIES_PACKET_ALIAS_TO_CANONICAL)
+      .find(alias=>SPECIES_PACKET_ALIAS_TO_CANONICAL[alias]===slug&&rows[alias]);
+    const canonicalSlug=rows[slug]?slug:(packetAlias||null);
+    const row=canonicalSlug?rows[canonicalSlug]:null;
     if(!row) continue;
     if(row.climateTraits&&typeof row.climateTraits==='object'){
       try{ plant.climateTraits=JSON.parse(JSON.stringify(row.climateTraits)); }
@@ -936,6 +947,7 @@ const PLANT_LIBRARY=[
     }
     plant.canonicalClimateAuthority={
       source:'catalog_plants',
+      canonicalSlug,
       verificationState:row.verificationState||null,
       needsReview:row.needsReview===true,
       updatedAt:row.updatedAt||null
@@ -954,23 +966,6 @@ const PLANT_LIBRARY=[
 })();
 const PLANT_INDEX=Object.fromEntries(PLANT_LIBRARY.map(p=>[p.slug,p]));
 /* ── Bounded identity alias remaps (canonical-wins; resolve-on-read) ── */
-const BOOTSTRAP_IDENTITY_ALIAS_TO_CANONICAL={
-  'apple-tree':'apple',
-  'pear-tree':'pear',
-  'peach-tree':'peach',
-  'plum-tree':'plum',
-  'fig-tree':'fig',
-  'grape-vine':'grapevine',
-  'passion-fruit':'passionfruit'
-};
-const SPECIES_PACKET_ALIAS_TO_CANONICAL={
-  'english-lavender':'lavender',
-  'spearmint':'mint',
-  'common-jasmine':'jasmine',
-  'bigleaf-hydrangea':'hydrangea',
-  'lesser-bougainvillea':'bougainvillea',
-  'bell-pepper':'sweet-pepper'
-};
 (function applyBoundedIdentityAliasRemapsInline(){
   const maps=Object.assign({},BOOTSTRAP_IDENTITY_ALIAS_TO_CANONICAL,SPECIES_PACKET_ALIAS_TO_CANONICAL);
   Object.keys(maps).forEach(alias=>{
