@@ -926,44 +926,73 @@ const SPECIES_PACKET_ALIAS_TO_CANONICAL={
   'english-lavender':'lavender','spearmint':'mint','common-jasmine':'jasmine',
   'bigleaf-hydrangea':'hydrangea','lesser-bougainvillea':'bougainvillea','bell-pepper':'sweet-pepper'
 };
-(function applyCanonicalRuntimeClimateOverlay(){
+function canonicalScientificIdentityKey(value){
+  return String(value||'').toLowerCase()
+    .replace(/×/g,'x')
+    .replace(/\bspp\.?\b/g,'spp')
+    .replace(/[^a-z0-9]+/g,' ')
+    .trim()
+    .replace(/\s+/g,' ');
+}
+function applyCanonicalRuntimeClimateOverlay(){
   const payload=typeof window!=='undefined'?window.__CRUVIT_CANONICAL_CLIMATE_BOOTSTRAP:null;
   const rows=payload&&payload.ready===true&&payload.plants&&typeof payload.plants==='object'
     ?payload.plants:{};
+  const scientificIndex=new Map();
+  for(const [rowSlug,row] of Object.entries(rows)){
+    const key=canonicalScientificIdentityKey(row?.scientific);
+    if(!key||/\bspp\b/.test(key)||/^various\b/.test(key)) continue;
+    const list=scientificIndex.get(key)||[];
+    list.push(rowSlug);
+    scientificIndex.set(key,list);
+  }
   const applied=[];
+  const appliedByMethod={direct:0,alias:0,scientific:0};
   for(const plant of PLANT_LIBRARY){
     const slug=String(plant?.slug||'').trim().toLowerCase();
     const packetAlias=Object.keys(SPECIES_PACKET_ALIAS_TO_CANONICAL)
       .find(alias=>SPECIES_PACKET_ALIAS_TO_CANONICAL[alias]===slug&&rows[alias]);
-    const canonicalSlug=rows[slug]?slug:(packetAlias||null);
+    const scientificKey=canonicalScientificIdentityKey(plant?.scientific);
+    const scientificMatches=scientificKey?(scientificIndex.get(scientificKey)||[]):[];
+    const scientificSlug=scientificMatches.length===1?scientificMatches[0]:null;
+    const canonicalSlug=rows[slug]?slug:(packetAlias||scientificSlug||null);
     const row=canonicalSlug?rows[canonicalSlug]:null;
     if(!row) continue;
+    const matchMethod=rows[slug]?'direct':packetAlias?'alias':'scientific';
     if(row.climateTraits&&typeof row.climateTraits==='object'){
       try{ plant.climateTraits=JSON.parse(JSON.stringify(row.climateTraits)); }
       catch{ plant.climateTraits=row.climateTraits; }
     }
-    if(row.scientific&&(!plant.scientific||String(plant.scientific).trim()===String(row.scientific).trim())){
+    if(row.scientific&&(!plant.scientific||canonicalScientificIdentityKey(plant.scientific)===canonicalScientificIdentityKey(row.scientific))){
       plant.scientific=row.scientific;
     }
     plant.canonicalClimateAuthority={
       source:'catalog_plants',
       canonicalSlug,
+      matchMethod,
       verificationState:row.verificationState||null,
       needsReview:row.needsReview===true,
       updatedAt:row.updatedAt||null
     };
     applied.push(slug);
+    appliedByMethod[matchMethod]++;
   }
-  if(typeof window!=='undefined'){
-    window.__cruvitCanonicalRuntimeClimateOverlay={
-      ready:payload?.ready===true,
-      code:payload?.code||'CANONICAL_BOOTSTRAP_UNAVAILABLE',
-      catalogCount:Number(payload?.count)||0,
-      appliedCount:applied.length,
-      appliedSlugs:applied
-    };
-  }
-})();
+  const meta={
+    ready:payload?.ready===true,
+    code:payload?.code||'CANONICAL_BOOTSTRAP_UNAVAILABLE',
+    catalogCount:Number(payload?.count)||0,
+    appliedCount:applied.length,
+    appliedSlugs:applied,
+    appliedByMethod
+  };
+  if(typeof window!=='undefined') window.__cruvitCanonicalRuntimeClimateOverlay=meta;
+  return meta;
+}
+applyCanonicalRuntimeClimateOverlay();
+if(typeof window!=='undefined'){
+  if(document.readyState==='complete') applyCanonicalRuntimeClimateOverlay();
+  else window.addEventListener('load',applyCanonicalRuntimeClimateOverlay,{once:true});
+}
 const PLANT_INDEX=Object.fromEntries(PLANT_LIBRARY.map(p=>[p.slug,p]));
 /* ── Bounded identity alias remaps (canonical-wins; resolve-on-read) ── */
 (function applyBoundedIdentityAliasRemapsInline(){
