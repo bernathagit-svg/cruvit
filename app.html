@@ -6560,7 +6560,9 @@ function smartRecEvaluateSuitability(p){
     &&meta.reproductiveClimate.fruiting
     &&typeof meta.reproductiveClimate.fruiting==='object'
   );
-  let positiveRecommendationEligible=!(fruitRecommendationClimateRequired&&!structuredFruitingClimateReady);
+  // General climate suitability is purpose-neutral. Missing structured fruiting evidence
+  // becomes an eligibility blocker only when the user explicitly asks for an edible/fruit outcome.
+  let positiveRecommendationEligible=true;
   const warnings=[];
   let blocked=false;
   let survivalFit=85;
@@ -6575,7 +6577,7 @@ function smartRecEvaluateSuitability(p){
   let warningPenalty=0;
   const addWarning=(msg,penalty=8)=>{smartRecAddUniqueMessage(warnings,msg);warningPenalty+=penalty;};
   const blockWith=(msg)=>{blocked=true;smartRecAddUniqueMessage(warnings,msg);};
-  if(!positiveRecommendationEligible){
+  if(ctx.edibleIntent&&fruitRecommendationClimateRequired&&!structuredFruitingClimateReady){
     addWarning('Structured fruiting-climate evidence is incomplete, so this plant is not eligible for a positive fruit recommendation.',12);
   }
   const protectionContext=typeof smartRecProtectionContext==='function'?smartRecProtectionContext():{indoorContext:!!ctx.indoorContext};
