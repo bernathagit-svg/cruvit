@@ -15,6 +15,7 @@ import {
   TERRAIN_LAYER_POLICY_V2
 } from './coordinate-climate-authority-v2-contract.js';
 import { atmosphericHumidityMismatchForLowTolerancePlant } from './structural-climate-authority-v1.js';
+import { readOptionalNumericThreshold } from '../catalog-expansion/plant-climate-quantitative-evidence-v1-contract.js';
 
 export const PRE_SCALE_SUITABILITY_SYSTEMIC_HARDENING_VERSION = '1.0.0';
 export const SPECIFIC_PLANT_EVALUATOR_VERSION = '1.1.0-pre-scale-hardening';
@@ -179,6 +180,53 @@ export function extremesAuthorityGapDemotesSurvivalPositive(meta, climateProfile
     material: true,
     reason:
       'Survival uses monthly-mean normals only; damaging extreme cold/heat authority is absent — strong positive capped.'
+  };
+}
+
+/**
+ * Deep-cold confidence guard.
+ * Monthly-mean Tmin <= -10C with high freezing risk is a severe climate context.
+ * A species-level strong positive requires comparable plant hardiness + climate extreme evidence;
+ * missing evidence caps confidence but never creates a hard Not Recommended by itself.
+ */
+export function deepColdHardinessConfidenceGap(meta, climateProfile) {
+  const risk = String(climateProfile?.freezingRisk || '').toLowerCase();
+  const rawCold =
+    climateProfile?.coldestMonthMeanMinC ??
+    climateProfile?.coordinateClimateV2?.coldestMonthMeanMinC;
+  const cold = rawCold == null || rawCold === '' ? NaN : Number(rawCold);
+  if (risk !== 'high' || !Number.isFinite(cold) || cold > -10) {
+    return { demote: false, deepCold: false };
+  }
+
+  const plantMinC = readOptionalNumericThreshold(meta, 'minimum_survival_temperature_c');
+  const absoluteMinRaw =
+    climateProfile?.absoluteMinTempC ??
+    climateProfile?.coordinateClimateV2?.absoluteMinTempC;
+  const absoluteMinC =
+    absoluteMinRaw == null || absoluteMinRaw === '' ? null : Number(absoluteMinRaw);
+  const comparable =
+    plantMinC != null &&
+    Number.isFinite(absoluteMinC);
+
+  if (comparable) {
+    return {
+      demote: false,
+      deepCold: true,
+      comparableExtremeEvidence: true,
+      plantMinimumSurvivalC: plantMinC,
+      climateAbsoluteMinC: absoluteMinC
+    };
+  }
+
+  return {
+    demote: true,
+    deepCold: true,
+    comparableExtremeEvidence: false,
+    plantMinimumSurvivalC: plantMinC,
+    climateAbsoluteMinC: Number.isFinite(absoluteMinC) ? absoluteMinC : null,
+    reason:
+      'Deep-cold climate detected, but comparable cultivar/species hardiness and absolute-minimum climate evidence are incomplete — strong positive held to Borderline.'
   };
 }
 
@@ -456,6 +504,12 @@ export function applyPreScaleSystemicDemotions({
         ? 'Atmospheric humidity demotion: low humidityTolerance vs high atmospheric humidity (hurs/RH); not from moistureRegime.'
         : 'Atmospheric humidity demotion: low humidityTolerance vs transition-band RH — confidence constrained without inventing a hard plant RH cutoff.'
     );
+  }
+
+  const deepCold = deepColdHardinessConfidenceGap(meta, climateProfile);
+  if (deepCold.demote && (next === 'good' || next === 'excellent')) {
+    next = 'borderline';
+    warnings.push(deepCold.reason);
   }
 
   const extremes = extremesAuthorityGapDemotesSurvivalPositive(meta, climateProfile);
