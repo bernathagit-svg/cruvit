@@ -463,11 +463,16 @@ export function structuralEnvironmentFromClimateProfile(climateProfile = {}) {
   if (!humiditySignal || humiditySignal === 'unknown' || humiditySignal === 'null') {
     humiditySignal = String(humidityFromBands).toLowerCase();
   }
+  const explicitDrySeasonSignal =
+    typeof climateProfile?.structuralClimate?.drySeasonSignal === 'boolean'
+      ? climateProfile.structuralClimate.drySeasonSignal
+      : typeof climateProfile.drySeasonSignal === 'boolean'
+        ? climateProfile.drySeasonSignal
+        : null;
   const drySeasonSignal =
-    merged.drySeasonSignal === true ||
-    climateProfile.drySeasonSignal === true ||
-    broad === 'mediterranean' ||
-    broad === 'arid';
+    explicitDrySeasonSignal != null
+      ? explicitDrySeasonSignal
+      : broad === 'mediterranean' || broad === 'arid';
   const frostFree = isFrostFreeGrowingClimate({
     ...merged,
     broadClimate: broad,
@@ -479,24 +484,26 @@ export function structuralEnvironmentFromClimateProfile(climateProfile = {}) {
   });
   // Year-round heat requires structural thermal support — highland tropics are not alwaysHot.
   const alwaysHot =
-    climateProfile.alwaysHot === true ||
-    thermalRegime === 'year-round-warm' ||
-    (broad === 'tropical' &&
-      frostFree &&
-      thermalRegime !== 'cool-highland' &&
-      thermalRegime !== 'cool-seasonal' &&
-      thermalRegime !== 'frost-prone');
+    typeof climateProfile.alwaysHot === 'boolean'
+      ? climateProfile.alwaysHot
+      : thermalRegime === 'year-round-warm' ||
+        (broad === 'tropical' &&
+          frostFree &&
+          thermalRegime !== 'cool-highland' &&
+          thermalRegime !== 'cool-seasonal' &&
+          thermalRegime !== 'frost-prone');
   const coolSeasonSignal =
-    climateProfile.coolSeasonSignal === true ||
-    broad === 'temperate' ||
-    broad === 'cool-temperate' ||
-    broad === 'mediterranean' ||
-    broad === 'highland-tropical' ||
-    thermalRegime === 'cool-highland' ||
-    thermalRegime === 'cool-seasonal' ||
-    thermalRegime === 'frost-prone' ||
-    (Number.isFinite(coldestMonthMeanMinC) &&
-      coldestMonthMeanMinC < DAMAGING_COLD_MONTH_MEAN_MIN_C);
+    typeof climateProfile.coolSeasonSignal === 'boolean'
+      ? climateProfile.coolSeasonSignal
+      : broad === 'temperate' ||
+        broad === 'cool-temperate' ||
+        broad === 'mediterranean' ||
+        broad === 'highland-tropical' ||
+        thermalRegime === 'cool-highland' ||
+        thermalRegime === 'cool-seasonal' ||
+        thermalRegime === 'frost-prone' ||
+        (Number.isFinite(coldestMonthMeanMinC) &&
+          coldestMonthMeanMinC < DAMAGING_COLD_MONTH_MEAN_MIN_C);
   return {
     broadClimate: broad,
     freezingRisk,
