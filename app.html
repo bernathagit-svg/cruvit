@@ -6831,9 +6831,13 @@ function smartRecEvaluateSuitability(p){
     warningPenalty
   ));
   let recommendationLevel=blocked?'blocked':(suitabilityScore>=85?'excellent':(suitabilityScore>=70?'good':'borderline'));
-  if(!blocked&&climateSuitabilityV1HighFrostNeedsConservativeClimate(meta,frostIndoorShelter,climateProfile)){
+  if(
+    !blocked
+    &&climateSuitabilityV1HighFrostNeedsConservativeClimate(meta,frostIndoorShelter,climateProfile)
+    &&climateSuitabilityV1IsWarmTropicalFrostSensitiveGroup(metaHasGroup)
+  ){
     const levelRank={excellent:4,good:3,borderline:2,blocked:1};
-    const frostCap=metaHasGroup('tropical-frost-sensitive-fruit')?'borderline':'borderline';
+    const frostCap='borderline';
     if((levelRank[recommendationLevel]||0)>(levelRank[frostCap]||0)) recommendationLevel=frostCap;
   }
   if(!blocked&&catalogNeedsReview&&recommendationLevel==='excellent') recommendationLevel='good';
