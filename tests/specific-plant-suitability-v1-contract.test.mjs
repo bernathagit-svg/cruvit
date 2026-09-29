@@ -165,6 +165,45 @@ test('1. high frost-sensitive tropical + non-frost-free Garden is NOT overall Bo
   assert.notEqual(outcomes.overall, 'borderline');
 });
 
+test('1b. tropical fruit in 5-10C mean-low band with low freeze risk is constrained, not hard-blocked', () => {
+  const meta = {
+    groupIds: ['tropical-frost-sensitive-fruit'],
+    frostSensitivity: 'very_high',
+    coldTolerance: 'very_low',
+    heatTolerance: 'high',
+    humidityTolerance: 'medium',
+    floweringRequirements: 'Warmth, sun, and low frost risk are essential.',
+    fruitingRequirements: 'Reliable fruiting needs a long warm season and low frost risk.'
+  };
+  const outcomes = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile: {
+      locationLabel: 'Warm Mediterranean coast',
+      broadClimate: 'mediterranean',
+      freezingRisk: 'low',
+      coldestMonthMeanMinC: 9.05,
+      warmestMonthMeanMaxC: 27.95,
+      thermalRegime: 'cool-seasonal',
+      structuralColdRisk: 'elevated',
+      structuralClimateStatus: 'known'
+    },
+    suitability: {
+      recommendationLevel: 'borderline',
+      survivalFit: 40,
+      thriveFit: 30,
+      floweringFit: 35,
+      fruitingFit: 30,
+      warnings: ['Needs a frost-free climate; outdoor reliability is limited where winters are cool or frost-prone.'],
+      explanationText: 'Needs a frost-free climate; outdoor reliability is limited where winters are cool or frost-prone.',
+      hardSurvivalBlocked: false
+    },
+    plant: { slug: 'generic-tropical-fruit', tags: ['tree', 'fruit', 'tropical'] },
+    protectedGrowing: false
+  });
+  assert.equal(outcomes.survival, SPECIFIC_OUTCOME_STATUS.CONSTRAINED);
+  assert.notEqual(outcomes.overall, 'blocked');
+});
+
 test('2. reliable survival failure always forces NOT RECOMMENDED', () => {
   const overall = deriveOverallVerdict({
     survival: SPECIFIC_OUTCOME_STATUS.UNRELIABLE,
