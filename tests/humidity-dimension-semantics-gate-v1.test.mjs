@@ -199,6 +199,54 @@ test('Singapore four: Survival not demoted; Growth constrained; Overall not Good
   }
 });
 
+test('low humidity tolerance alone does not make a climate claim moisture/precip dependent', () => {
+  const meta = {
+    frostSensitivity: 'medium',
+    coldTolerance: 'medium',
+    heatTolerance: 'medium',
+    humidityTolerance: 'low',
+    waterNeeds: 'low',
+    traitEvidenceClasses: {
+      frostSensitivity: 'SOURCE_SUPPORTED',
+      coldTolerance: 'SOURCE_SUPPORTED',
+      heatTolerance: 'SOURCE_SUPPORTED',
+      humidityTolerance: 'SOURCE_SUPPORTED',
+      waterNeeds: 'SOURCE_SUPPORTED'
+    }
+  };
+  const climateProfile = {
+    freezingRisk: 'low',
+    isFrostFreeGrowingClimate: true,
+    moistureRegime: 'semi-arid',
+    humiditySignal: 'medium',
+    confidenceDimensions: {
+      SOURCE_DATA_INTEGRITY: 'high',
+      COORDINATE_RESOLUTION_CONFIDENCE: 'high',
+      TERRAIN_CONTEXT_CONFIDENCE: 'high',
+      LOCAL_REPRESENTATIVENESS: 'unknown',
+      PROFILE_COMPLETENESS: 'high',
+      OVERALL_AUTHORITY_CONFIDENCE: 'unknown'
+    }
+  };
+  const o = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile,
+    suitability: {
+      recommendationLevel: 'good',
+      survivalFit: 85,
+      thriveFit: 80,
+      warnings: [],
+      explanationText: ''
+    },
+    plant: { slug: 'dry-climate-low-humidity-tolerance', climateTraits: meta }
+  });
+  assert.equal(o.overall, 'good');
+  assert.equal(
+    o.limitingFactors.some((x) => /representativeness unknown.*moisture\/precip/i.test(String(x))),
+    false
+  );
+});
+
 test('prior VPD/RH fixes preserved', () => {
   assert.equal(chelsaVpdToPa(11492), 1149.2);
   assert.equal(ATMOSPHERIC_HUMIDITY_AUTHORITY_V2.meanRhThresholdsPct.highInclusiveMin, 70);

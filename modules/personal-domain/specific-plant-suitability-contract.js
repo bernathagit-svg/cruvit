@@ -1677,8 +1677,6 @@ export function deriveSpecificPlantOutcomes({
     climateConfidence: confidenceBundle,
     moistureOrPrecipDependent:
       tropicalMoisturePlant ||
-      humidityTolerance === 'high' ||
-      humidityTolerance === 'low' ||
       moistureMismatchForHighHumidityPlant(meta, env),
     meta,
     climateProfile: climateProfile || env,
