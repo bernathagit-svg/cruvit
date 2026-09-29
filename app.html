@@ -6825,7 +6825,7 @@ function smartRecEvaluateSuitability(p){
   }
 
   if(blocked||hardSurvivalBlocked) positiveRecommendationEligible=false;
-  const suitabilityScore=blocked?0:Math.max(0,Math.round(
+  const contextualSuitabilityScore=blocked?0:Math.max(0,Math.round(
     (survivalFit*0.35)+
     (thriveFit*0.20)+
     (sunFit*0.10)+
@@ -6836,6 +6836,20 @@ function smartRecEvaluateSuitability(p){
     (userGoalFit*0.05)-
     warningPenalty
   ));
+  const noPurposeSuitabilityCeiling=blocked?0:Math.max(0,Math.round(
+    (survivalFit*0.35)+
+    (thriveFit*0.20)+
+    (sunFit*0.10)+
+    (waterFit*0.10)+
+    (heatColdFit*0.10)+
+    (humidityFit*0.05)+
+    (floweringFit*0.05)+
+    (75*0.05)-
+    warningPenalty
+  ));
+  const suitabilityScore=(ctx.edibleIntent||ctx.floweringIntent)
+    ?Math.min(contextualSuitabilityScore,noPurposeSuitabilityCeiling)
+    :contextualSuitabilityScore;
   let recommendationLevel=blocked?'blocked':(suitabilityScore>=85?'excellent':(suitabilityScore>=70?'good':'borderline'));
   if(
     !blocked
