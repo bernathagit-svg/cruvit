@@ -6486,6 +6486,10 @@ function smartRecMetaHasGroup(meta,groupId){
 
 function smartRecClimateFeelsHotHumid(climateProfile){
   return climateProfile.humiditySignal==='high'||(
+    climateProfile.alwaysHot===true&&
+    climateProfile.broadClimate==='tropical'&&
+    climateProfile.humiditySignal!=='low'
+  )||(
     climateProfile.broadClimate==='subtropical'&&(
       climateProfile.extremeHeatRisk!=='low'||
       (Number.isFinite(climateProfile.forecastPeak)&&climateProfile.forecastPeak>=30)||
@@ -6639,10 +6643,10 @@ function smartRecEvaluateSuitability(p){
     addWarning('Reliable fruiting is unlikely without a cooler, drier seasonal signal.',18);
     if(ctx.edibleIntent) blockWith('Reliable fruiting is not confident enough for an edible-first recommendation here.');
   }
-  if(meta.humidityTolerance==='low'&&climateProfile.humiditySignal==='high'){
+  if(meta.humidityTolerance==='low'&&(climateProfile.humiditySignal==='high'||hotHumidStress)){
     humidityFit=20;
     thriveFit=Math.min(thriveFit,35);
-    addWarning('High atmospheric humidity is a poor fit for this low-humidity-tolerance plant (distinct from irrigation water need and from P/PET moistureRegime).',15);
+    addWarning('Hot or humid atmospheric conditions are a poor fit for this low-humidity-tolerance plant (distinct from irrigation water need and from P/PET moistureRegime).',15);
     if(meta.hardBlockRules.includes('humid-heat-stress')&&climateProfile.extremeHeatRisk!=='low'){
       blockWith('Hot humid conditions make this a poor match.');
     }
@@ -6655,6 +6659,13 @@ function smartRecEvaluateSuitability(p){
     thriveFit=Math.min(thriveFit,20);
     heatColdFit=Math.min(heatColdFit,20);
     addWarning('Extreme heat is likely to cause stress here.',15);
+  }else if(climateProfile.extremeHeatRisk==='high'&&meta.heatTolerance==='medium'){
+    survivalFit=Math.min(survivalFit,65);
+    thriveFit=Math.min(thriveFit,45);
+    heatColdFit=Math.min(heatColdFit,35);
+    floweringFit=Math.min(floweringFit,55);
+    fruitingFit=Math.min(fruitingFit,55);
+    addWarning('Extreme heat is a significant constraint for this moderately heat-tolerant plant.',12);
   }else if(climateProfile.extremeHeatRisk!=='low'&&meta.heatTolerance==='medium'){
     heatColdFit=Math.min(heatColdFit,55);
     thriveFit=Math.min(thriveFit,60);
