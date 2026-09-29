@@ -253,20 +253,28 @@ export function applyRepresentativenessToSuitabilityClaim({
 
   if (!depends) return out;
 
-  if (local === 'low' || local === 'unknown' || overall === 'low' || overall === 'unknown') {
+  const evidencedLow = local === 'low' || overall === 'low';
+  const metadataUnknown = !evidencedLow && (local === 'unknown' || overall === 'unknown');
+
+  if (evidencedLow) {
     if (strongPositive) {
       out.adjustedRecommendation = 'borderline';
       out.demoted = true;
-      out.forceUnknownOutcomes = local === 'unknown';
       out.warnings.push(
-        local === 'unknown'
-          ? 'Local representativeness unknown — strong moisture/precip-dependent suitability claim withheld.'
-          : 'Local representativeness uncertain — strong moisture/precip-dependent suitability claim demoted; not auto Not Recommended.'
+        'Local representativeness uncertain — strong moisture/precip-dependent suitability claim demoted; not auto Not Recommended.'
       );
     } else if (!rec || rec === 'unknown') {
       out.forceUnknownOutcomes = true;
       out.warnings.push('Local representativeness uncertain — keep moisture-dependent outcomes UNKNOWN where evidence is thin.');
     }
+  } else if (metadataUnknown) {
+    // Unknown is absence of local QA evidence, not evidence of poor representativeness.
+    // Preserve supported general climate fit while surfacing confidence limits on
+    // moisture/precipitation-dependent dimensions.
+    out.forceUnknownOutcomes = false;
+    out.warnings.push(
+      'Local representativeness is not yet verified — moisture/precipitation-dependent details remain confidence-limited.'
+    );
   }
 
   return out;
