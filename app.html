@@ -2174,10 +2174,19 @@ function climateTraitOrdinalIsHardFrost(value){
 }
 
 function climateSuitabilityV1HighFrostNeedsConservativeClimate(meta,indoorShelter,garden){
-  return !indoorShelter
-    &&!!meta
-    &&climateTraitOrdinalIsHardFrost(meta.frostSensitivity)
-    &&!climateSuitabilityV1IsFrostFreeGrowingClimate(garden);
+  if(indoorShelter||!meta||!climateTraitOrdinalIsHardFrost(meta.frostSensitivity)) return false;
+  const risk=String(garden?.freezingRisk||'').toLowerCase();
+  const coldRaw=garden?.coldestMonthMeanMinC;
+  const cold=coldRaw==null||coldRaw===''?NaN:Number(coldRaw);
+  const thermal=String(garden?.thermalRegime||'').toLowerCase();
+  // frostFree=false means frost-free conditions are not proven; it is not itself
+  // evidence of damaging cold. Only structural cold evidence may trigger this cap.
+  return risk==='medium'
+    ||risk==='high'
+    ||(Number.isFinite(cold)&&cold<10)
+    ||thermal==='cool-seasonal'
+    ||thermal==='frost-prone'
+    ||thermal==='cool-highland';
 }
 
 function climateSuitabilityV1IsWarmTropicalFrostSensitiveGroup(metaHasGroup){
