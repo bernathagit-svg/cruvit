@@ -118,6 +118,43 @@ test('Part1 humidity FP systemic — atmospheric high RH, not moistureRegime', (
   assert.ok(/never moistureRegime/i.test(src.slice(i - 400, i + 400)));
 });
 
+test('Part1b deep-cold species fit is conditional without comparable absolute-extreme hardiness evidence', () => {
+  const adj = applyPreScaleSystemicDemotions({
+    overall: 'good',
+    meta: {
+      frostSensitivity: 'low',
+      coldTolerance: 'high'
+    },
+    climateProfile: {
+      freezingRisk: 'high',
+      coldestMonthMeanMinC: -11.85
+    },
+    plant: { slug: 'generic-cold-hardy-species' }
+  });
+  assert.equal(adj.overall, 'borderline');
+  assert.ok(adj.warnings.some((w) => /deep-cold|absolute-minimum|hardiness/i.test(String(w))));
+});
+
+test('Part1c deep-cold guard does not demote when comparable plant and climate extreme evidence exist', () => {
+  const adj = applyPreScaleSystemicDemotions({
+    overall: 'good',
+    meta: {
+      frostSensitivity: 'low',
+      coldTolerance: 'high',
+      quantitativeEvidence: {
+        minimum_survival_temperature_c: -20
+      }
+    },
+    climateProfile: {
+      freezingRisk: 'high',
+      coldestMonthMeanMinC: -11.85,
+      absoluteMinTempC: -17
+    },
+    plant: { slug: 'generic-quantified-cold-hardy-species' }
+  });
+  assert.equal(adj.overall, 'good');
+});
+
 test('Part2 extremes gap bounds confidence without manufacturing a climate mismatch', () => {
   const meta = { frostSensitivity: 'high', heatTolerance: 'high' };
   const gap = extremesAuthorityGapDemotesSurvivalPositive(meta, {});
