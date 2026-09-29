@@ -118,18 +118,26 @@ test('Part1 humidity FP systemic — atmospheric high RH, not moistureRegime', (
   assert.ok(/never moistureRegime/i.test(src.slice(i - 400, i + 400)));
 });
 
-test('Part2 extremes gap demotes strong positive; absence does not auto-block', () => {
+test('Part2 extremes gap bounds confidence without manufacturing a climate mismatch', () => {
   const meta = { frostSensitivity: 'high', heatTolerance: 'high' };
   const gap = extremesAuthorityGapDemotesSurvivalPositive(meta, {});
   assert.equal(gap.demote, true);
-  const adj = applyPreScaleSystemicDemotions({
+  const good = applyPreScaleSystemicDemotions({
     overall: 'good',
     meta,
     climateProfile: { freezingRisk: 'low', moistureRegime: 'humid', isFrostFreeGrowingClimate: true },
     plant: { slug: 'generic' }
   });
-  assert.equal(adj.overall, 'borderline');
-  assert.notEqual(adj.overall, 'blocked');
+  assert.equal(good.overall, 'good');
+  assert.ok(good.warnings.some((w) => /extreme|damaging/i.test(String(w))));
+  const excellent = applyPreScaleSystemicDemotions({
+    overall: 'excellent',
+    meta,
+    climateProfile: { freezingRisk: 'low', moistureRegime: 'humid', isFrostFreeGrowingClimate: true },
+    plant: { slug: 'generic' }
+  });
+  assert.equal(excellent.overall, 'good');
+  assert.notEqual(excellent.overall, 'blocked');
 });
 
 test('Part3 monthly water balance distinguishes seasonality with similar annual P', () => {
