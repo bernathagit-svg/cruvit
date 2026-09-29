@@ -827,18 +827,8 @@ export function evaluateFloweringFromCatalogEvidence({
       evidence: 'negative:freezing-risk'
     };
   }
-  if (
-    !sheltered &&
-    frostSensitivityIsHard(frostSensitivity) &&
-    !frostFree &&
-    (freezingRisk !== 'low' || plantRequiresYearRoundWarmClimate(meta))
-  ) {
-    return {
-      status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
-      limiting: 'Needs frost-free conditions for flowering.',
-      evidence: 'negative:not-frost-free'
-    };
-  }
+  // isFrostFreeGrowingClimate=false is an evidence gap, not proof of damaging frost.
+  // Actual cold failures are handled by freezingRisk and outdoorDamagingColdUnsupported below.
   if (!sheltered && outdoorDamagingColdUnsupported(meta, env)) {
     return {
       status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
@@ -956,12 +946,17 @@ export function evaluateFloweringFromCatalogEvidence({
     // without already hitting a hard negative above — still a real comparison, not a default score.
     if (
       !sheltered &&
-      (!frostFree || freezingRisk === 'high' || /cool|frost-prone|highland/.test(thermal))
+      (
+        freezingRisk === 'medium' ||
+        freezingRisk === 'high' ||
+        (coldest != null && coldest < DAMAGING_COLD_MONTH_MEAN_MIN_C) ||
+        /cool-seasonal|frost-prone|cool-highland/.test(thermal)
+      )
     ) {
       return {
         status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
-        limiting: 'Climate is too cool / not frost-free for sourced warm flowering needs.',
-        evidence: 'negative:cool-or-not-frost-free-vs-warm-flowering'
+        limiting: 'Climate has material cold evidence that conflicts with sourced warm flowering needs.',
+        evidence: 'negative:material-cold-vs-warm-flowering'
       };
     }
   }
@@ -1051,7 +1046,12 @@ export function evaluateFruitingFromCatalogEvidence({
     fruitFailCtx &&
     !sheltered &&
     isWarmTropicalFrostSensitiveGroup(meta) &&
-    (freezingRisk === 'medium' || freezingRisk === 'high' || !frostFree || humiditySignal === 'low')
+    (
+      freezingRisk === 'medium' ||
+      freezingRisk === 'high' ||
+      (coldest != null && coldest < DAMAGING_COLD_MONTH_MEAN_MIN_C) ||
+      humiditySignal === 'low'
+    )
   ) {
     return {
       status: SPECIFIC_OUTCOME_STATUS.UNRELIABLE,
@@ -1166,12 +1166,17 @@ export function evaluateFruitingFromCatalogEvidence({
     }
     if (
       !sheltered &&
-      (!frostFree || freezingRisk === 'high' || /cool|frost-prone|highland/.test(thermal))
+      (
+        freezingRisk === 'medium' ||
+        freezingRisk === 'high' ||
+        (coldest != null && coldest < DAMAGING_COLD_MONTH_MEAN_MIN_C) ||
+        /cool-seasonal|frost-prone|cool-highland/.test(thermal)
+      )
     ) {
       return {
         status: SPECIFIC_OUTCOME_STATUS.UNRELIABLE,
-        limiting: 'Climate is too cool / not frost-free for sourced fruiting needs.',
-        evidence: 'negative:cool-or-not-frost-free-vs-warm-fruiting',
+        limiting: 'Climate has material cold evidence that conflicts with sourced fruiting needs.',
+        evidence: 'negative:material-cold-vs-warm-fruiting',
         reproductiveClimateSuitability: SPECIFIC_OUTCOME_STATUS.UNRELIABLE,
         biologicalFruitSetEligibility: readBiologicalFruitSetEvidence(meta).eligibility
       };
@@ -1337,17 +1342,6 @@ export function deriveSpecificPlantOutcomes({
     );
     evidenceHints.usedHumiditySurvival = true;
     evidenceHints.survivalFields.push('humidityTolerance');
-  } else if (
-    !sheltered &&
-    frostSensitivityIsHard(frostSensitivity) &&
-    !frostFree &&
-    (freezingRisk !== 'low' || plantRequiresYearRoundWarmClimate(meta))
-  ) {
-    survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
-    limiting.push(
-      'Needs a frost-free climate; outdoor reliability is limited where winters are cool or frost-prone.'
-    );
-    evidenceHints.survivalFields.push('frostSensitivity');
   } else if (!sheltered && tropicalMoisturePlant && humiditySignal === 'low') {
     survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
     limiting.push('Low humidity / dry-air climate is a poor match for this plant.');

@@ -82,7 +82,11 @@ function climateYehiam() {
     climateLabel: 'Mediterranean',
     broadClimate: 'mediterranean',
     freezingRisk: 'low',
-    isFrostFreeGrowingClimate: false
+    isFrostFreeGrowingClimate: false,
+    coldestMonthMeanMinC: 7.75,
+    thermalRegime: 'cool-seasonal',
+    structuralColdRisk: 'elevated',
+    structuralClimateStatus: 'known'
   };
 }
 
@@ -283,9 +287,11 @@ test('6. colder Garden is equal or worse survival for frost-sensitive tropical',
   assert.equal(london.survival, SPECIFIC_OUTCOME_STATUS.UNRELIABLE);
   assert.equal(yehiam.overall, 'blocked');
   assert.equal(london.overall, 'blocked');
-  // London has explicit high freezingRisk factor; Yehiam fails frost-free requirement.
+  // London has explicit high freezingRisk; Yehiam is limited by measured structural cold.
   assert.ok(london.limitingFactors.some((w) => /Frost risk is too high/i.test(w)));
-  assert.ok(yehiam.limitingFactors.some((w) => /frost-free/i.test(w)));
+  assert.ok(
+    yehiam.limitingFactors.some((w) => /Coldest-month mean lows|warm tropical reliability/i.test(w))
+  );
 });
 
 test('7. Garden switch recomputes all four outcomes (hydrate comparator)', () => {
@@ -315,9 +321,11 @@ test('7. Garden switch recomputes all four outcomes (hydrate comparator)', () =>
     serverLocationToAppPartial,
     plant
   );
-  assert.equal(comparison.gardenA.outcomes.survival, SPECIFIC_OUTCOME_STATUS.UNRELIABLE);
+  // Hydrated coarse labels do not contain structural cold evidence, so Garden A
+  // must stay conservative rather than manufacture a frost failure from frostFree=false.
+  assert.equal(comparison.gardenA.outcomes.survival, SPECIFIC_OUTCOME_STATUS.CONSTRAINED);
   assert.equal(comparison.gardenB.outcomes.survival, SPECIFIC_OUTCOME_STATUS.UNRELIABLE);
-  assert.equal(comparison.gardenA.outcomes.overall, 'blocked');
+  assert.equal(comparison.gardenA.outcomes.overall, 'borderline');
   assert.equal(comparison.gardenB.outcomes.overall, 'blocked');
   assert.ok(comparison.gardenA.outcomes.growth);
   assert.ok(comparison.gardenA.outcomes.flowering);
@@ -325,6 +333,58 @@ test('7. Garden switch recomputes all four outcomes (hydrate comparator)', () =>
   assert.notEqual(
     comparison.gardenA.climate.freezingRisk,
     comparison.gardenB.climate.freezingRisk
+  );
+});
+
+test('7b. low freezing risk + mild structural winter is not a manufactured frost failure', () => {
+  const meta = {
+    frostSensitivity: 'very_high',
+    coldTolerance: 'very_low',
+    heatTolerance: 'high',
+    humidityTolerance: 'medium',
+    groupIds: ['tropical-frost-sensitive-fruit'],
+    floweringRequirements: 'Warmth, sun, and low frost risk are essential.',
+    fruitingRequirements: 'Reliable fruiting needs a long warm season and low frost risk.',
+    traitEvidenceClasses: {
+      frostSensitivity: 'SOURCE_SUPPORTED',
+      coldTolerance: 'SOURCE_SUPPORTED',
+      floweringRequirements: 'HEURISTIC_ASSERTION',
+      fruitingRequirements: 'HEURISTIC_ASSERTION'
+    }
+  };
+  const plant = { slug: 'generic-warm-fruit', tags: ['fruit'], climateTraits: meta };
+  const climateProfile = {
+    locationLabel: 'Warm Mediterranean coast',
+    broadClimate: 'mediterranean',
+    freezingRisk: 'low',
+    isFrostFreeGrowingClimate: false,
+    coldestMonthMeanMinC: 11.15,
+    thermalRegime: 'mild-seasonal',
+    structuralColdRisk: 'low',
+    moistureRegime: 'semi-arid',
+    humiditySignal: 'medium',
+    structuralClimateStatus: 'known'
+  };
+  const outcomes = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile,
+    suitability: {
+      recommendationLevel: 'borderline',
+      survivalFit: 75,
+      thriveFit: 70,
+      floweringFit: 50,
+      fruitingFit: 50,
+      warnings: [],
+      explanationText: ''
+    },
+    plant,
+    protectedGrowing: false
+  });
+  assert.notEqual(outcomes.survival, SPECIFIC_OUTCOME_STATUS.UNRELIABLE);
+  assert.notEqual(outcomes.overall, 'blocked');
+  assert.equal(
+    outcomes.limitingFactors.some((w) => /Needs a frost-free climate|not frost-free/i.test(w)),
+    false
   );
 });
 

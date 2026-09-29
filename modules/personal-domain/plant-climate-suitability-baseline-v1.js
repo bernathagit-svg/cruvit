@@ -92,21 +92,9 @@ export function assessPlantClimateColdSurvival(meta, climateProfile = {}) {
       authority: 'frostSensitivity-high'
     };
   }
-  if (
-    frostSensitivityIsHard(frost) &&
-    climateProfile?.isFrostFreeGrowingClimate === false &&
-    ((freezingRisk !== 'low' && freezingRisk !== '') || plantRequiresYearRoundWarmClimate(meta))
-  ) {
-    return {
-      survivalHint: 'unreliable',
-      confidence: extremes ? 'high' : 'medium',
-      reason: 'High frostSensitivity plant outside frost-free growing climate.',
-      survivalFit: 25,
-      thriveFit: 30,
-      authority: 'frostSensitivity-high-not-frost-free'
-    };
-  }
-
+  // isFrostFreeGrowingClimate=false means frost-free conditions are not proven;
+  // it is not positive evidence of damaging frost. Real cold evidence is handled
+  // above by freezingRisk and outdoorDamagingColdUnsupported().
   if (frostProne) {
     if (frost === 'low' && (coldTol === 'high' || coldTol === 'medium' || coldTol === '')) {
       return {
@@ -270,10 +258,14 @@ export function buildPlantDiscriminatedSuitabilityStub(meta, climateProfile = {}
   let recommendationLevel = 'borderline';
 
   if (needsWarm) {
-    if (!frostFree || freezingRisk === 'high' || /cool|frost-prone|highland/.test(thermal)) {
+    const materialColdMismatch =
+      freezingRisk === 'medium' ||
+      freezingRisk === 'high' ||
+      /cool-seasonal|frost-prone|cool-highland/.test(thermal);
+    if (materialColdMismatch) {
       thriveFit = Math.min(thriveFit, 35);
       warnings.push(
-        'Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.'
+        'Plant evidence indicates warm / tropical establishment needs; climate has material cool/frost/highland evidence.'
       );
     }
   }
