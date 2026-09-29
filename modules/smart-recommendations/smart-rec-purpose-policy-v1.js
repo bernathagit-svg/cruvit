@@ -370,7 +370,14 @@ export function applyPurposePolicyToSuitability(suitability = {}, derived = null
     hardSurvivalBlocked: next.hardSurvivalBlocked === true,
     safetyBlocked: options.safetyBlocked === true
   });
-  next.recommendationLevel = capRecommendationLevelForPurpose(next.recommendationLevel, purposeFit);
+  const explicitPurpose =
+    !!purpose?.userIntent || String(purpose?.source || '').startsWith('user');
+  // Keep the base recommendationLevel as general climate fit unless the user explicitly selected a purpose.
+  // Catalog capability still informs purposeFit/ranking, but must not silently turn a generally suitable plant
+  // into a climate false-negative.
+  if (explicitPurpose) {
+    next.recommendationLevel = capRecommendationLevelForPurpose(next.recommendationLevel, purposeFit);
+  }
   if (purposeFit.status === PURPOSE_FIT_STATUS.BLOCKED) {
     next.hardSurvivalBlocked = next.hardSurvivalBlocked === true || derived?.survival === 'unreliable';
   }
