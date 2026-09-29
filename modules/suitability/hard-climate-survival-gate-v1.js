@@ -10,7 +10,7 @@
  * Not a second climate engine: callers still use smartRecEvaluateSuitability.
  * Not plant- or place-specific.
  */
-export const HARD_CLIMATE_SURVIVAL_GATE_VERSION = '1.1.3';
+export const HARD_CLIMATE_SURVIVAL_GATE_VERSION = '1.1.4';
 
 const RISK_RANK = Object.freeze({ unknown: 0, low: 1, medium: 2, high: 3 });
 
@@ -189,7 +189,7 @@ export function evaluateHardClimateSurvival({
     frostHard ||
     (coldLow && (frostHard || frostSens === 'medium' || frostSens === ''));
 
-  if (frostHard && ambientRisk !== 'low' && ambientRisk !== 'unknown') {
+  if (frostHard && ambientRisk === 'high') {
     return Object.assign({}, base, {
       hardBlocked: true,
       reason: 'Frost risk is too high for this plant.',
@@ -197,6 +197,17 @@ export function evaluateHardClimateSurvival({
       thriveCap: 8,
       floweringCap: 8,
       fruitingCap: 5
+    });
+  }
+
+  if (frostHard && ambientRisk === 'medium' && !lethalAmbient) {
+    return Object.assign({}, base, {
+      hardBlocked: false,
+      reason: 'Seasonal frost risk requires protection for reliable outdoor performance.',
+      survivalCap: 55,
+      thriveCap: 45,
+      floweringCap: 45,
+      fruitingCap: 40
     });
   }
 
