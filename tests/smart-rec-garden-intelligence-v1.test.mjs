@@ -270,6 +270,31 @@ test('positive eligibility remains allowed when explicit flag is true and surviv
   }),false);
 });
 
+test('validated borderline outcome cannot remain a positive recommendation',()=>{
+  const aligned=alignSmartRecSuitabilityWithValidatedOutcomes({
+    positiveRecommendationEligible:true,
+    recommendationLevel:'good',
+    suitabilityScore:82,
+    hardSurvivalBlocked:false
+  },{
+    overall:'borderline',
+    survival:'constrained',
+    growth:'constrained',
+    limitingFactors:['Validated climate outcome is conditional.']
+  });
+  assert.equal(aligned.positiveRecommendationEligible,false);
+  assert.equal(aligned.recommendationLevel,'borderline');
+  assert.equal(aligned.hardSurvivalBlocked,false);
+  assert.equal(aligned.suitabilityScore,82);
+  assert.equal(isPositiveRecommendationIneligible({
+    positiveRecommendationEligible:aligned.positiveRecommendationEligible,
+    recommendationLevel:aligned.recommendationLevel,
+    hardSurvivalBlocked:aligned.hardSurvivalBlocked,
+    derivedOverall:'borderline',
+    derivedSurvival:'constrained'
+  }),true);
+});
+
 test('explicitly ineligible plant ranks behind otherwise-equal eligible plant',()=>{
   const eligible={
     positiveRecommendationEligible:true,
