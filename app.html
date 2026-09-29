@@ -6871,7 +6871,35 @@ function evaluateSpecificPlantSuitability(plant){
   const savedAnswers=smartRecSession&&typeof smartRecSession==='object'?smartRecSession.answers:undefined;
   if(smartRecSession&&typeof smartRecSession==='object') smartRecSession.answers={};
   try{
-    return smartRecEvaluateSuitability(plant);
+    let suitability=smartRecEvaluateSuitability(plant);
+    const derived=smartRecDeriveValidatedOutcomes(plant,suitability);
+    const gi=smartRecGardenIntelligenceApi();
+    if(gi&&typeof gi.alignSmartRecSuitabilityWithValidatedOutcomes==='function'){
+      suitability=gi.alignSmartRecSuitabilityWithValidatedOutcomes(suitability,derived,{
+        plant,
+        meta:typeof smartRecClimateMetaForPlant==='function'?smartRecClimateMetaForPlant(plant):null,
+        intent:{},
+        he:typeof getSmartRecLang==='function'&&getSmartRecLang()==='he'
+      });
+    }else if(suitability&&(
+      suitability.hardSurvivalBlocked===true||
+      String(derived?.overall||'').toLowerCase()==='blocked'||
+      ['unreliable','poor'].includes(String(derived?.survival||'').toLowerCase())
+    )){
+      suitability=Object.assign({},suitability,{
+        recommendationLevel:'blocked',
+        suitabilityScore:0,
+        positiveRecommendationEligible:false,
+        derivedOutcomes:derived||null
+      });
+    }else if(suitability&&String(derived?.overall||'').toLowerCase()==='borderline'){
+      suitability=Object.assign({},suitability,{
+        recommendationLevel:['excellent','good'].includes(String(suitability.recommendationLevel||'').toLowerCase())?'borderline':suitability.recommendationLevel,
+        positiveRecommendationEligible:false,
+        derivedOutcomes:derived||null
+      });
+    }
+    return suitability;
   }finally{
     if(smartRecSession&&typeof smartRecSession==='object') smartRecSession.answers=savedAnswers;
   }
