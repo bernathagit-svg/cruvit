@@ -346,6 +346,38 @@ test('F. UNKNOWN remains provisional, never promoted to Good', () => {
   assert.match(aligned.recommendationLabel, /Evidence-limited for fruit/i);
 });
 
+test('F2. catalog-only fruit capability does not demote general climate fit', () => {
+  const plant = {
+    slug: 'probe-catalog-fruit',
+    tags: ['fruit', 'tree'],
+    climateTraits: { groupIds: ['mediterranean-fruit'] }
+  };
+  const aligned = alignSmartRecSuitabilityWithValidatedOutcomes(
+    { recommendationLevel: 'good', suitabilityScore: 88, hardSurvivalBlocked: false },
+    { survival: 'reliable', growth: 'supported', flowering: 'unknown', fruiting: 'constrained', overall: 'good' },
+    { plant, meta: plant.climateTraits, intent: null }
+  );
+  assert.equal(aligned.purpose.source, 'catalog');
+  assert.equal(aligned.purposeFit.status, PURPOSE_FIT_STATUS.CONDITIONAL);
+  assert.equal(aligned.recommendationLevel, 'good');
+});
+
+test('F3. explicit fruit intent still caps a constrained fruiting outcome', () => {
+  const plant = {
+    slug: 'probe-explicit-fruit',
+    tags: ['fruit', 'tree'],
+    climateTraits: { groupIds: ['mediterranean-fruit'] }
+  };
+  const aligned = alignSmartRecSuitabilityWithValidatedOutcomes(
+    { recommendationLevel: 'good', suitabilityScore: 88, hardSurvivalBlocked: false },
+    { survival: 'reliable', growth: 'supported', flowering: 'supported', fruiting: 'constrained', overall: 'good' },
+    { plant, meta: plant.climateTraits, intent: { answers: { q9: 'food-herbs' } } }
+  );
+  assert.match(aligned.purpose.source, /^user/);
+  assert.equal(aligned.purposeFit.status, PURPOSE_FIT_STATUS.CONDITIONAL);
+  assert.equal(aligned.recommendationLevel, 'borderline');
+});
+
 test('G. explicit user purpose outranks default catalog purpose', () => {
   const peony = loadSeedPlant('garden-peony');
   const catalog = resolveSmartRecPurpose({ plant: peony, meta: peony.climateTraits });
