@@ -140,7 +140,7 @@ export function isPositiveRecommendationIneligible({
   const level = asText(recommendationLevel).toLowerCase();
   if (level === 'blocked') return true;
   const overall = asText(derivedOverall).toLowerCase();
-  if (overall === 'blocked') return true;
+  if (overall === 'blocked' || overall === 'borderline') return true;
   const survival = asText(derivedSurvival).toLowerCase();
   if (survival === 'unreliable' || survival === 'poor') return true;
   return false;
@@ -164,18 +164,28 @@ export function validatedSmartRecCardOutcomes(derived, suitability, meta, plant)
 
 export function alignSmartRecSuitabilityWithValidatedOutcomes(suitability = {}, derived = null, options = {}) {
   const next = Object.assign({}, suitability && typeof suitability === 'object' ? suitability : {});
-  const ineligible = isPositiveRecommendationIneligible({
-    hardSurvivalBlocked: next.hardSurvivalBlocked,
-    positiveRecommendationEligible: next.positiveRecommendationEligible,
-    recommendationLevel: next.recommendationLevel,
-    derivedOverall: derived?.overall,
-    derivedSurvival: derived?.survival
-  });
-  if (ineligible) {
+  const derivedOverall = asText(derived?.overall).toLowerCase();
+  const derivedSurvival = asText(derived?.survival).toLowerCase();
+  const rawLevel = asText(next.recommendationLevel).toLowerCase();
+  const hardBlocked =
+    next.hardSurvivalBlocked === true ||
+    rawLevel === 'blocked' ||
+    derivedOverall === 'blocked' ||
+    derivedSurvival === 'unreliable' ||
+    derivedSurvival === 'poor';
+
+  if (hardBlocked) {
     next.recommendationLevel = 'blocked';
     next.suitabilityScore = 0;
     next.hardSurvivalBlocked = true;
+    next.positiveRecommendationEligible = false;
+  } else if (derivedOverall === 'borderline') {
+    next.positiveRecommendationEligible = false;
+    if (rawLevel === 'excellent' || rawLevel === 'good') {
+      next.recommendationLevel = 'borderline';
+    }
   }
+
   const derivedLimiter = Array.isArray(derived?.limitingFactors)
     ? derived.limitingFactors.map((m) => asText(m)).find(Boolean)
     : '';
