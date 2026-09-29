@@ -320,6 +320,44 @@ export async function fetchClimateObjectBytes(objectKey, options = {}) {
   }
 }
 
+export async function listClimateObjectsPage(prefix, options = {}) {
+  const env = options.env || process.env;
+  applyR2LocalEnvFromFile(env);
+  const status = getR2ConnectionStatus(env);
+  if (!status.ready) return { ok:false, code:status.blocker, missing:status.missing, objects:[] };
+  const keyPrefix = String(prefix || '').replace(/^\/+/, '');
+  try {
+    const { ListObjectsV2Command } = await import('@aws-sdk/client-s3');
+    const client = await getS3Client(env);
+    const maxKeysRaw = Number(options.maxKeys);
+    const maxKeys = Number.isFinite(maxKeysRaw) ? Math.max(1, Math.min(1000, Math.floor(maxKeysRaw))) : 1000;
+    const out = await client.send(new ListObjectsV2Command({
+      Bucket:String(env.R2_BUCKET),
+      Prefix:keyPrefix,
+      ContinuationToken:options.continuationToken || undefined,
+      MaxKeys:maxKeys
+    }));
+    const objects=(out.Contents || []).map((row)=>({
+      key:row.Key,
+      bytes:Number(row.Size)||0,
+      etag:row.ETag||null,
+      lastModified:row.LastModified?.toISOString?.()||null
+    }));
+    return {
+      ok:true,
+      code:'OK',
+      prefix:keyPrefix,
+      objectCount:objects.length,
+      totalBytes:objects.reduce((sum,x)=>sum+x.bytes,0),
+      objects,
+      isTruncated:out.IsTruncated===true,
+      nextContinuationToken:out.IsTruncated ? (out.NextContinuationToken || null) : null
+    };
+  } catch (err) {
+    return {ok:false,code:'REMOTE_LIST_FAILED',prefix:keyPrefix,objects:[],error:String(err?.message||err)};
+  }
+}
+
 export async function listClimateObjectsByPrefix(prefix, options = {}) {
   const env = options.env || process.env;
   applyR2LocalEnvFromFile(env);
