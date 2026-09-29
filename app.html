@@ -2820,22 +2820,22 @@ function focusedGardenActions(){
       plantsByKey:focusPlantsByKeyMap()
     });
   }
-  return focusedTaskIndexes().map(i=>({
+  return companionOpenTaskEntriesFiltered().slice(0,focusMax).map(({t,i})=>({
     kind:'single',
     taskIndex:i,
     memberIndexes:[i],
-    title:String(data.tasks[i]?.[1]||''),
-    plantNames:[String(data.tasks[i]?.[6]||'')].filter(Boolean),
+    title:String(t?.[1]||''),
+    plantNames:[String(t?.[6]||'')].filter(Boolean),
     outcomeEligible:false
   }));
 }
 function focusedTaskIndexes(){
-  const actions=focusedGardenActions();
   const budget=window.cruvitGardenTaskBudgetV1;
-  if(budget&&typeof budget.expandFocusActionMemberIndexes==='function'){
-    // Representative indexes for legacy callers; Focus UI uses focusedGardenActions().
-    return actions.map(a=>a.taskIndex).filter(i=>Number.isInteger(i));
+  if(!budget||typeof budget.selectGardenFocusActions!=='function'){
+    const focusMax=showAllTasks?12:3;
+    return companionOpenTaskEntriesFiltered().slice(0,focusMax).map(x=>x.i).filter(i=>Number.isInteger(i));
   }
+  const actions=focusedGardenActions();
   return actions.map(a=>a.taskIndex).filter(i=>Number.isInteger(i));
 }
 function refreshOpenTaskPanels(){
