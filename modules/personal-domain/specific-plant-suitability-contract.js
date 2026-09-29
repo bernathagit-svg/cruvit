@@ -1250,7 +1250,8 @@ export function deriveSpecificPlantOutcomes({
   climateProfile,
   suitability,
   plant,
-  protectedGrowing = false
+  protectedGrowing = false,
+  gardenContext = null
 } = {}) {
   const env = structuralEnvironmentFromClimateProfile(climateProfile || {});
   const climateConfidence =
@@ -1285,6 +1286,14 @@ export function deriveSpecificPlantOutcomes({
   const humiditySignal = env.humiditySignal;
   const frostSensitivity = String(meta?.frostSensitivity || '').toLowerCase();
   const humidityTolerance = String(meta?.humidityTolerance || '').toLowerCase();
+  const waterNeeds = String(meta?.waterNeeds || '').trim().toLowerCase();
+  const irrigationType = String(gardenContext?.irrigationType ?? gardenContext?.irrigation_type ?? 'unknown').trim().toLowerCase();
+  const irrigationReliability = String(gardenContext?.irrigationReliability ?? gardenContext?.irrigation_reliability ?? 'unknown').trim().toLowerCase();
+  const reliableIrrigation = irrigationType !== 'none' && (irrigationReliability === 'medium' || irrigationReliability === 'high');
+  const aridWaterConstraint = !sheltered && !reliableIrrigation && (
+    (env.moistureRegime === 'hyper-arid' && (waterNeeds === 'medium' || waterNeeds === 'high')) ||
+    (env.moistureRegime === 'arid' && waterNeeds === 'high')
+  );
   const survivalFit = Number(s.survivalFit);
   const thriveFit = Number(s.thriveFit);
   // floweringFit / fruitingFit are NOT botanical evidence — ignored for reproductive outcomes.
@@ -1563,6 +1572,20 @@ export function deriveSpecificPlantOutcomes({
     unknownGaps.push('growth-evidence');
   }
 
+  // Irrigation is a conditional garden-site modifier, never a reason to soften a worse climate outcome.
+  // It may only bound an otherwise strong growth positive when natural climate water is insufficient.
+  if (aridWaterConstraint && growth === SPECIFIC_OUTCOME_STATUS.SUPPORTED) {
+    growth = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    evidenceHints.growthFields.push('waterNeeds');
+    if (!limiting.some((m) => /irrigation|water supply|natural climate water/i.test(String(m)))) {
+      limiting.push(
+        irrigationType === 'none' || irrigationReliability === 'none' || irrigationReliability === 'low'
+          ? `Natural climate water is too limited for this ${waterNeeds}-water plant and reliable irrigation is not available.`
+          : `Natural climate water is too limited for this ${waterNeeds}-water plant; irrigation reliability is unknown, so strong growth suitability is withheld.`
+      );
+    }
+  }
+
   if (chillDeficit) {
     if (
       growth === SPECIFIC_OUTCOME_STATUS.SUPPORTED ||
@@ -1681,6 +1704,7 @@ export function deriveSpecificPlantOutcomes({
     meta,
     climateProfile: climateProfile || env,
     plant,
+    gardenContext: gardenContext || {},
     evidenceStrength: strength
   });
 }

@@ -6244,7 +6244,11 @@ function smartRecProtectionContext(){
     greenhouse:planting==='greenhouse',
     frostFreeProtected:planting==='greenhouse'||planting==='conservatory',
     sunExposure:areaCtx.sunExposure||areaCtx.sun_exposure||'',
-    windExposure:areaCtx.windExposure||areaCtx.wind_exposure||''
+    windExposure:areaCtx.windExposure||areaCtx.wind_exposure||'',
+    irrigationType:areaCtx.irrigationType||areaCtx.irrigation_type||'unknown',
+    irrigationReliability:areaCtx.irrigationReliability||areaCtx.irrigation_reliability||'unknown',
+    drainage:areaCtx.drainage||'unknown',
+    moistureTendency:areaCtx.moistureTendency||areaCtx.soilMoistureTendency||areaCtx.moisture_tendency||'unknown'
   };
 }
 
@@ -6943,7 +6947,8 @@ function smartRecDeriveValidatedOutcomes(plant,suitability){
     climateProfile,
     suitability,
     plant,
-    protectedGrowing
+    protectedGrowing,
+    gardenContext:protection
   });
 }
 
