@@ -53,14 +53,14 @@ test('mismatch without survival evidence: affectsGrowth true, affectsSurvival fa
   assert.equal(m.affectsSurvival, false);
 });
 
-test('outcomes: Survival not demoted by humidity; Growth bounded; Overall not Good', () => {
+test('outcomes: Survival not demoted by humidity; Growth severity preserved; Overall not Good', () => {
   const meta = {
     frostSensitivity: 'low',
     humidityTolerance: 'low',
     heatTolerance: 'high',
     waterNeeds: 'low',
     // Isolate humidity dimension: survival-authorizing cold trait is source-supported;
-    // humidityTolerance remains heuristic → cannot authorize confident Poor.
+    // humidityTolerance remains heuristic; severe negative status is preserved, with confidence bounded separately.
     traitEvidenceClasses: {
       frostSensitivity: 'SOURCE_SUPPORTED',
       humidityTolerance: 'HEURISTIC_ASSERTION',
@@ -92,7 +92,7 @@ test('outcomes: Survival not demoted by humidity; Growth bounded; Overall not Go
     plant: { slug: 'generic-low-hum', climateTraits: meta }
   });
   assert.equal(o.survival, 'reliable');
-  assert.equal(o.growth, 'constrained'); // heuristic humidity cannot authorize confident Poor
+  assert.equal(o.growth, 'poor'); // severe negative is preserved; confidence is bounded separately
   assert.notEqual(o.overall, 'good');
   assert.notEqual(o.overall, 'excellent');
   assert.ok(/growth|humidity|evidence-strength|bounded/i.test(o.limitingFactors.join(' ')));
