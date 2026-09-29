@@ -2055,6 +2055,9 @@ function climateMetaFromCatalogTraits(traits,scientific){
   if(traits.traitEvidenceClasses&&typeof traits.traitEvidenceClasses==='object'){
     merged.traitEvidenceClasses=Object.assign({},traits.traitEvidenceClasses);
   }
+  if(traits.traitProvenance&&typeof traits.traitProvenance==='object'){
+    merged.traitProvenance=JSON.parse(JSON.stringify(traits.traitProvenance));
+  }
   if(traits.reproductiveBiology&&typeof traits.reproductiveBiology==='object'){
     merged.reproductiveBiology=Object.assign({},traits.reproductiveBiology);
   }
