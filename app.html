@@ -926,7 +926,7 @@ const SPECIES_PACKET_ALIAS_TO_CANONICAL={
   'english-lavender':'lavender','spearmint':'mint','common-jasmine':'jasmine',
   'bigleaf-hydrangea':'hydrangea','lesser-bougainvillea':'bougainvillea','bell-pepper':'sweet-pepper'
 };
-(function applyCanonicalRuntimeClimateOverlay(){
+function applyCanonicalRuntimeClimateOverlay(){
   const payload=typeof window!=='undefined'?window.__CRUVIT_CANONICAL_CLIMATE_BOOTSTRAP:null;
   const rows=payload&&payload.ready===true&&payload.plants&&typeof payload.plants==='object'
     ?payload.plants:{};
@@ -963,7 +963,9 @@ const SPECIES_PACKET_ALIAS_TO_CANONICAL={
       appliedSlugs:applied
     };
   }
-})();
+  return typeof window!=='undefined'?window.__cruvitCanonicalRuntimeClimateOverlay:null;
+}
+applyCanonicalRuntimeClimateOverlay();
 const PLANT_INDEX=Object.fromEntries(PLANT_LIBRARY.map(p=>[p.slug,p]));
 /* ── Bounded identity alias remaps (canonical-wins; resolve-on-read) ── */
 (function applyBoundedIdentityAliasRemapsInline(){
@@ -1176,6 +1178,9 @@ async function loadPlantCatalogSeed(url){
       if(json.schemaVersion!==1) throw new Error('Plant catalog seed invalid: schemaVersion');
       if(!Array.isArray(json.plants)) throw new Error('Plant catalog seed invalid: plants array');
       const mergeResult=mergePlantCatalogItems(json.plants);
+      // Seed items are loaded after the initial canonical DB overlay. Re-apply the same
+      // authoritative overlay so late-added plants receive catalog_plants climate_traits too.
+      applyCanonicalRuntimeClimateOverlay();
       if(json.catalogMediaByCanonicalSlug&&typeof json.catalogMediaByCanonicalSlug==='object'){
         Object.keys(json.catalogMediaByCanonicalSlug).forEach(slug=>{
           const plant=PLANT_INDEX[slug];
