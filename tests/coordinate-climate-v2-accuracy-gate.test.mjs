@@ -115,6 +115,23 @@ test('PART F: cache miss does not fetch externally', () => {
   assert.equal(c.terrainProviderExternalCalls, 0);
 });
 
+test('PART H0: unknown representativeness limits confidence without manufacturing a mismatch', () => {
+  const adj = applyRepresentativenessToSuitabilityClaim({
+    overallRecommendation: 'good',
+    confidence: {
+      dimensions: {
+        LOCAL_REPRESENTATIVENESS: 'unknown',
+        OVERALL_AUTHORITY_CONFIDENCE: 'unknown'
+      }
+    },
+    moistureOrPrecipDependent: true
+  });
+  assert.equal(adj.demoted, false);
+  assert.equal(adj.adjustedRecommendation, 'good');
+  assert.equal(adj.forceUnknownOutcomes, false);
+  assert.ok(adj.warnings.some((w) => /not yet verified|confidence-limited/i.test(String(w))));
+});
+
 test('PART H: uncertain representativeness demotes strong moisture claim', () => {
   const adj = applyRepresentativenessToSuitabilityClaim({
     overallRecommendation: 'good',
