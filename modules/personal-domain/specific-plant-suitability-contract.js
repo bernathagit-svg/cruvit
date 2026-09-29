@@ -531,6 +531,9 @@ export function structuralEnvironmentFromClimateProfile(climateProfile = {}) {
       merged.meanVpdPa ??
       null,
     structuralColdRisk: merged.structuralColdRisk || climateProfile.structuralColdRisk || 'unknown',
+    extremeHeatRisk: String(
+      merged.extremeHeatRisk || climateProfile.extremeHeatRisk || 'unknown'
+    ).toLowerCase(),
     coldestMonthMeanMinC,
     warmestMonthMeanMaxC,
     annualPrecipitationMm:
@@ -601,6 +604,62 @@ export function hasFloweringEvidence(meta, plant) {
 /** Positive fruiting requires explicit fruitingRequirements — not fruit group alone. */
 export function hasPositiveFruitingEvidence(meta) {
   return !!(meta && String(meta.fruitingRequirements || '').trim());
+}
+
+export function qualitativeHumidityStressEvidence(meta) {
+  const provenance = meta?.traitProvenance || meta?.climateTraits?.traitProvenance || {};
+  for (const [field, entry] of Object.entries(provenance)) {
+    if (!entry || typeof entry !== 'object') continue;
+    const excerpt = String(entry.shortExcerpt || entry.excerpt || '').toLowerCase();
+    if (!excerpt || !/humid|humidity/.test(excerpt)) continue;
+    if (!/(disease|declin|stress|rot|mildew|fung|poor|reduce|risk|problem)/.test(excerpt)) continue;
+    const sourceIds = Array.isArray(entry.sourceIds) ? entry.sourceIds.filter(Boolean) : [];
+    if (!sourceIds.length) continue;
+    return {
+      field,
+      excerpt,
+      sourceIds,
+      evidenceClass: String(entry.evidenceClass || 'HEURISTIC_ASSERTION')
+    };
+  }
+  return null;
+}
+
+export function qualitativeHumidityClimateMismatch(meta, env = {}) {
+  const evidence = qualitativeHumidityStressEvidence(meta);
+  if (!evidence) return null;
+  const humidity = String(env.humiditySignal || env.atmosphericHumidityRegime || '').toLowerCase();
+  const broad = String(env.broadClimate || '').toLowerCase();
+  const hotHumidClimate =
+    broad === 'tropical' ||
+    broad === 'subtropical' ||
+    env.alwaysHot === true ||
+    String(env.thermalRegime || '').toLowerCase() === 'year-round-warm';
+  if (!hotHumidClimate || !['medium', 'borderline', 'high'].includes(humidity)) return null;
+  return {
+    severity: 'constrained',
+    evidence,
+    limiting:
+      'Source-linked plant evidence warns about humid-climate stress; warm humid conditions constrain growth confidence.'
+  };
+}
+
+export function qualitativeExtremeHeatMismatch(meta, env = {}) {
+  if (String(env.extremeHeatRisk || '').toLowerCase() !== 'high') return null;
+  const heatTolerance = String(meta?.heatTolerance || '').toLowerCase();
+  if (heatTolerance === 'low') {
+    return {
+      severity: 'poor',
+      limiting: 'Extreme-heat risk is high while plant heat tolerance is low.'
+    };
+  }
+  if (heatTolerance === 'medium') {
+    return {
+      severity: 'constrained',
+      limiting: 'Extreme-heat risk is high while plant heat tolerance is only moderate.'
+    };
+  }
+  return null;
 }
 
 /** Recommendation-purpose fruit identity: fruit/citrus/berry only; generic edible is not fruit. */
@@ -1370,6 +1429,12 @@ export function deriveSpecificPlantOutcomes({
   }
 
   const lowHumMismatch = lowHumMismatchEarly;
+  const narrativeHumidityMismatch = !sheltered
+    ? qualitativeHumidityClimateMismatch(meta, env)
+    : null;
+  const qualitativeHeatMismatch = !sheltered
+    ? qualitativeExtremeHeatMismatch(meta, env)
+    : null;
   const heatQ = !sheltered ? quantitativeHeatUnsupported(meta, env) : null;
   const vpdQ = !sheltered ? quantitativeVpdUnsupported(meta, env) : null;
 
@@ -1407,6 +1472,22 @@ export function deriveSpecificPlantOutcomes({
         : SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
     evidenceHints.usedMoistureGrowth = true;
     evidenceHints.growthFields.push('humidityTolerance');
+  } else if (narrativeHumidityMismatch) {
+    growth = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    evidenceHints.usedHumidityGrowth = true;
+    if (!limiting.includes(narrativeHumidityMismatch.limiting)) {
+      limiting.push(narrativeHumidityMismatch.limiting);
+    }
+  } else if (qualitativeHeatMismatch) {
+    growth =
+      qualitativeHeatMismatch.severity === 'poor'
+        ? SPECIFIC_OUTCOME_STATUS.POOR
+        : SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    evidenceHints.usedHeat = true;
+    if (meta?.heatTolerance) evidenceHints.growthFields.push('heatTolerance');
+    if (!limiting.includes(qualitativeHeatMismatch.limiting)) {
+      limiting.push(qualitativeHeatMismatch.limiting);
+    }
   } else if (heatQ?.unsupported || vpdQ?.unsupported) {
     growth = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
     evidenceHints.usedHeat = !!heatQ?.unsupported;
