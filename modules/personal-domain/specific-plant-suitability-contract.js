@@ -1644,7 +1644,8 @@ export function deriveSpecificPlantOutcomes({
     suitability: s,
     sheltered,
     needsReview: review,
-    fruitOriented: isFruitRecommendationOriented(meta, plant),
+    // General climate fit is purpose-neutral. Fruit/flower intent is applied later by the Smart Rec purpose policy.
+    fruitOriented: false,
     reproductiveEvidence: {
       flowering: flowerEval.evidence,
       fruiting: fruitEval.evidence,
