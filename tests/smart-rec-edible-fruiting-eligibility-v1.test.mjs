@@ -15,6 +15,16 @@ test('edible-first recommendation requires supported structured fruiting climate
   assert.match(body,/Fruiting climate is not reliable enough for an edible-first recommendation here/);
 });
 
+test('catalog fruit identity alone does not disable a general climate recommendation',()=>{
+  const start=app.indexOf("function smartRecEvaluateSuitability(p)");
+  const end=app.indexOf("function searchCatalogForSpecificPlantCheck",start);
+  assert.ok(start>=0&&end>start);
+  const body=app.slice(start,end);
+  assert.match(body,/let positiveRecommendationEligible=true/);
+  assert.match(body,/ctx\.edibleIntent&&fruitRecommendationClimateRequired&&!structuredFruitingClimateReady/);
+  assert.doesNotMatch(body,/positiveRecommendationEligible=!\(fruitRecommendationClimateRequired&&!structuredFruitingClimateReady\)/);
+});
+
 test('specific plant check does not itself create edible intent',()=>{
   const start=app.indexOf("function evaluateSpecificPlantSuitability");
   const end=app.indexOf("window.cruvitSpecificPlantSuitability",start);
