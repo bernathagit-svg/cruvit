@@ -14,6 +14,7 @@ import {
   humiditySignalFromStructural,
   moistureMismatchForHighHumidityPlant,
   outdoorDamagingColdUnsupported,
+  outdoorChillingColdConstrained,
   warmCitrusWarmSeasonConstrained
 } from '../modules/personal-domain/structural-climate-authority-v1.js';
 import {
@@ -129,7 +130,8 @@ test('outcome: arid structural blocks high-humidity tropical even if frost-free 
     }
   };
   assert.equal(moistureMismatchForHighHumidityPlant(meta, env), true);
-  assert.equal(outdoorDamagingColdUnsupported(meta, env), true);
+  assert.equal(outdoorDamagingColdUnsupported(meta, env), false);
+  assert.equal(outdoorChillingColdConstrained(meta, env), true);
 
   const outcomes = deriveSpecificPlantOutcomes({
     meta,
@@ -165,7 +167,7 @@ test('aggregateArchiveDailyToNormals computes AI + coldest month', () => {
   assert.ok(agg.normals.coldestMonthMeanMinC < 10);
 });
 
-test('damaging-cold 10°C band is tropical year-round-warm, not Mediterranean citrus', () => {
+test('5-10°C tropical cold band is constrained, not hard-blocked; Mediterranean citrus stays outside that gate', () => {
   const mildWinter = { coldestMonthMeanMinC: 7.75, freezingRisk: 'low', thermalRegime: 'cool-seasonal' };
   const citrus = {
     frostSensitivity: 'very_high',
@@ -178,9 +180,15 @@ test('damaging-cold 10°C band is tropical year-round-warm, not Mediterranean ci
     groupIds: ['tropical-frost-sensitive-fruit']
   };
   assert.equal(outdoorDamagingColdUnsupported(citrus, mildWinter), false);
-  assert.equal(outdoorDamagingColdUnsupported(tropical, mildWinter), true);
+  assert.equal(outdoorChillingColdConstrained(citrus, mildWinter), false);
+  assert.equal(outdoorDamagingColdUnsupported(tropical, mildWinter), false);
+  assert.equal(outdoorChillingColdConstrained(tropical, mildWinter), true);
   assert.equal(
     outdoorDamagingColdUnsupported(tropical, { coldestMonthMeanMinC: 24.35, freezingRisk: 'low' }),
+    false
+  );
+  assert.equal(
+    outdoorChillingColdConstrained(tropical, { coldestMonthMeanMinC: 24.35, freezingRisk: 'low' }),
     false
   );
 });
