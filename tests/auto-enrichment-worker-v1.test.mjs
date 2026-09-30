@@ -13,6 +13,7 @@ import {
   WORKER_DRY_SCALE_MAX_JOBS,
   WORKER_PILOT_PLANT_SPECS,
   WORKER_SCALE_DRY_PLANT_SPECS,
+  WORKER_RESEARCH_RETRIEVAL_SPECS,
   WORKER_SCALE_DRY_EXCLUDE_SLUGS,
   WORKER_STOP_REASON,
   WORKER_SELECTION_REASON,
@@ -1241,4 +1242,43 @@ test('research-only dry batch retrieves HOLD debt but cannot mutate catalog or q
     summary: hashFile(summaryPath)
   };
   assert.deepEqual(after, before);
+});
+
+test('research retrieval specs use species-correct Acerola and Almond sources', () => {
+  const acerola = resolveWorkerRetrievalSpec({
+    slug: 'acerola',
+    scientificName: 'Malpighia emarginata',
+    plantSpecs: []
+  });
+  assert.equal(acerola.ok, true);
+  assert.equal(acerola.plantSpec.scientificName, 'Malpighia emarginata');
+  assert.ok(
+    acerola.plantSpec.approvedSources.some(
+      (s) =>
+        s.url ===
+        'https://blogs.ifas.ufl.edu/stlucieco/2025/08/20/growing-barbados-cherry-in-florida/'
+    )
+  );
+  assert.ok(!acerola.plantSpec.approvedSources.some((s) => /ncsu-generic/i.test(s.sourceId)));
+
+  const almond = resolveWorkerRetrievalSpec({
+    slug: 'almond',
+    scientificName: 'Prunus dulcis',
+    plantSpecs: []
+  });
+  assert.equal(almond.ok, true);
+  assert.equal(almond.plantSpec.scientificName, 'Prunus dulcis');
+  assert.ok(almond.plantSpec.approvedSources.some((s) => /extension\.usu\.edu\/treebrowser\/catalog\/almond/.test(s.url)));
+  assert.ok(almond.plantSpec.approvedSources.every((s) => !/prunus-glandulosa|flowering-almond/i.test(s.url + ' ' + s.title)));
+  assert.ok(almond.plantSpec.approvedSources.every((s) => !/plants\.ces\.ncsu\.edu\/plants\/prunus\/common-name\/almond/.test(s.url)));
+});
+
+test('research retrieval specs remain retrieval-only and do not expand production worker pilot/scale lists', () => {
+  assert.deepEqual(
+    WORKER_RESEARCH_RETRIEVAL_SPECS.map((s) => s.slug).sort(),
+    ['acerola', 'almond']
+  );
+  assert.ok(WORKER_RESEARCH_RETRIEVAL_SPECS.every((s) => s.safeWritable === false));
+  assert.equal(WORKER_PILOT_PLANT_SPECS.some((s) => s.slug === 'acerola' || s.slug === 'almond'), false);
+  assert.equal(WORKER_SCALE_DRY_PLANT_SPECS.some((s) => s.slug === 'acerola' || s.slug === 'almond'), false);
 });
