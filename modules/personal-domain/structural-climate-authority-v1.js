@@ -42,13 +42,6 @@ export const UNEP_ARIDITY_CLASSES = Object.freeze({
  */
 export const DAMAGING_COLD_MONTH_MEAN_MIN_C = 10;
 
-/**
- * Conservative lower edge for sustained warm-season citrus growth (°C).
- * UC ANR guidance places optimum citrus growth around 21-32°C; below this warmest-month
- * mean maximum, strong vegetative suitability for warm citrus is withheld rather than blocked.
- */
-export const WARM_CITRUS_WARMEST_MONTH_MEAN_MAX_MIN_C = 21;
-
 /** Elevation (m) at/above which tropical-latitude sites often lose lowland year-round warmth. */
 export const HIGH_ELEVATION_THRESHOLD_M = 1500;
 
@@ -661,16 +654,6 @@ export function outdoorChillingColdConstrained(meta, climateProfile) {
   if (!Number.isFinite(c)) return false;
   const risk = String(climateProfile?.freezingRisk || '').toLowerCase();
   return c > 5 && c < DAMAGING_COLD_MONTH_MEAN_MIN_C && risk !== 'medium' && risk !== 'high';
-}
-
-export function warmCitrusWarmSeasonConstrained(meta, climateProfile) {
-  const groups = Array.isArray(meta?.groupIds) ? meta.groupIds : [];
-  if (!groups.includes('warm-citrus-fruit-tree')) return false;
-  const raw = climateProfile?.warmestMonthMeanMaxC;
-  if (raw == null || raw === '') return false;
-  const c = Number(raw);
-  if (!Number.isFinite(c)) return false;
-  return c < WARM_CITRUS_WARMEST_MONTH_MEAN_MAX_MIN_C;
 }
 
 export function moistureMismatchForHighHumidityPlant(meta, climateProfile) {
