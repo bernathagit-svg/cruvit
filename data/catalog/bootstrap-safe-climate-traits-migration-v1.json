@@ -583,7 +583,7 @@
         "עץ זית"
       ],
       "climateTraits": {
-        "frostSensitivity": "medium",
+        "frostSensitivity": "high",
         "coldTolerance": "low",
         "heatTolerance": "high",
         "humidityTolerance": "medium",
@@ -598,7 +598,7 @@
           "humid-sensitive-mediterranean"
         ],
         "traitEvidenceClasses": {
-          "frostSensitivity": "HEURISTIC_ASSERTION",
+          "frostSensitivity": "SOURCE_SUPPORTED",
           "coldTolerance": "SOURCE_SUPPORTED",
           "heatTolerance": "HEURISTIC_ASSERTION",
           "humidityTolerance": "HEURISTIC_ASSERTION",
@@ -611,7 +611,7 @@
           "needsDrySeason": "HEURISTIC_ASSERTION"
         },
         "fieldOrigins": {
-          "frostSensitivity": "LEGACY_ASSERTED_METADATA",
+          "frostSensitivity": "ASSERTED_SOURCE",
           "coldTolerance": "ASSERTED_SOURCE",
           "heatTolerance": "LEGACY_ASSERTED_METADATA",
           "humidityTolerance": "LEGACY_ASSERTED_METADATA",
@@ -640,8 +640,9 @@
           "enrichmentApply": {
             "writerRef": "catalog-enrichment-apply-writer-v1@1.0.0",
             "gateRef": "catalog-enrichment-apply-gate-v1@1.0.0",
-            "appliedAt": "2026-09-08T17:51:22.610Z",
+            "appliedAt": "2026-09-30T14:44:35.053Z",
             "fields": [
+              "frostSensitivity",
               "coldTolerance"
             ],
             "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4"
@@ -650,7 +651,8 @@
         "enrichmentProvenance": {
           "coldTolerance": {
             "sourceIds": [
-              "ncsu-olea-europaea"
+              "ncsu-olea-europaea",
+              "tamu-olive-freeze"
             ],
             "sourceUrl": "https://plants.ces.ncsu.edu/plants/olea-europaea/",
             "sourceType": "university_extension",
@@ -685,20 +687,75 @@
               "normalizedResult": {
                 "value": "low",
                 "retainedSourceIds": [
-                  "ncsu-olea-europaea"
+                  "ncsu-olea-europaea",
+                  "tamu-olive-freeze"
+                ]
+              },
+              "reasons": [
+                "identical_normalized_values"
+              ],
+              "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"olive\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"low\",\"low\"],\"sourceIds\":[\"ncsu-olea-europaea\",\"tamu-olive-freeze\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"low\"}"
+            },
+            "transformId": "hardiness-zone-to-cold-traits-v1",
+            "transformVersion": "1.1.0",
+            "transformRef": "hardiness-zone-to-cold-traits-v1@1.1.0",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+            "contentHash": "c66a3de09646b3f2bcddec2dc4d8777061c9b245950e7127d849a326c6a1c60a",
+            "appliedAt": "2026-09-30T14:44:35.053Z",
+            "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+            "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+          },
+          "frostSensitivity": {
+            "sourceIds": [
+              "tamu-olive-freeze"
+            ],
+            "sourceUrl": "https://mytexas.ag.tamu.edu/publications/olives-texas-fruit-and-nut-production/",
+            "sourceType": "university_extension",
+            "supportingExcerpt": "Many olive trees in Texas were killed to the ground during February 2021 and have since regrown.",
+            "sourceClaim": {
+              "claimType": "cold_damage_threshold",
+              "rawValue": "killed_to_ground",
+              "displayValue": "killed_to_ground",
+              "hardinessZoneMin": null,
+              "hardinessZoneMax": null,
+              "hardinessZoneSystem": null,
+              "damageMode": "killed_to_ground",
+              "minimumWinterTemperatureF": null,
+              "units": null,
+              "claimFingerprint": "86e2addc3d6678ef1f11f4c3e350ce3dcf5bb2eb1173be36b026b723de3f2f40"
+            },
+            "sourcePolicyResult": {
+              "mayBeSourceSupported": true,
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "reasons": [
+                "tier_a_preferred_source_independent_ok",
+                "source_supported_gate_passed",
+                "policy=catalog-source-policy-v1@1.0.0",
+                "fieldProvenanceHonesty=1.0.0"
+              ]
+            },
+            "contradictionClass": "CONSISTENT",
+            "contradictionResult": {
+              "contradictionClass": "CONSISTENT",
+              "queueAction": "AUTO_CONTINUE",
+              "hold": false,
+              "normalizedResult": {
+                "value": "high",
+                "retainedSourceIds": [
+                  "tamu-olive-freeze"
                 ]
               },
               "reasons": [
                 "single_authoritative_claim"
               ],
-              "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"olive\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"low\"],\"sourceIds\":[\"ncsu-olea-europaea\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"low\"}"
+              "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"olive\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"high\"],\"sourceIds\":[\"tamu-olive-freeze\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"high\"}"
             },
-            "transformId": "hardiness-zone-to-cold-traits-v1",
+            "transformId": "frost-injury-to-frost-sensitivity-v1",
             "transformVersion": "1.0.0",
-            "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+            "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
             "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
-            "contentHash": "287247659de5e6c2a642bd8c036dbfdeb1cd5ae50a2ab8e8bd4d1f2c4c32c0c5",
-            "appliedAt": "2026-09-08T17:51:22.610Z",
+            "contentHash": "ce08e3342cf129b1ca17dbe61c05d79d19a7830cafc0c96be9d82531e23a3da2",
+            "appliedAt": "2026-09-30T14:44:35.053Z",
             "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
             "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
           }
@@ -876,7 +933,9 @@
         "quantitativeProvenance": {
           "optimum_growth_temperature_min_c": {
             "evidenceClass": "SOURCE_SUPPORTED",
-            "sourceIds": ["uf-ifas-hs1499-mango"],
+            "sourceIds": [
+              "uf-ifas-hs1499-mango"
+            ],
             "sourceUrl": "https://ask.ifas.ufl.edu/publication/HS1499",
             "shortExcerpt": "Optimum growing temperature range 75–86°F (~24–30°C).",
             "claimId": "quantitative-optimum-growth-temperature-min-c"
@@ -1392,7 +1451,7 @@
       ],
       "climateTraits": {
         "frostSensitivity": "very_high",
-        "coldTolerance": "low",
+        "coldTolerance": "very_low",
         "heatTolerance": "medium",
         "humidityTolerance": "medium",
         "drainageNeeds": "high",
@@ -1409,7 +1468,7 @@
         ],
         "traitEvidenceClasses": {
           "frostSensitivity": "SOURCE_SUPPORTED",
-          "coldTolerance": "HEURISTIC_ASSERTION",
+          "coldTolerance": "SOURCE_SUPPORTED",
           "heatTolerance": "HEURISTIC_ASSERTION",
           "humidityTolerance": "HEURISTIC_ASSERTION",
           "drainageNeeds": "HEURISTIC_ASSERTION",
@@ -1421,7 +1480,7 @@
         },
         "fieldOrigins": {
           "frostSensitivity": "ASSERTED_SOURCE",
-          "coldTolerance": "LEGACY_ASSERTED_METADATA",
+          "coldTolerance": "ASSERTED_SOURCE",
           "heatTolerance": "LEGACY_ASSERTED_METADATA",
           "humidityTolerance": "LEGACY_ASSERTED_METADATA",
           "drainageNeeds": "LEGACY_ASSERTED_METADATA",
@@ -1449,9 +1508,10 @@
           "enrichmentApply": {
             "writerRef": "catalog-enrichment-apply-writer-v1@1.0.0",
             "gateRef": "catalog-enrichment-apply-gate-v1@1.0.0",
-            "appliedAt": "2026-09-09T19:03:39.847Z",
+            "appliedAt": "2026-09-30T14:44:35.028Z",
             "fields": [
-              "frostSensitivity"
+              "frostSensitivity",
+              "coldTolerance"
             ],
             "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4"
           }
@@ -1506,8 +1566,62 @@
             "transformVersion": "1.0.0",
             "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
             "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
-            "contentHash": "eafad9c883b33ffb3ee6b3530624ef8a6fff42bc94ab177aca51759f6ef50993",
-            "appliedAt": "2026-09-09T19:03:39.847Z",
+            "contentHash": "40a981e5d3e591d019bca723248dffc0ebe6c233346c46638faf8aceef1ec811",
+            "appliedAt": "2026-09-30T14:44:35.028Z",
+            "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+            "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+          },
+          "coldTolerance": {
+            "sourceIds": [
+              "ncsu-citrus-x-sinensis"
+            ],
+            "sourceUrl": "https://plants.ces.ncsu.edu/plants/citrus-x-sinensis/",
+            "sourceType": "university_extension",
+            "supportingExcerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b",
+            "sourceClaim": {
+              "claimType": "usda_hardiness_zone_band",
+              "rawValue": "9-11",
+              "displayValue": "USDA 9-11",
+              "hardinessZoneMin": 9,
+              "hardinessZoneMax": 11,
+              "hardinessZoneSystem": "USDA",
+              "damageMode": null,
+              "minimumWinterTemperatureF": null,
+              "units": "usda_zone",
+              "claimFingerprint": "2cc55ef2cbe377d55cb36c48ef3121eaa74807c85bff000f7739b742a68eec23"
+            },
+            "sourcePolicyResult": {
+              "mayBeSourceSupported": true,
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "reasons": [
+                "tier_a_preferred_source_independent_ok",
+                "source_supported_gate_passed",
+                "policy=catalog-source-policy-v1@1.0.0",
+                "fieldProvenanceHonesty=1.0.0"
+              ]
+            },
+            "contradictionClass": "CONSISTENT",
+            "contradictionResult": {
+              "contradictionClass": "CONSISTENT",
+              "queueAction": "AUTO_CONTINUE",
+              "hold": false,
+              "normalizedResult": {
+                "value": "very_low",
+                "retainedSourceIds": [
+                  "ncsu-citrus-x-sinensis"
+                ]
+              },
+              "reasons": [
+                "single_authoritative_claim"
+              ],
+              "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"orange\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"ncsu-citrus-x-sinensis\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+            },
+            "transformId": "hardiness-zone-to-cold-traits-v1",
+            "transformVersion": "1.1.0",
+            "transformRef": "hardiness-zone-to-cold-traits-v1@1.1.0",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+            "contentHash": "40a981e5d3e591d019bca723248dffc0ebe6c233346c46638faf8aceef1ec811",
+            "appliedAt": "2026-09-30T14:44:35.028Z",
             "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
             "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
           }
@@ -2358,7 +2472,7 @@
           "tropical-frost-sensitive-fruit"
         ],
         "traitEvidenceClasses": {
-          "frostSensitivity": "HEURISTIC_ASSERTION",
+          "frostSensitivity": "SOURCE_SUPPORTED",
           "coldTolerance": "SOURCE_SUPPORTED",
           "heatTolerance": "HEURISTIC_ASSERTION",
           "humidityTolerance": "HEURISTIC_ASSERTION",
@@ -2370,7 +2484,7 @@
           "survivalVsThriveNotes": "HEURISTIC_ASSERTION"
         },
         "fieldOrigins": {
-          "frostSensitivity": "LEGACY_ASSERTED_METADATA",
+          "frostSensitivity": "ASSERTED_SOURCE",
           "coldTolerance": "ASSERTED_SOURCE",
           "heatTolerance": "LEGACY_ASSERTED_METADATA",
           "humidityTolerance": "LEGACY_ASSERTED_METADATA",
@@ -2398,8 +2512,9 @@
           "enrichmentApply": {
             "writerRef": "catalog-enrichment-apply-writer-v1@1.0.0",
             "gateRef": "catalog-enrichment-apply-gate-v1@1.0.0",
-            "appliedAt": "2026-09-08T17:51:22.636Z",
+            "appliedAt": "2026-09-30T14:44:35.040Z",
             "fields": [
+              "frostSensitivity",
               "coldTolerance"
             ],
             "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4"
@@ -2452,11 +2567,65 @@
               "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"avocado\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"ncsu-persea-americana\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
             },
             "transformId": "hardiness-zone-to-cold-traits-v1",
-            "transformVersion": "1.0.0",
-            "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+            "transformVersion": "1.1.0",
+            "transformRef": "hardiness-zone-to-cold-traits-v1@1.1.0",
             "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
-            "contentHash": "d27eafe773b3e294551e01f3bd9b24ea9aa0e6820d6b441959b96cc16353890d",
-            "appliedAt": "2026-09-08T17:51:22.636Z",
+            "contentHash": "5e5e9dc54b1ba20f93a2d2e3fcfdb5a8fbf2d1fa8de59d43011fe0e3119dbe6b",
+            "appliedAt": "2026-09-30T14:44:35.040Z",
+            "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+            "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+          },
+          "frostSensitivity": {
+            "sourceIds": [
+              "uf-ifas-hs1499-avocado"
+            ],
+            "sourceUrl": "https://ask.ifas.ufl.edu/publication/HS1499",
+            "sourceType": "university_extension",
+            "supportingExcerpt": "(°F) Chao and Paull (2008); Dubrovina and Bautista (2014); Wolstenholme (2013) Freeze damage range (°F) Arpaia et al.",
+            "sourceClaim": {
+              "claimType": "frost_injury_statement",
+              "rawValue": "frost_sensitive",
+              "displayValue": "frost_sensitive",
+              "hardinessZoneMin": null,
+              "hardinessZoneMax": null,
+              "hardinessZoneSystem": null,
+              "damageMode": "frost_sensitive",
+              "minimumWinterTemperatureF": null,
+              "units": null,
+              "claimFingerprint": "21e38ab7edecbc3ea3e0fe9721a164093c181a7b3351668b2ac343c5f5278a30"
+            },
+            "sourcePolicyResult": {
+              "mayBeSourceSupported": true,
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "reasons": [
+                "tier_a_preferred_source_independent_ok",
+                "source_supported_gate_passed",
+                "policy=catalog-source-policy-v1@1.0.0",
+                "fieldProvenanceHonesty=1.0.0"
+              ]
+            },
+            "contradictionClass": "CONSISTENT",
+            "contradictionResult": {
+              "contradictionClass": "CONSISTENT",
+              "queueAction": "AUTO_CONTINUE",
+              "hold": false,
+              "normalizedResult": {
+                "value": "high",
+                "retainedSourceIds": [
+                  "uf-ifas-hs1499-avocado"
+                ]
+              },
+              "reasons": [
+                "single_authoritative_claim"
+              ],
+              "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"avocado\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"high\"],\"sourceIds\":[\"uf-ifas-hs1499-avocado\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"high\"}"
+            },
+            "transformId": "frost-injury-to-frost-sensitivity-v1",
+            "transformVersion": "1.0.0",
+            "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+            "contentHash": "0fc5cecb92dc7d5eafb8f61fac32e2a61ff107c190566454682ebf569eb29e77",
+            "appliedAt": "2026-09-30T14:44:35.040Z",
             "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
             "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
           }
