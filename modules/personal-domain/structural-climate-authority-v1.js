@@ -572,7 +572,16 @@ export function applyStructuralClimateToProfile(climateProfile = {}, structuralC
     elevationM,
     thermalRegime,
     annualPrecipitationMm: sc.evidence?.annualPrecipitationMm ?? null,
+    annualPetMm: sc.evidence?.annualPetMm ?? null,
     aridityIndex: sc.evidence?.aridityIndex ?? null,
+    meanRelativeHumidityPct:
+      sc.evidence?.meanRelativeHumidityPct ?? sc.coordinateClimateV2?.meanRelativeHumidityPct ?? base.meanRelativeHumidityPct ?? null,
+    monthlyHursPct:
+      sc.coordinateClimateV2?.monthlyHursPct || base.monthlyHursPct || null,
+    meanVpdPa:
+      sc.evidence?.meanVpdPa ?? sc.coordinateClimateV2?.meanVpdPa ?? base.meanVpdPa ?? null,
+    monthlyVpdPa:
+      sc.coordinateClimateV2?.monthlyVpdPa || base.monthlyVpdPa || null,
     structuralClimateStatus: 'known',
     structuralClimate: sc,
     structuralClimateProvenance: sc.provenance
@@ -716,13 +725,31 @@ export function atmosphericHumidityMismatchForLowTolerancePlant(meta, climatePro
   }
 
   let regime = 'unknown';
+  let authority = null;
   if (Number.isFinite(mean)) {
     if (mean < 45) regime = 'low';
     else if (mean < 60) regime = 'medium';
     else if (mean < 70) regime = 'borderline';
     else regime = 'high';
+    authority = regime === 'high' ? 'hurs' : 'hurs-transition-band';
   } else {
-    regime = 'unknown';
+    const structural = climateProfile?.structuralClimate;
+    const provider = String(
+      structural?.provenance?.provider ||
+      climateProfile?.structuralClimateProvenance?.provider ||
+      ''
+    ).toLowerCase();
+    const authoritativeSignal = String(
+      structural?.humiditySignal || climateProfile?.atmosphericHumidityRegime || ''
+    ).toLowerCase();
+    const trustedStructuralSignal =
+      structural?.status === 'known' &&
+      provider.includes('coordinate-climate-authority-v2') &&
+      (authoritativeSignal === 'borderline' || authoritativeSignal === 'high');
+    if (trustedStructuralSignal) {
+      regime = authoritativeSignal;
+      authority = 'coordinate-climate-authority-v2-humidity-signal';
+    }
   }
 
   if (regime !== 'high' && regime !== 'borderline') return null;
@@ -733,7 +760,7 @@ export function atmosphericHumidityMismatchForLowTolerancePlant(meta, climatePro
     kind:
       regime === 'high' ? 'atmosphericHumidity-high' : 'atmosphericHumidity-borderline',
     severity,
-    authority: regime === 'high' ? 'hurs' : 'hurs-transition-band',
+    authority: authority || (regime === 'high' ? 'hurs' : 'hurs-transition-band'),
     meanRh: mean,
     regime,
     affectsSurvival: survivalThreat === true,

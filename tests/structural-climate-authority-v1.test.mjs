@@ -231,3 +231,42 @@ test(
     humiditySignalFromStructural(kochi.structuralClimate)
   );
 });
+
+test('structural projection preserves atmospheric RH/VPD authority from Coordinate Climate V2', () => {
+  const hurs = [61,62,63,64,65,66,67,66,65,64,63,62];
+  const vpd = [700,710,720,730,740,750,760,750,740,730,720,710];
+  const structuralClimate = {
+    status: 'known',
+    moistureRegime: 'humid',
+    humidityRegime: 'borderline',
+    humiditySignal: 'borderline',
+    structuralColdRisk: 'elevated',
+    freezingRisk: 'low',
+    drySeasonSignal: false,
+    thermalRegime: 'cool-seasonal',
+    evidence: {
+      annualPrecipitationMm: 1200,
+      annualPetMm: 700,
+      aridityIndex: 1.7,
+      meanRelativeHumidityPct: 64,
+      meanVpdPa: 735,
+      coldestMonthMeanMinC: 2,
+      warmestMonthMeanMaxC: 18
+    },
+    coordinateClimateV2: {
+      monthlyHursPct: hurs,
+      monthlyVpdPa: vpd,
+      meanRelativeHumidityPct: 64,
+      meanVpdPa: 735
+    }
+  };
+  const projected = applyStructuralClimateToProfile(
+    { broadClimate: 'temperate' },
+    structuralClimate
+  );
+  assert.equal(projected.meanRelativeHumidityPct, 64);
+  assert.equal(projected.meanVpdPa, 735);
+  assert.deepEqual(projected.monthlyHursPct, hurs);
+  assert.deepEqual(projected.monthlyVpdPa, vpd);
+  assert.equal(projected.annualPetMm, 700);
+});
