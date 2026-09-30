@@ -883,3 +883,64 @@ test('hyper-arid does not penalize low-water plant when irrigation is unknown', 
   assert.equal(outcomes.growth, SPECIFIC_OUTCOME_STATUS.SUPPORTED);
   assert.equal(outcomes.overall, 'good');
 });
+
+test('source-supported low heat tolerance is constrained in year-round-warm climate', () => {
+  const meta = {
+    frostSensitivity: 'low',
+    coldTolerance: 'medium',
+    heatTolerance: 'low',
+    waterNeeds: 'medium',
+    traitEvidenceClasses: {
+      frostSensitivity: 'SOURCE_SUPPORTED',
+      coldTolerance: 'SOURCE_SUPPORTED',
+      heatTolerance: 'SOURCE_SUPPORTED',
+      waterNeeds: 'SOURCE_SUPPORTED'
+    }
+  };
+  const o = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile: {
+      broadClimate: 'tropical',
+      thermalRegime: 'year-round-warm',
+      freezingRisk: 'low',
+      moistureRegime: 'humid',
+      coldestMonthMeanMinC: 24,
+      warmestMonthMeanMaxC: 29,
+      structuralClimateStatus: 'known'
+    },
+    suitability: { recommendationLevel:'good', survivalFit:85, thriveFit:80, warnings:[], explanationText:'' },
+    plant: { slug:'cool-season-source-backed', climateTraits:meta }
+  });
+  assert.equal(o.survival, SPECIFIC_OUTCOME_STATUS.RELIABLE);
+  assert.equal(o.growth, SPECIFIC_OUTCOME_STATUS.CONSTRAINED);
+  assert.equal(o.overall, 'borderline');
+});
+
+test('heuristic low heat tolerance alone does not trigger year-round-warm constraint', () => {
+  const meta = {
+    frostSensitivity: 'low',
+    coldTolerance: 'medium',
+    heatTolerance: 'low',
+    traitEvidenceClasses: {
+      frostSensitivity: 'SOURCE_SUPPORTED',
+      coldTolerance: 'SOURCE_SUPPORTED',
+      heatTolerance: 'HEURISTIC_ASSERTION'
+    }
+  };
+  const o = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile: {
+      broadClimate: 'tropical',
+      thermalRegime: 'year-round-warm',
+      freezingRisk: 'low',
+      moistureRegime: 'humid',
+      coldestMonthMeanMinC: 24,
+      warmestMonthMeanMaxC: 29,
+      structuralClimateStatus: 'known'
+    },
+    suitability: { recommendationLevel:'good', survivalFit:85, thriveFit:80, warnings:[], explanationText:'' },
+    plant: { slug:'cool-season-heuristic', climateTraits:meta }
+  });
+  assert.equal(o.growth, SPECIFIC_OUTCOME_STATUS.SUPPORTED);
+  assert.equal(o.overall, 'good');
+});
