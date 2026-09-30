@@ -310,3 +310,25 @@ test('explicitly ineligible plant ranks behind otherwise-equal eligible plant',(
   assert.ok(compareSmartRecRecommendationRank(eligible,ineligible)<0);
   assert.ok(compareSmartRecRecommendationRank(ineligible,eligible)>0);
 });
+
+test('Garden Area supportType maps to Smart Rec support context without privacy heuristic', () => {
+  const trellis = smartRecContextFromGardenArea(
+    { sunExposure: 'full_sun', plantingMode: 'ground', supportType: 'trellis' },
+    {}
+  );
+  assert.equal(trellis.__supportContextKnown, true);
+  assert.equal(trellis.__supportType, 'trellis');
+
+  const none = smartRecContextFromGardenArea(
+    { supportType: 'none' },
+    {}
+  );
+  assert.equal(none.__supportContextKnown, false);
+  assert.equal(none.__supportType, 'none');
+
+  const unknown = smartRecContextFromGardenArea(
+    { supportType: 'unknown' },
+    {}
+  );
+  assert.equal(unknown.__supportContextKnown, undefined);
+});

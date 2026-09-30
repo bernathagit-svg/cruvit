@@ -6242,7 +6242,8 @@ function smartRecCurrentContext(){
     groundContext:answers.q1==='ground',
     fullSunContext:answers.q2==='full-sun',
     shadeContext:answers.q2==='shade',
-    supportContextKnown:answers.q9==='privacy'
+    supportContextKnown:answers.__supportContextKnown===true||answers.q9==='privacy',
+    supportType:answers.__supportType||'unknown'
   };
 }
 

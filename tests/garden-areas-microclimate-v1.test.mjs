@@ -399,3 +399,29 @@ test('read model exposes Smart Rec / Design contract shape (no personalization)'
   assert.equal(rm.climateAuthority.AREA_IS_SECOND_CLIMATE_AUTHORITY, false);
   assert.equal(rm.plantCount, 1);
 });
+
+test('Area supportType persists explicitly and exposes support context without becoming climate authority', () => {
+  const ctx = buildUserProvidedAreaContext({
+    sunExposure: 'full_sun',
+    plantingMode: 'ground',
+    drainage: 'well_drained',
+    irrigationType: 'drip',
+    irrigationReliability: 'high',
+    supportType: 'trellis'
+  });
+  assert.equal(ctx.supportType, 'trellis');
+  const applied = applyAreaContextToSuitabilityInputs({ areaContext: ctx });
+  assert.equal(applied.supportType, 'trellis');
+  assert.equal(applied.supportContextKnown, true);
+  const rm = buildAreaReadModel({ id: 'support_area', name: 'Trellis row', context: ctx });
+  assert.equal(rm.context.supportType, 'trellis');
+  assert.equal(rm.unknownFields.includes('supportType'), false);
+  assert.equal(rm.climateAuthority.AREA_IS_SECOND_CLIMATE_AUTHORITY, false);
+
+  const none = buildUserProvidedAreaContext({ supportType: 'none' });
+  assert.equal(applyAreaContextToSuitabilityInputs({ areaContext: none }).supportContextKnown, false);
+
+  const unknown = normalizeAreaContext({});
+  assert.equal(unknown.supportType, 'unknown');
+  assert.equal(unknown.unknownReasons.supportType, 'not_provided');
+});
