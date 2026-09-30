@@ -448,11 +448,41 @@ test('Garden Areas UI exposes support selection and renders persisted support ty
   assert.match(html, /name="irrigationReliability"/);
   assert.match(html, /name="moistureTendency"/);
   assert.match(html, /name="windExposure"/);
+  assert.match(html, /name="frostProtection"/);
   assert.match(html, /name="supportType"/);
   assert.match(html, /value="well_drained"/);
   assert.match(html, /value="high"/);
   assert.match(html, /value="trellis"/);
   assert.match(html, /value="pergola"/);
+  assert.match(html, /value="frost_free"/);
   assert.match(html, /pergola/);
   assert.match(html, /Edit area/);
+});
+
+test('generic greenhouse is not frost-free unless Garden Area explicitly says frost_free', () => {
+  const generic = buildUserProvidedAreaContext({
+    plantingMode: 'greenhouse'
+  });
+  assert.equal(generic.plantingMode, 'greenhouse');
+  assert.equal(generic.frostProtection, 'unknown');
+  const genericApplied = applyAreaContextToSuitabilityInputs({ areaContext: generic });
+  assert.equal(genericApplied.frostFreeProtected, false);
+
+  const explicit = buildUserProvidedAreaContext({
+    plantingMode: 'greenhouse',
+    frostProtection: 'frost_free'
+  });
+  assert.equal(explicit.frostProtection, 'frost_free');
+  const explicitApplied = applyAreaContextToSuitabilityInputs({ areaContext: explicit });
+  assert.equal(explicitApplied.frostFreeProtected, true);
+
+  const rm = buildAreaReadModel({
+    id: 'frost_free_house',
+    name: 'Heated greenhouse',
+    context: explicit
+  });
+  assert.equal(rm.context.frostProtection, 'frost_free');
+  assert.equal(rm.unknownFields.includes('frostProtection'), false);
+  assert.equal(rm.gardenContextProfileProjection.areaFrostProtection, 'frost_free');
+  assert.equal(rm.gardenContextProfileProjection.frostFreeProtected, true);
 });

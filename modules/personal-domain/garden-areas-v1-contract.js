@@ -115,6 +115,12 @@ export const AREA_WIND_EXPOSURE = Object.freeze([
   'unknown'
 ]);
 
+export const AREA_FROST_PROTECTION = Object.freeze([
+  'none',
+  'frost_free',
+  'unknown'
+]);
+
 export const AREA_SUPPORT_TYPES = Object.freeze([
   'none',
   'trellis',
@@ -160,7 +166,8 @@ const UNKNOWN_REASON_FIELDS = Object.freeze([
   'irrigationType',
   'irrigationReliability',
   'plantingMode',
-  'supportType'
+  'supportType',
+  'frostProtection'
 ]);
 
 function inSet(set, value) {
@@ -308,6 +315,10 @@ export function normalizeAreaContext(input = {}, options = {}) {
     src.supportType ?? src.support_type ?? src.support,
     AREA_SUPPORT_TYPES
   );
+  const frostProtection = normalizeToken(
+    src.frostProtection ?? src.frost_protection,
+    AREA_FROST_PROTECTION
+  );
   const aspect = (() => {
     const raw = String(src.aspect ?? src.orientation ?? 'unknown')
       .trim()
@@ -351,7 +362,8 @@ export function normalizeAreaContext(input = {}, options = {}) {
     irrigationType,
     irrigationReliability,
     plantingMode,
-    supportType
+    supportType,
+    frostProtection
   };
   const unknownReasons = normalizeUnknownReasons(src.unknownReasons ?? src.unknown_reasons, fieldValues);
 
@@ -381,6 +393,7 @@ export function normalizeAreaContext(input = {}, options = {}) {
     moistureTendency,
     windExposure,
     supportType,
+    frostProtection,
     aspect,
     directSunHoursMin,
     directSunHoursMax,
@@ -435,6 +448,7 @@ export function buildAreaWritePayload(input = {}, options = {}) {
           moistureTendency: input.moistureTendency,
           windExposure: input.windExposure,
           supportType: input.supportType,
+          frostProtection: input.frostProtection,
           aspect: input.aspect,
           source: input.source,
           confirmationStatus: input.confirmationStatus,
@@ -507,6 +521,8 @@ export function applyAreaContextToSuitabilityInputs(input = {}) {
     windExposure: areaContext.windExposure,
     supportType: areaContext.supportType,
     supportContextKnown: areaContext.supportType !== 'unknown' && areaContext.supportType !== 'none',
+    frostProtection: areaContext.frostProtection,
+    frostFreeProtected: areaContext.frostProtection === 'frost_free',
     aspect: areaContext.aspect,
     source: areaContext.source,
     confirmationStatus: areaContext.confirmationStatus,
@@ -587,6 +603,8 @@ export function projectAreaContextToGardenContextProfile(areaContextInput) {
     areaPlantingMode: context.plantingMode,
     areaSupportType: context.supportType,
     supportContextKnown: context.supportType !== 'unknown' && context.supportType !== 'none',
+    areaFrostProtection: context.frostProtection,
+    frostFreeProtected: context.frostProtection === 'frost_free',
     projectionGaps: gaps,
     profileStatus: hasSemanticLoss ? 'insufficient' : trust.trusted ? 'partial' : 'untrusted',
     trusted: projectionTrusted,
@@ -621,6 +639,7 @@ export function buildAreaReadModel(areaRow = {}, plants = []) {
     moistureTendency: context.moistureTendency,
     windExposure: context.windExposure,
     supportType: context.supportType,
+    frostProtection: context.frostProtection,
     aspect: context.aspect
   })) {
     if (val === 'unknown') unknownFields.push(key);
@@ -703,6 +722,8 @@ export function resolvePlantSiteContextForComparison(input = {}) {
     moistureTendency: areaContext.moistureTendency,
     supportType: areaContext.supportType,
     supportContextKnown: areaContext.supportType !== 'unknown' && areaContext.supportType !== 'none',
+    frostProtection: areaContext.frostProtection,
+    frostFreeProtected: areaContext.frostProtection === 'frost_free',
     source: areaContext.source,
     confirmationStatus: areaContext.confirmationStatus,
     confidence: areaContext.confidence,

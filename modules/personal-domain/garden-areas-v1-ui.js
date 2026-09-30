@@ -15,6 +15,7 @@ import {
   AREA_IRRIGATION_RELIABILITY,
   AREA_MOISTURE_TENDENCY,
   AREA_WIND_EXPOSURE,
+  AREA_FROST_PROTECTION,
   AREA_SUPPORT_TYPES
 } from './garden-areas-v1-contract.js';
 
@@ -71,7 +72,7 @@ export function renderGardenAreasHtml(state = {}) {
             <b>${escapeHtml(a.name)}</b>
             <small>${escapeHtml(rm.context.sunExposure.replace(/_/g, ' '))} · ${escapeHtml(
             rm.context.plantingMode.replace(/_/g, ' ')
-          )} · ${escapeHtml(rm.context.supportType.replace(/_/g, ' '))} · ${rm.plantCount} plant${rm.plantCount === 1 ? '' : 's'}</small>
+          )} · ${escapeHtml(rm.context.supportType.replace(/_/g, ' '))} · ${escapeHtml(rm.context.frostProtection.replace(/_/g, ' '))} · ${rm.plantCount} plant${rm.plantCount === 1 ? '' : 's'}</small>
             <div class="gareas-actions">
               <button type="button" data-area-edit="${escapeHtml(a.id)}">Edit area</button>
               <button type="button" data-area-assign="${escapeHtml(a.id)}">Assign plant</button>
@@ -116,6 +117,9 @@ export function renderGardenAreasHtml(state = {}) {
       </label>
       <label>Wind exposure
         <select name="windExposure">${optionList(AREA_WIND_EXPOSURE, 'unknown')}</select>
+      </label>
+      <label>Frost protection
+        <select name="frostProtection">${optionList(AREA_FROST_PROTECTION, 'unknown')}</select>
       </label>
       <label>Support
         <select name="supportType">${optionList(AREA_SUPPORT_TYPES, 'unknown')}</select>
@@ -214,6 +218,7 @@ function wireAreaForm(host, pd) {
           irrigationReliability: fd.get('irrigationReliability'),
           moistureTendency: fd.get('moistureTendency'),
           windExposure: fd.get('windExposure'),
+          frostProtection: fd.get('frostProtection'),
           supportType: fd.get('supportType')
         })
       });
@@ -288,6 +293,11 @@ function wireAreaForm(host, pd) {
         currentContext.windExposure || 'unknown'
       );
       if (windExposure == null) return;
+      const frostProtection = prompt(
+        'Frost protection (frost free, none, or unknown):',
+        currentContext.frostProtection || 'unknown'
+      );
+      if (frostProtection == null) return;
       const support = prompt(
         'Support in this area (trellis, fence, wall, pergola, pole, railing, other, none, or unknown):',
         currentContext.supportType || 'unknown'
@@ -304,6 +314,7 @@ function wireAreaForm(host, pd) {
             irrigationReliability,
             moistureTendency,
             windExposure,
+            frostProtection,
             supportType: support
           })
         );

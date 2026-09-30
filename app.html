@@ -6275,13 +6275,16 @@ function smartRecProtectionContext(){
   const selected=smartRecSelectedArea();
   const areaCtx=selected?(selected.context&&typeof selected.context==='object'?selected.context:selected):{};
   const planting=String(areaCtx.plantingMode||areaCtx.planting_mode||areaCtx.siteType||'').trim().toLowerCase();
+  const frostProtection=String(areaCtx.frostProtection||areaCtx.frost_protection||'unknown').trim().toLowerCase();
+  const explicitFrostFree=areaCtx.frostFreeProtected===true||frostProtection==='frost_free';
   return {
     indoorContext:ctx.indoorContext===true,
     containerContext:ctx.containerContext===true,
     compactContainerContext:ctx.compactContainerContext===true,
     plantingMode:planting||(ctx.indoorContext?'indoor':(ctx.groundContext?'ground':'')),
     greenhouse:planting==='greenhouse',
-    frostFreeProtected:planting==='greenhouse'||planting==='conservatory'||planting==='indoor',
+    frostProtection,
+    frostFreeProtected:explicitFrostFree||planting==='conservatory'||planting==='indoor',
     sunExposure:areaCtx.sunExposure||areaCtx.sun_exposure||'',
     windExposure:areaCtx.windExposure||areaCtx.wind_exposure||'',
     irrigationType:areaCtx.irrigationType||areaCtx.irrigation_type||'unknown',
