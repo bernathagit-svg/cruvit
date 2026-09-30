@@ -5,6 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   DAMAGING_COLD_MONTH_MEAN_MIN_C,
+  WARM_CITRUS_WARMEST_MONTH_MEAN_MAX_MIN_C,
   STRUCTURAL_CLIMATE_AUTHORITY_VERSION,
   aggregateArchiveDailyToNormals,
   applyStructuralClimateToProfile,
@@ -12,7 +13,8 @@ import {
   fetchStructuralClimateForCoordinates,
   humiditySignalFromStructural,
   moistureMismatchForHighHumidityPlant,
-  outdoorDamagingColdUnsupported
+  outdoorDamagingColdUnsupported,
+  warmCitrusWarmSeasonConstrained
 } from '../modules/personal-domain/structural-climate-authority-v1.js';
 import {
   deriveSpecificPlantOutcomes,
@@ -22,6 +24,7 @@ import {
 test('contract version stable', () => {
   assert.equal(STRUCTURAL_CLIMATE_AUTHORITY_VERSION, '1.0.0');
   assert.equal(DAMAGING_COLD_MONTH_MEAN_MIN_C, 10);
+  assert.equal(WARM_CITRUS_WARMEST_MONTH_MEAN_MAX_MIN_C, 21);
 });
 
 test('UNEP AI + RH keep moisture and atmospheric humidity separate', () => {
@@ -222,4 +225,79 @@ test(
     humiditySignalFromStructural(cairo.structuralClimate),
     humiditySignalFromStructural(kochi.structuralClimate)
   );
+});
+
+
+test('warm-citrus warm-season adequacy constrains Quito-like climate but not Malaga-like climate', () => {
+  const citrus = {
+    groupIds: ['warm-citrus-fruit-tree'],
+    frostSensitivity: 'very_high',
+    coldTolerance: 'very_low'
+  };
+  assert.equal(warmCitrusWarmSeasonConstrained(citrus, { warmestMonthMeanMaxC: 17.75 }), true);
+  assert.equal(warmCitrusWarmSeasonConstrained(citrus, { warmestMonthMeanMaxC: 27.95 }), false);
+  assert.equal(
+    warmCitrusWarmSeasonConstrained(
+      { ...citrus, groupIds: ['mediterranean-fruit'] },
+      { warmestMonthMeanMaxC: 17.75 }
+    ),
+    false
+  );
+});
+
+test('warm-citrus thermal deficit caps Growth without inventing Survival failure', () => {
+  const meta = {
+    groupIds: ['warm-citrus-fruit-tree'],
+    frostSensitivity: 'very_high',
+    coldTolerance: 'very_low',
+    heatTolerance: 'medium',
+    waterNeeds: 'medium',
+    traitEvidenceClasses: {
+      groupIds: 'HEURISTIC_ASSERTION',
+      frostSensitivity: 'SOURCE_SUPPORTED',
+      coldTolerance: 'SOURCE_SUPPORTED',
+      heatTolerance: 'HEURISTIC_ASSERTION',
+      waterNeeds: 'HEURISTIC_ASSERTION'
+    }
+  };
+  const baseSuitability = {
+    recommendationLevel: 'good',
+    survivalFit: 85,
+    thriveFit: 80,
+    warnings: [],
+    explanationText: ''
+  };
+  const quitoLike = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile: {
+      broadClimate: 'highland-tropical',
+      freezingRisk: 'low',
+      moistureRegime: 'humid',
+      coldestMonthMeanMinC: 8.65,
+      warmestMonthMeanMaxC: 17.75,
+      structuralClimateStatus: 'known'
+    },
+    suitability: baseSuitability,
+    plant: { slug: 'warm-citrus-demo', climateTraits: meta }
+  });
+  assert.equal(quitoLike.survival, 'reliable');
+  assert.equal(quitoLike.growth, 'constrained');
+  assert.equal(quitoLike.overall, 'borderline');
+  assert.ok(quitoLike.limitingFactors.some((x) => /warm-season temperatures are too cool/i.test(String(x))));
+
+  const malagaLike = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile: {
+      broadClimate: 'mediterranean',
+      freezingRisk: 'low',
+      moistureRegime: 'semi-arid',
+      coldestMonthMeanMinC: 9.05,
+      warmestMonthMeanMaxC: 27.95,
+      structuralClimateStatus: 'known'
+    },
+    suitability: baseSuitability,
+    plant: { slug: 'warm-citrus-demo', climateTraits: meta }
+  });
+  assert.equal(malagaLike.growth, 'supported');
+  assert.equal(malagaLike.overall, 'good');
 });

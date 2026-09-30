@@ -12,6 +12,7 @@ import {
   moistureMismatchForHighHumidityPlant,
   outdoorDamagingColdUnsupported,
   outdoorChillingColdConstrained,
+  warmCitrusWarmSeasonConstrained,
   thermalRegimeFromStructuralEvidence
 } from './structural-climate-authority-v1.js';
 import { applyRepresentativenessToSuitabilityClaim } from './coordinate-climate-confidence-v2-contract.js';
@@ -1480,6 +1481,7 @@ export function deriveSpecificPlantOutcomes({
     : null;
   const heatQ = !sheltered ? quantitativeHeatUnsupported(meta, env) : null;
   const vpdQ = !sheltered ? quantitativeVpdUnsupported(meta, env) : null;
+  const warmCitrusThermalDeficit = !sheltered ? warmCitrusWarmSeasonConstrained(meta, env) : false;
 
   if (survival === SPECIFIC_OUTCOME_STATUS.UNRELIABLE && !sheltered) {
     growth = SPECIFIC_OUTCOME_STATUS.POOR;
@@ -1582,6 +1584,18 @@ export function deriveSpecificPlantOutcomes({
         irrigationType === 'none' || irrigationReliability === 'none' || irrigationReliability === 'low'
           ? `Natural climate water is too limited for this ${waterNeeds}-water plant and reliable irrigation is not available.`
           : `Natural climate water is too limited for this ${waterNeeds}-water plant; irrigation reliability is unknown, so strong growth suitability is withheld.`
+      );
+    }
+  }
+
+  // Warm citrus may avoid frost yet still lack enough seasonal warmth for strong vegetative performance.
+  // This is a confidence cap, not a survival block, and never softens a worse outcome.
+  if (warmCitrusThermalDeficit && growth === SPECIFIC_OUTCOME_STATUS.SUPPORTED) {
+    growth = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    evidenceHints.growthFields.push('groupIds');
+    if (!limiting.some((m) => /warm-season|citrus.*warmth|seasonal warmth/i.test(String(m)))) {
+      limiting.push(
+        `Warm-season temperatures are too cool for a strong citrus growth recommendation (warmest-month mean max ~${env.warmestMonthMeanMaxC}°C).`
       );
     }
   }
