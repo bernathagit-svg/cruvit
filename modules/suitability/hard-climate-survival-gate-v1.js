@@ -10,7 +10,7 @@
  * Not a second climate engine: callers still use smartRecEvaluateSuitability.
  * Not plant- or place-specific.
  */
-export const HARD_CLIMATE_SURVIVAL_GATE_VERSION = '1.1.4';
+export const HARD_CLIMATE_SURVIVAL_GATE_VERSION = '1.1.5';
 
 const RISK_RANK = Object.freeze({ unknown: 0, low: 1, medium: 2, high: 3 });
 
@@ -119,9 +119,11 @@ export function elevateAmbientFreezingRisk(climateProfile = {}, coords = {}) {
 
   // Lethal frost only. Climate authority maps cool-seasonal + elevated structural
   // cold to freezingRisk=low when month-min is well above freezing (cool winter ≠ freeze).
-  if (thermal === 'frost-prone' || thermal === 'cool-highland') {
+  if (thermal === 'frost-prone') {
     risk = bumpRisk(risk, 'high');
   }
+  // cool-highland means "not lowland tropical warmth"; it does not by itself prove lethal frost.
+  // Actual freeze severity remains controlled by freezingRisk / structuralColdRisk / month-min evidence below.
   if (structuralCold === 'high') {
     risk = bumpRisk(risk, 'high');
   }
