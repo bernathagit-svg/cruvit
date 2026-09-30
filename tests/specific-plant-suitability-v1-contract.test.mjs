@@ -1018,3 +1018,81 @@ test('arid + medium water only constrains when irrigation is explicitly unavaila
   });
   assert.equal(drip.overall, 'good');
 });
+
+test('semi-arid + explicit no irrigation constrains source-supported medium water, not heuristic-only water need', () => {
+  const climateProfile = {
+    broadClimate: 'mediterranean',
+    freezingRisk: 'low',
+    moistureRegime: 'semi-arid',
+    coldestMonthMeanMinC: 11,
+    warmestMonthMeanMaxC: 30,
+    structuralClimateStatus: 'known'
+  };
+  const suitability = {
+    recommendationLevel: 'good',
+    survivalFit: 85,
+    thriveFit: 80,
+    warnings: [],
+    explanationText: ''
+  };
+  const gardenContext = {
+    sunExposure: 'part_shade',
+    drainage: 'well_drained',
+    irrigationType: 'none',
+    irrigationReliability: 'none',
+    plantingMode: 'ground'
+  };
+  const sourceBackedMeta = {
+    frostSensitivity: 'medium',
+    coldTolerance: 'medium',
+    waterNeeds: 'medium',
+    sunNeeds: 'partial_shade',
+    drainageNeeds: 'high',
+    traitEvidenceClasses: {
+      frostSensitivity: 'SOURCE_SUPPORTED',
+      coldTolerance: 'SOURCE_SUPPORTED',
+      waterNeeds: 'SOURCE_SUPPORTED',
+      sunNeeds: 'SOURCE_SUPPORTED',
+      drainageNeeds: 'SOURCE_SUPPORTED'
+    }
+  };
+  const sourceBacked = deriveSpecificPlantOutcomes({
+    meta: sourceBackedMeta,
+    climateProfile,
+    suitability,
+    plant: { slug: 'source-backed-medium-water', climateTraits: sourceBackedMeta },
+    gardenContext
+  });
+  assert.equal(sourceBacked.survival, 'reliable');
+  assert.equal(sourceBacked.growth, 'constrained');
+  assert.equal(sourceBacked.overall, 'borderline');
+
+  const heuristicMeta = {
+    ...sourceBackedMeta,
+    traitEvidenceClasses: {
+      ...sourceBackedMeta.traitEvidenceClasses,
+      waterNeeds: 'HEURISTIC_ASSERTION'
+    }
+  };
+  const heuristic = deriveSpecificPlantOutcomes({
+    meta: heuristicMeta,
+    climateProfile,
+    suitability,
+    plant: { slug: 'heuristic-medium-water', climateTraits: heuristicMeta },
+    gardenContext
+  });
+  assert.equal(heuristic.overall, 'good');
+
+  const irrigated = deriveSpecificPlantOutcomes({
+    meta: sourceBackedMeta,
+    climateProfile,
+    suitability,
+    plant: { slug: 'source-backed-medium-water', climateTraits: sourceBackedMeta },
+    gardenContext: {
+      ...gardenContext,
+      irrigationType: 'drip',
+      irrigationReliability: 'high'
+    }
+  });
+  assert.equal(irrigated.overall, 'good');
+});
