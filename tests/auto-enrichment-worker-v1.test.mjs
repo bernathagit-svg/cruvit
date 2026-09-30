@@ -17,7 +17,9 @@ import {
   WORKER_STOP_REASON,
   WORKER_SELECTION_REASON,
   isJobEligibleForWorker,
+  isJobEligibleForResearchRetrieval,
   selectEligibleJobs,
+  selectResearchRetrievalJobs,
   lockBatch,
   computeBatchFingerprint,
   createDryValidationToken,
@@ -811,22 +813,28 @@ test('26. SAFE P1 AUTO plant without WORKER_PILOT_PLANT_SPECS can be selected', 
     safeSlugs: SAFE_SLUGS,
     plantSpecs: WORKER_PILOT_PLANT_SPECS
   });
-  assert.ok(sel.selected.some((j) => j.canonicalSlug === 'apricot'));
-  assert.ok(!WORKER_PILOT_PLANT_SPECS.some((s) => s.slug === 'apricot'));
+  const pilotSlugs = new Set(WORKER_PILOT_PLANT_SPECS.map((s) => s.slug));
+  const nonPilot = sel.selected.find((j) => !pilotSlugs.has(j.canonicalSlug));
+  assert.ok(nonPilot, 'queue-authority selection should allow a SAFE P1 AUTO non-pilot job');
 });
 
 test('27. pilot preferredOrder cannot override queue rank', () => {
   const queue = loadCurrentQueue(ROOT);
-  const sel = selectEligibleJobs(queue, {
+  const selectedWithPilotSpecs = selectEligibleJobs(queue, {
     maxJobs: 3,
     repoRoot: ROOT,
     safeSlugs: SAFE_SLUGS,
     plantSpecs: WORKER_PILOT_PLANT_SPECS
   });
-  // Queue order SAFE P1 AUTO starts apricot → avocado → guava (not lemon/olive preference).
+  const selectedWithoutPilotPreference = selectEligibleJobs(queue, {
+    maxJobs: 3,
+    repoRoot: ROOT,
+    safeSlugs: SAFE_SLUGS,
+    plantSpecs: []
+  });
   assert.deepEqual(
-    sel.selected.map((j) => j.canonicalSlug),
-    ['apricot', 'avocado', 'guava']
+    selectedWithPilotSpecs.selected.map((j) => j.canonicalSlug),
+    selectedWithoutPilotPreference.selected.map((j) => j.canonicalSlug)
   );
 });
 
@@ -969,9 +977,15 @@ test('29b. AUTO+productGate HOLD cannot enter; AUTO alone insufficient; needsRev
 });
 
 test('30. hard-stop does not substitute a fourth-ranked job into locked batch', async () => {
+  const queue = loadCurrentQueue(ROOT);
+  const expectedTop3 = selectEligibleJobs(queue, {
+    maxJobs: 3,
+    repoRoot: ROOT,
+    safeSlugs: SAFE_SLUGS
+  }).selected.map((j) => j.canonicalSlug);
   const lock = lockQueueAuthorityTop3();
-  assert.deepEqual([...lock.lockedSlugs], ['apricot', 'avocado', 'guava']);
-  const withFour = selectEligibleJobs(loadCurrentQueue(ROOT), {
+  assert.deepEqual([...lock.lockedSlugs], expectedTop3);
+  const withFour = selectEligibleJobs(queue, {
     maxJobs: 4,
     dryRun: true,
     allowDryScaleCeiling: true,
@@ -998,7 +1012,7 @@ test('30. hard-stop does not substitute a fourth-ranked job into locked batch', 
     })
   });
   // Membership immutable — no fourth slug appears even if retrieval fails / batch stops.
-  assert.deepEqual([...lock.lockedSlugs], ['apricot', 'avocado', 'guava']);
+  assert.deepEqual([...lock.lockedSlugs], expectedTop3);
   assert.ok(!dry.audits.some((a) => a.slug === fourth.canonicalSlug));
   assert.ok(!dry.lockedSlugs?.includes?.(fourth.canonicalSlug));
 });
@@ -1094,4 +1108,137 @@ test('33. real logical queue change does persist', () => {
   assert.ok(written.jobs.length > 0);
   assert.equal(written.parentCommit, 'new-parent');
   fs.rmSync(tmp, { recursive: true, force: true });
+});
+
+
+test('research-only selector may retrieve AUTO canonical P2 HOLD/needsReview debt without production eligibility', () => {
+  const job = {
+    jobId: 'research:papaya',
+    canonicalSlug: 'papaya',
+    scientificName: 'Carica papaya',
+    priority: 'P2',
+    enrichmentExecution: ENRICHMENT_EXECUTION.AUTO,
+    productGate: 'HOLD',
+    needsReview: true,
+    sourceRetrievalRequired: true,
+    identityStatus: 'CANONICAL_SPECIES',
+    productRole: 'SPECIES',
+    gapCodes: ['MISSING_FROST_EVIDENCE', 'NEEDS_REVIEW']
+  };
+  const prod = isJobEligibleForWorker(job, eligOpts());
+  assert.equal(prod.ok, false);
+  assert.ok(prod.reasons.includes('productGate_HOLD'));
+  assert.ok(prod.reasons.includes('needsReview'));
+
+  const research = isJobEligibleForResearchRetrieval(job, {
+    dryRun: true,
+    realExecutionAllowed: false
+  });
+  assert.equal(research.ok, true);
+
+  const selection = selectResearchRetrievalJobs({ jobs: [job] }, { maxJobs: 1 });
+  assert.deepEqual(selection.selected.map((x) => x.canonicalSlug), ['papaya']);
+  assert.equal(selection.realExecutionAllowed, false);
+  assert.equal(selection.selectionAuthority, 'QUEUE_ORDER_RESEARCH_ONLY_P1_P2_AUTO');
+});
+
+test('research-only eligibility remains closed to real execution and non-AUTO jobs', () => {
+  const base = {
+    jobId: 'research:test',
+    canonicalSlug: 'papaya',
+    scientificName: 'Carica papaya',
+    priority: 'P2',
+    enrichmentExecution: ENRICHMENT_EXECUTION.AUTO,
+    productGate: 'HOLD',
+    needsReview: true,
+    sourceRetrievalRequired: true,
+    identityStatus: 'CANONICAL_SPECIES',
+    productRole: 'SPECIES',
+    gapCodes: ['MISSING_COLD_EVIDENCE']
+  };
+  assert.equal(
+    isJobEligibleForResearchRetrieval(base, { dryRun: false, realExecutionAllowed: false }).ok,
+    false
+  );
+  assert.equal(
+    isJobEligibleForResearchRetrieval(base, { dryRun: true, realExecutionAllowed: true }).ok,
+    false
+  );
+  assert.equal(
+    isJobEligibleForResearchRetrieval(
+      { ...base, enrichmentExecution: ENRICHMENT_EXECUTION.HOLD_FOR_REVIEW },
+      { dryRun: true, realExecutionAllowed: false }
+    ).ok,
+    false
+  );
+});
+
+test('processBatch refuses research-only real mode before retrieval/write', async () => {
+  const out = await processBatch({
+    repoRoot: ROOT,
+    dryRun: false,
+    researchOnly: true,
+    realExecutionAllowed: false,
+    fetchImpl: async () => {
+      throw new Error('fetch_must_not_run');
+    }
+  });
+  assert.equal(out.status, 'BATCH_STOPPED');
+  assert.equal(out.REAL_EXECUTION_ALLOWED, false);
+  assert.equal(out.error, 'research_only_requires_dry_run_and_real_disabled');
+  assert.equal(out.externalRequests, 0);
+});
+
+
+test('research-only dry batch retrieves HOLD debt but cannot mutate catalog or queue', async () => {
+  const paths = bootstrapSafeMigrationPaths(ROOT);
+  const queuePath = path.join(ROOT, 'data/catalog/enrichment-queue/current-catalog-enrichment-queue-v1.json');
+  const summaryPath = path.join(ROOT, 'data/catalog/enrichment-queue/current-catalog-enrichment-summary-v1.json');
+  const before = {
+    json: hashFile(paths.json),
+    js: hashFile(paths.js),
+    browser: hashFile(paths.browser),
+    queue: hashFile(queuePath),
+    summary: hashFile(summaryPath)
+  };
+
+  const queue = loadCurrentQueue(ROOT);
+  const wanted = new Set(['strawberry-guava', 'papaya']);
+  const scopedQueue = { ...queue, jobs: (queue.jobs || []).filter((j) => wanted.has(j.canonicalSlug)) };
+  const selection = selectResearchRetrievalJobs(scopedQueue, { maxJobs: 2 });
+  assert.deepEqual(selection.selected.map((j) => j.canonicalSlug), ['strawberry-guava', 'papaya']);
+  const lock = lockBatch(selection, { plantSpecs: selection.plantSpecs });
+  const dirs = tempArtifactAndCache();
+
+  const batch = await processBatch({
+    repoRoot: ROOT,
+    dryRun: true,
+    researchOnly: true,
+    realExecutionAllowed: false,
+    lockedBatch: lock,
+    plantSpecs: selection.plantSpecs,
+    maxExternalRequestsTotal: 6,
+    maxExternalRequestsPerPlant: 3,
+    applyRetryFairness: false,
+    persistRetryFairness: false,
+    ...dirs,
+    fetchImpl: mockFetch()
+  });
+
+  assert.equal(batch.status, 'BATCH_COMPLETE');
+  assert.equal(batch.researchOnly, true);
+  assert.equal(batch.REAL_EXECUTION_ALLOWED, false);
+  assert.equal(batch.applied, 0);
+  assert.deepEqual(batch.plantsChanged, []);
+  assert.deepEqual(batch.fieldsChanged, {});
+  for (const a of batch.audits) assert.equal(a.writeResult, undefined);
+
+  const after = {
+    json: hashFile(paths.json),
+    js: hashFile(paths.js),
+    browser: hashFile(paths.browser),
+    queue: hashFile(queuePath),
+    summary: hashFile(summaryPath)
+  };
+  assert.deepEqual(after, before);
 });
