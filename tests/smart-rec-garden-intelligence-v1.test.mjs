@@ -361,3 +361,14 @@ test('Garden Area planting modes map to matching Smart Rec context without green
   const greenhouse = smartRecContextFromGardenArea({ plantingMode: 'greenhouse' }, {});
   assert.equal(greenhouse.q1, undefined);
 });
+
+test('Garden Area part_sun maps to partial-sun without overriding explicit user answer', () => {
+  const fromArea = smartRecContextFromGardenArea({ sunExposure: 'part_sun' }, {});
+  assert.equal(fromArea.q2, 'partial-sun');
+
+  const userWins = smartRecContextFromGardenArea(
+    { sunExposure: 'part_sun' },
+    { q2: 'full-sun' }
+  );
+  assert.equal(userWins.q2, 'full-sun');
+});

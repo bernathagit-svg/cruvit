@@ -252,7 +252,7 @@ export function smartRecContextFromGardenArea(areaContext, answers = {}) {
   const sun = asText(ctx.sunExposure || ctx.sun_exposure);
   if (!next.q2) {
     if (sun === 'full_sun') next.q2 = 'full-sun';
-    else if (sun === 'part_shade' || sun === 'morning_sun_part_shade' || sun === 'full_sun_to_part_shade') {
+    else if (sun === 'part_sun' || sun === 'part_shade' || sun === 'morning_sun_part_shade' || sun === 'full_sun_to_part_shade') {
       next.q2 = 'partial-sun';
     } else if (sun === 'full_shade' || sun === 'shade' || sun === 'bright_shade') {
       next.q2 = 'shade';
