@@ -30,7 +30,7 @@ import {
   reproductiveProseRejectsYearRoundWarmNeed
 } from './plant-climate-suitability-baseline-v1.js';
 import { resolveFruitingWithBiologicalEligibility, readBiologicalFruitSetEvidence } from '../catalog-expansion/reproductive-biology-v1-contract.js';
-import { applyEvidenceStrengthPropagation } from './evidence-strength-propagation-v1-contract.js';
+import { applyEvidenceStrengthPropagation, resolveTraitEvidenceClass } from './evidence-strength-propagation-v1-contract.js';
 import {
   frostSensitivityIsHard,
   isHardFrostLimiter,
@@ -650,6 +650,17 @@ export function qualitativeHumidityClimateMismatch(meta, env = {}) {
     evidence,
     limiting:
       'Source-linked plant evidence warns about humid-climate stress; warm humid conditions constrain growth confidence.'
+  };
+}
+
+export function qualitativeYearRoundWarmMismatch(meta, env = {}) {
+  const heatTolerance = String(meta?.heatTolerance || '').toLowerCase();
+  const thermal = String(env?.thermalRegime || '').toLowerCase();
+  const evidence = resolveTraitEvidenceClass(meta, 'heatTolerance');
+  if (heatTolerance !== 'low' || thermal !== 'year-round-warm' || evidence !== 'SOURCE_SUPPORTED') return null;
+  return {
+    severity: 'constrained',
+    limiting: 'Year-round warm conditions conflict with source-supported low heat tolerance; strong growth suitability is withheld.'
   };
 }
 
@@ -1476,6 +1487,9 @@ export function deriveSpecificPlantOutcomes({
   const narrativeHumidityMismatch = !sheltered
     ? qualitativeHumidityClimateMismatch(meta, env)
     : null;
+  const yearRoundWarmMismatch = !sheltered
+    ? qualitativeYearRoundWarmMismatch(meta, env)
+    : null;
   const qualitativeHeatMismatch = !sheltered
     ? qualitativeExtremeHeatMismatch(meta, env)
     : null;
@@ -1523,6 +1537,11 @@ export function deriveSpecificPlantOutcomes({
     if (!limiting.includes(narrativeHumidityMismatch.limiting)) {
       limiting.push(narrativeHumidityMismatch.limiting);
     }
+  } else if (yearRoundWarmMismatch) {
+    growth = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    evidenceHints.usedHeat = true;
+    evidenceHints.growthFields.push('heatTolerance');
+    if (!limiting.includes(yearRoundWarmMismatch.limiting)) limiting.push(yearRoundWarmMismatch.limiting);
   } else if (qualitativeHeatMismatch) {
     growth =
       qualitativeHeatMismatch.severity === 'poor'
