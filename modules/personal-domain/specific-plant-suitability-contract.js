@@ -1301,6 +1301,7 @@ export function deriveSpecificPlantOutcomes({
   const waterNeeds = String(meta?.waterNeeds || '').trim().toLowerCase();
   const irrigationType = String(gardenContext?.irrigationType ?? gardenContext?.irrigation_type ?? 'unknown').trim().toLowerCase();
   const irrigationReliability = String(gardenContext?.irrigationReliability ?? gardenContext?.irrigation_reliability ?? 'unknown').trim().toLowerCase();
+  const moistureTendency = String(gardenContext?.moistureTendency ?? gardenContext?.soilMoistureTendency ?? gardenContext?.moisture_tendency ?? 'unknown').trim().toLowerCase();
   const reliableIrrigation = irrigationType !== 'none' && (irrigationReliability === 'medium' || irrigationReliability === 'high');
   const irrigationExplicitlyUnavailable =
     irrigationType === 'none' || irrigationReliability === 'none' || irrigationReliability === 'low';
@@ -1316,6 +1317,11 @@ export function deriveSpecificPlantOutcomes({
       waterNeedsEvidence === 'SOURCE_SUPPORTED' &&
       (waterNeeds === 'medium' || waterNeeds === 'high'))
   );
+  const drySiteWaterConstraint =
+    moistureTendency === 'dry' &&
+    !reliableIrrigation &&
+    waterNeedsEvidence === 'SOURCE_SUPPORTED' &&
+    (waterNeeds === 'medium' || waterNeeds === 'high');
   const survivalFit = Number(s.survivalFit);
   const thriveFit = Number(s.thriveFit);
   // floweringFit / fruitingFit are NOT botanical evidence — ignored for reproductive outcomes.
@@ -1613,6 +1619,18 @@ export function deriveSpecificPlantOutcomes({
         irrigationType === 'none' || irrigationReliability === 'none' || irrigationReliability === 'low'
           ? `Natural climate water is too limited for this ${waterNeeds}-water plant and reliable irrigation is not available.`
           : `Natural climate water is too limited for this ${waterNeeds}-water plant; irrigation reliability is unknown, so strong growth suitability is withheld.`
+      );
+    }
+  }
+
+  // Explicit local soil dryness is Garden-site evidence, not ambient climate evidence.
+  // Only source-backed medium/high water needs may turn it into a constraint.
+  if (drySiteWaterConstraint && growth === SPECIFIC_OUTCOME_STATUS.SUPPORTED) {
+    growth = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    evidenceHints.growthFields.push('waterNeeds');
+    if (!limiting.some((m) => /soil moisture|dry site|local site water/i.test(String(m)))) {
+      limiting.push(
+        `Garden soil moisture is explicitly dry for this source-supported ${waterNeeds}-water plant; reliable irrigation is not confirmed, so strong growth suitability is withheld.`
       );
     }
   }
