@@ -10,7 +10,9 @@ import {
   buildAreaReadModel,
   AREA_SUN_EXPOSURES,
   AREA_PLANTING_MODES,
+  AREA_DRAINAGE,
   AREA_IRRIGATION_TYPES,
+  AREA_IRRIGATION_RELIABILITY,
   AREA_SUPPORT_TYPES
 } from './garden-areas-v1-contract.js';
 
@@ -98,8 +100,14 @@ export function renderGardenAreasHtml(state = {}) {
       <label>Planting
         <select name="plantingMode">${optionList(AREA_PLANTING_MODES, 'unknown')}</select>
       </label>
+      <label>Drainage
+        <select name="drainage">${optionList(AREA_DRAINAGE, 'unknown')}</select>
+      </label>
       <label>Irrigation
         <select name="irrigationType">${optionList(AREA_IRRIGATION_TYPES, 'unknown')}</select>
+      </label>
+      <label>Irrigation reliability
+        <select name="irrigationReliability">${optionList(AREA_IRRIGATION_RELIABILITY, 'unknown')}</select>
       </label>
       <label>Support
         <select name="supportType">${optionList(AREA_SUPPORT_TYPES, 'unknown')}</select>
@@ -193,7 +201,9 @@ function wireAreaForm(host, pd) {
         context: buildUserProvidedAreaContext({
           sunExposure: fd.get('sunExposure'),
           plantingMode: fd.get('plantingMode'),
+          drainage: fd.get('drainage'),
           irrigationType: fd.get('irrigationType'),
+          irrigationReliability: fd.get('irrigationReliability'),
           supportType: fd.get('supportType')
         })
       });
@@ -243,6 +253,21 @@ function wireAreaForm(host, pd) {
         currentContext.sunExposure || 'unknown'
       );
       if (sun == null) return;
+      const drainage = prompt(
+        'Drainage for this area (well drained, moderate, poor, or unknown):',
+        currentContext.drainage || 'unknown'
+      );
+      if (drainage == null) return;
+      const irrigationType = prompt(
+        'Irrigation type (none, manual, drip, sprinkler, automatic, or unknown):',
+        currentContext.irrigationType || 'unknown'
+      );
+      if (irrigationType == null) return;
+      const irrigationReliability = prompt(
+        'Irrigation reliability (none, low, medium, high, or unknown):',
+        currentContext.irrigationReliability || 'unknown'
+      );
+      if (irrigationReliability == null) return;
       const support = prompt(
         'Support in this area (trellis, fence, wall, pergola, pole, railing, other, none, or unknown):',
         currentContext.supportType || 'unknown'
@@ -254,6 +279,9 @@ function wireAreaForm(host, pd) {
           buildUserProvidedAreaContext({
             ...currentContext,
             sunExposure: sun,
+            drainage,
+            irrigationType,
+            irrigationReliability,
             supportType: support
           })
         );
