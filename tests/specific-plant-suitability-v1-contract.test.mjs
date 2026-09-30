@@ -1096,3 +1096,116 @@ test('semi-arid + explicit no irrigation constrains source-supported medium wate
   });
   assert.equal(irrigated.overall, 'good');
 });
+
+test('explicit dry Garden site constrains source-supported medium/high water need without reliable irrigation', () => {
+  const climateProfile = {
+    broadClimate: 'temperate',
+    freezingRisk: 'low',
+    moistureRegime: 'humid',
+    coldestMonthMeanMinC: 7,
+    warmestMonthMeanMaxC: 24,
+    structuralClimateStatus: 'known'
+  };
+  const suitability = {
+    recommendationLevel: 'good',
+    survivalFit: 85,
+    thriveFit: 80,
+    warnings: [],
+    explanationText: ''
+  };
+  const sourceBackedMeta = {
+    frostSensitivity: 'medium',
+    coldTolerance: 'medium',
+    waterNeeds: 'medium',
+    sunNeeds: 'part_shade',
+    drainageNeeds: 'high',
+    traitEvidenceClasses: {
+      frostSensitivity: 'SOURCE_SUPPORTED',
+      coldTolerance: 'SOURCE_SUPPORTED',
+      waterNeeds: 'SOURCE_SUPPORTED',
+      sunNeeds: 'SOURCE_SUPPORTED',
+      drainageNeeds: 'SOURCE_SUPPORTED'
+    }
+  };
+  const dryUnknownIrrigation = deriveSpecificPlantOutcomes({
+    meta: sourceBackedMeta,
+    climateProfile,
+    suitability,
+    plant: { slug: 'dry-site-medium-water', climateTraits: sourceBackedMeta },
+    gardenContext: {
+      sunExposure: 'part_shade',
+      drainage: 'well_drained',
+      moistureTendency: 'dry',
+      irrigationType: 'unknown',
+      irrigationReliability: 'unknown',
+      plantingMode: 'ground'
+    }
+  });
+  assert.equal(dryUnknownIrrigation.survival, 'reliable');
+  assert.equal(dryUnknownIrrigation.growth, 'constrained');
+  assert.equal(dryUnknownIrrigation.overall, 'borderline');
+  assert.ok(dryUnknownIrrigation.limitingFactors.some((x) => /soil moisture is explicitly dry/i.test(String(x))));
+
+  const irrigated = deriveSpecificPlantOutcomes({
+    meta: sourceBackedMeta,
+    climateProfile,
+    suitability,
+    plant: { slug: 'dry-site-medium-water', climateTraits: sourceBackedMeta },
+    gardenContext: {
+      sunExposure: 'part_shade',
+      drainage: 'well_drained',
+      moistureTendency: 'dry',
+      irrigationType: 'drip',
+      irrigationReliability: 'high',
+      plantingMode: 'ground'
+    }
+  });
+  assert.equal(irrigated.overall, 'good');
+
+  const heuristicMeta = {
+    ...sourceBackedMeta,
+    traitEvidenceClasses: {
+      ...sourceBackedMeta.traitEvidenceClasses,
+      waterNeeds: 'HEURISTIC_ASSERTION'
+    }
+  };
+  const heuristic = deriveSpecificPlantOutcomes({
+    meta: heuristicMeta,
+    climateProfile,
+    suitability,
+    plant: { slug: 'dry-site-heuristic-water', climateTraits: heuristicMeta },
+    gardenContext: {
+      sunExposure: 'part_shade',
+      drainage: 'well_drained',
+      moistureTendency: 'dry',
+      irrigationType: 'unknown',
+      irrigationReliability: 'unknown',
+      plantingMode: 'ground'
+    }
+  });
+  assert.equal(heuristic.overall, 'good');
+
+  const lowWaterMeta = {
+    ...sourceBackedMeta,
+    waterNeeds: 'low',
+    traitEvidenceClasses: {
+      ...sourceBackedMeta.traitEvidenceClasses,
+      waterNeeds: 'SOURCE_SUPPORTED'
+    }
+  };
+  const lowWater = deriveSpecificPlantOutcomes({
+    meta: lowWaterMeta,
+    climateProfile,
+    suitability,
+    plant: { slug: 'dry-site-low-water', climateTraits: lowWaterMeta },
+    gardenContext: {
+      sunExposure: 'part_shade',
+      drainage: 'well_drained',
+      moistureTendency: 'dry',
+      irrigationType: 'unknown',
+      irrigationReliability: 'unknown',
+      plantingMode: 'ground'
+    }
+  });
+  assert.equal(lowWater.overall, 'good');
+});
