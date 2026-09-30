@@ -211,6 +211,15 @@ function evaluateAligned({ plant, climate, intent = null, genericLevel = 'good' 
   };
 }
 
+test('warm-citrus group carries source-backed quantitative warm-season evidence', () => {
+  const app = fs.readFileSync(APP, 'utf8');
+  assert.match(
+    app,
+    /'warm-citrus-fruit-tree':\{[\s\S]*?quantitativeEvidence:\{optimum_growth_temperature_min_c:21\}/
+  );
+  assert.match(app, /sourceIds:\['uf-ifas-citrus-manual-temperature-range'\]/);
+});
+
 test('hard-frost gate and intelligence version stay on the purpose-policy path', () => {
   assert.equal(HARD_CLIMATE_SURVIVAL_GATE_VERSION, '1.1.4');
   assert.equal(SMART_REC_GARDEN_INTELLIGENCE_VERSION, '1.2.0-purpose-aware');

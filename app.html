@@ -1338,7 +1338,17 @@ const SMART_REC_CLIMATE_GROUPS={
     drainageNeeds:'high',
     floweringRequirements:'Flowers best with strong sun, warmth, and protection from frost and wind.',
     fruitingRequirements:'Reliable fruiting needs warmth, deep watering, and low frost risk.',
-    survivalVsThriveNotes:'Warm climates suit citrus best; frost and poor drainage quickly reduce fruit quality.'
+    survivalVsThriveNotes:'Warm climates suit citrus best; frost and poor drainage quickly reduce fruit quality.',
+    quantitativeEvidence:{optimum_growth_temperature_min_c:21},
+    quantitativeProvenance:{
+      optimum_growth_temperature_min_c:{
+        evidenceClass:'SOURCE_SUPPORTED',
+        sourceIds:['uf-ifas-citrus-manual-temperature-range'],
+        sourceUrl:'https://sfyl.ifas.ufl.edu/media/sfylifasufledu/indian-river/docs/pdfs/Citrus-manual_hamlin_orange_2025-2026.pdf',
+        shortExcerpt:'UF/IFAS citrus guidance gives a desirable growing range beginning near 70°F (~21°C).',
+        claimId:'quantitative-optimum-growth-temperature-min-c'
+      }
+    }
   },
   'humid-sensitive-mediterranean':{
     heatTolerance:'medium',
