@@ -82,6 +82,50 @@ export const WORKER_DRY_SCALE_MAX_EXTERNAL_REQUESTS_TOTAL = 20;
  * Untouched P1 AUTO scale-dry plant specs (Tier A NCSU + USDA). Prefer SAFE-writable first.
  * Excludes lemon/olive/avocado (already processed), apricot, pomegranate, strawberry-guava.
  */
+export const WORKER_RESEARCH_RETRIEVAL_SPECS = Object.freeze([
+  {
+    slug: 'acerola',
+    scientificName: 'Malpighia emarginata',
+    safeWritable: false,
+    retrievalSource: 'research-curated',
+    whySafe:
+      'Research-only species-correct UF/IFAS Extension source; no production write authorization.',
+    approvedSources: Object.freeze([
+      {
+        sourceId: 'ufifas-malpighia-emarginata',
+        sourceType: 'university_extension',
+        institution: 'University of Florida IFAS Extension',
+        url: 'https://blogs.ifas.ufl.edu/stlucieco/2025/08/20/growing-barbados-cherry-in-florida/',
+        title: 'Growing Barbados Cherry in Florida'
+      }
+    ])
+  },
+  {
+    slug: 'almond',
+    scientificName: 'Prunus dulcis',
+    safeWritable: false,
+    retrievalSource: 'research-curated',
+    whySafe:
+      'Research-only species-correct Utah State University Extension sources; avoids Prunus genus/flowering-almond conflation.',
+    approvedSources: Object.freeze([
+      {
+        sourceId: 'usu-prunus-dulcis-treebrowser',
+        sourceType: 'university_extension',
+        institution: 'Utah State University Extension',
+        url: 'https://extension.usu.edu/treebrowser/catalog/almond',
+        title: 'Almond - Prunus dulcis'
+      },
+      {
+        sourceId: 'usu-prunus-dulcis-home-garden',
+        sourceType: 'university_extension',
+        institution: 'Utah State University Extension',
+        url: 'https://extension.usu.edu/yardandgarden/research/almonds-in-the-home-garden',
+        title: 'How to Grow Almonds in Your Garden'
+      }
+    ])
+  }
+]);
+
 export const WORKER_SCALE_DRY_PLANT_SPECS = Object.freeze([
   {
     slug: 'guava',
@@ -608,7 +652,11 @@ export function scientificNameToNcsuPathSegment(scientificName) {
  * Known retrieval configs (pilot + scale-dry). Selection does NOT require membership.
  */
 export function knownWorkerRetrievalSpecs() {
-  return [...WORKER_PILOT_PLANT_SPECS, ...WORKER_SCALE_DRY_PLANT_SPECS];
+  return [
+    ...WORKER_PILOT_PLANT_SPECS,
+    ...WORKER_SCALE_DRY_PLANT_SPECS,
+    ...WORKER_RESEARCH_RETRIEVAL_SPECS
+  ];
 }
 
 /**
