@@ -5,6 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
 import {
   applyAllBootstrapStructuralClimateTraitsMigrations
 } from '../modules/personal-domain/bootstrap-safe-climate-traits-migration-v1.js';
@@ -15,7 +16,16 @@ import {
 } from '../modules/personal-domain/enrichment-gap-scanner-v1.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const PARENT = 'b6b4efa63533713c5d17988e0c0b6cf17ef6edc9';
+
+function resolveParentCommit() {
+  try {
+    return execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
+  } catch {
+    return 'UNKNOWN_PARENT_COMMIT';
+  }
+}
+
+const PARENT = resolveParentCommit();
 
 function loadCurrentCatalogPlants() {
   const app = fs.readFileSync(path.join(root, 'app.html'), 'utf8');
@@ -103,10 +113,11 @@ const queue2 = buildCurrentCatalogEnrichmentQueue(plants, {
 const fp1 = queueLogicalFingerprint(queue);
 const fp2 = queueLogicalFingerprint(queue2);
 
-const packets = loadBatch3Packets();
+const includeBatch3 = process.argv.includes('--include-batch3');
+const packets = includeBatch3 ? loadBatch3Packets() : [];
 let batch3Path = null;
 let batch3Summary = null;
-if (packets.length) {
+if (includeBatch3 && packets.length) {
   const batch3 = buildBatch3DryEnrichmentQueue(packets, {
     generatedAt,
     parentCommit: PARENT
