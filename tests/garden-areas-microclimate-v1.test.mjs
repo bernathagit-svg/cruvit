@@ -425,3 +425,27 @@ test('Area supportType persists explicitly and exposes support context without b
   assert.equal(unknown.supportType, 'unknown');
   assert.equal(unknown.unknownReasons.supportType, 'not_provided');
 });
+
+test('Garden Areas UI exposes support selection and renders persisted support type', () => {
+  const html = renderGardenAreasHtml({
+    signedIn: true,
+    areas: [{
+      id: 'a_support',
+      name: 'Pergola edge',
+      context: {
+        sunExposure: 'full_sun',
+        plantingMode: 'ground',
+        supportType: 'pergola',
+        source: 'user_input',
+        confirmationStatus: 'user_confirmed',
+        confidence: 'medium'
+      }
+    }],
+    plants: []
+  });
+  assert.match(html, /name="supportType"/);
+  assert.match(html, /value="trellis"/);
+  assert.match(html, /value="pergola"/);
+  assert.match(html, /pergola/);
+  assert.match(html, /Edit area/);
+});

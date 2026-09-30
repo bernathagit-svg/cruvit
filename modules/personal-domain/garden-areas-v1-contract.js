@@ -585,6 +585,8 @@ export function projectAreaContextToGardenContextProfile(areaContextInput) {
     // Area-authoritative site type preserved beside projection
     areaSiteType: context.plantingMode,
     areaPlantingMode: context.plantingMode,
+    areaSupportType: context.supportType,
+    supportContextKnown: context.supportType !== 'unknown' && context.supportType !== 'none',
     projectionGaps: gaps,
     profileStatus: hasSemanticLoss ? 'insufficient' : trust.trusted ? 'partial' : 'untrusted',
     trusted: projectionTrusted,
@@ -699,6 +701,8 @@ export function resolvePlantSiteContextForComparison(input = {}) {
     drainage: areaContext.drainage,
     irrigationType: areaContext.irrigationType,
     moistureTendency: areaContext.moistureTendency,
+    supportType: areaContext.supportType,
+    supportContextKnown: areaContext.supportType !== 'unknown' && areaContext.supportType !== 'none',
     source: areaContext.source,
     confirmationStatus: areaContext.confirmationStatus,
     confidence: areaContext.confidence,

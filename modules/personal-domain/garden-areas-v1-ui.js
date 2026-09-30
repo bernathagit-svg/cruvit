@@ -10,7 +10,8 @@ import {
   buildAreaReadModel,
   AREA_SUN_EXPOSURES,
   AREA_PLANTING_MODES,
-  AREA_IRRIGATION_TYPES
+  AREA_IRRIGATION_TYPES,
+  AREA_SUPPORT_TYPES
 } from './garden-areas-v1-contract.js';
 
 const HOST_ID = 'gardenAreasV1Host';
@@ -66,9 +67,9 @@ export function renderGardenAreasHtml(state = {}) {
             <b>${escapeHtml(a.name)}</b>
             <small>${escapeHtml(rm.context.sunExposure.replace(/_/g, ' '))} · ${escapeHtml(
             rm.context.plantingMode.replace(/_/g, ' ')
-          )} · ${rm.plantCount} plant${rm.plantCount === 1 ? '' : 's'}</small>
+          )} · ${escapeHtml(rm.context.supportType.replace(/_/g, ' '))} · ${rm.plantCount} plant${rm.plantCount === 1 ? '' : 's'}</small>
             <div class="gareas-actions">
-              <button type="button" data-area-edit="${escapeHtml(a.id)}">Edit sun</button>
+              <button type="button" data-area-edit="${escapeHtml(a.id)}">Edit area</button>
               <button type="button" data-area-assign="${escapeHtml(a.id)}">Assign plant</button>
               <button type="button" data-area-delete="${escapeHtml(a.id)}">Delete</button>
             </div>
@@ -99,6 +100,9 @@ export function renderGardenAreasHtml(state = {}) {
       </label>
       <label>Irrigation
         <select name="irrigationType">${optionList(AREA_IRRIGATION_TYPES, 'unknown')}</select>
+      </label>
+      <label>Support
+        <select name="supportType">${optionList(AREA_SUPPORT_TYPES, 'unknown')}</select>
       </label>
       <button type="submit" class="btn light">Create area</button>
     </form>
@@ -189,7 +193,8 @@ function wireAreaForm(host, pd) {
         context: buildUserProvidedAreaContext({
           sunExposure: fd.get('sunExposure'),
           plantingMode: fd.get('plantingMode'),
-          irrigationType: fd.get('irrigationType')
+          irrigationType: fd.get('irrigationType'),
+          supportType: fd.get('supportType')
         })
       });
       if (typeof pd.upsertAreaOnActiveGarden === 'function') {
@@ -231,13 +236,27 @@ function wireAreaForm(host, pd) {
   host.querySelectorAll('[data-area-edit]').forEach((btn) => {
     btn.addEventListener('click', async () => {
       const areaId = btn.getAttribute('data-area-edit');
+      const currentArea = cachedGardenAreas.find((a) => String(a.id) === String(areaId));
+      const currentContext = normalizeAreaContext(currentArea?.context || {});
       const sun = prompt(
         'Sun for this area (full sun, part sun, part shade, full shade, or unknown):',
-        'unknown'
+        currentContext.sunExposure || 'unknown'
       );
       if (sun == null) return;
+      const support = prompt(
+        'Support in this area (trellis, fence, wall, pergola, pole, railing, other, none, or unknown):',
+        currentContext.supportType || 'unknown'
+      );
+      if (support == null) return;
       try {
-        await pd.updateAreaContextOnActiveGarden?.(areaId, buildUserProvidedAreaContext({ sunExposure: sun }));
+        await pd.updateAreaContextOnActiveGarden?.(
+          areaId,
+          buildUserProvidedAreaContext({
+            ...currentContext,
+            sunExposure: sun,
+            supportType: support
+          })
+        );
         await refreshGardenAreasV1();
       } catch (e) {
         alert(e?.message || 'Could not update area.');
