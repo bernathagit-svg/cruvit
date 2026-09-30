@@ -1681,7 +1681,17 @@ const SMART_REC_SPECIFIC_CLIMATE_METADATA={
   },
   mango:{
     hardBlockRules:['no-small-container'],
-    floweringRequirements:'Warmth, sun, and low frost risk are essential; humidity can reduce bloom quality through disease pressure.'
+    floweringRequirements:'Warmth, sun, and low frost risk are essential; humidity can reduce bloom quality through disease pressure.',
+    quantitativeEvidence:{optimum_growth_temperature_min_c:24},
+    quantitativeProvenance:{
+      optimum_growth_temperature_min_c:{
+        evidenceClass:'SOURCE_SUPPORTED',
+        sourceIds:['uf-ifas-hs1499-mango'],
+        sourceUrl:'https://ask.ifas.ufl.edu/publication/HS1499',
+        shortExcerpt:'Optimum growing temperature range 75–86°F (~24–30°C).',
+        claimId:'quantitative-optimum-growth-temperature-min-c'
+      }
+    }
   },
   lychee:{
     needsDrySeason:true,

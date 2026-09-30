@@ -18,6 +18,7 @@ import {
 import { applyRepresentativenessToSuitabilityClaim } from './coordinate-climate-confidence-v2-contract.js';
 import {
   quantitativeColdSurvivalUnsupported,
+  quantitativeGrowthWarmSeasonUnsupported,
   quantitativeHeatUnsupported,
   quantitativeVpdUnsupported
 } from '../catalog-expansion/plant-climate-quantitative-evidence-v1-contract.js';
@@ -1480,6 +1481,7 @@ export function deriveSpecificPlantOutcomes({
     ? qualitativeExtremeHeatMismatch(meta, env)
     : null;
   const heatQ = !sheltered ? quantitativeHeatUnsupported(meta, env) : null;
+  const growthWarmQ = !sheltered ? quantitativeGrowthWarmSeasonUnsupported(meta, env) : null;
   const vpdQ = !sheltered ? quantitativeVpdUnsupported(meta, env) : null;
   const warmCitrusThermalDeficit = !sheltered ? warmCitrusWarmSeasonConstrained(meta, env) : false;
 
@@ -1586,6 +1588,13 @@ export function deriveSpecificPlantOutcomes({
           : `Natural climate water is too limited for this ${waterNeeds}-water plant; irrigation reliability is unknown, so strong growth suitability is withheld.`
       );
     }
+  }
+
+  // Source-backed optimum-growth lower bounds cap strong positives without inventing survival failure.
+  if (growthWarmQ?.unsupported && growth === SPECIFIC_OUTCOME_STATUS.SUPPORTED) {
+    growth = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    evidenceHints.growthFields.push('quantitative.optimum_growth_temperature_min_c');
+    if (growthWarmQ.limiting && !limiting.includes(growthWarmQ.limiting)) limiting.push(growthWarmQ.limiting);
   }
 
   // Warm citrus may avoid frost yet still lack enough seasonal warmth for strong vegetative performance.

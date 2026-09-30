@@ -14,6 +14,7 @@ export const PLANT_CLIMATE_QUANTITATIVE_EVIDENCE_VERSION = '1.0.0';
 export const QUANTITATIVE_CLAIM_FIELDS = Object.freeze([
   'quantitative.minimum_survival_temperature_c',
   'quantitative.preferred_minimum_temperature_c',
+  'quantitative.optimum_growth_temperature_min_c',
   'quantitative.chill_hours_min',
   'quantitative.chill_hours_max',
   'quantitative.maximum_tolerated_temperature_c',
@@ -30,6 +31,7 @@ export const QUANTITATIVE_CLAIM_FIELDS = Object.freeze([
 export const QUANTITATIVE_TRAIT_KEYS = Object.freeze([
   'minimum_survival_temperature_c',
   'preferred_minimum_temperature_c',
+  'optimum_growth_temperature_min_c',
   'chill_hours_min',
   'chill_hours_max',
   'maximum_tolerated_temperature_c',
@@ -45,6 +47,7 @@ export const QUANTITATIVE_TRAIT_KEYS = Object.freeze([
 const NUMERIC_KEYS = new Set([
   'minimum_survival_temperature_c',
   'preferred_minimum_temperature_c',
+  'optimum_growth_temperature_min_c',
   'chill_hours_min',
   'chill_hours_max',
   'maximum_tolerated_temperature_c',
@@ -179,8 +182,25 @@ export function quantitativeColdSurvivalUnsupported(meta, climateProfile) {
 }
 
 /**
- * Additive heat check. Absence → null (no negative).
+ * Additive optimum-growth lower-bound check. Absence → null (no negative).
+ * This constrains strong Growth confidence only; it is not a survival threshold.
  */
+export function quantitativeGrowthWarmSeasonUnsupported(meta, climateProfile) {
+  const minC = readOptionalNumericThreshold(meta, 'optimum_growth_temperature_min_c');
+  if (minC == null) return null;
+  const raw = climateProfile?.warmestMonthMeanMaxC;
+  if (raw == null || raw === '') return null;
+  const warmest = Number(raw);
+  if (!Number.isFinite(warmest)) return null;
+  if (warmest < minC) {
+    return {
+      unsupported: true,
+      limiting: `Warmest-month mean highs (~${warmest}°C) are below the sourced optimum-growth lower bound (~${minC}°C).`
+    };
+  }
+  return { unsupported: false };
+}
+
 export function quantitativeHeatUnsupported(meta, climateProfile) {
   const maxC = readOptionalNumericThreshold(meta, 'maximum_tolerated_temperature_c');
   if (maxC == null) return null;

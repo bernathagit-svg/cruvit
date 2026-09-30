@@ -13,8 +13,11 @@ import {
 } from '../modules/personal-domain/specific-plant-suitability-contract.js';
 import { atmosphericHumidityMismatchForLowTolerancePlant as fromStructural } from '../modules/personal-domain/structural-climate-authority-v1.js';
 import {
+  materializeQuantitativeEvidenceFromClaims,
   quantitativeColdSurvivalUnsupported,
-  readOptionalNumericThreshold
+  quantitativeGrowthWarmSeasonUnsupported,
+  readOptionalNumericThreshold,
+  validateQuantitativeClaims
 } from '../modules/catalog-expansion/plant-climate-quantitative-evidence-v1-contract.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -140,4 +143,75 @@ test('authoritative quantitative min survival is additive when present', () => {
   assert.equal(hit.unsupported, true);
   const ok = quantitativeColdSurvivalUnsupported(meta, { coldestMonthMeanMinC: 14 });
   assert.equal(ok.unsupported, false);
+});
+
+
+test('optimum growth lower bound requires provenance and materializes generically', () => {
+  const claims = [{
+    claimId: 'quantitative-optimum-growth-temperature-min-c',
+    field: 'quantitative.optimum_growth_temperature_min_c',
+    status: 'asserted',
+    value: 24,
+    sourceIds: ['uf-ifas-hs1499-mango'],
+    shortExcerpt: 'Optimum growing temperature range 75–86°F.'
+  }];
+  const errors = validateQuantitativeClaims(claims, new Set(['uf-ifas-hs1499-mango']), []);
+  assert.deepEqual(errors, []);
+  const materialized = materializeQuantitativeEvidenceFromClaims(claims);
+  assert.equal(materialized.quantitativeEvidence.optimum_growth_temperature_min_c, 24);
+  assert.deepEqual(
+    materialized.quantitativeProvenance.optimum_growth_temperature_min_c.sourceIds,
+    ['uf-ifas-hs1499-mango']
+  );
+});
+
+test('optimum growth lower bound constrains strong Growth but not Survival', () => {
+  const meta = {
+    frostSensitivity: 'high',
+    coldTolerance: 'low',
+    heatTolerance: 'high',
+    quantitativeEvidence: { optimum_growth_temperature_min_c: 24 },
+    quantitativeProvenance: {
+      optimum_growth_temperature_min_c: {
+        evidenceClass: 'SOURCE_SUPPORTED',
+        sourceIds: ['uf-ifas-hs1499-mango'],
+        shortExcerpt: 'Optimum growing temperature range 75–86°F.'
+      }
+    },
+    traitEvidenceClasses: {
+      frostSensitivity: 'SOURCE_SUPPORTED',
+      coldTolerance: 'SOURCE_SUPPORTED',
+      heatTolerance: 'SOURCE_SUPPORTED'
+    }
+  };
+  const q = quantitativeGrowthWarmSeasonUnsupported(meta, { warmestMonthMeanMaxC: 22.05 });
+  assert.equal(q.unsupported, true);
+  assert.equal(
+    quantitativeGrowthWarmSeasonUnsupported(meta, { warmestMonthMeanMaxC: 26.35 }).unsupported,
+    false
+  );
+  const outcomes = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile: {
+      broadClimate: 'subtropical',
+      freezingRisk: 'low',
+      isFrostFreeGrowingClimate: true,
+      moistureRegime: 'humid',
+      coldestMonthMeanMinC: 11.05,
+      warmestMonthMeanMaxC: 22.05,
+      structuralClimateStatus: 'known'
+    },
+    suitability: {
+      recommendationLevel: 'good',
+      survivalFit: 85,
+      thriveFit: 80,
+      warnings: [],
+      explanationText: ''
+    },
+    plant: { slug: 'quantitative-growth-demo', climateTraits: meta }
+  });
+  assert.equal(outcomes.survival, 'reliable');
+  assert.equal(outcomes.growth, 'constrained');
+  assert.equal(outcomes.overall, 'borderline');
+  assert.ok(outcomes.limitingFactors.some((x) => /optimum-growth lower bound/i.test(String(x))));
 });
