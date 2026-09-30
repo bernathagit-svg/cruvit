@@ -372,3 +372,16 @@ test('Garden Area part_sun maps to partial-sun without overriding explicit user 
   );
   assert.equal(userWins.q2, 'full-sun');
 });
+
+test('Smart Rec requires explicit Garden Area selection when multiple Areas exist', () => {
+  const app = fs.readFileSync(APP, 'utf8');
+  assert.match(app, /id="srAreaSelect"/);
+  assert.match(app, /selectedAreaId:null/);
+  assert.match(app, /function smartRecSelectedArea\(\)/);
+  assert.match(app, /if\(areas\.length===1\)/);
+  assert.match(app, /if\(!wanted\) return null/);
+  const overlayBlock = app.match(/function smartRecAreaAnswerOverlay\(\)[\s\S]{0,700}?\n\}/)?.[0] || '';
+  assert.doesNotMatch(overlayBlock, /areas\[0\]/);
+  const protectionBlock = app.match(/function smartRecProtectionContext\(\)[\s\S]{0,1200}?\n\}/)?.[0] || '';
+  assert.doesNotMatch(protectionBlock, /areas\[0\]/);
+});
