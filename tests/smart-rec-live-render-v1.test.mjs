@@ -49,6 +49,13 @@ const GATE = path.join(ROOT, 'modules', 'suitability', 'hard-climate-survival-ga
 const MODULE = path.join(ROOT, 'modules', 'smart-recommendations', 'smart-rec-garden-intelligence-v1.js');
 const SEED = path.join(ROOT, 'data', 'plants.seed.json');
 const DATA = path.join(ROOT, 'data', 'coordinate-climate', 'v2');
+const GLOBAL_TILE_DIR = path.join(DATA, 'coverage', 'global-v1', 'tiles');
+const HAS_LOCAL_GLOBAL_TILE_CORPUS = fs.existsSync(GLOBAL_TILE_DIR);
+const MOJSTRANA_CORPUS_TEST_OPTIONS = {
+  skip: HAS_LOCAL_GLOBAL_TILE_CORPUS
+    ? false
+    : 'requires local global-v1 tile corpus (~17GB); remote canary covers the R2 path'
+};
 
 let paidNetwork = 0;
 const origFetch = globalThis.fetch;
@@ -221,7 +228,7 @@ test('paid AI automated tests = 0', () => {
   assert.equal(paidNetwork, 0);
 });
 
-test('Mojstrana has eligible positive-control plants; tropicals stay excluded', () => {
+test('Mojstrana has eligible positive-control plants; tropicals stay excluded', MOJSTRANA_CORPUS_TEST_OPTIONS, () => {
   const moj = loadMojstranaClimate();
   assert.equal(elevateAmbientFreezingRisk(moj.climateProfile, moj.loc), 'high');
   const slugs = catalogSlugs();
@@ -257,7 +264,7 @@ test('Mojstrana has eligible positive-control plants; tropicals stay excluded', 
   assert.equal(getCoordinateClimateRuntimeCounters().chelsaExternalCalls, 0);
 });
 
-test('eligible result list reaches renderer and creates visible cards', () => {
+test('eligible result list reaches renderer and creates visible cards', MOJSTRANA_CORPUS_TEST_OPTIONS, () => {
   const moj = loadMojstranaClimate();
   const lavender = evaluateEligibility(loadRuntimePlant('lavender'), moj);
   assert.equal(lavender.ineligible, false);
