@@ -1302,9 +1302,14 @@ export function deriveSpecificPlantOutcomes({
   const irrigationType = String(gardenContext?.irrigationType ?? gardenContext?.irrigation_type ?? 'unknown').trim().toLowerCase();
   const irrigationReliability = String(gardenContext?.irrigationReliability ?? gardenContext?.irrigation_reliability ?? 'unknown').trim().toLowerCase();
   const reliableIrrigation = irrigationType !== 'none' && (irrigationReliability === 'medium' || irrigationReliability === 'high');
+  const irrigationExplicitlyUnavailable =
+    irrigationType === 'none' || irrigationReliability === 'none' || irrigationReliability === 'low';
   const aridWaterConstraint = !sheltered && !reliableIrrigation && (
     (env.moistureRegime === 'hyper-arid' && (waterNeeds === 'medium' || waterNeeds === 'high')) ||
-    (env.moistureRegime === 'arid' && waterNeeds === 'high')
+    (env.moistureRegime === 'arid' && (
+      waterNeeds === 'high' ||
+      (waterNeeds === 'medium' && irrigationExplicitlyUnavailable)
+    ))
   );
   const survivalFit = Number(s.survivalFit);
   const thriveFit = Number(s.thriveFit);

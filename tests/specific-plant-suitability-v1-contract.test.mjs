@@ -944,3 +944,77 @@ test('heuristic low heat tolerance alone does not trigger year-round-warm constr
   assert.equal(o.growth, SPECIFIC_OUTCOME_STATUS.SUPPORTED);
   assert.equal(o.overall, 'good');
 });
+
+test('arid + medium water only constrains when irrigation is explicitly unavailable', () => {
+  const meta = {
+    frostSensitivity: 'high',
+    coldTolerance: 'low',
+    heatTolerance: 'high',
+    waterNeeds: 'medium',
+    sunNeeds: 'full_sun',
+    drainageNeeds: 'high',
+    traitEvidenceClasses: {
+      frostSensitivity: 'SOURCE_SUPPORTED',
+      coldTolerance: 'SOURCE_SUPPORTED',
+      heatTolerance: 'HEURISTIC_ASSERTION',
+      waterNeeds: 'HEURISTIC_ASSERTION',
+      sunNeeds: 'HEURISTIC_ASSERTION',
+      drainageNeeds: 'HEURISTIC_ASSERTION'
+    }
+  };
+  const climateProfile = {
+    broadClimate: 'arid',
+    freezingRisk: 'low',
+    moistureRegime: 'arid',
+    coldestMonthMeanMinC: 15,
+    warmestMonthMeanMaxC: 41,
+    structuralClimateStatus: 'known'
+  };
+  const suitability = {
+    recommendationLevel: 'good',
+    survivalFit: 85,
+    thriveFit: 80,
+    warnings: [],
+    explanationText: ''
+  };
+  const plant = { slug: 'medium-water-arid-demo', climateTraits: meta };
+
+  const unknown = deriveSpecificPlantOutcomes({
+    meta, climateProfile, suitability, plant,
+    gardenContext: {
+      sunExposure: 'full_sun',
+      drainage: 'well_drained',
+      irrigationType: 'unknown',
+      irrigationReliability: 'unknown',
+      plantingMode: 'ground'
+    }
+  });
+  assert.equal(unknown.overall, 'good');
+
+  const none = deriveSpecificPlantOutcomes({
+    meta, climateProfile, suitability, plant,
+    gardenContext: {
+      sunExposure: 'full_sun',
+      drainage: 'well_drained',
+      irrigationType: 'none',
+      irrigationReliability: 'none',
+      plantingMode: 'ground'
+    }
+  });
+  assert.equal(none.survival, 'reliable');
+  assert.equal(none.growth, 'constrained');
+  assert.equal(none.overall, 'borderline');
+  assert.ok(none.limitingFactors.some((x) => /reliable irrigation is not available/i.test(String(x))));
+
+  const drip = deriveSpecificPlantOutcomes({
+    meta, climateProfile, suitability, plant,
+    gardenContext: {
+      sunExposure: 'full_sun',
+      drainage: 'well_drained',
+      irrigationType: 'drip',
+      irrigationReliability: 'high',
+      plantingMode: 'ground'
+    }
+  });
+  assert.equal(drip.overall, 'good');
+});
