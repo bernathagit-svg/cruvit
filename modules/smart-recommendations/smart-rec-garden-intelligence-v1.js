@@ -259,8 +259,10 @@ export function smartRecContextFromGardenArea(areaContext, answers = {}) {
     }
   }
   const planting = asText(ctx.plantingMode || ctx.planting_mode);
-  if (!next.q1 && (planting === 'container' || planting === 'pot' || planting === 'balcony')) {
-    next.q1 = 'balcony';
+  if (!next.q1) {
+    if (planting === 'container' || planting === 'pot' || planting === 'balcony') next.q1 = 'balcony';
+    else if (planting === 'indoor') next.q1 = 'indoor';
+    else if (planting === 'ground' || planting === 'raised_bed') next.q1 = 'ground';
   }
   // A generic container is not evidence that the container is compact/small.
   // Keep size UNKNOWN unless the user explicitly supplied the compact-container answer.

@@ -347,3 +347,17 @@ test('generic Garden Area container does not masquerade as compact container', (
   );
   assert.equal(explicitCompactWins.q8, 'compact');
 });
+
+test('Garden Area planting modes map to matching Smart Rec context without greenhouse aliasing', () => {
+  const ground = smartRecContextFromGardenArea({ plantingMode: 'ground' }, {});
+  assert.equal(ground.q1, 'ground');
+
+  const raised = smartRecContextFromGardenArea({ plantingMode: 'raised_bed' }, {});
+  assert.equal(raised.q1, 'ground');
+
+  const indoor = smartRecContextFromGardenArea({ plantingMode: 'indoor' }, {});
+  assert.equal(indoor.q1, 'indoor');
+
+  const greenhouse = smartRecContextFromGardenArea({ plantingMode: 'greenhouse' }, {});
+  assert.equal(greenhouse.q1, undefined);
+});
