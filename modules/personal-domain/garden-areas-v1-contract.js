@@ -115,6 +115,18 @@ export const AREA_WIND_EXPOSURE = Object.freeze([
   'unknown'
 ]);
 
+export const AREA_SUPPORT_TYPES = Object.freeze([
+  'none',
+  'trellis',
+  'fence',
+  'wall',
+  'pergola',
+  'pole',
+  'railing',
+  'other',
+  'unknown'
+]);
+
 export const AREA_ASPECTS = Object.freeze([
   'N',
   'NE',
@@ -147,7 +159,8 @@ const UNKNOWN_REASON_FIELDS = Object.freeze([
   'drainage',
   'irrigationType',
   'irrigationReliability',
-  'plantingMode'
+  'plantingMode',
+  'supportType'
 ]);
 
 function inSet(set, value) {
@@ -291,6 +304,10 @@ export function normalizeAreaContext(input = {}, options = {}) {
     src.windExposure ?? src.wind_exposure ?? src.shelter,
     AREA_WIND_EXPOSURE
   );
+  const supportType = normalizeToken(
+    src.supportType ?? src.support_type ?? src.support,
+    AREA_SUPPORT_TYPES
+  );
   const aspect = (() => {
     const raw = String(src.aspect ?? src.orientation ?? 'unknown')
       .trim()
@@ -333,7 +350,8 @@ export function normalizeAreaContext(input = {}, options = {}) {
     drainage,
     irrigationType,
     irrigationReliability,
-    plantingMode
+    plantingMode,
+    supportType
   };
   const unknownReasons = normalizeUnknownReasons(src.unknownReasons ?? src.unknown_reasons, fieldValues);
 
@@ -362,6 +380,7 @@ export function normalizeAreaContext(input = {}, options = {}) {
     irrigationReliability,
     moistureTendency,
     windExposure,
+    supportType,
     aspect,
     directSunHoursMin,
     directSunHoursMax,
@@ -415,6 +434,7 @@ export function buildAreaWritePayload(input = {}, options = {}) {
           irrigationReliability: input.irrigationReliability,
           moistureTendency: input.moistureTendency,
           windExposure: input.windExposure,
+          supportType: input.supportType,
           aspect: input.aspect,
           source: input.source,
           confirmationStatus: input.confirmationStatus,
@@ -485,6 +505,8 @@ export function applyAreaContextToSuitabilityInputs(input = {}) {
     irrigationReliability: areaContext.irrigationReliability,
     moistureTendency: areaContext.moistureTendency,
     windExposure: areaContext.windExposure,
+    supportType: areaContext.supportType,
+    supportContextKnown: areaContext.supportType !== 'unknown' && areaContext.supportType !== 'none',
     aspect: areaContext.aspect,
     source: areaContext.source,
     confirmationStatus: areaContext.confirmationStatus,
@@ -596,6 +618,7 @@ export function buildAreaReadModel(areaRow = {}, plants = []) {
     irrigationReliability: context.irrigationReliability,
     moistureTendency: context.moistureTendency,
     windExposure: context.windExposure,
+    supportType: context.supportType,
     aspect: context.aspect
   })) {
     if (val === 'unknown') unknownFields.push(key);

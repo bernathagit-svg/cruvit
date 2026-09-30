@@ -263,6 +263,11 @@ export function smartRecContextFromGardenArea(areaContext, answers = {}) {
     next.q1 = 'balcony';
   }
   if (!next.q8 && (planting === 'container' || planting === 'pot')) next.q8 = 'compact';
+  const supportType = asText(ctx.supportType || ctx.support_type || ctx.support).toLowerCase();
+  if (supportType && supportType !== 'unknown') {
+    next.__supportContextKnown = supportType !== 'none';
+    next.__supportType = supportType;
+  }
   return next;
 }
 
