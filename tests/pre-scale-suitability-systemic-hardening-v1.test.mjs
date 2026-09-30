@@ -405,3 +405,109 @@ test('coverage cellToMinimalProfile exposes freezingRisk/humidity/chill enums', 
   assert.ok(profile.humiditySignal);
   assert.equal(typeof profile.coolSeasonSignal, 'boolean');
 });
+
+test('garden-site sun mismatch demotes strong positive without blocking survival', () => {
+  const meta = {
+    frostSensitivity: 'medium',
+    coldTolerance: 'medium',
+    heatTolerance: 'medium',
+    waterNeeds: 'medium',
+    sunNeeds: 'partial_shade',
+    drainageNeeds: 'high',
+    traitEvidenceClasses: {
+      frostSensitivity: 'SOURCE_SUPPORTED',
+      coldTolerance: 'SOURCE_SUPPORTED',
+      sunNeeds: 'SOURCE_SUPPORTED',
+      drainageNeeds: 'SOURCE_SUPPORTED',
+      waterNeeds: 'SOURCE_SUPPORTED'
+    }
+  };
+  const climateProfile = {
+    broadClimate: 'mediterranean',
+    freezingRisk: 'low',
+    moistureRegime: 'semi-arid',
+    coldestMonthMeanMinC: 11,
+    warmestMonthMeanMaxC: 30,
+    structuralClimateStatus: 'known'
+  };
+  const suitability = {
+    recommendationLevel: 'good',
+    survivalFit: 85,
+    thriveFit: 80,
+    warnings: [],
+    explanationText: ''
+  };
+  const mismatch = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile,
+    suitability,
+    plant: { slug: 'shade-demo', climateTraits: meta },
+    gardenContext: {
+      sunExposure: 'full_sun',
+      drainage: 'well_drained',
+      irrigationType: 'drip',
+      irrigationReliability: 'high',
+      plantingMode: 'ground'
+    }
+  });
+  assert.equal(mismatch.survival, 'reliable');
+  assert.equal(mismatch.overall, 'borderline');
+  assert.equal(mismatch.suitabilityDimensions?.GARDEN_SITE_SUITABILITY, 'MISMATCH');
+  assert.ok(mismatch.limitingFactors.some((x) => /sun exposure.*conflicts/i.test(String(x))));
+
+  const aligned = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile,
+    suitability,
+    plant: { slug: 'shade-demo', climateTraits: meta },
+    gardenContext: {
+      sunExposure: 'part_shade',
+      drainage: 'well_drained',
+      irrigationType: 'drip',
+      irrigationReliability: 'high',
+      plantingMode: 'ground'
+    }
+  });
+  assert.equal(aligned.overall, 'good');
+});
+
+test('garden-site drainage mismatch demotes strong positive', () => {
+  const meta = {
+    frostSensitivity: 'medium',
+    coldTolerance: 'medium',
+    drainageNeeds: 'high',
+    sunNeeds: 'full_sun',
+    traitEvidenceClasses: {
+      frostSensitivity: 'SOURCE_SUPPORTED',
+      coldTolerance: 'SOURCE_SUPPORTED',
+      drainageNeeds: 'SOURCE_SUPPORTED',
+      sunNeeds: 'SOURCE_SUPPORTED'
+    }
+  };
+  const outcomes = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile: {
+      broadClimate: 'mediterranean',
+      freezingRisk: 'low',
+      coldestMonthMeanMinC: 10,
+      warmestMonthMeanMaxC: 28,
+      structuralClimateStatus: 'known'
+    },
+    suitability: {
+      recommendationLevel: 'good',
+      survivalFit: 85,
+      thriveFit: 80,
+      warnings: [],
+      explanationText: ''
+    },
+    plant: { slug: 'drainage-demo', climateTraits: meta },
+    gardenContext: {
+      sunExposure: 'full_sun',
+      drainage: 'poor',
+      plantingMode: 'ground'
+    }
+  });
+  assert.equal(outcomes.overall, 'borderline');
+  assert.equal(outcomes.suitabilityDimensions?.GARDEN_SITE_SUITABILITY, 'MISMATCH');
+  assert.ok(outcomes.limitingFactors.some((x) => /drainage.*conflicts/i.test(String(x))));
+});

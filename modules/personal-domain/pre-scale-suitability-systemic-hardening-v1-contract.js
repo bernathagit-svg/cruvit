@@ -357,6 +357,38 @@ export function irrigationWaterSemantics(meta, climateProfile, gardenContext = {
   };
 }
 
+function normalizeSiteToken(v) {
+  return String(v || '').trim().toLowerCase().replace(/\s+/g, '_');
+}
+
+function sunSiteCompatibility(plantSun, gardenSun) {
+  const p = normalizeSiteToken(plantSun);
+  const g = normalizeSiteToken(gardenSun);
+  if (!p || !g || p === 'unknown' || g === 'unknown') return 'unknown';
+  const allowed = {
+    full_sun: new Set(['full_sun']),
+    full_sun_to_part_shade: new Set(['full_sun', 'part_sun', 'part_shade']),
+    morning_sun_part_shade: new Set(['part_sun', 'part_shade']),
+    partial_shade: new Set(['part_sun', 'part_shade']),
+    part_shade: new Set(['part_sun', 'part_shade']),
+    shade: new Set(['part_shade', 'full_shade']),
+    bright_shade: new Set(['part_shade', 'full_shade'])
+  };
+  const set = allowed[p];
+  if (!set) return p === g ? 'match' : 'unknown';
+  return set.has(g) ? 'match' : 'mismatch';
+}
+
+function drainageSiteCompatibility(plantDrainage, gardenDrainage) {
+  const p = normalizeSiteToken(plantDrainage);
+  const g = normalizeSiteToken(gardenDrainage);
+  if (!p || !g || p === 'unknown' || g === 'unknown') return 'unknown';
+  if (p === 'high') return g === 'well_drained' ? 'match' : 'mismatch';
+  if (p === 'medium') return g === 'poor' ? 'mismatch' : 'match';
+  if (p === 'low') return 'match';
+  return 'unknown';
+}
+
 export function gardenSiteSuitabilityDimensions(meta, gardenContext = {}) {
   const sunPlant = meta?.sunNeeds || null;
   const drainPlant = meta?.drainageNeeds || null;
@@ -366,9 +398,10 @@ export function gardenSiteSuitabilityDimensions(meta, gardenContext = {}) {
     sun: {
       plantEvidence: sunPlant,
       gardenEvidence: sunGarden,
+      compatibility: sunSiteCompatibility(sunPlant, sunGarden),
       status:
         sunPlant && sunGarden
-          ? 'comparable'
+          ? sunSiteCompatibility(sunPlant, sunGarden)
           : sunPlant && !sunGarden
             ? 'UNKNOWN_GARDEN_CONTEXT'
             : 'UNKNOWN'
@@ -376,9 +409,10 @@ export function gardenSiteSuitabilityDimensions(meta, gardenContext = {}) {
     drainage: {
       plantEvidence: drainPlant,
       gardenEvidence: drainGarden,
+      compatibility: drainageSiteCompatibility(drainPlant, drainGarden),
       status:
         drainPlant && drainGarden
-          ? 'comparable'
+          ? drainageSiteCompatibility(drainPlant, drainGarden)
           : drainPlant && !drainGarden
             ? 'UNKNOWN_GARDEN_CONTEXT'
             : 'UNKNOWN'
@@ -554,7 +588,20 @@ export function applyPreScaleSystemicDemotions({
     warnings.push(
       'Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment.'
     );
-  } else if (site.sun.status === 'comparable' || site.drainage.status === 'comparable') {
+  } else if (site.sun.status === 'mismatch' || site.drainage.status === 'mismatch') {
+    dims[SUITABILITY_DIMENSIONS.GARDEN_SITE_SUITABILITY] = 'MISMATCH';
+    if (next === 'good' || next === 'excellent') next = 'borderline';
+    if (site.sun.status === 'mismatch') {
+      warnings.push(
+        `Garden sun exposure (${site.sun.gardenEvidence}) conflicts with plant sun need (${site.sun.plantEvidence}); strong recommendation withheld.`
+      );
+    }
+    if (site.drainage.status === 'mismatch') {
+      warnings.push(
+        `Garden drainage (${site.drainage.gardenEvidence}) conflicts with plant drainage need (${site.drainage.plantEvidence}); strong recommendation withheld.`
+      );
+    }
+  } else if (site.sun.status === 'match' || site.drainage.status === 'match') {
     dims[SUITABILITY_DIMENSIONS.GARDEN_SITE_SUITABILITY] = 'PARTIAL';
   }
 
