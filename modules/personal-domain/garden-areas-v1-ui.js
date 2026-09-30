@@ -13,6 +13,8 @@ import {
   AREA_DRAINAGE,
   AREA_IRRIGATION_TYPES,
   AREA_IRRIGATION_RELIABILITY,
+  AREA_MOISTURE_TENDENCY,
+  AREA_WIND_EXPOSURE,
   AREA_SUPPORT_TYPES
 } from './garden-areas-v1-contract.js';
 
@@ -109,6 +111,12 @@ export function renderGardenAreasHtml(state = {}) {
       <label>Irrigation reliability
         <select name="irrigationReliability">${optionList(AREA_IRRIGATION_RELIABILITY, 'unknown')}</select>
       </label>
+      <label>Soil moisture
+        <select name="moistureTendency">${optionList(AREA_MOISTURE_TENDENCY, 'unknown')}</select>
+      </label>
+      <label>Wind exposure
+        <select name="windExposure">${optionList(AREA_WIND_EXPOSURE, 'unknown')}</select>
+      </label>
       <label>Support
         <select name="supportType">${optionList(AREA_SUPPORT_TYPES, 'unknown')}</select>
       </label>
@@ -204,6 +212,8 @@ function wireAreaForm(host, pd) {
           drainage: fd.get('drainage'),
           irrigationType: fd.get('irrigationType'),
           irrigationReliability: fd.get('irrigationReliability'),
+          moistureTendency: fd.get('moistureTendency'),
+          windExposure: fd.get('windExposure'),
           supportType: fd.get('supportType')
         })
       });
@@ -268,6 +278,16 @@ function wireAreaForm(host, pd) {
         currentContext.irrigationReliability || 'unknown'
       );
       if (irrigationReliability == null) return;
+      const moistureTendency = prompt(
+        'Soil moisture tendency (dry, moderate, moist, or unknown):',
+        currentContext.moistureTendency || 'unknown'
+      );
+      if (moistureTendency == null) return;
+      const windExposure = prompt(
+        'Wind exposure (exposed, moderate, sheltered, or unknown):',
+        currentContext.windExposure || 'unknown'
+      );
+      if (windExposure == null) return;
       const support = prompt(
         'Support in this area (trellis, fence, wall, pergola, pole, railing, other, none, or unknown):',
         currentContext.supportType || 'unknown'
@@ -282,6 +302,8 @@ function wireAreaForm(host, pd) {
             drainage,
             irrigationType,
             irrigationReliability,
+            moistureTendency,
+            windExposure,
             supportType: support
           })
         );
