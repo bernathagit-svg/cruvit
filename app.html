@@ -817,6 +817,10 @@
             <h2 id="srResultsTitle">Recommendations</h2>
             <p id="srResultsClimate" class="sr-results-climate"></p>
             <button type="button" id="srChangeLocationBtn" class="sr-chip sr-chip-action" onclick="smartRecRequestLocationChange()" hidden>Change location</button>
+            <label id="srAreaSelectWrap" class="sr-results-sub" hidden>
+              <span id="srAreaSelectLabel">Planting area</span>
+              <select id="srAreaSelect" class="field" onchange="smartRecSelectArea(this.value)"></select>
+            </label>
             <p id="srResultsSubtitle" class="sr-results-sub"></p>
           </div>
           <span id="srResultsCount" class="sr-results-count"></span>
@@ -6217,14 +6221,28 @@ function getSmartRecCatalogBySlug(){
   });
   return out;
 }
-function smartRecAreaAnswerOverlay(){
+function smartRecCachedAreas(){
   const areasApi=typeof window!=='undefined'?window.cruvitGardenAreasV1:null;
-  const areas=areasApi&&typeof areasApi.getCachedAreas==='function'?areasApi.getCachedAreas():[];
-  if(!areas.length) return {};
+  return areasApi&&typeof areasApi.getCachedAreas==='function'?(areasApi.getCachedAreas()||[]):[];
+}
+function smartRecSelectedArea(){
+  const areas=smartRecCachedAreas();
+  if(!areas.length) return null;
+  if(areas.length===1){
+    const only=areas[0];
+    if(smartRecSession&&typeof smartRecSession==='object') smartRecSession.selectedAreaId=String(only.id||only.areaId||'')||null;
+    return only;
+  }
+  const wanted=String(smartRecSession?.selectedAreaId||'');
+  if(!wanted) return null;
+  return areas.find(a=>String(a.id||a.areaId||'')===wanted)||null;
+}
+function smartRecAreaAnswerOverlay(){
+  const selected=smartRecSelectedArea();
+  if(!selected) return {};
   const gi=smartRecGardenIntelligenceApi();
   if(!gi||typeof gi.smartRecContextFromGardenArea!=='function') return {};
-  const first=areas[0]||{};
-  return gi.smartRecContextFromGardenArea(first.context||first,{});
+  return gi.smartRecContextFromGardenArea(selected.context||selected,{});
 }
 
 function smartRecCurrentContext(){
@@ -6254,10 +6272,8 @@ function hardClimateSurvivalGateApi(){
 
 function smartRecProtectionContext(){
   const ctx=smartRecCurrentContext();
-  const areasApi=typeof window!=='undefined'?window.cruvitGardenAreasV1:null;
-  const areas=areasApi&&typeof areasApi.getCachedAreas==='function'?(areasApi.getCachedAreas()||[]):[];
-  const first=areas[0]||{};
-  const areaCtx=first.context&&typeof first.context==='object'?first.context:first;
+  const selected=smartRecSelectedArea();
+  const areaCtx=selected?(selected.context&&typeof selected.context==='object'?selected.context:selected):{};
   const planting=String(areaCtx.plantingMode||areaCtx.planting_mode||areaCtx.siteType||'').trim().toLowerCase();
   return {
     indoorContext:ctx.indoorContext===true,
@@ -7409,7 +7425,7 @@ function getSmartRecCopy(){
   };
 }
 function createSmartRecSession(){
-  return {step:'location',locationConfirmed:false,depth:null,answers:{},questionIndex:0,questionQueue:[],compiledFilters:null,resumeAfterLocationChange:null};
+  return {step:'location',locationConfirmed:false,depth:null,answers:{},questionIndex:0,questionQueue:[],compiledFilters:null,resumeAfterLocationChange:null,selectedAreaId:null};
 }
 let smartRecSession=createSmartRecSession();
 function initSmartRecSession(){
@@ -7417,6 +7433,7 @@ function initSmartRecSession(){
   smartRecActiveChips=new Set();
   smartRecHasInteracted=false;
   normalizeGardenDataShape();
+  smartRecRenderAreaSelector();
   updateSmartRecResultsHeader([]);
   smartRecBootMessages();
   renderSmartRecComposerOptions();
@@ -7445,6 +7462,7 @@ function smartRecOnLocationUpdated(){
   const root=document.getElementById('smart-rec-root');
   if(!root||!root.classList.contains('sr-active'))return;
   try{ if(typeof refreshSrHeroAnswerPreview==='function') refreshSrHeroAnswerPreview(); }catch(_){}
+  smartRecRenderAreaSelector();
   refreshSmartRecBrowse();
   if(smartRecSession.locationConfirmed||smartRecSession.step!=='location')return;
   const snap=getSmartRecLocationSnapshot();
@@ -7600,6 +7618,41 @@ function renderSmartRecMessages(){
   thread.innerHTML=html||`<div class="sr-chat-placeholder"><div class="sr-chat-placeholder-icon" aria-hidden="true">🌿</div><p>${copy.shellChatPlaceholder}</p></div>`;
   thread.scrollTop=thread.scrollHeight;
 }
+function smartRecRenderAreaSelector(){
+  const wrap=document.getElementById('srAreaSelectWrap');
+  const select=document.getElementById('srAreaSelect');
+  const label=document.getElementById('srAreaSelectLabel');
+  if(!wrap||!select)return;
+  const areas=smartRecCachedAreas();
+  if(!areas.length){
+    wrap.hidden=true;
+    select.innerHTML='';
+    return;
+  }
+  const he=getSmartRecLang()==='he';
+  if(label)label.textContent=he?'אזור שתילה':'Planting area';
+  const selected=smartRecSelectedArea();
+  const opts=[];
+  if(areas.length>1){
+    opts.push(`<option value="">${he?'בחרו אזור בגינה':'Choose a garden area'}</option>`);
+  }
+  areas.forEach((a,i)=>{
+    const id=String(a.id||a.areaId||'');
+    const name=String(a.name||a.label||`Area ${i+1}`);
+    opts.push(`<option value="${escapeAttr(id)}">${escapeHtml(name)}</option>`);
+  });
+  select.innerHTML=opts.join('');
+  select.value=selected?String(selected.id||selected.areaId||''):'';
+  wrap.hidden=false;
+}
+function smartRecSelectArea(areaId){
+  if(!smartRecSession||typeof smartRecSession!=='object')return;
+  smartRecSession.selectedAreaId=String(areaId||'')||null;
+  smartRecRenderAreaSelector();
+  try{ if(typeof refreshSrHeroAnswerPreview==='function') refreshSrHeroAnswerPreview(); }catch(_){}
+  refreshSmartRecBrowse();
+  try{ updateSmartRecResultsHeader(getSmartRecBrowsePlants().slice(0,12)); }catch(_){}
+}
 function renderSmartRecResultsEmpty(kind){
   const results=document.getElementById('smartRecResults');
   if(!results)return;
@@ -7619,6 +7672,7 @@ function renderSmartRecResultsEmpty(kind){
 }
 function updateSmartRecResultsHeader(plants){
   const copy=getSmartRecCopy();
+  smartRecRenderAreaSelector();
   const loc=String(data.location||data.gardenLocation?.label||'').trim();
   const climate=String(data.climate||data.gardenLocation?.climate||'').trim();
   const title=document.getElementById('srResultsTitle');
