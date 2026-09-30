@@ -271,6 +271,48 @@ function assertNotOptimisticSurvival(row) {
   assert.equal(isStrongOutcomeBand(row.survival), false);
 }
 
+test('cool-highland without freeze evidence does not manufacture high ambient freeze risk', () => {
+  const quito = loadPilotClimate('quito');
+  assert.equal(quito.climateProfile.thermalRegime, 'cool-highland');
+  assert.equal(quito.climateProfile.freezingRisk, 'low');
+  assert.ok(Number(quito.climateProfile.coldestMonthMeanMinC) > 5);
+  assert.equal(elevateAmbientFreezingRisk(quito.climateProfile, quito.loc || {}), 'low');
+
+  for (const slug of ['apple','hydrangea']) {
+    const plant = loadRuntimePlant(slug);
+    const verdict = evaluateHardClimateSurvival({
+      meta: plant.climateTraits,
+      climateProfile: quito.climateProfile,
+      protectionContext: { plantingMode: 'ground' },
+      coords: quito.loc || {}
+    });
+    assert.equal(verdict.hardBlocked, false, slug);
+    assert.notEqual(verdict.ambientFreezingRisk, 'high', slug);
+  }
+
+  assert.equal(
+    elevateAmbientFreezingRisk(
+      { thermalRegime: 'cool-highland', freezingRisk: 'low', coldestMonthMeanMinC: 3 },
+      {}
+    ),
+    'medium'
+  );
+  assert.equal(
+    elevateAmbientFreezingRisk(
+      { thermalRegime: 'cool-highland', freezingRisk: 'low', coldestMonthMeanMinC: -1 },
+      {}
+    ),
+    'high'
+  );
+  assert.equal(
+    elevateAmbientFreezingRisk(
+      { thermalRegime: 'frost-prone', freezingRisk: 'low', coldestMonthMeanMinC: 8 },
+      {}
+    ),
+    'high'
+  );
+});
+
 test('offline matrix: hard-cold mismatch cannot be Reliable/Strong', () => {
   const moj = loadMojstranaClimate();
   assert.equal(elevateAmbientFreezingRisk(moj.climateProfile, moj.loc), 'high');

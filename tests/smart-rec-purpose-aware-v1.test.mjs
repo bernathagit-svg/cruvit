@@ -221,10 +221,10 @@ test('warm-citrus group carries source-backed quantitative warm-season evidence'
 });
 
 test('hard-frost gate and intelligence version stay on the purpose-policy path', () => {
-  assert.equal(HARD_CLIMATE_SURVIVAL_GATE_VERSION, '1.1.4');
+  assert.equal(HARD_CLIMATE_SURVIVAL_GATE_VERSION, '1.1.5');
   assert.equal(SMART_REC_GARDEN_INTELLIGENCE_VERSION, '1.2.0-purpose-aware');
   const gate = fs.readFileSync(GATE, 'utf8');
-  assert.match(gate, /HARD_CLIMATE_SURVIVAL_GATE_VERSION = '1.1.4'/);
+  assert.match(gate, /HARD_CLIMATE_SURVIVAL_GATE_VERSION = '1.1.5'/);
 });
 
 test('A. fruit-purpose cannot be Good when sourced Fruiting is Unreliable', () => {
