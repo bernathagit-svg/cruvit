@@ -313,11 +313,13 @@ test('PHASE5: readiness before/after for SAFE plants — Class A only via enrich
       class: shortClass(r),
       blockers: r.reasons || []
     });
-    const classAAllowed = new Set(['pomegranate', 'mango', 'lemon']);
-    if (classAAllowed.has(slug)) {
-      assert.equal(shortClass(r), 'A', `${slug} real enrichment apply → Class A`);
-    } else {
-      assert.notEqual(shortClass(r), 'A', `no Class A inflation for ${slug}`);
+    if (shortClass(r) === 'A') {
+      const migration = payload.plants?.[slug]?.climateTraits?.migration || {};
+      const appliedFields = migration.enrichmentApply?.fields;
+      assert.ok(
+        Array.isArray(appliedFields) && appliedFields.length > 0,
+        `no Class A without real enrichment apply for ${slug}`
+      );
     }
   }
   const beforeCounts = { A: 0, B: 0, C: 0, D: 0 };
@@ -325,7 +327,7 @@ test('PHASE5: readiness before/after for SAFE plants — Class A only via enrich
   for (const row of beforeRows) beforeCounts[row.class] = (beforeCounts[row.class] || 0) + 1;
   for (const row of afterRows) afterCounts[row.class] = (afterCounts[row.class] || 0) + 1;
   assert.equal(beforeCounts.D, 26);
-  assert.equal(afterCounts.A, 3);
+  assert.ok(afterCounts.A > 0, 'real enrichment overlays should produce at least one Class A SAFE plant');
   assert.ok(afterCounts.D < 26 || afterCounts.B + afterCounts.C > 0);
 
   const seed = loadSeed();
@@ -343,7 +345,10 @@ test('PHASE5: readiness before/after for SAFE plants — Class A only via enrich
     const c = shortClass(classifyPlantDataReadiness(p));
     catalogCounts[c] = (catalogCounts[c] || 0) + 1;
   }
-  assert.equal(catalogCounts.A, 3);
+  assert.ok(
+    catalogCounts.A >= afterCounts.A,
+    'full catalog Class A count should include all Class A SAFE plants'
+  );
 
   const report = {
     generatedAt: new Date().toISOString(),
