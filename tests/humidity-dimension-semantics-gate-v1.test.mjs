@@ -255,3 +255,36 @@ test('prior VPD/RH fixes preserved', () => {
   assert.ok(s.meanVpdPa > 1200 && s.meanVpdPa < 1300);
   assert.equal(s.humiditySignal, 'borderline');
 });
+
+test('trusted persisted Coordinate Climate humidity signal can backfill missing numeric RH', () => {
+  const m = atmosphericHumidityMismatchForLowTolerancePlant(
+    { humidityTolerance: 'low' },
+    {
+      structuralClimate: {
+        status: 'known',
+        humiditySignal: 'borderline',
+        provenance: { provider: 'coordinate-climate-authority-v2' }
+      }
+    }
+  );
+  assert.ok(m);
+  assert.equal(m.regime, 'borderline');
+  assert.equal(m.severity, 'moderate');
+  assert.equal(m.authority, 'coordinate-climate-authority-v2-humidity-signal');
+  assert.equal(m.affectsGrowth, true);
+});
+
+test('untrusted humidity signal without Coordinate Climate provenance does not create mismatch', () => {
+  const m = atmosphericHumidityMismatchForLowTolerancePlant(
+    { humidityTolerance: 'low' },
+    {
+      humiditySignal: 'borderline',
+      structuralClimate: {
+        status: 'known',
+        humiditySignal: 'borderline',
+        provenance: { provider: 'legacy-broad-climate' }
+      }
+    }
+  );
+  assert.equal(m, null);
+});
