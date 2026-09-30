@@ -443,7 +443,12 @@ test('Garden Areas UI exposes support selection and renders persisted support ty
     }],
     plants: []
   });
+  assert.match(html, /name="drainage"/);
+  assert.match(html, /name="irrigationType"/);
+  assert.match(html, /name="irrigationReliability"/);
   assert.match(html, /name="supportType"/);
+  assert.match(html, /value="well_drained"/);
+  assert.match(html, /value="high"/);
   assert.match(html, /value="trellis"/);
   assert.match(html, /value="pergola"/);
   assert.match(html, /pergola/);
