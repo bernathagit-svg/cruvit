@@ -202,13 +202,34 @@ test('B. downstream growth/flowering/fruiting cannot stay strong when survival i
   );
 });
 
-test('C. explicit frost-free greenhouse context may change result', () => {
+test('C. generic greenhouse is shelter; explicit frost-free evidence may change result', () => {
   const outdoor = applyOutdoorTender(TENDER, ALPINE_FREEZE, { plantingMode: 'ground' });
-  const protectedEnv = applyOutdoorTender(TENDER, ALPINE_FREEZE, { plantingMode: 'greenhouse' });
-  assert.equal(isExplicitFrostFreeProtectedContext({ plantingMode: 'greenhouse' }), true);
-  assert.equal(protectedEnv.verdict.hardBlocked, false);
-  assert.equal(protectedEnv.verdict.protectedContext, true);
-  assert.ok(protectedEnv.fits.survivalFit > outdoor.fits.survivalFit);
+  const genericGreenhouse = applyOutdoorTender(TENDER, ALPINE_FREEZE, { plantingMode: 'greenhouse' });
+  const explicitProtected = applyOutdoorTender(TENDER, ALPINE_FREEZE, {
+    plantingMode: 'greenhouse',
+    frostFreeProtected: true
+  });
+  const explicitMode = applyOutdoorTender(TENDER, ALPINE_FREEZE, {
+    plantingMode: 'frost-free-greenhouse'
+  });
+
+  assert.equal(isExplicitFrostFreeProtectedContext({ plantingMode: 'greenhouse' }), false);
+  assert.equal(isOrdinaryAreaShelter({ plantingMode: 'greenhouse' }), true);
+  assert.equal(genericGreenhouse.verdict.hardBlocked, true);
+
+  assert.equal(
+    isExplicitFrostFreeProtectedContext({ plantingMode: 'greenhouse', frostFreeProtected: true }),
+    true
+  );
+  assert.equal(explicitProtected.verdict.hardBlocked, false);
+  assert.equal(explicitProtected.verdict.protectedContext, true);
+  assert.ok(explicitProtected.fits.survivalFit > outdoor.fits.survivalFit);
+
+  assert.equal(
+    isExplicitFrostFreeProtectedContext({ plantingMode: 'frost-free-greenhouse' }),
+    true
+  );
+  assert.equal(explicitMode.verdict.hardBlocked, false);
 });
 
 test('D. ordinary Area shelter does not erase hard freeze', () => {
@@ -491,9 +512,19 @@ test('real catalog lemon × Mojstrana outdoor cannot display Survival Reliable',
   assert.notEqual(warmOutcomes.survival, 'unreliable');
 
   const greenhouse = applyOutdoorTender(lemonTraits, climate, { plantingMode: 'greenhouse' });
-  assert.equal(isExplicitFrostFreeProtectedContext({ plantingMode: 'greenhouse' }), true);
-  assert.equal(greenhouse.verdict.hardBlocked, false);
-  assert.ok(greenhouse.fits.survivalFit > outdoor.fits.survivalFit);
+  assert.equal(isExplicitFrostFreeProtectedContext({ plantingMode: 'greenhouse' }), false);
+  assert.equal(greenhouse.verdict.hardBlocked, true);
+
+  const frostFreeGreenhouse = applyOutdoorTender(lemonTraits, climate, {
+    plantingMode: 'greenhouse',
+    frostFreeProtected: true
+  });
+  assert.equal(
+    isExplicitFrostFreeProtectedContext({ plantingMode: 'greenhouse', frostFreeProtected: true }),
+    true
+  );
+  assert.equal(frostFreeGreenhouse.verdict.hardBlocked, false);
+  assert.ok(frostFreeGreenhouse.fits.survivalFit > outdoor.fits.survivalFit);
 });
 
 test('hard frost limiter outranks soft confidence warning', () => {

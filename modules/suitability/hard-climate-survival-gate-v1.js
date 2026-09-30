@@ -4,8 +4,8 @@
  * Ambient outdoor Garden climate is the authority.
  * Lethal frost / hard cold cannot be averaged away by soft positive traits.
  * Ordinary patio, wind shelter, or container does not erase a regional freeze.
- * Only explicit frost-free protected context (greenhouse / indoor overwinter) may
- * change the cold-exposure model.
+ * Only explicit frost-free protected context (confirmed frost-free greenhouse / indoor overwinter)
+ * may change the cold-exposure model. A generic greenhouse is shelter, not proof of frost-free conditions.
  *
  * Not a second climate engine: callers still use smartRecEvaluateSuitability.
  * Not plant- or place-specific.
@@ -24,7 +24,6 @@ export const CLIMATE_TRAIT_ORDINAL = Object.freeze([
 ]);
 
 const EXPLICIT_FROST_FREE_PROTECTION = Object.freeze({
-  greenhouse: true,
   conservatory: true,
   'frost-free-greenhouse': true,
   'indoor-overwinter': true,
@@ -73,6 +72,7 @@ export function isOrdinaryAreaShelter(protectionContext = {}) {
     planting === 'patio' ||
     planting === 'ground' ||
     planting === 'shelter' ||
+    planting === 'greenhouse' ||
     asText(protectionContext.sunExposure) === 'part_shade' ||
     asText(protectionContext.windExposure) === 'sheltered'
   );
@@ -81,7 +81,6 @@ export function isOrdinaryAreaShelter(protectionContext = {}) {
 export function isExplicitFrostFreeProtectedContext(protectionContext = {}) {
   if (!protectionContext || typeof protectionContext !== 'object') return false;
   if (protectionContext.frostFreeProtected === true) return true;
-  if (protectionContext.greenhouse === true) return true;
   const planting = asText(protectionContext.plantingMode || protectionContext.protectionMode);
   if (EXPLICIT_FROST_FREE_PROTECTION[planting]) return true;
   if (protectionContext.indoorOverwinter === true) return true;

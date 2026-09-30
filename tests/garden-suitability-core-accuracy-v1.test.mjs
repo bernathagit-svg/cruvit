@@ -425,7 +425,7 @@ test('offline matrix: chill-requiring apple fails fruiting in always-hot Kochi',
   assert.notEqual(row.overall, 'excellent');
 });
 
-test('offline matrix: greenhouse may change exposure; patio/container do not', MOJSTRANA_CORPUS_TEST_OPTIONS, () => {
+test('offline matrix: generic greenhouse is shelter; only explicit frost-free protection changes exposure', MOJSTRANA_CORPUS_TEST_OPTIONS, () => {
   const moj = loadMojstranaClimate();
   const lemon = loadRuntimePlant('lemon');
   const mango = loadRuntimePlant('mango');
@@ -442,13 +442,26 @@ test('offline matrix: greenhouse may change exposure; patio/container do not', M
   });
   const house = evaluateRow({ plant: lemon, climate: moj, protection: { plantingMode: 'greenhouse' } });
   const mangoHouse = evaluateRow({ plant: mango, climate: moj, protection: { plantingMode: 'greenhouse' } });
+  const frostFreeHouse = evaluateRow({
+    plant: lemon,
+    climate: moj,
+    protection: { plantingMode: 'greenhouse', frostFreeProtected: true }
+  });
+  const frostFreeMangoHouse = evaluateRow({
+    plant: mango,
+    climate: moj,
+    protection: { plantingMode: 'greenhouse', frostFreeProtected: true }
+  });
   assert.equal(isOrdinaryAreaShelter({ plantingMode: 'patio' }), true);
+  assert.equal(isOrdinaryAreaShelter({ plantingMode: 'greenhouse' }), true);
   assert.equal(outdoor.hardBlocked, true);
   assert.equal(patio.hardBlocked, true);
   assert.equal(pot.hardBlocked, true);
-  assert.equal(house.hardBlocked, false);
-  assert.equal(mangoHouse.hardBlocked, false);
-  assert.notEqual(house.survival, 'unreliable');
+  assert.equal(house.hardBlocked, true);
+  assert.equal(mangoHouse.hardBlocked, true);
+  assert.equal(frostFreeHouse.hardBlocked, false);
+  assert.equal(frostFreeMangoHouse.hardBlocked, false);
+  assert.notEqual(frostFreeHouse.survival, 'unreliable');
 });
 
 test('invariants A–I hold on the offline matrix', MOJSTRANA_CORPUS_TEST_OPTIONS, () => {
@@ -519,6 +532,8 @@ test('print accuracy matrix (opt-in)', (t) => {
     evaluateRow({ plant: apple, climate: kochi, protection: { plantingMode: 'ground' } }),
     evaluateRow({ plant: lemon, climate: moj, protection: { plantingMode: 'greenhouse' } }),
     evaluateRow({ plant: mango, climate: moj, protection: { plantingMode: 'greenhouse' } }),
+    evaluateRow({ plant: lemon, climate: moj, protection: { plantingMode: 'greenhouse', frostFreeProtected: true } }),
+    evaluateRow({ plant: mango, climate: moj, protection: { plantingMode: 'greenhouse', frostFreeProtected: true } }),
     evaluateRow({
       plant: lemon,
       climate: moj,
