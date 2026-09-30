@@ -332,3 +332,18 @@ test('Garden Area supportType maps to Smart Rec support context without privacy 
   );
   assert.equal(unknown.__supportContextKnown, undefined);
 });
+
+test('generic Garden Area container does not masquerade as compact container', () => {
+  const fromArea = smartRecContextFromGardenArea(
+    { plantingMode: 'container', sunExposure: 'full_sun' },
+    {}
+  );
+  assert.equal(fromArea.q1, 'balcony');
+  assert.equal(fromArea.q8, undefined);
+
+  const explicitCompactWins = smartRecContextFromGardenArea(
+    { plantingMode: 'container' },
+    { q8: 'compact' }
+  );
+  assert.equal(explicitCompactWins.q8, 'compact');
+});
