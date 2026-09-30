@@ -6265,7 +6265,7 @@ function smartRecProtectionContext(){
     compactContainerContext:ctx.compactContainerContext===true,
     plantingMode:planting||(ctx.indoorContext?'indoor':(ctx.groundContext?'ground':'')),
     greenhouse:planting==='greenhouse',
-    frostFreeProtected:planting==='greenhouse'||planting==='conservatory',
+    frostFreeProtected:planting==='greenhouse'||planting==='conservatory'||planting==='indoor',
     sunExposure:areaCtx.sunExposure||areaCtx.sun_exposure||'',
     windExposure:areaCtx.windExposure||areaCtx.wind_exposure||'',
     irrigationType:areaCtx.irrigationType||areaCtx.irrigation_type||'unknown',
@@ -6762,7 +6762,7 @@ function smartRecEvaluateSuitability(p){
     addWarning('Hot exposed conditions are likely to reduce berry quality here.',15);
   }
   if(smartRecMetaHasGroup(meta,'tropical-shade-houseplant')){
-    if(!ctx.indoorContext&&climateProfile.freezingRisk!=='low'){
+    if(!frostIndoorShelter&&climateProfile.freezingRisk!=='low'){
       blockWith('This tropical foliage plant is better treated as an indoor or very sheltered plant here.');
     }
     if(ctx.fullSunContext){
@@ -6770,7 +6770,7 @@ function smartRecEvaluateSuitability(p){
       addWarning('Harsh direct sun is a poor fit for this foliage plant.',15);
     }
   }
-  if(metaHasGroup('warm-season-tender-herb')&&!ctx.indoorContext&&climateProfile.freezingRisk!=='low'){
+  if(metaHasGroup('warm-season-tender-herb')&&!frostIndoorShelter&&climateProfile.freezingRisk!=='low'){
     thriveFit=Math.min(thriveFit,40);
     addWarning('Cold weather makes this a seasonal rather than year-round outdoor herb here.',10);
   }
