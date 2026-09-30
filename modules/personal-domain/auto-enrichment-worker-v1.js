@@ -744,6 +744,63 @@ export function isJobEligibleForWorker(job, options = {}) {
   return { ok: reasons.length === 0, reasons };
 }
 
+export function isJobEligibleForResearchRetrieval(job, options = {}) {
+  const reasons = [];
+  if (!job) return { ok: false, reasons: ['missing_job'] };
+  if (options.dryRun !== true) reasons.push('research_requires_dry_run');
+  if (options.realExecutionAllowed !== false) reasons.push('research_requires_real_disabled');
+  if (job.enrichmentExecution !== ENRICHMENT_EXECUTION.AUTO) reasons.push('not_AUTO');
+  if (!['P1', 'P2'].includes(job.priority)) reasons.push('priority_not_research_eligible');
+  if (job.sourceRetrievalRequired !== true) reasons.push('sourceRetrievalRequired_not_true');
+  if (job.productRole === 'CATEGORY_ONLY') reasons.push('category_only');
+  if ((job.gapCodes || []).some((g) => DISQUALIFY_GAPS.has(g))) reasons.push('identity_or_broad_gap');
+  if (!(job.gapCodes || []).length) reasons.push('no_unresolved_gaps');
+  if (job.identityStatus && !['CANONICAL_SPECIES', 'SPECIES_OK', 'OK'].includes(job.identityStatus)) {
+    reasons.push(`identityStatus:${job.identityStatus}`);
+  }
+  if (options.excludeSlugs?.includes(job.canonicalSlug)) reasons.push('excluded_slug');
+  return { ok: reasons.length === 0, reasons };
+}
+
+export function selectResearchRetrievalJobs(queueDoc, options = {}) {
+  const maxJobs = Math.max(1, Math.min(Number(options.maxJobs) || 10, 25));
+  const retrievalPlantSpecs = options.plantSpecs || knownWorkerRetrievalSpecs();
+  const eligible = [];
+  const skipped = [];
+  for (const job of queueDoc?.jobs || []) {
+    const el = isJobEligibleForResearchRetrieval(job, {
+      dryRun: true,
+      realExecutionAllowed: false,
+      excludeSlugs: options.excludeSlugs || []
+    });
+    if (!el.ok) {
+      skipped.push({ jobId: job.jobId, slug: job.canonicalSlug, reasons: el.reasons });
+      continue;
+    }
+    if (eligible.length >= maxJobs) {
+      skipped.push({ jobId: job.jobId, slug: job.canonicalSlug, reasons: [WORKER_SELECTION_REASON.MAX_JOBS_REACHED] });
+      continue;
+    }
+    eligible.push(job);
+  }
+  const resolvedSpecs = eligible
+    .map((j) => resolveWorkerRetrievalSpec({
+      slug: j.canonicalSlug,
+      scientificName: j.scientificName,
+      plantSpecs: retrievalPlantSpecs
+    }))
+    .filter((r) => r.ok)
+    .map((r) => r.plantSpec);
+  return {
+    maxJobs,
+    selected: eligible,
+    skipped,
+    plantSpecs: resolvedSpecs,
+    realExecutionAllowed: false,
+    selectionAuthority: 'QUEUE_ORDER_RESEARCH_ONLY_P1_P2_AUTO'
+  };
+}
+
 export function selectEligibleJobs(queueDoc, options = {}) {
   const resolved = resolveWorkerMaxJobs({
     dryRun: options.dryRun !== false,
@@ -1289,7 +1346,8 @@ export async function processJob({
   batchWrittenSlugs = null,
   safeSlugs = null,
   retrievalPlantSpecs = null,
-  excludeSlugs = null
+  excludeSlugs = null,
+  researchOnly = false
 }) {
   const audit = {
     workerRef: AUTO_ENRICHMENT_WORKER_REF,
@@ -1310,6 +1368,13 @@ export async function processJob({
   const before = classifyPlantDataReadiness(plant);
   audit.beforeReadiness = { readinessShort: before.readinessShort, gate: before.gate };
 
+  if (researchOnly && !dryRun) {
+    audit.status = 'FAILED';
+    audit.hardStop = WORKER_STOP_REASON.APPLY_UNEXPECTED_FAILURE;
+    audit.error = 'research_only_forbids_real_execution';
+    return audit;
+  }
+
   // Real writes require dry validation + locked batch
   if (!dryRun) {
     const allow = assertRealWriteAllowed(lockedBatch, dryValidation);
@@ -1321,15 +1386,19 @@ export async function processJob({
     }
   }
 
-  const el = isJobEligibleForWorker(
-    { ...job, canonicalSlug: job.canonicalSlug || job.slug },
-    {
-      requireWorkerSpec: false,
-      safeSlugs,
-      repoRoot,
-      excludeSlugs: excludeSlugs || []
-    }
-  );
+  const normalizedJob = { ...job, canonicalSlug: job.canonicalSlug || job.slug };
+  const el = researchOnly
+    ? isJobEligibleForResearchRetrieval(normalizedJob, {
+        dryRun,
+        realExecutionAllowed: false,
+        excludeSlugs: excludeSlugs || []
+      })
+    : isJobEligibleForWorker(normalizedJob, {
+        requireWorkerSpec: false,
+        safeSlugs,
+        repoRoot,
+        excludeSlugs: excludeSlugs || []
+      });
   if (!el.ok) {
     audit.status = 'SKIPPED';
     audit.skipReasons = el.reasons;
@@ -1622,13 +1691,34 @@ export async function processBatch({
   applyRetryFairness = true,
   persistRetryFairness = null,
   retryStatePath = null,
-  now = null
+  now = null,
+  researchOnly = false
 }) {
   const plantsBySlug = loadCatalogPlants(repoRoot);
   const queueDoc = loadCurrentQueue(repoRoot);
   const safeSlugs = loadSafeWriterSlugSet(repoRoot);
   const retrievalPlantSpecs = plantSpecs || knownWorkerRetrievalSpecs();
   const clock = now || new Date();
+
+  if (researchOnly && (dryRun !== true || realExecutionAllowed !== false)) {
+    return {
+      workerRef: AUTO_ENRICHMENT_WORKER_REF,
+      dryRun,
+      researchOnly: true,
+      status: 'BATCH_STOPPED',
+      batchStopReason: WORKER_STOP_REASON.APPLY_UNEXPECTED_FAILURE,
+      error: 'research_only_requires_dry_run_and_real_disabled',
+      batchLocked: !!lockedBatch?.batchLocked,
+      audits: [],
+      selectedJobs: [],
+      lockedSlugs: lockedBatch?.lockedSlugs || [],
+      externalRequests: 0,
+      plantsChanged: [],
+      fieldsChanged: {},
+      REAL_EXECUTION_ALLOWED: false,
+      recoveryPolicy: 'none'
+    };
+  }
 
   const resolved = resolveWorkerMaxJobs({
     dryRun,
@@ -1657,20 +1747,26 @@ export async function processBatch({
 
   let lock = lockedBatch;
   if (!lock) {
-    const selection = selectEligibleJobs(queueDoc, {
-      maxJobs: resolved.maxJobs,
-      plantSpecs: retrievalPlantSpecs,
-      excludeSlugs,
-      dryRun,
-      allowDryScaleCeiling,
-      realExecutionAllowed,
-      repoRoot,
-      safeSlugs,
-      applyRetryFairness,
-      retryStatePath,
-      now: clock,
-      plantsBySlug
-    });
+    const selection = researchOnly
+      ? selectResearchRetrievalJobs(queueDoc, {
+          maxJobs: resolved.maxJobs,
+          plantSpecs: retrievalPlantSpecs,
+          excludeSlugs
+        })
+      : selectEligibleJobs(queueDoc, {
+          maxJobs: resolved.maxJobs,
+          plantSpecs: retrievalPlantSpecs,
+          excludeSlugs,
+          dryRun,
+          allowDryScaleCeiling,
+          realExecutionAllowed,
+          repoRoot,
+          safeSlugs,
+          applyRetryFairness,
+          retryStatePath,
+          now: clock,
+          plantsBySlug
+        });
     if (selection.batchStopReason) {
       return {
         workerRef: AUTO_ENRICHMENT_WORKER_REF,
@@ -1760,8 +1856,9 @@ export async function processBatch({
     dryBatchValidated: false,
     REAL_EXECUTION_ALLOWED: dryRun ? false : realExecutionAllowed !== false,
     allowDryScaleCeiling: !!allowDryScaleCeiling,
+    researchOnly: !!researchOnly,
     recoveryPolicy: dryRun
-      ? 'n/a_dry'
+      ? (researchOnly ? 'research_only_no_catalog_or_queue_writes' : 'n/a_dry')
       : 'per_plant_triad_atomic_only__batch_not_transactional__restore_parent_baseline_on_regression'
   };
 
@@ -1865,7 +1962,8 @@ export async function processBatch({
       batchWrittenSlugs,
       safeSlugs,
       retrievalPlantSpecs,
-      excludeSlugs
+      excludeSlugs,
+      researchOnly
     });
     batch.audits.push(audit);
     batch.externalRequests += audit.externalRequests || 0;
