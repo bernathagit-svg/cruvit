@@ -6238,6 +6238,7 @@ function smartRecCurrentContext(){
     edibleIntent:answers.q5==='yes-edible'||answers.q9==='food-herbs',
     floweringIntent:answers.q6==='yes-flowering'||answers.q9==='beauty',
     containerContext:answers.q1==='balcony'||answers.q8==='compact',
+    compactContainerContext:answers.q8==='compact',
     indoorContext:answers.q1==='indoor',
     groundContext:answers.q1==='ground',
     fullSunContext:answers.q2==='full-sun',
@@ -6261,6 +6262,7 @@ function smartRecProtectionContext(){
   return {
     indoorContext:ctx.indoorContext===true,
     containerContext:ctx.containerContext===true,
+    compactContainerContext:ctx.compactContainerContext===true,
     plantingMode:planting||(ctx.indoorContext?'indoor':(ctx.groundContext?'ground':'')),
     greenhouse:planting==='greenhouse',
     frostFreeProtected:planting==='greenhouse'||planting==='conservatory',
@@ -6710,8 +6712,13 @@ function smartRecEvaluateSuitability(p){
       blockWith('This plant is not a confident fit here without a support structure.');
     }
   }
-  if(meta.hardBlockRules.includes('no-small-container')&&ctx.containerContext){
-    blockWith('This plant is not a good fit for a compact balcony or container setup.');
+  if(meta.hardBlockRules.includes('no-small-container')){
+    if(ctx.compactContainerContext){
+      blockWith('This plant is not a good fit for a compact balcony or small-container setup.');
+    }else if(ctx.containerContext){
+      thriveFit=Math.min(thriveFit,55);
+      addWarning('Container size is unknown; this plant needs more root volume than a compact container, so strong suitability is withheld until size is confirmed.',10);
+    }
   }
   if(metaHasGroup('warm-citrus-fruit-tree')&&!frostIndoorShelter&&climateProfile.freezingRisk==='medium'&&!hardSurvivalBlocked){
     thriveFit=Math.min(thriveFit,55);

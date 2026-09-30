@@ -262,7 +262,8 @@ export function smartRecContextFromGardenArea(areaContext, answers = {}) {
   if (!next.q1 && (planting === 'container' || planting === 'pot' || planting === 'balcony')) {
     next.q1 = 'balcony';
   }
-  if (!next.q8 && (planting === 'container' || planting === 'pot')) next.q8 = 'compact';
+  // A generic container is not evidence that the container is compact/small.
+  // Keep size UNKNOWN unless the user explicitly supplied the compact-container answer.
   const supportType = asText(ctx.supportType || ctx.support_type || ctx.support).toLowerCase();
   if (supportType && supportType !== 'unknown') {
     next.__supportContextKnown = supportType !== 'none';
