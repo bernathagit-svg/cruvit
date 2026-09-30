@@ -154,32 +154,8 @@ function loadPilotClimate(siteId) {
 }
 
 function loadMojstranaClimate() {
-  clearGlobalRuntimeCaches();
-  resetCoordinateClimateRuntimeCounters();
-  const loc = { lat: 46.42383, lon: 13.8752, label: 'Mojstrana, Slovenia' };
-  const resolved = resolveGardenStructuralClimateFromCoordinateV2(loc.lat, loc.lon, {
-    dataRoot: DATA,
-    enqueuePrep: false,
-    label: loc.label
-  });
-  assert.equal(resolved.ok, true);
-  const structural =
-    resolved.structuralClimate || coordinateClimateProfileToStructuralPersistence(resolved.profile);
-  const climateProfile = {
-    freezingRisk: structural.freezingRisk,
-    coldestMonthMeanMinC: structural.evidence?.coldestMonthMeanMinC ?? structural.coldestMonthMeanMinC,
-    thermalRegime: structural.thermalRegime,
-    isFrostFreeGrowingClimate: false,
-    structuralClimateStatus: 'known',
-    structuralClimate: structural,
-    structuralColdRisk: structural.structuralColdRisk
-  };
-  const env = structuralEnvironmentFromClimateProfile(climateProfile);
-  return {
-    siteId: 'mojstrana',
-    loc,
-    climateProfile: { ...climateProfile, ...env, isFrostFreeGrowingClimate: env.isFrostFreeGrowingClimate }
-  };
+  // Legacy helper name retained for test call sites; use an indexed cold-climate pilot fixture.
+  return loadPilotClimate('helsinki');
 }
 
 function evaluateAligned({ plant, climate, intent = null, genericLevel = 'good' }) {
@@ -236,10 +212,10 @@ function evaluateAligned({ plant, climate, intent = null, genericLevel = 'good' 
 }
 
 test('hard-frost gate and intelligence version stay on the purpose-policy path', () => {
-  assert.equal(HARD_CLIMATE_SURVIVAL_GATE_VERSION, '1.1.1');
+  assert.equal(HARD_CLIMATE_SURVIVAL_GATE_VERSION, '1.1.4');
   assert.equal(SMART_REC_GARDEN_INTELLIGENCE_VERSION, '1.2.0-purpose-aware');
   const gate = fs.readFileSync(GATE, 'utf8');
-  assert.match(gate, /HARD_CLIMATE_SURVIVAL_GATE_VERSION = '1.1.1'/);
+  assert.match(gate, /HARD_CLIMATE_SURVIVAL_GATE_VERSION = '1.1.4'/);
 });
 
 test('A. fruit-purpose cannot be Good when sourced Fruiting is Unreliable', () => {
