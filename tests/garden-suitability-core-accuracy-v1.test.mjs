@@ -46,6 +46,13 @@ const APP = path.join(ROOT, 'app.html');
 const GATE = path.join(ROOT, 'modules', 'suitability', 'hard-climate-survival-gate-v1.js');
 const SEED = path.join(ROOT, 'data', 'plants.seed.json');
 const DATA = path.join(ROOT, 'data', 'coordinate-climate', 'v2');
+const GLOBAL_TILE_DIR = path.join(DATA, 'coverage', 'global-v1', 'tiles');
+const HAS_LOCAL_GLOBAL_TILE_CORPUS = fs.existsSync(GLOBAL_TILE_DIR);
+const MOJSTRANA_CORPUS_TEST_OPTIONS = {
+  skip: HAS_LOCAL_GLOBAL_TILE_CORPUS
+    ? false
+    : 'requires local global-v1 tile corpus (~17GB); remote canary covers the R2 path'
+};
 const PILOT = path.join(DATA, 'pilot');
 const QA = path.join(DATA, 'qa');
 
@@ -313,7 +320,7 @@ test('cool-highland without freeze evidence does not manufacture high ambient fr
   );
 });
 
-test('offline matrix: hard-cold mismatch cannot be Reliable/Strong', () => {
+test('offline matrix: hard-cold mismatch cannot be Reliable/Strong', MOJSTRANA_CORPUS_TEST_OPTIONS, () => {
   const moj = loadMojstranaClimate();
   assert.equal(elevateAmbientFreezingRisk(moj.climateProfile, moj.loc), 'high');
   const lemon = loadRuntimePlant('lemon');
@@ -350,7 +357,7 @@ test('offline matrix: hard-cold mismatch cannot be Reliable/Strong', () => {
   assert.equal(getCoordinateClimateRuntimeCounters().chelsaExternalCalls, 0);
 });
 
-test('offline matrix: cold-hardy lavender remains viable in Mojstrana', () => {
+test('offline matrix: cold-hardy lavender remains viable in Mojstrana', MOJSTRANA_CORPUS_TEST_OPTIONS, () => {
   const moj = loadMojstranaClimate();
   const lavender = loadRuntimePlant('lavender');
   assert.equal(lavender.climateTraits.frostSensitivity, 'low');
@@ -418,7 +425,7 @@ test('offline matrix: chill-requiring apple fails fruiting in always-hot Kochi',
   assert.notEqual(row.overall, 'excellent');
 });
 
-test('offline matrix: greenhouse may change exposure; patio/container do not', () => {
+test('offline matrix: greenhouse may change exposure; patio/container do not', MOJSTRANA_CORPUS_TEST_OPTIONS, () => {
   const moj = loadMojstranaClimate();
   const lemon = loadRuntimePlant('lemon');
   const mango = loadRuntimePlant('mango');
@@ -444,7 +451,7 @@ test('offline matrix: greenhouse may change exposure; patio/container do not', (
   assert.notEqual(house.survival, 'unreliable');
 });
 
-test('invariants A–I hold on the offline matrix', () => {
+test('invariants A–I hold on the offline matrix', MOJSTRANA_CORPUS_TEST_OPTIONS, () => {
   const moj = loadMojstranaClimate();
   const kochi = loadPilotClimate('kochi');
   const lemon = loadRuntimePlant('lemon');

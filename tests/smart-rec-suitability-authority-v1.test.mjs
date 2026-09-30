@@ -54,6 +54,13 @@ const CONTRACT = path.join(ROOT, 'modules', 'personal-domain', 'specific-plant-s
 const MODULE = path.join(ROOT, 'modules', 'smart-recommendations', 'smart-rec-garden-intelligence-v1.js');
 const SEED = path.join(ROOT, 'data', 'plants.seed.json');
 const DATA = path.join(ROOT, 'data', 'coordinate-climate', 'v2');
+const GLOBAL_TILE_DIR = path.join(DATA, 'coverage', 'global-v1', 'tiles');
+const HAS_LOCAL_GLOBAL_TILE_CORPUS = fs.existsSync(GLOBAL_TILE_DIR);
+const MOJSTRANA_CORPUS_TEST_OPTIONS = {
+  skip: HAS_LOCAL_GLOBAL_TILE_CORPUS
+    ? false
+    : 'requires local global-v1 tile corpus (~17GB); remote canary covers the R2 path'
+};
 
 let paidNetwork = 0;
 const origFetch = globalThis.fetch;
@@ -262,7 +269,7 @@ test('stale excellent score cannot override hard-blocked Survival', () => {
   assert.match(card.limiter, /frost|freeze/i);
 });
 
-test('Mojstrana outdoor: lemon / mango / pineapple cannot rank as positive recommendations', () => {
+test('Mojstrana outdoor: lemon / mango / pineapple cannot rank as positive recommendations', MOJSTRANA_CORPUS_TEST_OPTIONS, () => {
   const moj = loadMojstranaClimate();
   assert.equal(elevateAmbientFreezingRisk(moj.climateProfile, moj.loc), 'high');
   const rows = ['lemon', 'mango', 'pineapple'].map((slug) => {
@@ -298,7 +305,7 @@ test('Mojstrana outdoor: lemon / mango / pineapple cannot rank as positive recom
   assert.equal(getCoordinateClimateRuntimeCounters().chelsaExternalCalls, 0);
 });
 
-test('Mojstrana outdoor: lavender remains recommendable and ranks above hard-blocked plants', () => {
+test('Mojstrana outdoor: lavender remains recommendable and ranks above hard-blocked plants', MOJSTRANA_CORPUS_TEST_OPTIONS, () => {
   const moj = loadMojstranaClimate();
   const lavender = consumeSmartRecFromEngine({
     plant: loadRuntimePlant('lavender'),
