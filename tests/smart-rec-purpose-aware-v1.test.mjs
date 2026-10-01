@@ -472,3 +472,64 @@ test('J. paid AI automated calls stay 0', () => {
   assert.equal(paidNetwork, 0);
   assert.equal(getCoordinateClimateRuntimeCounters().chelsaExternalCalls, 0);
 });
+
+test('G2. morphology tags do not create a second purpose for a flowering ornamental', () => {
+  const lilacLike = {
+    slug: 'lilac-like',
+    tags: ['ornamental', 'shrub', 'chill'],
+    climateTraits: {
+      floweringRequirements: 'Requires winter chill for reliable spring bloom.'
+    }
+  };
+  const caps = catalogPurposeCapabilities(lilacLike, lilacLike.climateTraits);
+  assert.deepEqual(caps, ['flowering-ornamental']);
+  const purpose = resolveSmartRecPurpose({ plant: lilacLike, meta: lilacLike.climateTraits });
+  assert.equal(purpose.role, 'flowering-ornamental');
+  assert.equal(purpose.source, 'catalog');
+});
+
+test('G3. generic ornamental morphology without flowering evidence stays garden-fit', () => {
+  const ornamentalTree = {
+    slug: 'ornamental-tree-only',
+    tags: ['ornamental', 'tree', 'evergreen'],
+    climateTraits: {}
+  };
+  const caps = catalogPurposeCapabilities(ornamentalTree, ornamentalTree.climateTraits);
+  assert.deepEqual(caps, []);
+  const purpose = resolveSmartRecPurpose({ plant: ornamentalTree, meta: ornamentalTree.climateTraits });
+  assert.equal(purpose.role, 'garden-fit');
+  assert.equal(purpose.source, 'unknown');
+});
+
+test('G4. explicit structure tags still resolve foliage-structure purpose', () => {
+  const hedge = {
+    slug: 'hedge-probe',
+    tags: ['hedge', 'screen', 'evergreen'],
+    climateTraits: {}
+  };
+  const caps = catalogPurposeCapabilities(hedge, hedge.climateTraits);
+  assert.deepEqual(caps, ['foliage-structure']);
+  const purpose = resolveSmartRecPurpose({ plant: hedge, meta: hedge.climateTraits });
+  assert.equal(purpose.role, 'foliage-structure');
+  assert.equal(purpose.source, 'catalog');
+});
+
+test('G5. shade preference tag does not become foliage-structure catalog purpose', () => {
+  const shadePlant = {
+    slug: 'shade-preference-only',
+    tags: ['shade', 'acid-soil'],
+    climateTraits: {}
+  };
+  const caps = catalogPurposeCapabilities(shadePlant, shadePlant.climateTraits);
+  assert.deepEqual(caps, []);
+  const catalogPurpose = resolveSmartRecPurpose({ plant: shadePlant, meta: shadePlant.climateTraits });
+  assert.equal(catalogPurpose.role, 'garden-fit');
+
+  const userShade = resolveSmartRecPurpose({
+    plant: shadePlant,
+    meta: shadePlant.climateTraits,
+    intent: { answers: { q9: 'shade' } }
+  });
+  assert.equal(userShade.role, 'foliage-structure');
+  assert.equal(userShade.source, 'user-q9');
+});
