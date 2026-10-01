@@ -1,0 +1,210 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "dragon-fruit-p1-review-closure-wave-b-v1",
+  "identity": {
+    "canonicalSlug": "dragon-fruit",
+    "commonNameEn": "Dragon Fruit",
+    "acceptedScientificName": "Selenicereus undatus",
+    "aliases": [
+      "dragon fruit",
+      "dragonfruit",
+      "pitaya",
+      "Selenicereus undatus",
+      "Hylocereus undatus"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P1 review closure Wave B; authoritative tropical-fruit evidence and canonical taxonomy where needed.",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-10-01"
+  },
+  "sources": [
+    {
+      "sourceId": "kew-selenicereus-undatus",
+      "institution": "Royal Botanic Gardens, Kew",
+      "publisher": "Plants of the World Online",
+      "title": "Selenicereus undatus - accepted name; Hylocereus undatus synonym",
+      "url": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:125404-2",
+      "authorityTier": "botanical_institution",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "ufifas-pitaya-hs303",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "UF/IFAS Extension",
+      "title": "Pitaya (Dragonfruit) Growing in the Florida Home Landscape",
+      "url": "https://edis.ifas.ufl.edu/publication/HS303/pdf",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Selenicereus undatus",
+      "sourceIds": [
+        "kew-selenicereus-undatus"
+      ],
+      "shortExcerpt": "Selenicereus undatus — canonical identity supported by Royal Botanic Gardens, Kew.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "dragon fruit",
+        "dragonfruit",
+        "pitaya",
+        "Selenicereus undatus",
+        "Hylocereus undatus"
+      ],
+      "sourceIds": [
+        "kew-selenicereus-undatus"
+      ],
+      "shortExcerpt": "Current and historical/common names retained as aliases.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ufifas-pitaya-hs303"
+      ],
+      "shortExcerpt": "Pitayas grow in tropical/subtropical climates mostly free of frost; long exposure below freezing (31°F/-2°C) can damage plants, though light freeze injury may recover.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Conservative frost-sensitivity interpretation from explicit cold/freeze evidence; not a direct source ordinal."
+    },
+    {
+      "claimId": "cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ufifas-pitaya-hs303"
+      ],
+      "shortExcerpt": "Pitayas grow in tropical/subtropical climates mostly free of frost; long exposure below freezing (31°F/-2°C) can damage plants, though light freeze injury may recover.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Conservative qualitative cold-tolerance interpretation from explicit temperature/hardiness evidence."
+    },
+    {
+      "claimId": "heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ufifas-pitaya-hs303"
+      ],
+      "shortExcerpt": "Best growth about 65-77°F; full sun crop with some shade tolerance; excessive soil moisture causes disease and well-drained media are used.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ufifas-pitaya-hs303"
+      ],
+      "shortExcerpt": "Best growth about 65-77°F; full sun crop with some shade tolerance; excessive soil moisture causes disease and well-drained media are used.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ufifas-pitaya-hs303"
+      ],
+      "shortExcerpt": "Best growth about 65-77°F; full sun crop with some shade tolerance; excessive soil moisture causes disease and well-drained media are used.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun_to_part_shade",
+      "sourceIds": [
+        "ufifas-pitaya-hs303"
+      ],
+      "shortExcerpt": "Best growth about 65-77°F; full sun crop with some shade tolerance; excessive soil moisture causes disease and well-drained media are used.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ufifas-pitaya-hs303"
+      ],
+      "shortExcerpt": "Best growth about 65-77°F; full sun crop with some shade tolerance; excessive soil moisture causes disease and well-drained media are used.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "chill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ufifas-pitaya-hs303"
+      ],
+      "shortExcerpt": "No winter-chill requirement is asserted for this tropical/subtropical catalog purpose.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "fruit",
+        "cactus",
+        "climber",
+        "support-dependent"
+      ],
+      "sourceIds": [
+        "ufifas-pitaya-hs303"
+      ],
+      "shortExcerpt": "Catalog tags: fruit, cactus, climber, support-dependent",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "flowering",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Large nocturnal hermaphroditic flowers; some cultivars are self-incompatible. A dry winter/early-spring period supports abundant bloom induction.",
+      "sourceIds": [
+        "ufifas-pitaya-hs303"
+      ],
+      "shortExcerpt": "Large nocturnal hermaphroditic flowers; some cultivars are self-incompatible. A dry winter/early-spring period supports abundant bloom induction.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruiting",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Cross-pollination among different genetic types improves fruit set and size; irrigation is recommended from flowering through harvest.",
+      "sourceIds": [
+        "ufifas-pitaya-hs303"
+      ],
+      "shortExcerpt": "Cross-pollination among different genetic types improves fruit set and size; irrigation is recommended from flowering through harvest.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-01",
+    "approvedBy": "Owner continuation authorization",
+    "notes": "Owner instructed continuation of Full Catalog Revalidation/P1 closure; no paid APIs."
+  }
+}

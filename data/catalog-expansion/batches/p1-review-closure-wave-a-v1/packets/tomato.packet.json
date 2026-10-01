@@ -1,0 +1,199 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "tomato-p1-review-closure-wave-a-v1",
+  "identity": {
+    "canonicalSlug": "tomato",
+    "commonNameEn": "Tomato",
+    "acceptedScientificName": "Solanum lycopersicum",
+    "aliases": [
+      "tomato",
+      "tomatoes",
+      "Solanum lycopersicum",
+      "Lycopersicon esculentum"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P1 review closure Wave A; authoritative extension source plus conservative evidence-class semantics.",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-10-01"
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-solanum-lycopersicum",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "NC State Extension",
+      "title": "Solanum lycopersicum (Tomato)",
+      "url": "https://plants.ces.ncsu.edu/plants/solanum-lycopersicum/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Solanum lycopersicum",
+      "sourceIds": [
+        "ncsu-solanum-lycopersicum"
+      ],
+      "shortExcerpt": "Solanum lycopersicum — identity confirmed by North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "tomato",
+        "tomatoes",
+        "Solanum lycopersicum",
+        "Lycopersicon esculentum"
+      ],
+      "sourceIds": [
+        "ncsu-solanum-lycopersicum"
+      ],
+      "shortExcerpt": "Common and historical names retained for canonical identity.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-solanum-lycopersicum"
+      ],
+      "shortExcerpt": "Warm-season crop planted after frost risk has passed; prefers roughly 70-75 F.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Conservative frost sensitivity retained from explicit hardiness/cold wording; not inferred from zone alone."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-solanum-lycopersicum"
+      ],
+      "shortExcerpt": "Warm-season crop planted after frost risk has passed; prefers roughly 70-75 F.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Versioned qualitative cold-tolerance interpretation from explicit hardiness/temperature evidence."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-solanum-lycopersicum"
+      ],
+      "shortExcerpt": "Full sun; moist loamy slightly acidic soil; consistent watering is important and extreme summer heat can cause blossom drop.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-solanum-lycopersicum"
+      ],
+      "shortExcerpt": "Full sun; moist loamy slightly acidic soil; consistent watering is important and extreme summer heat can cause blossom drop.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-solanum-lycopersicum"
+      ],
+      "shortExcerpt": "Full sun; moist loamy slightly acidic soil; consistent watering is important and extreme summer heat can cause blossom drop.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-solanum-lycopersicum"
+      ],
+      "shortExcerpt": "Full sun; moist loamy slightly acidic soil; consistent watering is important and extreme summer heat can cause blossom drop.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-solanum-lycopersicum"
+      ],
+      "shortExcerpt": "Full sun; moist loamy slightly acidic soil; consistent watering is important and extreme summer heat can cause blossom drop.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-solanum-lycopersicum"
+      ],
+      "shortExcerpt": "No winter-chill requirement asserted for this catalog purpose.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "fruit",
+        "vegetable",
+        "annual",
+        "edible"
+      ],
+      "sourceIds": [
+        "ncsu-solanum-lycopersicum"
+      ],
+      "shortExcerpt": "Catalog tags: fruit, vegetable, annual, edible",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Small yellow star-shaped flowers are produced before fruit set.",
+      "sourceIds": [
+        "ncsu-solanum-lycopersicum"
+      ],
+      "shortExcerpt": "Small yellow star-shaped flowers are produced before fruit set.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Berry fruits develop after flowering; excessive heat can cause blossom drop and reduce fruit set.",
+      "sourceIds": [
+        "ncsu-solanum-lycopersicum"
+      ],
+      "shortExcerpt": "Berry fruits develop after flowering; excessive heat can cause blossom drop and reduce fruit set.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-01",
+    "approvedBy": "Owner continuation authorization",
+    "notes": "Owner instructed continuation of Full Catalog Revalidation/P1 closure; no paid APIs."
+  }
+}

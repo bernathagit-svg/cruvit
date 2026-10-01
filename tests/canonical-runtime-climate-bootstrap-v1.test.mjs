@@ -39,10 +39,19 @@ test('fruit recommendations fail closed when structured fruiting climate is miss
   assert.match(app,/s\.positiveRecommendationEligible===false/);
 });
 
-test('species-packet alias promotes accepted scientific identity over legacy broad identity',()=>{
+test('verified canonical identity promotes accepted scientific identity over legacy inline identity',()=>{
   const overlay=app.indexOf('function applyCanonicalRuntimeClimateOverlay');
   const index=app.indexOf('const PLANT_INDEX=Object.fromEntries');
   const body=app.slice(overlay,index);
-  assert.match(body,/row\.scientific&&\(packetAlias\|\|!plant\.scientific/);
+  assert.match(body,/canonicalIdentityVerified=row\.verificationState==='verified'&&row\.needsReview!==true/);
+  assert.match(body,/row\.scientific&&\(canonicalIdentityVerified\|\|packetAlias\|\|!plant\.scientific/);
   assert.match(app,/'lesser-bougainvillea':'bougainvillea'/);
+});
+
+test('unverified canonical catalog rows cannot force a scientific identity rewrite',()=>{
+  const overlay=app.indexOf('function applyCanonicalRuntimeClimateOverlay');
+  const index=app.indexOf('const PLANT_INDEX=Object.fromEntries');
+  const body=app.slice(overlay,index);
+  assert.doesNotMatch(body,/canonicalIdentityVerified=row\.verificationState!=='verified'/);
+  assert.match(body,/row\.needsReview!==true/);
 });

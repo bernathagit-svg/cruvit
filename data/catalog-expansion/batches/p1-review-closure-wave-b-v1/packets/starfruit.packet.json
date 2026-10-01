@@ -1,0 +1,197 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "starfruit-p1-review-closure-wave-b-v1",
+  "identity": {
+    "canonicalSlug": "starfruit",
+    "commonNameEn": "Starfruit",
+    "acceptedScientificName": "Averrhoa carambola",
+    "aliases": [
+      "starfruit",
+      "carambola",
+      "Averrhoa carambola"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P1 review closure Wave B; authoritative tropical-fruit evidence and canonical taxonomy where needed.",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-10-01"
+  },
+  "sources": [
+    {
+      "sourceId": "ufifas-carambola-mg269",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "UF/IFAS Extension",
+      "title": "Carambola Growing in the Florida Home Landscape",
+      "url": "https://edis.ifas.ufl.edu/publication/MG269/pdf",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Averrhoa carambola",
+      "sourceIds": [
+        "ufifas-carambola-mg269"
+      ],
+      "shortExcerpt": "Averrhoa carambola — canonical identity supported by University of Florida IFAS Extension.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "starfruit",
+        "carambola",
+        "Averrhoa carambola"
+      ],
+      "sourceIds": [
+        "ufifas-carambola-mg269"
+      ],
+      "shortExcerpt": "Current and historical/common names retained as aliases.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ufifas-carambola-mg269"
+      ],
+      "shortExcerpt": "Best growth and fruiting occur around 68-95°F; growth stops below 65°F; young leaves may be killed at 30-32°F and larger tissues at lower freezing temperatures.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Conservative frost-sensitivity interpretation from explicit cold/freeze evidence; not a direct source ordinal."
+    },
+    {
+      "claimId": "cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ufifas-carambola-mg269"
+      ],
+      "shortExcerpt": "Best growth and fruiting occur around 68-95°F; growth stops below 65°F; young leaves may be killed at 30-32°F and larger tissues at lower freezing temperatures.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Conservative qualitative cold-tolerance interpretation from explicit temperature/hardiness evidence."
+    },
+    {
+      "claimId": "heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ufifas-carambola-mg269"
+      ],
+      "shortExcerpt": "Warm to hot conditions, well-drained soil, continuous access to soil moisture, and wind protection are optimum; drought reduces flowering and fruit size.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ufifas-carambola-mg269"
+      ],
+      "shortExcerpt": "Warm to hot conditions, well-drained soil, continuous access to soil moisture, and wind protection are optimum; drought reduces flowering and fruit size.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ufifas-carambola-mg269"
+      ],
+      "shortExcerpt": "Warm to hot conditions, well-drained soil, continuous access to soil moisture, and wind protection are optimum; drought reduces flowering and fruit size.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ufifas-carambola-mg269"
+      ],
+      "shortExcerpt": "Warm to hot conditions, well-drained soil, continuous access to soil moisture, and wind protection are optimum; drought reduces flowering and fruit size.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ufifas-carambola-mg269"
+      ],
+      "shortExcerpt": "Warm to hot conditions, well-drained soil, continuous access to soil moisture, and wind protection are optimum; drought reduces flowering and fruit size.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "chill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ufifas-carambola-mg269"
+      ],
+      "shortExcerpt": "No winter-chill requirement is asserted for this tropical/subtropical catalog purpose.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "fruit",
+        "edible",
+        "tropical",
+        "tree"
+      ],
+      "sourceIds": [
+        "ufifas-carambola-mg269"
+      ],
+      "shortExcerpt": "Catalog tags: fruit, edible, tropical, tree",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "flowering",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Established shoots can flower repeatedly; pruning can induce flowering in about 21 days, while cool fall/winter temperatures may prevent fruit set.",
+      "sourceIds": [
+        "ufifas-carambola-mg269"
+      ],
+      "shortExcerpt": "Established shoots can flower repeatedly; pruning can induce flowering in about 21 days, while cool fall/winter temperatures may prevent fruit set.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruiting",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Fruit may develop about 70-80 days after induced flowering; continuous soil moisture supports flowering and fruit production.",
+      "sourceIds": [
+        "ufifas-carambola-mg269"
+      ],
+      "shortExcerpt": "Fruit may develop about 70-80 days after induced flowering; continuous soil moisture supports flowering and fruit production.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-01",
+    "approvedBy": "Owner continuation authorization",
+    "notes": "Owner instructed continuation of Full Catalog Revalidation/P1 closure; no paid APIs."
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "contract": "cruvit-p1-production-closure-v1",
+  "createdAt": "2026-10-01",
+  "scope": "Full Catalog Revalidation P1 review/hold closure",
+  "evidencePackets": {
+    "waveA": 15,
+    "waveB": 7,
+    "total": 22,
+    "classA": 22,
+    "contradictionHolds": 0
+  },
+  "productionPersistence": {
+    "table": "public.catalog_plants",
+    "insertedOrUpserted": 22,
+    "verifiedClean": 22,
+    "missingScientific": 0,
+    "missingCold": 0,
+    "missingFrost": 0,
+    "missingHeat": 0,
+    "missingSun": 0,
+    "missingWater": 0,
+    "missingDrainage": 0,
+    "missingFlowering": 0,
+    "missingProvenance": 0,
+    "catalogTotalAfter": 112
+  },
+  "runtime": {
+    "bootstrapReady": true,
+    "bootstrapCount": 112,
+    "liveOverlayAppliedToP1": 22,
+    "pageErrors": 0,
+    "identityCorrections": [
+      {
+        "slug": "areca-palm",
+        "canonicalScientific": "Chrysalidocarpus lutescens",
+        "legacyAlias": "Dypsis lutescens"
+      },
+      {
+        "slug": "dragon-fruit",
+        "canonicalScientific": "Selenicereus undatus",
+        "legacyAlias": "Hylocereus undatus"
+      }
+    ]
+  },
+  "regression": {
+    "relatedTests": {
+      "pass": 151,
+      "fail": 0,
+      "skipped": 2,
+      "skipReason": "Mojstrana tests require local global-v1 climate tile corpus; remote R2 path is separately covered"
+    },
+    "globalClimateStress": {
+      "locations": 24,
+      "plants": 6,
+      "evaluations": 144,
+      "failures": 0,
+      "knownLocations": 24
+    }
+  },
+  "fullCatalogAfter": {
+    "unifiedCanonicalEntities": 153,
+    "passFull": 115,
+    "unknownValid": 11,
+    "broadIdentityValid": 12,
+    "researchRequired": 15,
+    "contradiction": 0,
+    "p0": 0,
+    "p1": 0,
+    "p2": 15
+  }
+}

@@ -21,6 +21,7 @@ test('full catalog revalidation remains internally consistent',()=>{
   assert.ok(broadQueue.rows.every(r=>r.identityScope==='broad'&&r.smartRecommendationPolicy==='BLOCK_POSITIVE_UNTIL_SPECIES_RESOLVED'));
   assert.equal(Object.values(queue.priorityCounts).reduce((a,b)=>a+b,0),queue.total);
   assert.equal(queue.priorityCounts.P0_IDENTITY_OR_CORE_BLOCK,0);
+  assert.equal(queue.priorityCounts.P1_REVIEW_HOLD,0);
   assert.ok(queue.rows.every(r=>r.source==='RUNTIME_ONLY'));
   assert.ok(broadQueue.rows.every(r=>!queue.rows.some(q=>q.slug===r.slug)));
   assert.equal(s.CONTRADICTION,0);

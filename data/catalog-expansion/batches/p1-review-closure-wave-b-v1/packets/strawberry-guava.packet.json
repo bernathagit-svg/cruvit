@@ -1,0 +1,210 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "strawberry-guava-p1-review-closure-wave-b-v1",
+  "identity": {
+    "canonicalSlug": "strawberry-guava",
+    "commonNameEn": "Strawberry Guava",
+    "acceptedScientificName": "Psidium cattleyanum",
+    "aliases": [
+      "strawberry guava",
+      "cattley guava",
+      "Psidium cattleyanum",
+      "Psidium cattleianum",
+      "cherry guava"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P1 review closure Wave B; authoritative tropical-fruit evidence and canonical taxonomy where needed.",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-10-01"
+  },
+  "sources": [
+    {
+      "sourceId": "kew-psidium-cattleyanum",
+      "institution": "Royal Botanic Gardens, Kew",
+      "publisher": "Plants of the World Online",
+      "title": "Psidium cattleyanum Sabine - accepted species",
+      "url": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:600760-1",
+      "authorityTier": "botanical_institution",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "ufifas-psidium-cattleianum-st529",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "UF/IFAS Extension",
+      "title": "Psidium cattleianum: Strawberry Guava",
+      "url": "https://edis.ifas.ufl.edu/publication/ST529/pdf",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Psidium cattleyanum",
+      "sourceIds": [
+        "kew-psidium-cattleyanum"
+      ],
+      "shortExcerpt": "Psidium cattleyanum — canonical identity supported by Royal Botanic Gardens, Kew.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "strawberry guava",
+        "cattley guava",
+        "Psidium cattleyanum",
+        "Psidium cattleianum",
+        "cherry guava"
+      ],
+      "sourceIds": [
+        "kew-psidium-cattleyanum"
+      ],
+      "shortExcerpt": "Current and historical/common names retained as aliases.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ufifas-psidium-cattleianum-st529"
+      ],
+      "shortExcerpt": "UF/IFAS lists USDA hardiness zones 10A-11 for strawberry guava; Kew accepts the canonical name Psidium cattleyanum.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Conservative frost-sensitivity interpretation from explicit cold/freeze evidence; not a direct source ordinal."
+    },
+    {
+      "claimId": "cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "ufifas-psidium-cattleianum-st529"
+      ],
+      "shortExcerpt": "UF/IFAS lists USDA hardiness zones 10A-11 for strawberry guava; Kew accepts the canonical name Psidium cattleyanum.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Conservative qualitative cold-tolerance interpretation from explicit temperature/hardiness evidence."
+    },
+    {
+      "claimId": "heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ufifas-psidium-cattleianum-st529"
+      ],
+      "shortExcerpt": "Full sun to partial shade and well-drained sites; strawberry guava is moderately drought tolerant once established.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ufifas-psidium-cattleianum-st529"
+      ],
+      "shortExcerpt": "Full sun to partial shade and well-drained sites; strawberry guava is moderately drought tolerant once established.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ufifas-psidium-cattleianum-st529"
+      ],
+      "shortExcerpt": "Full sun to partial shade and well-drained sites; strawberry guava is moderately drought tolerant once established.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun_to_part_shade",
+      "sourceIds": [
+        "ufifas-psidium-cattleianum-st529"
+      ],
+      "shortExcerpt": "Full sun to partial shade and well-drained sites; strawberry guava is moderately drought tolerant once established.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ufifas-psidium-cattleianum-st529"
+      ],
+      "shortExcerpt": "Full sun to partial shade and well-drained sites; strawberry guava is moderately drought tolerant once established.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "chill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ufifas-psidium-cattleianum-st529"
+      ],
+      "shortExcerpt": "No winter-chill requirement is asserted for this tropical/subtropical catalog purpose.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "fruit",
+        "edible",
+        "shrub",
+        "invasive-caution"
+      ],
+      "sourceIds": [
+        "ufifas-psidium-cattleianum-st529"
+      ],
+      "shortExcerpt": "Catalog tags: fruit, edible, shrub, invasive-caution",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "flowering",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "White fragrant flowers are produced year-round, singly or in small groups at leaf axils.",
+      "sourceIds": [
+        "ufifas-psidium-cattleianum-st529"
+      ],
+      "shortExcerpt": "White fragrant flowers are produced year-round, singly or in small groups at leaf axils.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruiting",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Fleshy purplish-red berries follow flowering; the plant is used for fruit but is invasive/not recommended in South Florida and requires escape management elsewhere.",
+      "sourceIds": [
+        "ufifas-psidium-cattleianum-st529"
+      ],
+      "shortExcerpt": "Fleshy purplish-red berries follow flowering; the plant is used for fruit but is invasive/not recommended in South Florida and requires escape management elsewhere.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-01",
+    "approvedBy": "Owner continuation authorization",
+    "notes": "Owner instructed continuation of Full Catalog Revalidation/P1 closure; no paid APIs."
+  }
+}
