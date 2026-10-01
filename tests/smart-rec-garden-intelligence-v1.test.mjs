@@ -402,3 +402,14 @@ test('Smart Rec consumes only trusted normalized selected Garden Area context', 
   assert.match(protectionBlock, /smartRecTrustedSelectedAreaContext\(\)/);
   assert.doesNotMatch(protectionBlock, /selected\.context/);
 });
+
+test('q9 shade goal requires shade-provider structure, not generic shade preference text', () => {
+  const app = fs.readFileSync(APP, 'utf8');
+  const block =
+    app.match(/else if\(a\.q9==='shade'\)\{[\s\S]{0,900}?labels\.push\(getSmartRecOptionLabel\('q9','shade'\)\);/)?.[0] || '';
+  assert.match(block, /tree/);
+  assert.match(block, /palm/);
+  assert.match(block, /climber/);
+  assert.match(block, /canopy/);
+  assert.doesNotMatch(block, /t\.includes\('shade'\)/);
+});
