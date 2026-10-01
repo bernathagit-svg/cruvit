@@ -43,8 +43,8 @@ const FRUIT_TAGS = new Set(['fruit', 'nut', 'berry', 'citrus']);
 const FRUITING_VEG_TAGS = new Set(['fruiting', 'melon', 'cucurbit']);
 const VEGETATIVE_TAGS = new Set(['root', 'leafy', 'leaf', 'herb', 'foliage']);
 const VEGETABLE_TAGS = new Set(['vegetable', 'veg', 'cole']);
-const FLOWERING_TAGS = new Set(['flowering', 'color', 'fragrant', 'ornamental']);
-const FOLIAGE_TAGS = new Set(['tree', 'hedge', 'climber', 'evergreen', 'shrub', 'screen']);
+const FLOWERING_TAGS = new Set(['flowering', 'flower', 'color', 'fragrant']);
+const FOLIAGE_TAGS = new Set(['foliage', 'hedge', 'screen', 'privacy']);
 const FRUIT_GROUPS = /fruit-tree|tropical-frost-sensitive-fruit|mediterranean-fruit|warm-citrus|cool-moist-berry|subtropical-fruit/;
 const HERB_GROUPS = /herb-edible/;
 
