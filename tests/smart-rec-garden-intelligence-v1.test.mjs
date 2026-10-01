@@ -385,3 +385,20 @@ test('Smart Rec requires explicit Garden Area selection when multiple Areas exis
   const protectionBlock = app.match(/function smartRecProtectionContext\(\)[\s\S]{0,1200}?\n\}/)?.[0] || '';
   assert.doesNotMatch(protectionBlock, /areas\[0\]/);
 });
+
+test('Smart Rec consumes only trusted normalized selected Garden Area context', () => {
+  const app = fs.readFileSync(APP, 'utf8');
+  assert.match(app, /function smartRecTrustedSelectedAreaContext\(\)/);
+  assert.match(app, /normalizeAreaContext/);
+  assert.match(app, /normalized&&normalized\.trusted===true\?normalized:null/);
+
+  const overlayBlock =
+    app.match(/function smartRecAreaAnswerOverlay\(\)[\s\S]{0,600}?\n\}/)?.[0] || '';
+  assert.match(overlayBlock, /smartRecTrustedSelectedAreaContext\(\)/);
+  assert.doesNotMatch(overlayBlock, /selected\.context/);
+
+  const protectionBlock =
+    app.match(/function smartRecProtectionContext\(\)[\s\S]{0,1500}?\n\}/)?.[0] || '';
+  assert.match(protectionBlock, /smartRecTrustedSelectedAreaContext\(\)/);
+  assert.doesNotMatch(protectionBlock, /selected\.context/);
+});

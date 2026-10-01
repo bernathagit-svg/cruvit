@@ -6237,12 +6237,22 @@ function smartRecSelectedArea(){
   if(!wanted) return null;
   return areas.find(a=>String(a.id||a.areaId||'')===wanted)||null;
 }
-function smartRecAreaAnswerOverlay(){
+function smartRecTrustedSelectedAreaContext(){
   const selected=smartRecSelectedArea();
-  if(!selected) return {};
+  if(!selected) return null;
+  const raw=selected.context&&typeof selected.context==='object'?selected.context:selected;
+  const areasApi=typeof window!=='undefined'?window.cruvitGardenAreasV1:null;
+  const normalized=areasApi&&typeof areasApi.normalizeAreaContext==='function'
+    ?areasApi.normalizeAreaContext(raw)
+    :raw;
+  return normalized&&normalized.trusted===true?normalized:null;
+}
+function smartRecAreaAnswerOverlay(){
+  const areaCtx=smartRecTrustedSelectedAreaContext();
+  if(!areaCtx) return {};
   const gi=smartRecGardenIntelligenceApi();
   if(!gi||typeof gi.smartRecContextFromGardenArea!=='function') return {};
-  return gi.smartRecContextFromGardenArea(selected.context||selected,{});
+  return gi.smartRecContextFromGardenArea(areaCtx,{});
 }
 
 function smartRecCurrentContext(){
@@ -6272,8 +6282,7 @@ function hardClimateSurvivalGateApi(){
 
 function smartRecProtectionContext(){
   const ctx=smartRecCurrentContext();
-  const selected=smartRecSelectedArea();
-  const areaCtx=selected?(selected.context&&typeof selected.context==='object'?selected.context:selected):{};
+  const areaCtx=smartRecTrustedSelectedAreaContext()||{};
   const planting=String(areaCtx.plantingMode||areaCtx.planting_mode||areaCtx.siteType||'').trim().toLowerCase();
   const frostProtection=String(areaCtx.frostProtection||areaCtx.frost_protection||'unknown').trim().toLowerCase();
   const explicitFrostFree=areaCtx.frostFreeProtected===true||frostProtection==='frost_free';
