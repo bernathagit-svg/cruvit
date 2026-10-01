@@ -1,0 +1,74 @@
+{
+  "contract": "cruvit-p2-production-closure-v1",
+  "createdAt": "2026-10-01",
+  "scope": "Owner-approved P2 canonical closure",
+  "ownerApproval": {
+    "approved": true,
+    "plantCount": 13,
+    "condition": "all QA gates; no silent inference"
+  },
+  "approvedCorpus": {
+    "batch": "p2-owner-approved-v1",
+    "packetCount": 13,
+    "classA": 13,
+    "pass": 13,
+    "contradictionHolds": 0,
+    "claimsChangedFromProposal": 0
+  },
+  "productionPersistence": {
+    "project": "cruvit-production",
+    "table": "public.catalog_plants",
+    "catalogTotal": 125,
+    "targetCount": 13,
+    "verifiedClean": 13,
+    "p2SourcePacketCount": 13,
+    "missingScientific": 0,
+    "missingCold": 0,
+    "missingFrost": 0,
+    "missingHeat": 0,    "missingSun": 0,
+    "missingWater": 0,
+    "missingDrainage": 0,
+    "missingTraitEvidence": 0,
+    "missingProvenance": 0,
+    "missingMediaStatus": 0,
+    "databaseWritePerformedThisRun": false,
+    "databaseWriteReason": "Readback showed the 13 production rows already matched the approved P2 source-packet state; no redundant rewrite was performed."
+  },
+  "fullCatalogAfter": {
+    "unifiedCanonicalEntities": 152,
+    "passFull": 129,
+    "unknownValid": 11,
+    "broadIdentityValid": 12,
+    "researchRequired": 0,
+    "contradiction": 0,
+    "queueTotal": 0,
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "evidencePackets": 125,
+    "classAEvidencePackets": 125
+  },  "qa": {
+    "proposalBrowserClimateStress": {
+      "plants": 13,
+      "locations": 6,
+      "evaluations": 78,
+      "failures": 0,
+      "pageErrors": 0
+    },
+    "globalClimateStress": {
+      "locations": 24,
+      "plants": 6,
+      "evaluations": 144,
+      "knownLocations": 24,
+      "unknownLocations": 0,
+      "failures": 0,
+      "pageErrors": 0
+    },
+    "regression": {
+      "tests": 170,
+      "pass": 170,
+      "fail": 0,
+      "skipped": 0
+    }
+  }
+}
