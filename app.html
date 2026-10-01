@@ -6265,7 +6265,7 @@ function smartRecCurrentContext(){
     safeIntent:answers.q4==='pet-safe',
     edibleIntent:answers.q5==='yes-edible'||answers.q9==='food-herbs',
     floweringIntent:answers.q6==='yes-flowering'||answers.q9==='beauty',
-    containerContext:answers.q1==='balcony'||answers.q8==='compact',
+    containerContext:answers.__containerContext===true||answers.q1==='balcony'||answers.q8==='compact',
     compactContainerContext:answers.q8==='compact',
     indoorContext:answers.q1==='indoor',
     groundContext:answers.q1==='ground',

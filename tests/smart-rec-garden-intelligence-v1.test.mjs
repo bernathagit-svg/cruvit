@@ -216,16 +216,19 @@ test('suitability outputs stay four-dimensional; UNKNOWN remains valid', () => {
   assert.equal(withReqs.fruiting, 'weak');
 });
 
-test('Garden Area overlay fills missing answers and does not override user answers', () => {
+test('Garden Area overlay fills missing answers without turning generic container into balcony', () => {
   const fromArea = smartRecContextFromGardenArea({ sunExposure: 'full_sun', plantingMode: 'container' }, {});
   assert.equal(fromArea.q2, 'full-sun');
-  assert.equal(fromArea.q1, 'balcony');
+  assert.equal(fromArea.__containerContext, true);
+  assert.equal(fromArea.q1, undefined);
+
   const userWins = smartRecContextFromGardenArea(
     { sunExposure: 'full_sun', plantingMode: 'container' },
     { q2: 'shade', q1: 'ground' }
   );
   assert.equal(userWins.q2, 'shade');
   assert.equal(userWins.q1, 'ground');
+  assert.equal(userWins.__containerContext, true);
 });
 
 test('app wiring: catalog intelligence module, no Design start, no Identifier rewrite', () => {
@@ -333,19 +336,29 @@ test('Garden Area supportType maps to Smart Rec support context without privacy 
   assert.equal(unknown.__supportContextKnown, undefined);
 });
 
-test('generic Garden Area container does not masquerade as compact container', () => {
+test('generic Garden Area container does not masquerade as balcony or compact container', () => {
   const fromArea = smartRecContextFromGardenArea(
     { plantingMode: 'container', sunExposure: 'full_sun' },
     {}
   );
-  assert.equal(fromArea.q1, 'balcony');
+  assert.equal(fromArea.__containerContext, true);
+  assert.equal(fromArea.q1, undefined);
   assert.equal(fromArea.q8, undefined);
+
+  const actualBalcony = smartRecContextFromGardenArea(
+    { plantingMode: 'balcony' },
+    {}
+  );
+  assert.equal(actualBalcony.__containerContext, true);
+  assert.equal(actualBalcony.q1, 'balcony');
 
   const explicitCompactWins = smartRecContextFromGardenArea(
     { plantingMode: 'container' },
-    { q8: 'compact' }
+    { q8: 'compact', q1: 'ground' }
   );
+  assert.equal(explicitCompactWins.__containerContext, true);
   assert.equal(explicitCompactWins.q8, 'compact');
+  assert.equal(explicitCompactWins.q1, 'ground');
 });
 
 test('Garden Area planting modes map to matching Smart Rec context without greenhouse aliasing', () => {
