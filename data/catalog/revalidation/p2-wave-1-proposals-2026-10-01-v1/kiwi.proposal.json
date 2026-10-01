@@ -1,0 +1,212 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "kiwi-p2-wave-1-proposal-v1",
+  "identity": {
+    "canonicalSlug": "kiwi",
+    "commonNameEn": "Kiwi",
+    "acceptedScientificName": "Actinidia deliciosa",
+    "aliases": [
+      "fuzzy kiwifruit",
+      "Actinidia deliciosa"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P2 full-catalog revalidation proposal. Source-backed facts plus explicitly labeled heuristic interpretations; not approved for ingest."
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-actinidia-deliciosa",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Actinidia deliciosa",
+      "url": "https://plants.ces.ncsu.edu/plants/actinidia-deliciosa/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "osu-kiwifruit-home",
+      "institution": "Oregon State University Extension Service",
+      "publisher": "Oregon State University Extension Service",
+      "title": "Growing kiwifruit in your home garden",
+      "url": "https://extension.oregonstate.edu/catalog/em-9322-growing-kiwifruit-your-home-garden",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "cruvit-legacy-runtime-context",
+      "institution": "CRUVIT Legacy Catalog",
+      "publisher": "CRUVIT Legacy Catalog",
+      "title": "Existing CRUVIT runtime rule context",
+      "url": "urn:cruvit:legacy-runtime-context",
+      "authorityTier": "internal_legacy",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "kiwi-frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "osu-kiwifruit-home"
+      ],
+      "shortExcerpt": "Dormant fuzzy kiwifruit is cold hardy to about 0-10°F, while newly developing shoots are frost-sensitive; stage-specific injury is not promoted to whole-plant sensitivity.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "kiwi-cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-actinidia-deliciosa"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 7a through 9b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "kiwi-heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "osu-kiwifruit-home"
+      ],
+      "shortExcerpt": "Fuzzy kiwifruit is adapted to warmer regions and needs a long frost-free growing season; heat tolerance retained as medium.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "kiwi-sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "osu-kiwifruit-home"
+      ],
+      "shortExcerpt": "Ideal environmental conditions include full sun exposure.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "kiwi-water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "osu-kiwifruit-home"
+      ],
+      "shortExcerpt": "Fertile soil with moderate water-holding capacity is recommended; vines require consistent growing-season moisture.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "kiwi-drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "osu-kiwifruit-home"
+      ],
+      "shortExcerpt": "Kiwifruit vines are sensitive to poor drainage and roots can suffocate in waterlogged soil.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "kiwi-chill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "osu-kiwifruit-home"
+      ],
+      "shortExcerpt": "After the winter cold or chilling requirement is satisfied and temperatures warm, buds break; fuzzy kiwifruit has a defined winter dormancy requirement.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "kiwi-flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Reliable bloom requires appropriate winter dormancy/chill and protection of early young growth from spring frost.",
+      "sourceIds": [
+        "osu-kiwifruit-home"
+      ],
+      "shortExcerpt": "Kiwifruit break bud early; newly developing young shoots are sensitive to frost injury.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "kiwi-fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Fuzzy kiwifruit needs roughly 225-240 frost-free days, full sun, and compatible pollination for reliable fruit production.",
+      "sourceIds": [
+        "osu-kiwifruit-home"
+      ],
+      "shortExcerpt": "Actinidia deliciosa needs about 225 to 240 frost-free days; site selection favors full sun.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "kiwi-tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "fruit",
+        "vine",
+        "climber",
+        "deciduous",
+        "support"
+      ],
+      "sourceIds": [
+        "osu-kiwifruit-home"
+      ],
+      "shortExcerpt": "Catalog tags: fruit, vine, climber, deciduous, support",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "kiwi-legacy-humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "kiwi-legacy-survivalVsThriveNotes",
+      "field": "survivalVsThriveNotes",
+      "status": "asserted",
+      "value": "Vine may grow in mild warm sites, but reliable fruiting depends on adequate winter chill and cross-pollination.",
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "kiwi-legacy-groupIds",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "subtropical-fruiting-climber",
+        "support-dependent-plant",
+        "temperate-chill-fruit-tree"
+      ],
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING",
+    "searchQuery": "Actinidia deliciosa Kiwi"
+  },
+  "humanApproval": {
+    "approvedForIngest": false,
+    "approvedAt": null,
+    "note": "PROPOSAL_ONLY — Owner Review gate intentionally not satisfied."
+  }
+}

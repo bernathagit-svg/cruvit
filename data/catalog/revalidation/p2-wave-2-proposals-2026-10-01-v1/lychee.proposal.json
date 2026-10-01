@@ -1,0 +1,223 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "lychee-p2-wave-2-proposal-v1",
+  "identity": {
+    "canonicalSlug": "lychee",
+    "commonNameEn": "Lychee Tree",
+    "acceptedScientificName": "Litchi chinensis",
+    "aliases": [
+      "litchi",
+      "Litchi chinensis"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P2 proposal only. "
+  },
+  "sources": [
+    {
+      "sourceId": "uf-ifas-lychee-tree",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida IFAS Extension",
+      "title": "Litchi chinensis: Lychee",
+      "url": "https://edis.ifas.ufl.edu/publication/ST364",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "uf-ifas-lychee-home",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida IFAS Extension",
+      "title": "Lychee Growing in the Florida Home Landscape",
+      "url": "https://edis.ifas.ufl.edu/publication/MG051",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "cruvit-legacy-runtime-context",
+      "institution": "CRUVIT Legacy Catalog",
+      "publisher": "CRUVIT Legacy Catalog",
+      "title": "Existing CRUVIT runtime rule context",
+      "url": "urn:cruvit:legacy-runtime-context",
+      "authorityTier": "internal_legacy",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "lychee-frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-lychee-home"
+      ],
+      "shortExcerpt": "Young lychee trees are damaged by temperatures around 28–32°F; large trees can sustain extensive damage around 24–25°F.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "lychee-cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "uf-ifas-lychee-tree"
+      ],
+      "shortExcerpt": "USDA hardiness zones 10 through 11.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "lychee-heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "uf-ifas-lychee-home"
+      ],
+      "shortExcerpt": "Warm-to-cool subtropical climate with hot humid summers supports growth, but flowering needs a cooler seasonal signal.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "lychee-humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-lychee-home"
+      ],
+      "shortExcerpt": "Lychee is adapted to humid subtropical conditions and hot humid summer fruit growth.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "lychee-sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "uf-ifas-lychee-tree"
+      ],
+      "shortExcerpt": "Easily grown in full sun.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "lychee-water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-lychee-tree"
+      ],
+      "shortExcerpt": "Plants should receive regular watering.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "lychee-drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-lychee-tree"
+      ],
+      "shortExcerpt": "Deep, fertile, well-drained soil is recommended.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "lychee-flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Reliable bloom benefits from a cooler, drier nonfreezing winter period.",
+      "sourceIds": [
+        "uf-ifas-lychee-home"
+      ],
+      "shortExcerpt": "Lychee performs in subtropical climates with a dry, cold, nonfreezing winter period.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "lychee-fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Fruit production needs a cooler seasonal flowering signal followed by warm humid growth and consistent moisture.",
+      "sourceIds": [
+        "uf-ifas-lychee-home"
+      ],
+      "shortExcerpt": "Dry cool winter conditions support flowering, followed by hot humid summer fruit development.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "lychee-tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "fruit",
+        "tree",
+        "subtropical",
+        "edible"
+      ],
+      "sourceIds": [
+        "uf-ifas-lychee-tree"
+      ],
+      "shortExcerpt": "Catalog tags: fruit, tree, subtropical, edible",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "lychee-legacy-survivalVsThriveNotes",
+      "field": "survivalVsThriveNotes",
+      "status": "asserted",
+      "value": "Warm frost-free conditions may allow survival, but thriving and reliable fruiting are much narrower than a generic subtropical label suggests.",
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "lychee-legacy-groupIds",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "humid-subtropical-fruit-tree"
+      ],
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "lychee-legacy-hardBlockRules",
+      "field": "hardBlockRules",
+      "status": "asserted",
+      "value": [
+        "needs-cooler-drier-winter-for-fruit",
+        "no-small-container"
+      ],
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "lychee-legacy-needsDrySeason",
+      "field": "needsDrySeason",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING",
+    "searchQuery": "Litchi chinensis Lychee Tree"
+  },
+  "humanApproval": {
+    "approvedForIngest": false,
+    "approvedAt": null,
+    "note": "PROPOSAL_ONLY — Owner Review gate intentionally not satisfied."
+  }
+}

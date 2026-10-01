@@ -1,0 +1,214 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "mandarin-p2-wave-2-proposal-v1",
+  "identity": {
+    "canonicalSlug": "mandarin",
+    "commonNameEn": "Mandarin / Clementine Tree",
+    "acceptedScientificName": "Citrus reticulata",
+    "aliases": [
+      "mandarin",
+      "clementine",
+      "Citrus reticulata"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P2 proposal only. Cold tolerance is group-level and cultivar/rootstock dependent; Satsuma-specific hardiness is not generalized to all mandarins."
+  },
+  "sources": [
+    {
+      "sourceId": "rhs-mandarin-group",
+      "institution": "Royal Horticultural Society",
+      "publisher": "Royal Horticultural Society",
+      "title": "Citrus reticulata Mandarin Group (F)",
+      "url": "https://www.rhs.org.uk/plants/105707/citrus-reticulata-mandarin-group-f/details",
+      "authorityTier": "horticultural_society",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "uf-ifas-cold-hardy-citrus",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida IFAS Extension",
+      "title": "Cold Hardy Citrus",
+      "url": "https://ufdcimages.uflib.ufl.edu/IR/00/00/46/24/00001/CH02900.PDF",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "cruvit-legacy-runtime-context",
+      "institution": "CRUVIT Legacy Catalog",
+      "publisher": "CRUVIT Legacy Catalog",
+      "title": "Existing CRUVIT runtime rule context",
+      "url": "urn:cruvit:legacy-runtime-context",
+      "authorityTier": "internal_legacy",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "mandarin-frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-cold-hardy-citrus"
+      ],
+      "shortExcerpt": "Cold hardiness varies widely among mandarins; cold-hardy selections still require cultivar/rootstock-specific interpretation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "mandarin-cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "rhs-mandarin-group"
+      ],
+      "shortExcerpt": "RHS Mandarin Group hardiness H2: low-temperature tolerant but not surviving freezing.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "mandarin-heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-mandarin-group"
+      ],
+      "shortExcerpt": "Best grown in a cool or temperate conservatory/greenhouse and moved outdoors in summer; heat tolerance retained as medium.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "mandarin-humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-mandarin-group"
+      ],
+      "shortExcerpt": "Moist but well-drained culture supports a moderate humidity stance.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "mandarin-sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "rhs-mandarin-group"
+      ],
+      "shortExcerpt": "Cultivation calls for full light with shade from hot sun under glass.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "mandarin-water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-mandarin-group"
+      ],
+      "shortExcerpt": "Water freely during spring/summer growth and sparingly in winter.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "mandarin-drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "rhs-mandarin-group"
+      ],
+      "shortExcerpt": "Loam-based compost with grit; moist but well-drained growing conditions.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "mandarin-flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Spring flowering needs bright light and protection from damaging frost.",
+      "sourceIds": [
+        "rhs-mandarin-group"
+      ],
+      "shortExcerpt": "Fragrant white flowers are borne in spring; cultivation is sheltered and nonfreezing.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "mandarin-fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Reliable fruiting is cultivar-dependent and needs adequate warmth, light, moisture, and low freeze risk.",
+      "sourceIds": [
+        "rhs-mandarin-group",
+        "uf-ifas-cold-hardy-citrus"
+      ],
+      "shortExcerpt": "Mandarins differ in cold hardiness; fruit follows spring flowering under protected cultivation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "mandarin-tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "fruit",
+        "citrus",
+        "tree",
+        "evergreen",
+        "edible"
+      ],
+      "sourceIds": [
+        "rhs-mandarin-group"
+      ],
+      "shortExcerpt": "Catalog tags: fruit, citrus, tree, evergreen, edible",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "mandarin-legacy-survivalVsThriveNotes",
+      "field": "survivalVsThriveNotes",
+      "status": "asserted",
+      "value": "Mandarins are somewhat forgiving citrus, but winter cold still reduces canopy quality and reliable fruiting.",
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "mandarin-legacy-groupIds",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "warm-citrus-fruit-tree"
+      ],
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "mandarin-legacy-warningFlags",
+      "field": "warningFlags",
+      "status": "asserted",
+      "value": [
+        "thorny"
+      ],
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING",
+    "searchQuery": "Citrus reticulata Mandarin / Clementine Tree"
+  },
+  "humanApproval": {
+    "approvedForIngest": false,
+    "approvedAt": null,
+    "note": "PROPOSAL_ONLY — Owner Review gate intentionally not satisfied."
+  }
+}

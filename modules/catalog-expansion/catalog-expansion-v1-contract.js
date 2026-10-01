@@ -116,6 +116,8 @@ export const CLAIM_FIELDS = Object.freeze([
   'survivalVsThriveNotes',
   'groupIds',
   'hardBlockRules',
+  'needsDrySeason',
+  'warningFlags',
   'care.sun',
   'care.water',
   'care.growth',
@@ -158,7 +160,9 @@ const TRAIT_FIELDS = new Set([
   'fruitingRequirements',
   'survivalVsThriveNotes',
   'groupIds',
-  'hardBlockRules'
+  'hardBlockRules',
+  'needsDrySeason',
+  'warningFlags'
 ]);
 
 function isNonEmptyString(v) {

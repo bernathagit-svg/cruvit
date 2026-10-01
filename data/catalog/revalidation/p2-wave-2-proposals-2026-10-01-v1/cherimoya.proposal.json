@@ -1,0 +1,190 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "cherimoya-p2-wave-2-proposal-v1",
+  "identity": {
+    "canonicalSlug": "cherimoya",
+    "commonNameEn": "Cherimoya",
+    "acceptedScientificName": "Annona cherimola",
+    "aliases": [
+      "custard apple",
+      "Annona cherimola"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P2 proposal only. "
+  },
+  "sources": [
+    {
+      "sourceId": "ucanr-cherimoya",
+      "institution": "University of California Cooperative Extension",
+      "publisher": "University of California Cooperative Extension",
+      "title": "Cherimoya | Topics in Subtropics",
+      "url": "https://ucanr.edu/blog/topics-subtropics/article/cherimoya",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "cruvit-legacy-runtime-context",
+      "institution": "CRUVIT Legacy Catalog",
+      "publisher": "CRUVIT Legacy Catalog",
+      "title": "Existing CRUVIT runtime rule context",
+      "url": "urn:cruvit:legacy-runtime-context",
+      "authorityTier": "internal_legacy",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "cherimoya-frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ucanr-cherimoya"
+      ],
+      "shortExcerpt": "Requires a relatively frost-free environment; mature hardy varieties tolerate only short periods around 26°F.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "cherimoya-cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ucanr-cherimoya"
+      ],
+      "shortExcerpt": "Mature trees of hardy varieties tolerate short periods around 26°F; prolonged hard freeze is unsuitable.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "bounded-cold-statement-to-ordinal: short ~26F tolerance -> low"
+    },
+    {
+      "claimId": "cherimoya-heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ucanr-cherimoya"
+      ],
+      "shortExcerpt": "Sunny warmth is needed for flavor, but inland trees need protection from extremely hot temperatures and dry winds.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "cherimoya-humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ucanr-cherimoya"
+      ],
+      "shortExcerpt": "Cherimoya will not tolerate prolonged high humidity.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cherimoya-sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ucanr-cherimoya"
+      ],
+      "shortExcerpt": "A sunny location is needed because sufficient heat is required for good flavor.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cherimoya-water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ucanr-cherimoya"
+      ],
+      "shortExcerpt": "Good watering practices are important; soil should not become excessively dry or wet.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "cherimoya-drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ucanr-cherimoya"
+      ],
+      "shortExcerpt": "The most critical soil requirement is good drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cherimoya-flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Mild relatively frost-free conditions support flowering; hand pollination is commonly used to improve set.",
+      "sourceIds": [
+        "ucanr-cherimoya"
+      ],
+      "shortExcerpt": "The crop is normally hand pollinated; cherimoya requires a relatively frost-free environment.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cherimoya-fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Sunny mild conditions, good drainage, and reliable pollination are needed for fruit production.",
+      "sourceIds": [
+        "ucanr-cherimoya"
+      ],
+      "shortExcerpt": "Sunny warmth develops flavor; good drainage is critical and the crop is commonly hand pollinated.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cherimoya-tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "subtropical",
+        "fruit",
+        "tree",
+        "hand-pollination"
+      ],
+      "sourceIds": [
+        "ucanr-cherimoya"
+      ],
+      "shortExcerpt": "Catalog tags: subtropical, fruit, tree, hand-pollination",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "cherimoya-legacy-survivalVsThriveNotes",
+      "field": "survivalVsThriveNotes",
+      "status": "asserted",
+      "value": "Needs cool winters without hard freeze and warm frost-free summers; fruiting often needs pollination help.",
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "cherimoya-legacy-groupIds",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "humid-subtropical-fruit-tree",
+        "tropical-frost-sensitive-fruit"
+      ],
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING",
+    "searchQuery": "Annona cherimola Cherimoya"
+  },
+  "humanApproval": {
+    "approvedForIngest": false,
+    "approvedAt": null,
+    "note": "PROPOSAL_ONLY — Owner Review gate intentionally not satisfied."
+  }
+}

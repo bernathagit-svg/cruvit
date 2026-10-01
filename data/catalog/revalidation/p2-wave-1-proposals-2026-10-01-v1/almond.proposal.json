@@ -1,0 +1,219 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "almond-p2-wave-1-proposal-v1",
+  "identity": {
+    "canonicalSlug": "almond",
+    "commonNameEn": "Almond",
+    "acceptedScientificName": "Prunus dulcis",
+    "aliases": [
+      "almond tree",
+      "Prunus dulcis"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P2 full-catalog revalidation proposal. Source-backed facts plus explicitly labeled heuristic interpretations; not approved for ingest."
+  },
+  "sources": [
+    {
+      "sourceId": "usu-almond-treebrowser",
+      "institution": "Utah State University Extension",
+      "publisher": "Utah State University Extension",
+      "title": "Almond | TreeBrowser",
+      "url": "https://extension.usu.edu/treebrowser/catalog/almond",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "usu-almond-home",
+      "institution": "Utah State University Extension",
+      "publisher": "Utah State University Extension",
+      "title": "How to Grow Almonds in Your Garden",
+      "url": "https://extension.usu.edu/yardandgarden/research/almonds-in-the-home-garden",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "ucanr-almond-ipm",
+      "institution": "University of California Statewide IPM Program",
+      "publisher": "University of California Statewide IPM Program",
+      "title": "Cultural Tips for Growing Almond",
+      "url": "https://ipm.ucanr.edu/home-and-landscape/cultural-tips-for-growing-almond/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "cruvit-legacy-runtime-context",
+      "institution": "CRUVIT Legacy Catalog",
+      "publisher": "CRUVIT Legacy Catalog",
+      "title": "Existing CRUVIT runtime rule context",
+      "url": "urn:cruvit:legacy-runtime-context",
+      "authorityTier": "internal_legacy",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "almond-frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "usu-almond-home"
+      ],
+      "shortExcerpt": "Woody stems and branches can be damaged by extreme winter cold; spring frosts commonly damage flowers.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "almond-cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "usu-almond-treebrowser"
+      ],
+      "shortExcerpt": "Hardiness Zone 6-7.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "almond-heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "usu-almond-home"
+      ],
+      "shortExcerpt": "Almonds can be grown successfully in Utah’s warmest areas and are adapted to warm climates.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "almond-sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "usu-almond-home"
+      ],
+      "shortExcerpt": "Almonds need full sun.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "almond-water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "usu-almond-home"
+      ],
+      "shortExcerpt": "Mature trees benefit from less frequent, longer, deeper irrigation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "almond-drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "usu-almond-treebrowser"
+      ],
+      "shortExcerpt": "Prefers a light, well-drained soil.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "almond-chill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ucanr-almond-ipm"
+      ],
+      "shortExcerpt": "Almonds are adapted to areas with adequate chilling, about 400 to 500 hours below 45°F.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "almond-flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Early spring bloom; spring frost can damage flowers and reduce nut set.",
+      "sourceIds": [
+        "usu-almond-home"
+      ],
+      "shortExcerpt": "Almonds flower with or before peaches; spring frosts can damage flowers.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "almond-fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Reliable nut set requires compatible cross-pollination and avoidance of damaging spring frost.",
+      "sourceIds": [
+        "usu-almond-home"
+      ],
+      "shortExcerpt": "Most almonds are not self-fruitful; compatible pollen and bees are required, and frost can prevent fruiting.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "almond-tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "nut",
+        "tree",
+        "deciduous",
+        "orchard"
+      ],
+      "sourceIds": [
+        "usu-almond-treebrowser"
+      ],
+      "shortExcerpt": "Catalog tags: nut, tree, deciduous, orchard",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "almond-legacy-humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "almond-legacy-survivalVsThriveNotes",
+      "field": "survivalVsThriveNotes",
+      "status": "asserted",
+      "value": "Trees may grow in mild climates, but reliable nut set depends on adequate chill and dry ripening conditions.",
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "almond-legacy-groupIds",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "warm-dry-mediterranean-fruit",
+        "temperate-chill-fruit-tree"
+      ],
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING",
+    "searchQuery": "Prunus dulcis Almond"
+  },
+  "humanApproval": {
+    "approvedForIngest": false,
+    "approvedAt": null,
+    "note": "PROPOSAL_ONLY — Owner Review gate intentionally not satisfied."
+  }
+}
