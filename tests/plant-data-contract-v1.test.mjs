@@ -678,3 +678,31 @@ test('packet normalization derives provenance and preserves source-linked non-fr
   assert.equal(result.unknownOutcomes.includes('fruiting'), false);
   assert.equal(result.readinessShort, 'A');
 });
+
+test('broad scientific identities are explicit broad scope and cannot masquerade as Class A species', () => {
+  const broad = classifyPlantDataReadiness({
+    slug: 'demo-genus',
+    name: 'Demo Genus',
+    scientific: 'Demo spp.',
+    climateTraits: {
+      frostSensitivity: 'medium',
+      coldTolerance: 'medium',
+      heatTolerance: 'medium',
+      sunNeeds: 'full_sun',
+      waterNeeds: 'medium',
+      drainageNeeds: 'high',
+      humidityTolerance: 'medium',
+      floweringRequirements: 'Known only at broad identity scope.',
+      fruitingOutcomeApplicable: false,
+      traitEvidenceClasses: {
+        frostSensitivity: 'SOURCE_SUPPORTED',
+        coldTolerance: 'SOURCE_SUPPORTED',
+        heatTolerance: 'SOURCE_SUPPORTED',
+        humidityTolerance: 'SOURCE_SUPPORTED'
+      }
+    }
+  });
+  assert.equal(broad.identityScope, 'broad');
+  assert.notEqual(broad.readinessShort, 'A');
+  assert.ok(broad.reasons.includes(PLANT_DATA_REASON.SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A));
+});

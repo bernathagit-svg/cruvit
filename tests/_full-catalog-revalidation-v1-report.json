@@ -1,6 +1,6 @@
 {
   "contract": "cruvit-full-catalog-revalidation-v1",
-  "generatedAt": "2026-10-01T17:12:30.138Z",
+  "generatedAt": "2026-10-01T18:05:58.977Z",
   "runtime": {
     "total": 123,
     "counts": {
@@ -176,7 +176,8 @@
     "statusCounts": {
       "PASS_FULL": 93,
       "UNKNOWN_VALID": 11,
-      "RESEARCH_REQUIRED": 49,
+      "BROAD_IDENTITY_VALID": 12,
+      "RESEARCH_REQUIRED": 37,
       "CONTRADICTION": 0
     },
     "reasonFrequency": {
@@ -191,237 +192,115 @@
       "HUMIDITY_UNKNOWN": 47
     }
   },
-  "researchQueue": {
-    "total": 49,
-    "priorityCounts": {
-      "P0_IDENTITY_OR_CORE_BLOCK": 12,
-      "P1_REVIEW_HOLD": 22,
-      "P2_EVIDENCE_ENRICHMENT": 15
-    },
+  "broadIdentityQueue": {
+    "total": 12,
     "rows": [
       {
         "slug": "agapanthus",
-        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
-        "readiness": "D",
-        "gate": "REJECT",
-        "reasons": [
-          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
-          "MISSING_FROST_SENSITIVITY",
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "LEGACY_META_ONLY"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
+        "scientific": "Agapanthus spp.",
+        "identityScope": "broad",
+        "action": "SPECIES_SELECTION_REQUIRED_FOR_PRECISE_SUITABILITY",
+        "smartRecommendationPolicy": "BLOCK_POSITIVE_UNTIL_SPECIES_RESOLVED",
         "source": "RUNTIME_ONLY"
       },
       {
         "slug": "azalea",
-        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
-        "readiness": "D",
-        "gate": "REJECT",
-        "reasons": [
-          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
-          "MISSING_FROST_SENSITIVITY",
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "LEGACY_META_ONLY"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
+        "scientific": "Rhododendron spp.",
+        "identityScope": "broad",
+        "action": "SPECIES_SELECTION_REQUIRED_FOR_PRECISE_SUITABILITY",
+        "smartRecommendationPolicy": "BLOCK_POSITIVE_UNTIL_SPECIES_RESOLVED",
         "source": "RUNTIME_ONLY"
       },
       {
         "slug": "banana",
-        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
-        "readiness": "D",
-        "gate": "REJECT",
-        "reasons": [
-          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
-          "MISSING_FROST_SENSITIVITY",
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "LEGACY_META_ONLY"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
+        "scientific": "Musa spp.",
+        "identityScope": "broad",
+        "action": "SPECIES_SELECTION_REQUIRED_FOR_PRECISE_SUITABILITY",
+        "smartRecommendationPolicy": "BLOCK_POSITIVE_UNTIL_SPECIES_RESOLVED",
         "source": "RUNTIME_ONLY"
       },
       {
         "slug": "camellia",
-        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
-        "readiness": "D",
-        "gate": "REJECT",
-        "reasons": [
-          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
-          "MISSING_FROST_SENSITIVITY",
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "LEGACY_META_ONLY"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
+        "scientific": "Camellia spp.",
+        "identityScope": "broad",
+        "action": "SPECIES_SELECTION_REQUIRED_FOR_PRECISE_SUITABILITY",
+        "smartRecommendationPolicy": "BLOCK_POSITIVE_UNTIL_SPECIES_RESOLVED",
         "source": "RUNTIME_ONLY"
       },
       {
         "slug": "geranium",
-        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
-        "readiness": "D",
-        "gate": "REJECT",
-        "reasons": [
-          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
-          "MISSING_FROST_SENSITIVITY",
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "LEGACY_META_ONLY"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
+        "scientific": "Pelargonium spp.",
+        "identityScope": "broad",
+        "action": "SPECIES_SELECTION_REQUIRED_FOR_PRECISE_SUITABILITY",
+        "smartRecommendationPolicy": "BLOCK_POSITIVE_UNTIL_SPECIES_RESOLVED",
         "source": "RUNTIME_ONLY"
       },
       {
         "slug": "melaleuca",
-        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
-        "readiness": "D",
-        "gate": "REJECT",
-        "reasons": [
-          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
-          "MISSING_FROST_SENSITIVITY",
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "LEGACY_META_ONLY"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
+        "scientific": "Melaleuca spp.",
+        "identityScope": "broad",
+        "action": "SPECIES_SELECTION_REQUIRED_FOR_PRECISE_SUITABILITY",
+        "smartRecommendationPolicy": "BLOCK_POSITIVE_UNTIL_SPECIES_RESOLVED",
         "source": "RUNTIME_ONLY"
       },
       {
         "slug": "mulberry",
-        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
-        "readiness": "D",
-        "gate": "REJECT",
-        "reasons": [
-          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
-          "MISSING_FROST_SENSITIVITY",
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "LEGACY_META_ONLY"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
+        "scientific": "Morus spp.",
+        "identityScope": "broad",
+        "action": "SPECIES_SELECTION_REQUIRED_FOR_PRECISE_SUITABILITY",
+        "smartRecommendationPolicy": "BLOCK_POSITIVE_UNTIL_SPECIES_RESOLVED",
         "source": "RUNTIME_ONLY"
       },
       {
         "slug": "oak-tree",
-        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
-        "readiness": "B",
-        "gate": "PARTIAL",
-        "reasons": [
-          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
+        "scientific": "Quercus spp.",
+        "identityScope": "broad",
+        "action": "SPECIES_SELECTION_REQUIRED_FOR_PRECISE_SUITABILITY",
+        "smartRecommendationPolicy": "BLOCK_POSITIVE_UNTIL_SPECIES_RESOLVED",
         "source": "RUNTIME_ONLY"
       },
       {
         "slug": "orchid",
-        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
+        "scientific": "Phalaenopsis spp.",
+        "identityScope": "broad",
+        "action": "SPECIES_SELECTION_REQUIRED_FOR_PRECISE_SUITABILITY",
+        "smartRecommendationPolicy": "BLOCK_POSITIVE_UNTIL_SPECIES_RESOLVED",
         "source": "RUNTIME_ONLY"
       },
       {
         "slug": "pine-tree",
-        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
+        "scientific": "Pinus spp.",
+        "identityScope": "broad",
+        "action": "SPECIES_SELECTION_REQUIRED_FOR_PRECISE_SUITABILITY",
+        "smartRecommendationPolicy": "BLOCK_POSITIVE_UNTIL_SPECIES_RESOLVED",
         "source": "RUNTIME_ONLY"
       },
       {
         "slug": "rose",
-        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
+        "scientific": "Rosa spp.",
+        "identityScope": "broad",
+        "action": "SPECIES_SELECTION_REQUIRED_FOR_PRECISE_SUITABILITY",
+        "smartRecommendationPolicy": "BLOCK_POSITIVE_UNTIL_SPECIES_RESOLVED",
         "source": "RUNTIME_ONLY"
       },
       {
         "slug": "succulent",
-        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
-        "readiness": "D",
-        "gate": "REJECT",
-        "reasons": [
-          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
-          "MISSING_FROST_SENSITIVITY",
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "LEGACY_META_ONLY"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
+        "scientific": "Various succulent species",
+        "identityScope": "broad",
+        "action": "SPECIES_SELECTION_REQUIRED_FOR_PRECISE_SUITABILITY",
+        "smartRecommendationPolicy": "BLOCK_POSITIVE_UNTIL_SPECIES_RESOLVED",
         "source": "RUNTIME_ONLY"
-      },
+      }
+    ]
+  },
+  "researchQueue": {
+    "total": 37,
+    "priorityCounts": {
+      "P0_IDENTITY_OR_CORE_BLOCK": 0,
+      "P1_REVIEW_HOLD": 22,
+      "P2_EVIDENCE_ENRICHMENT": 15
+    },
+    "rows": [
       {
         "slug": "areca-palm",
         "priority": "P1_REVIEW_HOLD",
@@ -982,7 +861,7 @@
     {
       "slug": "agapanthus",
       "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
+      "status": "BROAD_IDENTITY_VALID",
       "readiness": "D",
       "gate": "REJECT",
       "reasons": [
@@ -1170,7 +1049,7 @@
     {
       "slug": "azalea",
       "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
+      "status": "BROAD_IDENTITY_VALID",
       "readiness": "D",
       "gate": "REJECT",
       "reasons": [
@@ -1194,7 +1073,7 @@
     {
       "slug": "banana",
       "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
+      "status": "BROAD_IDENTITY_VALID",
       "readiness": "D",
       "gate": "REJECT",
       "reasons": [
@@ -1501,7 +1380,7 @@
     {
       "slug": "camellia",
       "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
+      "status": "BROAD_IDENTITY_VALID",
       "readiness": "D",
       "gate": "REJECT",
       "reasons": [
@@ -2331,7 +2210,7 @@
     {
       "slug": "geranium",
       "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
+      "status": "BROAD_IDENTITY_VALID",
       "readiness": "D",
       "gate": "REJECT",
       "reasons": [
@@ -2911,7 +2790,7 @@
     {
       "slug": "melaleuca",
       "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
+      "status": "BROAD_IDENTITY_VALID",
       "readiness": "D",
       "gate": "REJECT",
       "reasons": [
@@ -3000,7 +2879,7 @@
     {
       "slug": "mulberry",
       "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
+      "status": "BROAD_IDENTITY_VALID",
       "readiness": "D",
       "gate": "REJECT",
       "reasons": [
@@ -3048,7 +2927,7 @@
     {
       "slug": "oak-tree",
       "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
+      "status": "BROAD_IDENTITY_VALID",
       "readiness": "B",
       "gate": "PARTIAL",
       "reasons": [
@@ -3145,7 +3024,7 @@
     {
       "slug": "orchid",
       "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
+      "status": "BROAD_IDENTITY_VALID",
       "readiness": "B",
       "gate": "HOLD",
       "reasons": [
@@ -3340,7 +3219,7 @@
     {
       "slug": "pine-tree",
       "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
+      "status": "BROAD_IDENTITY_VALID",
       "readiness": "B",
       "gate": "HOLD",
       "reasons": [
@@ -3623,7 +3502,7 @@
     {
       "slug": "rose",
       "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
+      "status": "BROAD_IDENTITY_VALID",
       "readiness": "B",
       "gate": "HOLD",
       "reasons": [
@@ -3923,7 +3802,7 @@
     {
       "slug": "succulent",
       "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
+      "status": "BROAD_IDENTITY_VALID",
       "readiness": "D",
       "gate": "REJECT",
       "reasons": [

@@ -157,12 +157,18 @@ export function resolvePlantScientific(plant = {}) {
   ).trim();
 }
 
-export function scientificIsAmbiguousForClassA(scientific) {
+export function resolvePlantIdentityScope(plantOrScientific = '') {
+  const scientific = typeof plantOrScientific === 'string'
+    ? plantOrScientific
+    : resolvePlantScientific(plantOrScientific);
   const s = String(scientific || '').trim();
-  if (!s) return true;
-  if (/\bspp\.?\b/i.test(s)) return true;
-  if (/^various\b/i.test(s)) return true;
-  return false;
+  if (!s) return 'unknown';
+  if (/\bspp\.?\b/i.test(s) || /^various\b/i.test(s)) return 'broad';
+  return 'species';
+}
+
+export function scientificIsAmbiguousForClassA(scientific) {
+  return resolvePlantIdentityScope(scientific) !== 'species';
 }
 
 export function getTraitEvidenceMap(plant = {}) {
@@ -363,6 +369,7 @@ export function classifyPlantDataReadiness(plant, options = {}) {
   const slug = resolvePlantSlug(plant);
   const commonName = resolvePlantCommonName(plant);
   const scientific = resolvePlantScientific(plant);
+  const identityScope = resolvePlantIdentityScope(scientific);
   const identityOk = !!slug && !!commonName && !!scientific;
   if (!identityOk) reasons.push(PLANT_DATA_REASON.IDENTITY_MISSING);
 
@@ -539,6 +546,7 @@ export function classifyPlantDataReadiness(plant, options = {}) {
     slug: slug || null,
     commonName: commonName || null,
     scientific: scientific || null,
+    identityScope,
     readiness,
     readinessShort,
     gate,

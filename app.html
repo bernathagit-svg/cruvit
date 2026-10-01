@@ -6907,6 +6907,12 @@ function smartRecEvaluateSuitability(p){
     if((levelRank[recommendationLevel]||0)>(levelRank[frostCap]||0)) recommendationLevel=frostCap;
   }
   if(!blocked&&catalogNeedsReview&&recommendationLevel==='excellent') recommendationLevel='good';
+  const broadIdentityScope=/\bspp\.?\b/i.test(String(p?.scientific||''))||/^various\b/i.test(String(p?.scientific||''));
+  if(broadIdentityScope){
+    positiveRecommendationEligible=false;
+    if(!blocked&&recommendationLevel!=='blocked') recommendationLevel='borderline';
+    smartRecAddUniqueMessage(warnings,'Select the exact species or cultivar before CRUVIT can make a positive suitability recommendation.');
+  }
   const explanationText=warnings[0]||meta.survivalVsThriveNotes||'';
   return {suitabilityScore,recommendationLevel,survivalFit,thriveFit,floweringFit,fruitingFit,warnings,explanationText,hardSurvivalBlocked,reproductiveClimateGate,positiveRecommendationEligible};
 }
