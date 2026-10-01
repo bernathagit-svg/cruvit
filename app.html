@@ -7854,7 +7854,7 @@ function compileSmartRecSessionFilters(answers){
     matchers.push(p=>{const t=textForSearch(p);return (p.tags||[]).some(x=>['tree','climber','hedge'].includes(String(x).toLowerCase()))||t.includes('screen')||t.includes('hedge')||t.includes('privacy');});
     labels.push(getSmartRecOptionLabel('q9','privacy'));
   }else if(a.q9==='shade'){
-    matchers.push(p=>{const t=textForSearch(p);return (p.tags||[]).some(x=>String(x).toLowerCase()==='tree')||t.includes('tree')||t.includes('shade');});
+    matchers.push(p=>{const t=textForSearch(p);const tags=(p.tags||[]).map(x=>String(x).toLowerCase());return tags.some(x=>['tree','palm','climber','vine'].includes(x))||t.includes('shade tree')||t.includes('canopy')||t.includes('pergola')||t.includes('large tree');});
     labels.push(getSmartRecOptionLabel('q9','shade'));
   }else if(a.q9==='wildlife'){
     matchers.push(p=>{const t=textForSearch(p);return (p.tags||[]).some(x=>['flowering','fragrant','color'].includes(String(x).toLowerCase()))||t.includes('pollinator')||t.includes('wildlife')||t.includes('nectar');});
