@@ -22,14 +22,14 @@ const bootstrap=[...bootstrapRecords.keys()];
 const safe=getBootstrapSafeClimateTraitsMigrationPayload(),unlocked=getBootstrapUnlockedSixClimateTraitsMigrationPayload();
 const ALIAS_TO_CANONICAL=Object.freeze({
   'apple-tree':'apple','pear-tree':'pear','peach-tree':'peach','plum-tree':'plum','fig-tree':'fig','grape-vine':'grapevine','passion-fruit':'passionfruit',
-  'english-lavender':'lavender','spearmint':'mint','common-jasmine':'jasmine','bigleaf-hydrangea':'hydrangea','lesser-bougainvillea':'bougainvillea','bell-pepper':'sweet-pepper'
+  'english-lavender':'lavender','spearmint':'mint','common-jasmine':'jasmine','bigleaf-hydrangea':'hydrangea','lesser-bougainvillea':'bougainvillea','bell-pepper':'sweet-pepper','sweet-orange':'orange'
 });
 const canonicalSlug=(slug)=>ALIAS_TO_CANONICAL[String(slug||'').trim().toLowerCase()]||String(slug||'').trim().toLowerCase();
 const runtimeBy=new Map();
 for(const slug of bootstrap){const m=safe.plants[slug]||unlocked.plants[slug],raw=bootstrapRecords.get(slug)||{};runtimeBy.set(slug,{slug,name:m?.name||raw.name||slug,scientific:m?.scientific||raw.scientific||'Various bootstrap species',aliases:m?.aliases||[],_source:'bootstrap'});}
 applyAllBootstrapStructuralClimateTraitsMigrations([...runtimeBy.values()],Object.fromEntries(runtimeBy));
 for(const p of seed){const slug=String(p.slug||'').toLowerCase();if(slug)runtimeBy.set(slug,{...p,_source:'seed'});}
-function walk(dir,out=[]){for(const e of fs.readdirSync(dir,{withFileTypes:true})){const fp=path.join(dir,e.name);if(e.isDirectory())walk(fp,out);else if(e.name.endsWith('.packet.json'))out.push(fp);}return out;}
+function walk(dir,out=[]){for(const e of fs.readdirSync(dir,{withFileTypes:true})){const fp=path.join(dir,e.name);if(e.isDirectory())walk(fp,out);else if(e.name.endsWith('.packet.json')||e.name==='packet.json')out.push(fp);}return out;}
 const packetFiles=walk(path.join(ROOT,'data/catalog-expansion'));
 const packetBy=new Map(),packetMetaByNative=new Map(),packetContradictionByNative=new Map();for(const file of packetFiles){
   const packet=JSON.parse(fs.readFileSync(file,'utf8').replace(/^\uFEFF/,''));

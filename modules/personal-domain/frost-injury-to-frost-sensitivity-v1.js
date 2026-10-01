@@ -8,12 +8,13 @@ import { EVIDENCE_CLASS } from './plant-data-contract-v1.js';
 import { HARDINESS_CLAIM_TYPE } from './hardiness-evidence-claims-v1.js';
 
 export const FROST_INJURY_TO_FROST_SENSITIVITY_ID = 'frost-injury-to-frost-sensitivity-v1';
-export const FROST_INJURY_TO_FROST_SENSITIVITY_VERSION = '1.0.0';
+export const FROST_INJURY_TO_FROST_SENSITIVITY_VERSION = '1.1.0';
 export const FROST_INJURY_TO_FROST_SENSITIVITY_REF = `${FROST_INJURY_TO_FROST_SENSITIVITY_ID}@${FROST_INJURY_TO_FROST_SENSITIVITY_VERSION}`;
 
 export const FROST_INJURY_REASON = Object.freeze({
   INJURY_MAPPED: 'frost_injury_mapped_to_frost_sensitivity',
   LATE_FROST_INSUFFICIENT_ALONE: 'late_frost_blossom_risk_needs_more_evidence',
+  STAGE_SPECIFIC_INSUFFICIENT_ALONE: 'stage_specific_frost_injury_needs_more_evidence_for_whole_plant',
   UNSUPPORTED_CLAIM: 'unsupported_or_missing_frost_injury_claim',
   ZONE_NOT_ACCEPTED: 'hardiness_zone_not_accepted_as_frost_injury'
 });
@@ -62,6 +63,17 @@ export function applyFrostInjuryToFrostSensitivity(sourceClaim) {
     };
   }
 
+  if (sourceClaim.injuryScope === 'stage_specific') {
+    return {
+      ok: false,
+      transformId,
+      transformVersion,
+      transformRef,
+      outputs: [],
+      reasons: [FROST_INJURY_REASON.STAGE_SPECIFIC_INSUFFICIENT_ALONE]
+    };
+  }
+
   const mapped = mapFrostDamageModeToSensitivity(sourceClaim.damageMode);
   if (!mapped.ok) {
     return {
@@ -91,6 +103,8 @@ export function applyFrostInjuryToFrostSensitivity(sourceClaim) {
         sourceClaimRef: {
           claimType: sourceClaim.claimType,
           damageMode: sourceClaim.damageMode,
+          injuryScope: sourceClaim.injuryScope || 'whole_plant_or_unspecified',
+          affectedStage: sourceClaim.affectedStage || null,
           minimumWinterTemperatureF: sourceClaim.minimumWinterTemperatureF ?? null,
           claimFingerprint: sourceClaim.claimFingerprint
         }
@@ -110,7 +124,7 @@ export const FROST_INJURY_TO_FROST_SENSITIVITY_CONTRACT = Object.freeze({
   outputFields: ['frostSensitivity'],
   nonInput: ['usda_hardiness_zone_band'],
   applicability:
-    'Explicit frost injury / kill / tender / sensitive wording with identity match. Hardiness zone alone is rejected.',
+    'Explicit whole-plant or unspecified frost injury / kill / tender / sensitive wording with identity match. Stage-specific young-growth, blossom, flower, bud, or fruit injury is preserved as evidence but cannot set whole-plant frostSensitivity. Hardiness zone alone is rejected.',
   mapping: Object.freeze({
     frost_tender: 'very_high',
     killed_to_ground: 'high',

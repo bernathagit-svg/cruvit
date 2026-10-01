@@ -197,6 +197,9 @@ export function extractFrostInjuryClaim(text) {
   let damageMode = null;
   let minimumWinterTemperatureF = null;
   let claimType = HARDINESS_CLAIM_TYPE.FROST_INJURY_STATEMENT;
+  const stageMatch = excerpt.match(/\b(?:young|new(?:ly developing)?|emerging)\s+(shoots?|leaves?|growth|foliage|buds?)\b|\b(blossoms?|flowers?|flower buds?|fruit(?:lets?)?)\b/i);
+  const injuryScope = stageMatch ? 'stage_specific' : 'whole_plant_or_unspecified';
+  const affectedStage = stageMatch ? String(stageMatch[1] || stageMatch[2] || 'stage_specific').toLowerCase() : null;
 
   const kill = excerpt.match(
     /killed to the ground[^0-9]{0,40}(?:below|under)?\s*(-?\d+)\s*(?:&deg;|°)?\s*F/i
@@ -226,6 +229,8 @@ export function extractFrostInjuryClaim(text) {
   return {
     claimType,
     damageMode,
+    injuryScope,
+    affectedStage,
     minimumWinterTemperatureF,
     temperatureUnit: minimumWinterTemperatureF != null ? 'F' : null,
     rawValue: damageMode,
@@ -238,6 +243,8 @@ export function extractFrostInjuryClaim(text) {
       JSON.stringify({
         t: claimType,
         mode: damageMode,
+        scope: injuryScope,
+        stage: affectedStage,
         f: minimumWinterTemperatureF
       })
     )

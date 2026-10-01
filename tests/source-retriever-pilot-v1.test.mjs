@@ -236,11 +236,11 @@ test('helpers: license digits do not pollute zones; frost injury extract', () =>
   assert.equal(zoneAsFrost.ok, false);
 });
 
-test('simulation: cold-only authorized leaves readiness B', () => {
+test('simulation: source-supported cold upgrades otherwise complete plant from B to A', () => {
   const built = builtFrom(appleHtml);
   const sim = simulateReadinessWithCandidates(currentPlant, built.fieldPackets);
   assert.equal(sim.current.readinessShort, 'B');
-  assert.equal(sim.simulated.readinessShort, 'B');
+  assert.equal(sim.simulated.readinessShort, 'A');
   assert.equal(sim.fieldsAppliedInSimulation, 1);
 });
 
