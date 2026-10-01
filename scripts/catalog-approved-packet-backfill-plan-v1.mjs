@@ -26,7 +26,7 @@ function walk(dir,out=[]){
   for(const ent of fs.readdirSync(dir,{withFileTypes:true})){
     const p=path.join(dir,ent.name);
     if(ent.isDirectory()) walk(p,out);
-    else if(ent.isFile() && ent.name.endsWith('.packet.json')) out.push(p);
+    else if(ent.isFile() && (ent.name.endsWith('.packet.json')||ent.name==='packet.json')) out.push(p);
   }
   return out;
 }

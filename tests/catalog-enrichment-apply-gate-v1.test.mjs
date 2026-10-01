@@ -21,7 +21,7 @@ import { EVIDENCE_CLASS, VALUE_ORIGIN, classifyPlantDataReadiness } from '../mod
 import { candidatePacketFingerprint } from '../modules/personal-domain/source-retriever-pilot-v1.js';
 import { applyAllBootstrapStructuralClimateTraitsMigrations } from '../modules/personal-domain/bootstrap-safe-climate-traits-migration-v1.js';
 import { HARDINESS_ZONE_TO_COLD_TRAITS_REF, HARDINESS_ZONE_TO_COLD_TRAITS_VERSION } from '../modules/personal-domain/hardiness-zone-to-cold-traits-v1.js';
-import { FROST_INJURY_TO_FROST_SENSITIVITY_REF } from '../modules/personal-domain/frost-injury-to-frost-sensitivity-v1.js';
+import { FROST_INJURY_TO_FROST_SENSITIVITY_REF, FROST_INJURY_TO_FROST_SENSITIVITY_VERSION } from '../modules/personal-domain/frost-injury-to-frost-sensitivity-v1.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..');
@@ -76,7 +76,6 @@ test('gate ref frozen + current transforms registered', () => {
   assert.equal(CATALOG_ENRICHMENT_APPLY_GATE_REF, 'catalog-enrichment-apply-gate-v1@1.0.0');
   assert.ok(APPROVED_TRANSFORMS[HARDINESS_ZONE_TO_COLD_TRAITS_REF]);
   assert.ok(APPROVED_TRANSFORMS[FROST_INJURY_TO_FROST_SENSITIVITY_REF]);
-  assert.ok(APPROVED_TRANSFORMS['frost-injury-to-frost-sensitivity-v1@1.0.0']);
   assert.equal(FUTURE_ATOMIC_WRITE_SPEC.executed, false);
 });
 
@@ -131,6 +130,7 @@ test('5. invalid evidence lineage → blocked', () => {
   const fp = structuredClone(
     pomPacket.fieldPackets.find((f) => f.targetField === 'frostSensitivity')
   );
+  fp.transformVersion = FROST_INJURY_TO_FROST_SENSITIVITY_VERSION;
   fp.evidenceLineage = 'MADE_UP';
   const r = evaluateCandidateForApply(fp, {
     plant: pomPlant,
@@ -146,7 +146,8 @@ test('6. conflicting SS current value → HOLD', () => {
   plant.climateTraits.frostSensitivity = 'very_low';
   plant.climateTraits.traitEvidenceClasses.frostSensitivity = EVIDENCE_CLASS.SOURCE_SUPPORTED;
   plant.climateTraits.fieldOrigins.frostSensitivity = VALUE_ORIGIN.ASSERTED_SOURCE;
-  const fp = pomPacket.fieldPackets.find((f) => f.targetField === 'frostSensitivity');
+  const fp = structuredClone(pomPacket.fieldPackets.find((f) => f.targetField === 'frostSensitivity'));
+  fp.transformVersion = FROST_INJURY_TO_FROST_SENSITIVITY_VERSION;
   const r = evaluateCandidateForApply(fp, {
     plant,
     packet: pomPacket,

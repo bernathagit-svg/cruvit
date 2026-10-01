@@ -1,6 +1,6 @@
 {
   "contract": "cruvit-full-catalog-revalidation-v1",
-  "generatedAt": "2026-10-01T18:28:36.087Z",
+  "generatedAt": "2026-10-01T18:54:20.946Z",
   "runtime": {
     "total": 123,
     "counts": {
@@ -15,26 +15,26 @@
       "HOLD": 26,
       "REJECT": 13
     },
-    "canonicalUnique": 123
+    "canonicalUnique": 122
   },
   "packets": {
-    "files": 111,
-    "unique": 111,
+    "files": 112,
+    "unique": 112,
     "counts": {
-      "A": 111,
+      "A": 112,
       "B": 0,
       "C": 0,
       "D": 0
     },
     "gates": {
-      "PASS": 111,
+      "PASS": 112,
       "PARTIAL": 0,
       "HOLD": 0,
       "REJECT": 0
     },
-    "canonicalUnique": 111,
+    "canonicalUnique": 112,
     "canonicalCounts": {
-      "A": 111,
+      "A": 112,
       "B": 0,
       "C": 0,
       "D": 0
@@ -42,9 +42,9 @@
     "realContradictionHolds": []
   },
   "coverage": {
-    "unifiedUnique": 153,
-    "overlap": 81,
-    "runtimeOnlyCount": 42,
+    "unifiedUnique": 152,
+    "overlap": 82,
+    "runtimeOnlyCount": 40,
     "packetOnlyCount": 30,
     "runtimeOnly": [
       "agapanthus",
@@ -55,7 +55,6 @@
       "banana",
       "basil",
       "black-eyed-susan-vine",
-      "cacao",
       "camellia",
       "cherimoya",
       "coconut",
@@ -79,7 +78,6 @@
       "mulberry",
       "oak-tree",
       "olive",
-      "orange",
       "orchid",
       "passionfruit",
       "pine-tree",
@@ -135,36 +133,37 @@
       "common-jasmine": "jasmine",
       "bigleaf-hydrangea": "hydrangea",
       "lesser-bougainvillea": "bougainvillea",
-      "bell-pepper": "sweet-pepper"
+      "bell-pepper": "sweet-pepper",
+      "sweet-orange": "orange"
     }
   },
   "unified": {
     "counts": {
-      "A": 115,
-      "B": 30,
+      "A": 116,
+      "B": 28,
       "C": 0,
       "D": 8
     },
     "gates": {
-      "PASS": 115,
-      "PARTIAL": 27,
+      "PASS": 116,
+      "PARTIAL": 25,
       "HOLD": 3,
       "REJECT": 8
     },
     "statusCounts": {
-      "PASS_FULL": 115,
+      "PASS_FULL": 116,
       "UNKNOWN_VALID": 11,
       "BROAD_IDENTITY_VALID": 12,
-      "RESEARCH_REQUIRED": 15,
+      "RESEARCH_REQUIRED": 13,
       "CONTRADICTION": 0
     },
     "reasonFrequency": {
-      "COMPLETE_FOR_CLASS_A": 115,
+      "COMPLETE_FOR_CLASS_A": 116,
       "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A": 12,
       "MISSING_FROST_SENSITIVITY": 8,
       "FLOWERING_REQUIREMENTS_MISSING": 19,
       "FRUITING_REQUIREMENTS_MISSING": 26,
-      "MISSING_TRAIT_EVIDENCE": 21,
+      "MISSING_TRAIT_EVIDENCE": 20,
       "LEGACY_META_ONLY": 8,
       "HUMIDITY_UNKNOWN": 47,
       "NEEDS_REVIEW": 3
@@ -272,26 +271,15 @@
     ]
   },
   "researchQueue": {
-    "total": 15,
+    "total": 13,
     "priorityCounts": {
       "P0_IDENTITY_OR_CORE_BLOCK": 0,
       "P1_REVIEW_HOLD": 0,
-      "P2_EVIDENCE_ENRICHMENT": 15
+      "P2_EVIDENCE_ENRICHMENT": 13
     },
     "rows": [
       {
         "slug": "almond",
-        "priority": "P2_EVIDENCE_ENRICHMENT",
-        "readiness": "B",
-        "gate": "PARTIAL",
-        "reasons": [
-          "MISSING_TRAIT_EVIDENCE"
-        ],
-        "unknownOutcomes": [],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "cacao",
         "priority": "P2_EVIDENCE_ENRICHMENT",
         "readiness": "B",
         "gate": "PARTIAL",
@@ -395,15 +383,6 @@
       },
       {
         "slug": "mandarin",
-        "priority": "P2_EVIDENCE_ENRICHMENT",
-        "readiness": "B",
-        "gate": "PARTIAL",
-        "reasons": [],
-        "unknownOutcomes": [],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "orange",
         "priority": "P2_EVIDENCE_ENRICHMENT",
         "readiness": "B",
         "gate": "PARTIAL",
@@ -977,19 +956,26 @@
     },
     {
       "slug": "cacao",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "PARTIAL",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "MISSING_TRAIT_EVIDENCE"
+        "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "cacao"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/packets/cacao-theobroma-cacao-v1/packet.json",
+          "packetId": "cacao-theobroma-cacao-v1",
+          "forceReview": false,
+          "nativeSlug": "cacao"
+        }
+      ]
     },
     {
       "slug": "camellia",
@@ -2633,17 +2619,27 @@
     },
     {
       "slug": "orange",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "PARTIAL",
-      "reasons": [],
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
       "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
-        "orange"
+        "orange",
+        "sweet-orange"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/sweet-orange.packet.json",
+          "packetId": "sweet-orange-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "sweet-orange"
+        }
+      ]
     },
     {
       "slug": "orchid",
@@ -3506,29 +3502,6 @@
           "packetId": "sweet-cherry-bulk-batch-1-v1",
           "forceReview": false,
           "nativeSlug": "sweet-cherry"
-        }
-      ]
-    },
-    {
-      "slug": "sweet-orange",
-      "source": "PACKET_OVERLAY_RUNTIME",
-      "status": "PASS_FULL",
-      "readiness": "A",
-      "gate": "PASS",
-      "reasons": [
-        "COMPLETE_FOR_CLASS_A"
-      ],
-      "unknownOutcomes": [],
-      "realContradiction": false,
-      "runtimeAliases": [
-        "sweet-orange"
-      ],
-      "packet": [
-        {
-          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/sweet-orange.packet.json",
-          "packetId": "sweet-orange-bulk-batch-3-v1",
-          "forceReview": false,
-          "nativeSlug": "sweet-orange"
         }
       ]
     },

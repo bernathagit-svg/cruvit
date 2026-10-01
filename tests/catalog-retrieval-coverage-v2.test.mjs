@@ -209,3 +209,30 @@ test('11. experiment fingerprint stable for same 10 + baseline commit', () => {
   assert.equal(a, b);
   assert.match(a, /^[a-f0-9]{64}$/);
 });
+
+test('stage-specific frost injury cannot set whole-plant frostSensitivity', () => {
+  const kiwi = extractFrostInjuryClaim(
+    'In spring, young shoots are very frost tender and late frosts may damage new growth.'
+  );
+  assert.ok(kiwi);
+  assert.equal(kiwi.injuryScope, 'stage_specific');
+  assert.match(String(kiwi.affectedStage), /shoot/);
+  const kiwiXf = applyFrostInjuryToFrostSensitivity(kiwi);
+  assert.equal(kiwiXf.ok, false);
+  assert.ok(kiwiXf.reasons.includes('stage_specific_frost_injury_needs_more_evidence_for_whole_plant'));
+
+  const maple = extractFrostInjuryClaim(
+    'Young leaves are sensitive to frost and late frost damage can occur.'
+  );
+  assert.ok(maple);
+  assert.equal(maple.injuryScope, 'stage_specific');
+  assert.match(String(maple.affectedStage), /leav/);
+  assert.equal(applyFrostInjuryToFrostSensitivity(maple).ok, false);
+
+  const wholePlant = extractFrostInjuryClaim(
+    'The plant is frost tender and should be protected from freezing temperatures.'
+  );
+  assert.ok(wholePlant);
+  assert.equal(wholePlant.injuryScope, 'whole_plant_or_unspecified');
+  assert.equal(applyFrostInjuryToFrostSensitivity(wholePlant).ok, true);
+});
