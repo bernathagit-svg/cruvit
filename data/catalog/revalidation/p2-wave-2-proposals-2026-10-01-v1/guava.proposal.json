@@ -1,0 +1,199 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "guava-p2-wave-2-proposal-v1",
+  "identity": {
+    "canonicalSlug": "guava",
+    "commonNameEn": "Guava Tree",
+    "acceptedScientificName": "Psidium guajava",
+    "aliases": [
+      "common guava",
+      "Psidium guajava"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P2 proposal only. "
+  },
+  "sources": [
+    {
+      "sourceId": "rhs-psidium-guajava",
+      "institution": "Royal Horticultural Society",
+      "publisher": "Royal Horticultural Society",
+      "title": "Psidium guajava (F) | common guava",
+      "url": "https://www.rhs.org.uk/plants/21375/psidium-guajava-f/details",
+      "authorityTier": "horticultural_society",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "uf-ifas-guava",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida IFAS Extension",
+      "title": "Guava Growing in the Florida Home Landscape",
+      "url": "https://edis.ifas.ufl.edu/publication/MG045",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "cruvit-legacy-runtime-context",
+      "institution": "CRUVIT Legacy Catalog",
+      "publisher": "CRUVIT Legacy Catalog",
+      "title": "Existing CRUVIT runtime rule context",
+      "url": "urn:cruvit:legacy-runtime-context",
+      "authorityTier": "internal_legacy",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "guava-frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-guava"
+      ],
+      "shortExcerpt": "Young guava may be killed at 27–28°F; lower temperatures can damage or kill stems, limbs and trunk.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "guava-cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "rhs-psidium-guajava"
+      ],
+      "shortExcerpt": "RHS hardiness H2: tolerant of low temperatures but not surviving being frozen.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "guava-heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-guava"
+      ],
+      "shortExcerpt": "Ideal growth and production temperatures are 73–82°F; guava is adapted to warm subtropical to tropical climates.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "guava-humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "uf-ifas-guava"
+      ],
+      "shortExcerpt": "Warm subtropical/tropical adaptation supports a moderate humidity stance without inventing a numeric threshold.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "guava-sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "rhs-psidium-guajava"
+      ],
+      "shortExcerpt": "Position: Full sun.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "guava-water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-psidium-guajava"
+      ],
+      "shortExcerpt": "Moist but well-drained growing conditions.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "guava-drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "rhs-psidium-guajava"
+      ],
+      "shortExcerpt": "Moist but well-drained soil is specified.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "guava-flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Warm, bright conditions and low freeze risk support flowering.",
+      "sourceIds": [
+        "rhs-psidium-guajava",
+        "uf-ifas-guava"
+      ],
+      "shortExcerpt": "Flowers may be produced year-round on new shoots; cold and drought slow or stop growth.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "guava-fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Reliable fruit production needs warm subtropical/tropical conditions and protection from damaging cold.",
+      "sourceIds": [
+        "uf-ifas-guava"
+      ],
+      "shortExcerpt": "Guava is adapted to warm subtropical/tropical climates; damaging cold can kill productive wood.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "guava-tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "fruit",
+        "tree",
+        "subtropical",
+        "edible"
+      ],
+      "sourceIds": [
+        "rhs-psidium-guajava"
+      ],
+      "shortExcerpt": "Catalog tags: fruit, tree, subtropical, edible",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "guava-legacy-survivalVsThriveNotes",
+      "field": "survivalVsThriveNotes",
+      "status": "asserted",
+      "value": "May survive in protected warm sites, but thriving and reliable fruiting are much narrower than a simple warm-climate tag suggests.",
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "guava-legacy-groupIds",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "tropical-frost-sensitive-fruit"
+      ],
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING",
+    "searchQuery": "Psidium guajava Guava Tree"
+  },
+  "humanApproval": {
+    "approvedForIngest": false,
+    "approvedAt": null,
+    "note": "PROPOSAL_ONLY — Owner Review gate intentionally not satisfied."
+  }
+}

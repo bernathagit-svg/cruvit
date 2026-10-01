@@ -1,0 +1,215 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "grapevine-p2-wave-1-proposal-v1",
+  "identity": {
+    "canonicalSlug": "grapevine",
+    "commonNameEn": "Grapevine",
+    "acceptedScientificName": "Vitis vinifera",
+    "aliases": [
+      "common grape",
+      "wine grape",
+      "Vitis vinifera"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P2 full-catalog revalidation proposal. Source-backed facts plus explicitly labeled heuristic interpretations; not approved for ingest."
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-vitis-vinifera",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Vitis vinifera",
+      "url": "https://plants.ces.ncsu.edu/plants/vitis-vinifera/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "cruvit-legacy-runtime-context",
+      "institution": "CRUVIT Legacy Catalog",
+      "publisher": "CRUVIT Legacy Catalog",
+      "title": "Existing CRUVIT runtime rule context",
+      "url": "urn:cruvit:legacy-runtime-context",
+      "authorityTier": "internal_legacy",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "grape-frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-vitis-vinifera"
+      ],
+      "shortExcerpt": "Vines should be protected from winter winds and frost; spring frost risk affects new shoots and production.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "grape-cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-vitis-vinifera"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 6a through 10b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "grape-heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-vitis-vinifera"
+      ],
+      "shortExcerpt": "Hot and humid summers negatively affect fruit production; heat fit is retained conservatively as medium.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "grape-humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-vitis-vinifera"
+      ],
+      "shortExcerpt": "Hot and humid summers negatively affect fruit production and disease pressure is frequent.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "grape-sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-vitis-vinifera"
+      ],
+      "shortExcerpt": "The common grape prefers full sun.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "grape-water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-vitis-vinifera"
+      ],
+      "shortExcerpt": "Soil Drainage includes Moist and Occasionally Dry; water need retained as moderate.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "grape-drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-vitis-vinifera"
+      ],
+      "shortExcerpt": "The common grape prefers well-drained soil.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "grape-flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Spring flowering performs best with full sun, air circulation, and low frost exposure.",
+      "sourceIds": [
+        "ncsu-vitis-vinifera"
+      ],
+      "shortExcerpt": "Numerous tiny flowers bloom in spring; the vine prefers full sun, good circulation and frost-protected sites.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "grape-fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Reliable fruit production needs full sun, well-drained soil, support/training, and avoidance of hot-humid disease pressure.",
+      "sourceIds": [
+        "ncsu-vitis-vinifera"
+      ],
+      "shortExcerpt": "Hot and humid summers negatively affect fruit production; support and training should be provided.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "grape-tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "fruit",
+        "vine",
+        "climber",
+        "edible"
+      ],
+      "sourceIds": [
+        "ncsu-vitis-vinifera"
+      ],
+      "shortExcerpt": "Catalog tags: fruit, vine, climber, edible",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "grapevine-legacy-survivalVsThriveNotes",
+      "field": "survivalVsThriveNotes",
+      "status": "asserted",
+      "value": "Needs a fence, wall, pole, trellis, or similar support instead of open-lawn placement.",
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "grapevine-legacy-groupIds",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "warm-dry-mediterranean-fruit",
+        "support-dependent-plant"
+      ],
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "grapevine-legacy-hardBlockRules",
+      "field": "hardBlockRules",
+      "status": "asserted",
+      "value": [
+        "needs-support"
+      ],
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "grapevine-legacy-needsDrySeason",
+      "field": "needsDrySeason",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING",
+    "searchQuery": "Vitis vinifera Grapevine"
+  },
+  "humanApproval": {
+    "approvedForIngest": false,
+    "approvedAt": null,
+    "note": "PROPOSAL_ONLY — Owner Review gate intentionally not satisfied."
+  }
+}

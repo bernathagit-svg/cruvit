@@ -622,7 +622,11 @@ export function normalizeBatch3PacketForClassification(packet) {
     'floweringRequirements',
     'fruitingRequirements',
     'needsWinterChill',
-    'groupIds'
+    'survivalVsThriveNotes',
+    'groupIds',
+    'hardBlockRules',
+    'needsDrySeason',
+    'warningFlags'
   ]) {
     const c = byField[field];
     if (!c) continue;

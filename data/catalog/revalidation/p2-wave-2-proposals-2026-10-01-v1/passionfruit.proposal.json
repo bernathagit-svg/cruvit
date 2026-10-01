@@ -1,0 +1,214 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "passionfruit-p2-wave-2-proposal-v1",
+  "identity": {
+    "canonicalSlug": "passionfruit",
+    "commonNameEn": "Passionfruit Vine",
+    "acceptedScientificName": "Passiflora edulis",
+    "aliases": [
+      "purple granadilla",
+      "passion fruit",
+      "Passiflora edulis"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P2 proposal only. "
+  },
+  "sources": [
+    {
+      "sourceId": "rhs-passiflora-edulis",
+      "institution": "Royal Horticultural Society",
+      "publisher": "Royal Horticultural Society",
+      "title": "Passiflora edulis (F) | purple granadilla",
+      "url": "https://www.rhs.org.uk/plants/69583/passiflora-edulis-f/details",
+      "authorityTier": "horticultural_society",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "uf-ifas-passionfruit",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida IFAS Extension",
+      "title": "The Passion Fruit in Florida",
+      "url": "https://edis.ifas.ufl.edu/publication/HS1406",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "cruvit-legacy-runtime-context",
+      "institution": "CRUVIT Legacy Catalog",
+      "publisher": "CRUVIT Legacy Catalog",
+      "title": "Existing CRUVIT runtime rule context",
+      "url": "urn:cruvit:legacy-runtime-context",
+      "authorityTier": "internal_legacy",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "passion-frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "very_high",
+      "sourceIds": [
+        "uf-ifas-passionfruit"
+      ],
+      "shortExcerpt": "Young plants should be planted after frost risk; cold below about 50°F is a management concern and freezing exposure requires protection.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "passion-cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "rhs-passiflora-edulis"
+      ],
+      "shortExcerpt": "RHS hardiness H1A for Passiflora edulis.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "passion-heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "uf-ifas-passionfruit"
+      ],
+      "shortExcerpt": "Best growth temperatures are warm; planting guidance avoids temperatures above about 90°F during establishment.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "passion-humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "uf-ifas-passionfruit"
+      ],
+      "shortExcerpt": "Florida culture supports moderate humid-condition tolerance without a numeric humidity threshold.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "passion-sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "uf-ifas-passionfruit"
+      ],
+      "shortExcerpt": "Passion fruit grows best in full sun or where vines can reach full sun after climbing.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "passion-water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "uf-ifas-passionfruit"
+      ],
+      "shortExcerpt": "Irrigation is needed during dry periods; moderate drought tolerance is reported in landscape guidance.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "passion-drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-passionfruit"
+      ],
+      "shortExcerpt": "Passion fruit vines should be planted in well-drained soils.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "passion-flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Warm bright conditions, full sun, support, and protection from cold favor flowering.",
+      "sourceIds": [
+        "uf-ifas-passionfruit"
+      ],
+      "shortExcerpt": "Full sun is recommended; cold/frost exposure is avoided for young plants.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "passion-fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Reliable fruiting needs warmth, full sun, regular water, trellis support, and frost protection.",
+      "sourceIds": [
+        "uf-ifas-passionfruit"
+      ],
+      "shortExcerpt": "Full sun, well-drained soil and irrigation are recommended; fruit ripens about 70–80 days after pollination.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "passion-tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "fruit",
+        "vine",
+        "climber",
+        "edible",
+        "support"
+      ],
+      "sourceIds": [
+        "rhs-passiflora-edulis"
+      ],
+      "shortExcerpt": "Catalog tags: fruit, vine, climber, edible, support",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "passionfruit-legacy-survivalVsThriveNotes",
+      "field": "survivalVsThriveNotes",
+      "status": "asserted",
+      "value": "Needs a fence, wall, pole, trellis, or similar support instead of open-lawn placement.",
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "passionfruit-legacy-groupIds",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "subtropical-fruiting-climber",
+        "support-dependent-plant"
+      ],
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "passionfruit-legacy-hardBlockRules",
+      "field": "hardBlockRules",
+      "status": "asserted",
+      "value": [
+        "needs-support"
+      ],
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING",
+    "searchQuery": "Passiflora edulis Passionfruit Vine"
+  },
+  "humanApproval": {
+    "approvedForIngest": false,
+    "approvedAt": null,
+    "note": "PROPOSAL_ONLY — Owner Review gate intentionally not satisfied."
+  }
+}

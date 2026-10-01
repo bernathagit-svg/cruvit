@@ -1,0 +1,596 @@
+{
+  "contract": "cruvit-p2-owner-review-summary-v1",
+  "createdAt": "2026-10-01",
+  "proposalCount": 13,
+  "allClassA": true,
+  "allOwnerUnapproved": true,
+  "allMaterialize": true,
+  "contradictionHoldCount": 0,
+  "changedPlantCount": 13,
+  "rows": [
+    {
+      "slug": "almond",
+      "readiness": "A",
+      "gate": "PASS",
+      "approvedForIngest": false,
+      "contradictionHold": false,
+      "holdFields": [],
+      "materializationOk": true,
+      "materializationErrors": [],
+      "materializedRuleContext": {
+        "needsWinterChill": true,
+        "survivalVsThriveNotes": "Trees may grow in mild climates, but reliable nut set depends on adequate chill and dry ripening conditions.",
+        "groupIds": [
+          "warm-dry-mediterranean-fruit",
+          "temperate-chill-fruit-tree"
+        ],
+        "hardBlockRules": null,
+        "needsDrySeason": null,
+        "warningFlags": null
+      },
+      "changes": [
+        {
+          "field": "floweringRequirements",
+          "before": "Early spring bloom after winter chill; late frost can destroy blossoms.",
+          "proposed": "Early spring bloom; spring frost can damage flowers and reduce nut set.",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        {
+          "field": "fruitingRequirements",
+          "before": "Reliable nut set needs adequate winter chill and dry ripening conditions.",
+          "proposed": "Reliable nut set requires compatible cross-pollination and avoidance of damaging spring frost.",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        }
+      ]
+    },
+    {
+      "slug": "cypress",
+      "readiness": "A",
+      "gate": "PASS",
+      "approvedForIngest": false,
+      "contradictionHold": false,
+      "holdFields": [],
+      "materializationOk": true,
+      "materializationErrors": [],
+      "materializedRuleContext": {
+        "needsWinterChill": false,
+        "survivalVsThriveNotes": "Well suited to hot dry summers with drainage; prolonged humid heat and wet soil reduce performance.",
+        "groupIds": [
+          "humid-sensitive-mediterranean",
+          "warm-dry-structural-shrub"
+        ],
+        "hardBlockRules": null,
+        "needsDrySeason": null,
+        "warningFlags": null
+      },
+      "changes": [
+        {
+          "field": "coldTolerance",
+          "before": "medium",
+          "proposed": "low",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        {
+          "field": "humidityTolerance",
+          "before": "low",
+          "proposed": "high",
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        {
+          "field": "floweringRequirements",
+          "before": null,
+          "proposed": "No true flowers; pollen cones appear in early spring.",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        }
+      ]
+    },
+    {
+      "slug": "grapevine",
+      "readiness": "A",
+      "gate": "PASS",
+      "approvedForIngest": false,
+      "contradictionHold": false,
+      "holdFields": [],
+      "materializationOk": true,
+      "materializationErrors": [],
+      "materializedRuleContext": {
+        "needsWinterChill": null,
+        "survivalVsThriveNotes": "Needs a fence, wall, pole, trellis, or similar support instead of open-lawn placement.",
+        "groupIds": [
+          "warm-dry-mediterranean-fruit",
+          "support-dependent-plant"
+        ],
+        "hardBlockRules": [
+          "needs-support"
+        ],
+        "needsDrySeason": true,
+        "warningFlags": null
+      },
+      "changes": [
+        {
+          "field": "heatTolerance",
+          "before": "high",
+          "proposed": "medium",
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        {
+          "field": "humidityTolerance",
+          "before": "medium",
+          "proposed": "low",
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        {
+          "field": "floweringRequirements",
+          "before": "Best flowering comes with full sun, airflow, and a clear dry-season rhythm.",
+          "proposed": "Spring flowering performs best with full sun, air circulation, and low frost exposure.",
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        {
+          "field": "fruitingRequirements",
+          "before": "Reliable fruiting prefers warm dry seasons, deep but not constant watering, and good drainage.",
+          "proposed": "Reliable fruit production needs full sun, well-drained soil, support/training, and avoidance of hot-humid disease pressure.",
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        }
+      ]
+    },
+    {
+      "slug": "japanese-maple",
+      "readiness": "A",
+      "gate": "PASS",
+      "approvedForIngest": false,
+      "contradictionHold": false,
+      "holdFields": [],
+      "materializationOk": true,
+      "materializationErrors": [],
+      "materializedRuleContext": {
+        "needsWinterChill": true,
+        "survivalVsThriveNotes": "Can persist in warm gardens with shade and irrigation, but leaf quality declines in sustained heat and alkaline soil.",
+        "groupIds": [
+          "acid-soil-cool-moisture",
+          "cool-season-shade"
+        ],
+        "hardBlockRules": null,
+        "needsDrySeason": null,
+        "warningFlags": null
+      },
+      "changes": [
+        {
+          "field": "sunNeeds",
+          "before": "morning_sun_part_shade",
+          "proposed": "partial_shade",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        {
+          "field": "floweringRequirements",
+          "before": null,
+          "proposed": "Small red-to-purple flowers appear in spring.",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        }
+      ]
+    },
+    {
+      "slug": "kiwi",
+      "readiness": "A",
+      "gate": "PASS",
+      "approvedForIngest": false,
+      "contradictionHold": false,
+      "holdFields": [],
+      "materializationOk": true,
+      "materializationErrors": [],
+      "materializedRuleContext": {
+        "needsWinterChill": true,
+        "survivalVsThriveNotes": "Vine may grow in mild warm sites, but reliable fruiting depends on adequate winter chill and cross-pollination.",
+        "groupIds": [
+          "subtropical-fruiting-climber",
+          "support-dependent-plant",
+          "temperate-chill-fruit-tree"
+        ],
+        "hardBlockRules": null,
+        "needsDrySeason": null,
+        "warningFlags": null
+      },
+      "changes": [
+        {
+          "field": "coldTolerance",
+          "before": "medium",
+          "proposed": "low",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        {
+          "field": "floweringRequirements",
+          "before": "Needs adequate winter chill hours plus spring warmth for reliable bloom; most cultivars need male and female plants.",
+          "proposed": "Reliable bloom requires appropriate winter dormancy/chill and protection of early young growth from spring frost.",
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        {
+          "field": "fruitingRequirements",
+          "before": "Reliable fruiting depends on winter chill / cool-season dormancy cueing, full sun, and cross-pollination.",
+          "proposed": "Fuzzy kiwifruit needs roughly 225-240 frost-free days, full sun, and compatible pollination for reliable fruit production.",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        }
+      ]
+    },
+    {
+      "slug": "cherimoya",
+      "readiness": "A",
+      "gate": "PASS",
+      "approvedForIngest": false,
+      "contradictionHold": false,
+      "holdFields": [],
+      "materializationOk": true,
+      "materializationErrors": [],
+      "materializedRuleContext": {
+        "needsWinterChill": null,
+        "survivalVsThriveNotes": "Needs cool winters without hard freeze and warm frost-free summers; fruiting often needs pollination help.",
+        "groupIds": [
+          "humid-subtropical-fruit-tree",
+          "tropical-frost-sensitive-fruit"
+        ],
+        "hardBlockRules": null,
+        "needsDrySeason": null,
+        "warningFlags": null
+      },
+      "changes": [
+        {
+          "field": "humidityTolerance",
+          "before": "medium",
+          "proposed": "low",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        {
+          "field": "sunNeeds",
+          "before": "full_sun_to_part_shade",
+          "proposed": "full_sun",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        {
+          "field": "needsWinterChill",
+          "before": true,
+          "proposed": null,
+          "evidenceClass": null
+        },
+        {
+          "field": "floweringRequirements",
+          "before": "Flowers in mild frost-free seasons; hand pollination often improves set in home gardens.",
+          "proposed": "Mild relatively frost-free conditions support flowering; hand pollination is commonly used to improve set.",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        {
+          "field": "fruitingRequirements",
+          "before": "Fruiting needs frost-free mild climate; hard frost damages wood and fruit set.",
+          "proposed": "Sunny mild conditions, good drainage, and reliable pollination are needed for fruit production.",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        }
+      ]
+    },
+    {
+      "slug": "coconut",
+      "readiness": "A",
+      "gate": "PASS",
+      "approvedForIngest": false,
+      "contradictionHold": false,
+      "holdFields": [],
+      "materializationOk": true,
+      "materializationErrors": [],
+      "materializedRuleContext": {
+        "needsWinterChill": false,
+        "survivalVsThriveNotes": "Reliable growth and fruiting need frost-free tropical or subtropical conditions.",
+        "groupIds": [
+          "tropical-frost-sensitive-fruit",
+          "hot-dry-palm"
+        ],
+        "hardBlockRules": [
+          "no-small-container"
+        ],
+        "needsDrySeason": null,
+        "warningFlags": null
+      },
+      "changes": [
+        {
+          "field": "frostSensitivity",
+          "before": "high",
+          "proposed": "very_high",
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        {
+          "field": "coldTolerance",
+          "before": "low",
+          "proposed": "very_low",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        {
+          "field": "floweringRequirements",
+          "before": "Inflorescences form under warm tropical conditions; prolonged cool weather slows flowering.",
+          "proposed": "Flowering requires sustained warm tropical growth conditions.",
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        {
+          "field": "fruitingRequirements",
+          "before": "Reliable nut production needs frost-free tropical warmth; cold snaps reduce fruit set and quality.",
+          "proposed": "Nut production requires sustained tropical warmth and avoidance of chilling/freezing injury.",
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        }
+      ]
+    },
+    {
+      "slug": "guava",
+      "readiness": "A",
+      "gate": "PASS",
+      "approvedForIngest": false,
+      "contradictionHold": false,
+      "holdFields": [],
+      "materializationOk": true,
+      "materializationErrors": [],
+      "materializedRuleContext": {
+        "needsWinterChill": null,
+        "survivalVsThriveNotes": "May survive in protected warm sites, but thriving and reliable fruiting are much narrower than a simple warm-climate tag suggests.",
+        "groupIds": [
+          "tropical-frost-sensitive-fruit"
+        ],
+        "hardBlockRules": null,
+        "needsDrySeason": null,
+        "warningFlags": null
+      },
+      "changes": [
+        {
+          "field": "coldTolerance",
+          "before": "low",
+          "proposed": "very_low",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        {
+          "field": "floweringRequirements",
+          "before": "Warmth, sun, and low frost risk are essential for strong growth.",
+          "proposed": "Warm, bright conditions and low freeze risk support flowering.",
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        {
+          "field": "fruitingRequirements",
+          "before": "Reliable fruiting needs a long warm season, low frost risk, and good drainage.",
+          "proposed": "Reliable fruit production needs warm subtropical/tropical conditions and protection from damaging cold.",
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        }
+      ]
+    },
+    {
+      "slug": "lychee",
+      "readiness": "A",
+      "gate": "PASS",
+      "approvedForIngest": false,
+      "contradictionHold": false,
+      "holdFields": [],
+      "materializationOk": true,
+      "materializationErrors": [],
+      "materializedRuleContext": {
+        "needsWinterChill": null,
+        "survivalVsThriveNotes": "Warm frost-free conditions may allow survival, but thriving and reliable fruiting are much narrower than a generic subtropical label suggests.",
+        "groupIds": [
+          "humid-subtropical-fruit-tree"
+        ],
+        "hardBlockRules": [
+          "needs-cooler-drier-winter-for-fruit",
+          "no-small-container"
+        ],
+        "needsDrySeason": true,
+        "warningFlags": null
+      },
+      "changes": [
+        {
+          "field": "coldTolerance",
+          "before": "low",
+          "proposed": "very_low",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        {
+          "field": "sunNeeds",
+          "before": "full_sun_to_part_shade",
+          "proposed": "full_sun",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        {
+          "field": "floweringRequirements",
+          "before": "Needs a subtler seasonal shift than broad tropical heat; dry winds and erratic stress reduce bloom quality.",
+          "proposed": "Reliable bloom benefits from a cooler, drier nonfreezing winter period.",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        {
+          "field": "fruitingRequirements",
+          "before": "Reliable fruiting usually needs a cooler, drier seasonal signal plus consistent moisture and protection from stress.",
+          "proposed": "Fruit production needs a cooler seasonal flowering signal followed by warm humid growth and consistent moisture.",
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        }
+      ]
+    },
+    {
+      "slug": "mandarin",
+      "readiness": "A",
+      "gate": "PASS",
+      "approvedForIngest": false,
+      "contradictionHold": false,
+      "holdFields": [],
+      "materializationOk": true,
+      "materializationErrors": [],
+      "materializedRuleContext": {
+        "needsWinterChill": null,
+        "survivalVsThriveNotes": "Mandarins are somewhat forgiving citrus, but winter cold still reduces canopy quality and reliable fruiting.",
+        "groupIds": [
+          "warm-citrus-fruit-tree"
+        ],
+        "hardBlockRules": null,
+        "needsDrySeason": null,
+        "warningFlags": [
+          "thorny"
+        ]
+      },
+      "changes": [
+        {
+          "field": "coldTolerance",
+          "before": "low",
+          "proposed": "very_low",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        {
+          "field": "floweringRequirements",
+          "before": "Flowers best with strong sun, warmth, and protection from frost and wind.",
+          "proposed": "Spring flowering needs bright light and protection from damaging frost.",
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        {
+          "field": "fruitingRequirements",
+          "before": "Reliable fruiting needs warmth, deep watering, and low frost risk.",
+          "proposed": "Reliable fruiting is cultivar-dependent and needs adequate warmth, light, moisture, and low freeze risk.",
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        }
+      ]
+    },
+    {
+      "slug": "passionfruit",
+      "readiness": "A",
+      "gate": "PASS",
+      "approvedForIngest": false,
+      "contradictionHold": false,
+      "holdFields": [],
+      "materializationOk": true,
+      "materializationErrors": [],
+      "materializedRuleContext": {
+        "needsWinterChill": null,
+        "survivalVsThriveNotes": "Needs a fence, wall, pole, trellis, or similar support instead of open-lawn placement.",
+        "groupIds": [
+          "subtropical-fruiting-climber",
+          "support-dependent-plant"
+        ],
+        "hardBlockRules": [
+          "needs-support"
+        ],
+        "needsDrySeason": null,
+        "warningFlags": null
+      },
+      "changes": [
+        {
+          "field": "frostSensitivity",
+          "before": "high",
+          "proposed": "very_high",
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        {
+          "field": "coldTolerance",
+          "before": "low",
+          "proposed": "very_low",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        {
+          "field": "sunNeeds",
+          "before": "full_sun_to_part_shade",
+          "proposed": "full_sun",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        {
+          "field": "floweringRequirements",
+          "before": "Warmth, sun, and a real support structure matter more than simple climate matching alone.",
+          "proposed": "Warm bright conditions, full sun, support, and protection from cold favor flowering.",
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        {
+          "field": "fruitingRequirements",
+          "before": "Reliable fruiting needs warmth, regular water, support, and protection from frost or hard wind.",
+          "proposed": "Reliable fruiting needs warmth, full sun, regular water, trellis support, and frost protection.",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        }
+      ]
+    },
+    {
+      "slug": "pistachio",
+      "readiness": "A",
+      "gate": "PASS",
+      "approvedForIngest": false,
+      "contradictionHold": false,
+      "holdFields": [],
+      "materializationOk": true,
+      "materializationErrors": [],
+      "materializedRuleContext": {
+        "needsWinterChill": true,
+        "survivalVsThriveNotes": "Reliable nut production needs winter chill, hot dry ripening season and a compatible pollinator tree.",
+        "groupIds": [
+          "warm-dry-mediterranean-fruit",
+          "temperate-chill-fruit-tree"
+        ],
+        "hardBlockRules": null,
+        "needsDrySeason": null,
+        "warningFlags": null
+      },
+      "changes": [
+        {
+          "field": "coldTolerance",
+          "before": "medium",
+          "proposed": "high",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        {
+          "field": "waterNeeds",
+          "before": "low",
+          "proposed": "medium",
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        {
+          "field": "floweringRequirements",
+          "before": "Requires winter chill for bloom; male and female trees needed.",
+          "proposed": "High winter chilling is required; male and female trees are needed for pollination.",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        {
+          "field": "fruitingRequirements",
+          "before": "Reliable nut production needs winter chill, hot dry summers, and a compatible pollinator.",
+          "proposed": "Nut production needs winter chill, pollination, and warm dry summer ripening conditions.",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        }
+      ]
+    },
+    {
+      "slug": "plumeria",
+      "readiness": "A",
+      "gate": "PASS",
+      "approvedForIngest": false,
+      "contradictionHold": false,
+      "holdFields": [],
+      "materializationOk": true,
+      "materializationErrors": [],
+      "materializedRuleContext": {
+        "needsWinterChill": false,
+        "survivalVsThriveNotes": "Can look excellent in warm sheltered gardens; even light frost can defoliate or damage branches.",
+        "groupIds": [
+          "frost-sensitive-ornamental",
+          "warm-climate-ornamental"
+        ],
+        "hardBlockRules": null,
+        "needsDrySeason": null,
+        "warningFlags": null
+      },
+      "changes": [
+        {
+          "field": "frostSensitivity",
+          "before": "high",
+          "proposed": "very_high",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        {
+          "field": "coldTolerance",
+          "before": "low",
+          "proposed": "very_low",
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        {
+          "field": "waterNeeds",
+          "before": "medium",
+          "proposed": "low",
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        {
+          "field": "floweringRequirements",
+          "before": "Blooms in warm seasons with full sun; wet cold dormancy reduces flowering.",
+          "proposed": "Warm frost-free conditions with full sun support flowering.",
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        }
+      ]
+    }
+  ]
+}

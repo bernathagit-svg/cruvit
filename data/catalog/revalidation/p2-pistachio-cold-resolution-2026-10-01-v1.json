@@ -1,0 +1,35 @@
+{
+  "contract": "cruvit-p2-pistachio-cold-resolution-v1",
+  "createdAt": "2026-10-01",
+  "slug": "pistachio",
+  "scientific": "Pistacia vera",
+  "resolution": {
+    "coldTolerance": "high",
+    "frostSensitivity": "medium",
+    "needsWinterChill": true,
+    "holdResolved": true
+  },
+  "reason": "Whole-plant dormant cold survival must be separated from fall/spring leaf and flower frost injury. The previous 27F interpretation mixed stage-specific injury with dormant-tree survival.",
+  "sources": [
+    {
+      "id": "ucanr-pistachio-calendar",
+      "url": "https://anrcatalog.ucanr.edu/pdf/8147.pdf",
+      "supports": "high chilling requirement and early fall/spring frost injury"
+    },
+    {
+      "id": "ucanr-pistachio-dormancy-cold",
+      "url": "https://ucanr.edu/sites/default/files/2023-02/Pistachio_Notes_Newsletter96633.pdf",
+      "supports": "dormant Pistacia vera seedling survival near 10F and colder"
+    },    {
+      "id": "usu-pistachio-treebrowser",
+      "url": "https://extension.usu.edu/treebrowser/catalog/pistachio",
+      "supports": "Pistacia vera hardiness zones 4-9 and established fruiting trees in Logan, Utah"
+    }
+  ],
+  "policy": {
+    "wholePlantColdAuthority": "dormant survival + hardiness evidence",
+    "stageFrostAuthority": "frostSensitivity and reproductive outcome evidence",
+    "noNumericThresholdInvented": true,
+    "ownerApprovalStillRequiredForIngest": true
+  }
+}

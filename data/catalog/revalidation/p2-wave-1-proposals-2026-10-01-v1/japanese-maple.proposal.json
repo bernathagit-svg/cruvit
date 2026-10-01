@@ -1,0 +1,189 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "japanese-maple-p2-wave-1-proposal-v1",
+  "identity": {
+    "canonicalSlug": "japanese-maple",
+    "commonNameEn": "Japanese Maple",
+    "acceptedScientificName": "Acer palmatum",
+    "aliases": [
+      "Japanese maple",
+      "Acer palmatum"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P2 full-catalog revalidation proposal. Source-backed facts plus explicitly labeled heuristic interpretations; not approved for ingest."
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-acer-palmatum",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Acer palmatum",
+      "url": "https://plants.ces.ncsu.edu/plants/acer-palmatum/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "cruvit-legacy-runtime-context",
+      "institution": "CRUVIT Legacy Catalog",
+      "publisher": "CRUVIT Legacy Catalog",
+      "title": "Existing CRUVIT runtime rule context",
+      "url": "urn:cruvit:legacy-runtime-context",
+      "authorityTier": "internal_legacy",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "maple-frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-acer-palmatum"
+      ],
+      "shortExcerpt": "USDA Zones 5a-8b support whole-plant hardiness; young leaves are frost-sensitive, which is stage-specific and does not set the whole-plant ordinal.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "maple-cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-acer-palmatum"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 5a through 8b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "maple-heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-acer-palmatum"
+      ],
+      "shortExcerpt": "Excess sun, drying wind and drought can cause leaf scorch; warm-site heat tolerance retained conservatively as low.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "maple-sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "partial_shade",
+      "sourceIds": [
+        "ncsu-acer-palmatum"
+      ],
+      "shortExcerpt": "Plant in dappled shade.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "maple-water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-acer-palmatum"
+      ],
+      "shortExcerpt": "Plant in evenly moist soil; young leaves are not drought tolerant.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "maple-drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-acer-palmatum"
+      ],
+      "shortExcerpt": "Plant in evenly moist, well-drained soil.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "maple-flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Small red-to-purple flowers appear in spring.",
+      "sourceIds": [
+        "ncsu-acer-palmatum"
+      ],
+      "shortExcerpt": "Flowers are small and red to purple; bloom time is spring.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "maple-tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "ornamental",
+        "tree",
+        "deciduous"
+      ],
+      "sourceIds": [
+        "ncsu-acer-palmatum"
+      ],
+      "shortExcerpt": "Catalog tags: ornamental, tree, deciduous",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "japanese-maple-legacy-humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "japanese-maple-legacy-needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "japanese-maple-legacy-survivalVsThriveNotes",
+      "field": "survivalVsThriveNotes",
+      "status": "asserted",
+      "value": "Can persist in warm gardens with shade and irrigation, but leaf quality declines in sustained heat and alkaline soil.",
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "japanese-maple-legacy-groupIds",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "acid-soil-cool-moisture",
+        "cool-season-shade"
+      ],
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING",
+    "searchQuery": "Acer palmatum Japanese Maple"
+  },
+  "humanApproval": {
+    "approvedForIngest": false,
+    "approvedAt": null,
+    "note": "PROPOSAL_ONLY — Owner Review gate intentionally not satisfied."
+  }
+}

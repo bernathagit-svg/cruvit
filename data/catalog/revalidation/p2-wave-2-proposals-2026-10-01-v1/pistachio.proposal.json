@@ -1,0 +1,228 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "pistachio-p2-wave-2-proposal-v1",
+  "identity": {
+    "canonicalSlug": "pistachio",
+    "commonNameEn": "Pistachio",
+    "acceptedScientificName": "Pistacia vera",
+    "aliases": [
+      "Pistacia vera"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P2 proposal only. Whole-plant coldTolerance uses dormant survival and hardiness-zone evidence; fall/spring frost injury remains stage-specific frost/reproductive evidence."
+  },
+  "sources": [
+    {
+      "sourceId": "ucanr-pistachio-calendar",
+      "institution": "University of California Cooperative Extension",
+      "publisher": "University of California Cooperative Extension",
+      "title": "Pistachio: Calendar of Operations for Home Gardeners",
+      "url": "https://ucanr.edu/sites/default/files/2010-06/18997.pdf",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "ucanr-pistachio-climate",
+      "institution": "University of California Cooperative Extension",
+      "publisher": "University of California Cooperative Extension",
+      "title": "California Pistachio Research: Climate & Cultivars",
+      "url": "https://ucanr.edu/site/california-pistachio-research/climate-cultivars",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "ucanr-pistachio-dormancy-cold",
+      "institution": "University of California Cooperative Extension",
+      "publisher": "University of California Cooperative Extension",
+      "title": "Pistachio Notes: winter dormancy and cold survival",
+      "url": "https://ucanr.edu/sites/default/files/2023-02/Pistachio_Notes_Newsletter96633.pdf",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "usu-pistachio-treebrowser",
+      "institution": "Utah State University Extension",
+      "publisher": "Utah State University Extension",
+      "title": "Pistachio | TreeBrowser",
+      "url": "https://extension.usu.edu/treebrowser/catalog/pistachio",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "cruvit-legacy-runtime-context",
+      "institution": "CRUVIT Legacy Catalog",
+      "publisher": "CRUVIT Legacy Catalog",
+      "title": "Existing CRUVIT runtime rule context",
+      "url": "urn:cruvit:legacy-runtime-context",
+      "authorityTier": "internal_legacy",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "pistachio-frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ucanr-pistachio-calendar"
+      ],
+      "shortExcerpt": "Trees tolerate short winter cold near 27°F, while leaves and flowers are injured by early fall or spring frost; whole-plant sensitivity retained as medium.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "pistachio-cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ucanr-pistachio-dormancy-cold",
+        "usu-pistachio-treebrowser"
+      ],
+      "shortExcerpt": "UC notes that increasingly dormant Pistacia vera seedlings can survive about 10°F and colder; USU lists Pistacia vera in USDA zones 4-9 and reports established fruiting trees in Logan, Utah.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "dormant-survival-plus-hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "pistachio-heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ucanr-pistachio-calendar"
+      ],
+      "shortExcerpt": "Warm, dry weather from July to early September is important for proper kernel maturation.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "pistachio-humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ucanr-pistachio-calendar"
+      ],
+      "shortExcerpt": "Heavy rainfall during pollination reduces fruit set and promotes wet-weather diseases.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "pistachio-sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ucanr-pistachio-calendar"
+      ],
+      "shortExcerpt": "Pistachio orchard culture is a full-sun nut-tree system; hot dry ripening weather is required.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "pistachio-water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ucanr-pistachio-calendar"
+      ],
+      "shortExcerpt": "Established trees tolerate drought, but quality kernel production requires substantial summer irrigation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "pistachio-drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ucanr-pistachio-calendar"
+      ],
+      "shortExcerpt": "Deep, light- to medium-textured, well-drained soils are preferred; wet soil promotes root/crown disease.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "pistachio-chill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ucanr-pistachio-calendar"
+      ],
+      "shortExcerpt": "About 850 hours below 45°F are required for pistachio flowering and production.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "pistachio-flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "High winter chilling is required; male and female trees are needed for pollination.",
+      "sourceIds": [
+        "ucanr-pistachio-calendar"
+      ],
+      "shortExcerpt": "About 850 hours below 45°F are required; male and female flowers occur on separate trees.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "pistachio-fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Nut production needs winter chill, pollination, and warm dry summer ripening conditions.",
+      "sourceIds": [
+        "ucanr-pistachio-calendar"
+      ],
+      "shortExcerpt": "High chilling plus warm dry July–early September weather are important for kernel maturation.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "pistachio-tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "nut",
+        "tree",
+        "deciduous",
+        "orchard"
+      ],
+      "sourceIds": [
+        "ucanr-pistachio-climate"
+      ],
+      "shortExcerpt": "Catalog tags: nut, tree, deciduous, orchard",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "pistachio-legacy-survivalVsThriveNotes",
+      "field": "survivalVsThriveNotes",
+      "status": "asserted",
+      "value": "Reliable nut production needs winter chill, hot dry ripening season and a compatible pollinator tree.",
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "pistachio-legacy-groupIds",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "warm-dry-mediterranean-fruit",
+        "temperate-chill-fruit-tree"
+      ],
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING",
+    "searchQuery": "Pistacia vera Pistachio"
+  },
+  "humanApproval": {
+    "approvedForIngest": false,
+    "approvedAt": null,
+    "note": "PROPOSAL_ONLY — Owner Review gate intentionally not satisfied."
+  }
+}
