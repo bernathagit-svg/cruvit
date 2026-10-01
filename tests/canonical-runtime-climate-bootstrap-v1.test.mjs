@@ -38,3 +38,11 @@ test('fruit recommendations fail closed when structured fruiting climate is miss
   assert.match(app,/Structured fruiting-climate evidence is incomplete/);
   assert.match(app,/s\.positiveRecommendationEligible===false/);
 });
+
+test('species-packet alias promotes accepted scientific identity over legacy broad identity',()=>{
+  const overlay=app.indexOf('function applyCanonicalRuntimeClimateOverlay');
+  const index=app.indexOf('const PLANT_INDEX=Object.fromEntries');
+  const body=app.slice(overlay,index);
+  assert.match(body,/row\.scientific&&\(packetAlias\|\|!plant\.scientific/);
+  assert.match(app,/'lesser-bougainvillea':'bougainvillea'/);
+});
