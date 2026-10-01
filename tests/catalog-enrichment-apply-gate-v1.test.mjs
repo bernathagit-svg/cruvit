@@ -17,9 +17,11 @@ import {
   FUTURE_ATOMIC_WRITE_SPEC,
   APPROVED_TRANSFORMS
 } from '../modules/personal-domain/catalog-enrichment-apply-gate-v1.js';
-import { EVIDENCE_CLASS, VALUE_ORIGIN } from '../modules/personal-domain/plant-data-contract-v1.js';
+import { EVIDENCE_CLASS, VALUE_ORIGIN, classifyPlantDataReadiness } from '../modules/personal-domain/plant-data-contract-v1.js';
 import { candidatePacketFingerprint } from '../modules/personal-domain/source-retriever-pilot-v1.js';
 import { applyAllBootstrapStructuralClimateTraitsMigrations } from '../modules/personal-domain/bootstrap-safe-climate-traits-migration-v1.js';
+import { HARDINESS_ZONE_TO_COLD_TRAITS_REF, HARDINESS_ZONE_TO_COLD_TRAITS_VERSION } from '../modules/personal-domain/hardiness-zone-to-cold-traits-v1.js';
+import { FROST_INJURY_TO_FROST_SENSITIVITY_REF } from '../modules/personal-domain/frost-injury-to-frost-sensitivity-v1.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..');
@@ -70,22 +72,21 @@ const applePlant = loadPlant('apple');
 const figPacket = loadPacket('fig');
 const figPlant = loadPlant('fig');
 
-test('gate ref frozen + transforms registered', () => {
+test('gate ref frozen + current transforms registered', () => {
   assert.equal(CATALOG_ENRICHMENT_APPLY_GATE_REF, 'catalog-enrichment-apply-gate-v1@1.0.0');
-  assert.ok(APPROVED_TRANSFORMS['hardiness-zone-to-cold-traits-v1@1.0.0']);
+  assert.ok(APPROVED_TRANSFORMS[HARDINESS_ZONE_TO_COLD_TRAITS_REF]);
+  assert.ok(APPROVED_TRANSFORMS[FROST_INJURY_TO_FROST_SENSITIVITY_REF]);
   assert.ok(APPROVED_TRANSFORMS['frost-injury-to-frost-sensitivity-v1@1.0.0']);
   assert.equal(FUTURE_ATOMIC_WRITE_SPEC.executed, false);
 });
 
-test('1. valid pomegranate candidate set → APPLY_ALLOWED', () => {
+test('1. stale pomegranate candidate set is blocked after transform version upgrade', () => {
   const r = evaluateCandidateSetForPlant({ packet: pomPacket, plant: pomPlant });
-  assert.equal(r.setDecision, APPLY_DECISION.APPLY_ALLOWED);
+  assert.equal(r.setDecision, APPLY_DECISION.APPLY_BLOCKED);
   assert.equal(r.selectedForPilotWrite, true);
-  assert.ok(r.mutationPlan?.ok);
-  assert.equal(r.mutationPlan.writesCatalog, false);
-  // Post first real apply: canonical pomegranate is already Class A / SOURCE_SUPPORTED.
-  assert.equal(r.readinessSimulation.current.readinessShort, 'A');
-  assert.equal(r.readinessSimulation.simulated.readinessShort, 'A');
+  assert.equal(r.mutationPlan, null);
+  assert.ok(r.fieldResults.some((x) => x.reasons.includes('transform_not_registered_or_field_mismatch')));
+  assert.equal(classifyPlantDataReadiness(pomPlant).readinessShort, 'A');
   assert.equal(r.externalRequests, 0);
   assert.equal(r.catalogMutated, false);
 });
@@ -154,12 +155,13 @@ test('6. conflicting SS current value → HOLD', () => {
   assert.equal(r.decision, APPLY_DECISION.HOLD_CONFLICT);
 });
 
-test('7. already SOURCE_SUPPORTED equivalent → allowed (idempotent upgrade path)', () => {
+test('7. current transform + equivalent SOURCE_SUPPORTED value is allowed idempotently', () => {
   assert.equal(pomPlant.climateTraits.traitEvidenceClasses.coldTolerance, 'SOURCE_SUPPORTED');
   assert.equal(pomPlant.climateTraits.coldTolerance, 'low');
-  const fp = pomPacket.fieldPackets.find((f) => f.targetField === 'coldTolerance');
+  const fp = structuredClone(pomPacket.fieldPackets.find((f) => f.targetField === 'coldTolerance'));
+  fp.transformVersion = HARDINESS_ZONE_TO_COLD_TRAITS_VERSION;
   assert.equal(fp.proposedValue, 'low');
-  const r = evaluateCandidateForApply(fp, { plant: pomPlant, packet: pomPacket });
+  const r = evaluateCandidateForApply(fp, { plant: pomPlant, packet: pomPacket, verifyFingerprint: false });
   assert.equal(r.decision, APPLY_DECISION.APPLY_ALLOWED);
   assert.ok(r.reasons.includes('same_value_evidence_provenance_upgrade'));
 });
@@ -173,42 +175,32 @@ test('8. tampered packet fingerprint → blocked', () => {
   assert.ok(r.reasons.includes('packet_fingerprint_mismatch'));
 });
 
-test('9. repeat evaluation idempotent', () => {
+test('9. repeat evaluation of stale packet is deterministically blocked', () => {
   const a = evaluateCandidateSetForPlant({ packet: pomPacket, plant: pomPlant });
   const b = evaluateCandidateSetForPlant({ packet: pomPacket, plant: pomPlant });
   assert.equal(a.setFingerprint, b.setFingerprint);
-  assert.equal(a.mutationPlan.planFingerprint, b.mutationPlan.planFingerprint);
-  // provenance map keys unique (no duplicate on rebuild)
-  assert.equal(
-    Object.keys(a.mutationPlan.after.climateTraits.enrichmentProvenance).sort().join(','),
-    'coldTolerance,frostSensitivity'
-  );
+  assert.equal(a.setDecision, APPLY_DECISION.APPLY_BLOCKED);
+  assert.equal(b.setDecision, APPLY_DECISION.APPLY_BLOCKED);
+  assert.equal(a.mutationPlan, null);
+  assert.equal(b.mutationPlan, null);
 });
 
-test('10. dry-run mutation changes only authorized fields (idempotent after real apply)', () => {
-  const r = evaluateCandidateSetForPlant({ packet: pomPacket, plant: pomPlant });
+test('10. stale packet produces no write plan and cannot mutate the already-applied plant', () => {
   const beforeHash = plantContentHash(pomPlant);
-  const { before, after, guards } = r.mutationPlan;
-  assert.equal(guards.floweringRequirementsUnchanged, true);
-  assert.equal(guards.fruitingRequirementsUnchanged, true);
-  assert.equal(guards.needsReviewUnchanged, true);
-  assert.equal(before.climateTraits.floweringRequirements, after.climateTraits.floweringRequirements);
-  assert.equal(before.climateTraits.fruitingRequirements, after.climateTraits.fruitingRequirements);
-  // Already applied: values stay equivalent; dry-run must not invent alternate ordinals
-  assert.equal(before.climateTraits.frostSensitivity, after.climateTraits.frostSensitivity);
-  assert.equal(before.climateTraits.coldTolerance, after.climateTraits.coldTolerance);
-  assert.equal(after.climateTraits.frostSensitivity, 'high');
-  assert.equal(after.climateTraits.coldTolerance, 'low');
-  // original plant unchanged
+  const r = evaluateCandidateSetForPlant({ packet: pomPacket, plant: pomPlant });
+  assert.equal(r.setDecision, APPLY_DECISION.APPLY_BLOCKED);
+  assert.equal(r.mutationPlan, null);
   assert.equal(plantContentHash(pomPlant), beforeHash);
   assert.equal(pomPlant.climateTraits.frostSensitivity, 'high');
+  assert.equal(pomPlant.climateTraits.coldTolerance, 'low');
 });
 
-test('11. pomegranate simulated readiness correct (post real apply)', () => {
+test('11. pomegranate remains Class A while obsolete candidate write is blocked', () => {
+  const current = classifyPlantDataReadiness(pomPlant);
+  assert.equal(current.readinessShort, 'A');
   const r = evaluateCandidateSetForPlant({ packet: pomPacket, plant: pomPlant });
-  assert.equal(r.readinessSimulation.current.readinessShort, 'A');
-  assert.equal(r.readinessSimulation.simulated.readinessShort, 'A');
-  assert.ok(r.readinessSimulation.blockersCleared.length >= 0);
+  assert.equal(r.setDecision, APPLY_DECISION.APPLY_BLOCKED);
+  assert.equal(r.readinessSimulation, null);
 });
 
 test('12. apple/fig not selected for apply write plan', () => {

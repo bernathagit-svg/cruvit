@@ -53,13 +53,14 @@
       "expected": 460
     },
     "overallCounts": {
-      "blocked": 4,
-      "borderline": 206
+      "borderline": 136,
+      "blocked": 20,
+      "good": 54
     },
     "survivalCounts": {
-      "unreliable": 4,
-      "reliable": 96,
-      "constrained": 110
+      "constrained": 94,
+      "unreliable": 20,
+      "reliable": 96
     }
   },
   "mediterraneanSanity": {
@@ -67,6 +68,7 @@
     "byPlant": {
       "bay-laurel": {
         "overallUnique": [
+          "good",
           "borderline"
         ],
         "moistureRegimes": [
@@ -77,15 +79,18 @@
         ],
         "notBlanketNotRecommended": true,
         "humidSampleOverall": [
-          "borderline"
+          "borderline",
+          "good"
         ],
         "semiAridSampleOverall": [
+          "good",
           "borderline"
         ],
-        "climateSensitive": false
+        "climateSensitive": true
       },
       "oleander": {
         "overallUnique": [
+          "good",
           "borderline"
         ],
         "moistureRegimes": [
@@ -96,15 +101,18 @@
         ],
         "notBlanketNotRecommended": true,
         "humidSampleOverall": [
-          "borderline"
+          "borderline",
+          "good"
         ],
         "semiAridSampleOverall": [
+          "good",
           "borderline"
         ],
-        "climateSensitive": false
+        "climateSensitive": true
       },
       "common-thyme": {
         "overallUnique": [
+          "good",
           "borderline"
         ],
         "moistureRegimes": [
@@ -115,15 +123,18 @@
         ],
         "notBlanketNotRecommended": true,
         "humidSampleOverall": [
-          "borderline"
+          "borderline",
+          "good"
         ],
         "semiAridSampleOverall": [
+          "good",
           "borderline"
         ],
-        "climateSensitive": false
+        "climateSensitive": true
       },
       "garden-sage": {
         "overallUnique": [
+          "good",
           "borderline"
         ],
         "moistureRegimes": [
@@ -134,12 +145,14 @@
         ],
         "notBlanketNotRecommended": true,
         "humidSampleOverall": [
-          "borderline"
+          "borderline",
+          "good"
         ],
         "semiAridSampleOverall": [
+          "good",
           "borderline"
         ],
-        "climateSensitive": false
+        "climateSensitive": true
       }
     }
   },
@@ -184,6 +197,7 @@
     "optionalClaimFields": [
       "quantitative.minimum_survival_temperature_c",
       "quantitative.preferred_minimum_temperature_c",
+      "quantitative.optimum_growth_temperature_min_c",
       "quantitative.chill_hours_min",
       "quantitative.chill_hours_max",
       "quantitative.maximum_tolerated_temperature_c",
@@ -227,5 +241,5 @@
     "era5": 0
   },
   "gradientExternalClimateCalls": 0,
-  "generatedAt": "2026-08-31T03:54:55.677Z"
+  "generatedAt": "2026-10-01T17:12:32.303Z"
 }

@@ -96,7 +96,7 @@ test('cacao packet validates and materializes without inventing rainfall mm', ()
   assert.equal(m.item.climateTraits.humidityTolerance, 'high');
   assert.ok(String(m.item.climateTraits.floweringRequirements || '').length > 10);
   assert.ok(String(m.item.climateTraits.fruitingRequirements || '').length > 10);
-  assert.equal(m.item.climateTraits.needsReview, true);
+  assert.equal(m.item.climateTraits.needsReview, false);
   assert.ok(m.unknownFields.includes('rainfallMmAnnual'));
   assert.ok(m.item.source.provider === 'catalog-expansion-v1');
   assert.ok(Array.isArray(m.item.source.provenance));
@@ -189,9 +189,14 @@ test('systemic reproductive climate transforms materialize only from explicit so
   }
 });
 
-test('materializer does not invent a fruiting climate requirement when source evidence is insufficient', () => {
+test('materializer preserves source-backed unquantified fruiting climate without inventing quantitative limits', () => {
   const packet = loadPacket();
   const m = materializePlantCatalogItemFromPacket(packet);
   assert.equal(m.ok, true);
-  assert.equal(m.item.climateTraits.reproductiveClimate, undefined);
+  const rc = m.item.climateTraits.reproductiveClimate;
+  assert.equal(rc?.fruiting?.evidenceState, 'RESEARCHED_UNQUANTIFIED');
+  assert.equal(rc?.fruiting?.evidenceClass, 'SOURCE_SUPPORTED');
+  assert.ok(Array.isArray(rc?.fruiting?.sourceIds) && rc.fruiting.sourceIds.length > 0);
+  assert.equal(rc?.fruiting?.optimumTemperatureC, undefined);
+  assert.equal(rc?.fruiting?.summerHeatBand, undefined);
 });

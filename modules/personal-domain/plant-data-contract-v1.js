@@ -9,7 +9,10 @@
  * knowledge and MUST NOT manufacture Class A readiness.
  */
 
-import { FIELD_PROVENANCE_EVIDENCE_CLASSES } from '../catalog-expansion/field-provenance-honesty-v1-contract.js';
+import {
+  FIELD_PROVENANCE_EVIDENCE_CLASSES,
+  annotatePacketFieldProvenance
+} from '../catalog-expansion/field-provenance-honesty-v1-contract.js';
 
 export const PLANT_DATA_CONTRACT_VERSION = '1.0.0';
 export const PLANT_DATA_CONTRACT_ID = 'plant-data-contract-v1';
@@ -596,13 +599,16 @@ export function classifyCatalogReadOnly(plants, options = {}) {
 export function normalizeBatch3PacketForClassification(packet) {
   if (!packet || typeof packet !== 'object') return null;
   const id = packet.identity || {};
-  const claims = Array.isArray(packet.claims) ? packet.claims : [];
+  const rawClaims = Array.isArray(packet.claims) ? packet.claims : [];
+  const annotated = annotatePacketFieldProvenance({ ...packet, claims: rawClaims });
+  const claims = Array.isArray(annotated?.claims) ? annotated.claims : rawClaims;
   const byField = {};
   for (const c of claims) {
     if (c?.field) byField[c.field] = c;
   }
   const climateTraits = {};
   const traitEvidenceClasses = {};
+  const traitProvenance = {};
   for (const field of [
     ...CLIMATE_CORE_FIELDS,
     'floweringRequirements',
@@ -620,6 +626,18 @@ export function normalizeBatch3PacketForClassification(packet) {
   }
   if (Object.keys(traitEvidenceClasses).length) {
     climateTraits.traitEvidenceClasses = traitEvidenceClasses;
+  }
+  for (const c of claims) {
+    if (!c?.field || String(c.status || '').toLowerCase() !== 'asserted') continue;
+    traitProvenance[c.field] = {
+      status: c.status,
+      sourceIds: Array.isArray(c.sourceIds) ? [...c.sourceIds] : [],
+      shortExcerpt: c.shortExcerpt || null,
+      evidenceClass: c.evidenceClass || FIELD_PROVENANCE_EVIDENCE_CLASSES.UNKNOWN
+    };
+  }
+  if (Object.keys(traitProvenance).length) {
+    climateTraits.traitProvenance = traitProvenance;
   }
   if (packet.flags?.forceClimateNeedsReview === true) {
     climateTraits.needsReview = true;

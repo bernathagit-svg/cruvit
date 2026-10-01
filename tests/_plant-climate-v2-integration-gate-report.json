@@ -130,18 +130,173 @@
       "expected": 460
     },
     "overallCounts": {
-      "blocked": 4,
-      "borderline": 206
+      "borderline": 136,
+      "blocked": 20,
+      "good": 54
     },
     "survivalCounts": {
-      "unreliable": 4,
-      "reliable": 96,
-      "constrained": 110
+      "constrained": 94,
+      "unreliable": 20,
+      "reliable": 96
     }
   },
-  "falsePositiveCandidates": [],
-  "falsePositiveAuditedCount": 102,
-  "falsePositiveAuthorizedCount": 102,
+  "falsePositiveCandidates": [
+    {
+      "plant": "carob",
+      "site": "yehiam",
+      "flags": {
+        "overallPos": true,
+        "survPos": true,
+        "growPos": true,
+        "flowerPos": false,
+        "fruitPos": false,
+        "any": true
+      },
+      "reasons": [
+        "overall-positive-ok-moisture-humid-without-atmospheric-high-or-borderline"
+      ],
+      "authorized": [
+        "frostSensitivity=medium",
+        "freezingRisk=low",
+        "coldestMonthMeanMinC=7.75",
+        "thermalRegime=cool-seasonal",
+        "thriveFit-path+climate moisture/thermal cues",
+        "overall=good survival=reliable growth=supported"
+      ],
+      "rejected": true,
+      "material": false
+    },
+    {
+      "plant": "bay-laurel",
+      "site": "yehiam",
+      "flags": {
+        "overallPos": true,
+        "survPos": true,
+        "growPos": true,
+        "flowerPos": false,
+        "fruitPos": false,
+        "any": true
+      },
+      "reasons": [
+        "overall-positive-ok-moisture-humid-without-atmospheric-high-or-borderline"
+      ],
+      "authorized": [
+        "frostSensitivity=medium",
+        "freezingRisk=low",
+        "coldestMonthMeanMinC=7.75",
+        "thermalRegime=cool-seasonal",
+        "thriveFit-path+climate moisture/thermal cues",
+        "overall=good survival=reliable growth=supported"
+      ],
+      "rejected": true,
+      "material": false
+    },
+    {
+      "plant": "oleander",
+      "site": "yehiam",
+      "flags": {
+        "overallPos": true,
+        "survPos": true,
+        "growPos": true,
+        "flowerPos": false,
+        "fruitPos": false,
+        "any": true
+      },
+      "reasons": [
+        "overall-positive-ok-moisture-humid-without-atmospheric-high-or-borderline"
+      ],
+      "authorized": [
+        "frostSensitivity=medium",
+        "freezingRisk=low",
+        "coldestMonthMeanMinC=7.75",
+        "thermalRegime=cool-seasonal",
+        "thriveFit-path+climate moisture/thermal cues",
+        "overall=good survival=reliable growth=supported"
+      ],
+      "rejected": true,
+      "material": false
+    },
+    {
+      "plant": "southern-magnolia",
+      "site": "yehiam",
+      "flags": {
+        "overallPos": true,
+        "survPos": true,
+        "growPos": true,
+        "flowerPos": false,
+        "fruitPos": false,
+        "any": true
+      },
+      "reasons": [
+        "overall-positive-despite-low-local-representativeness-on-moisture-dependent-plant"
+      ],
+      "authorized": [
+        "frostSensitivity=medium",
+        "freezingRisk=low",
+        "coldestMonthMeanMinC=7.75",
+        "thermalRegime=cool-seasonal",
+        "humidityTolerance=high",
+        "moistureRegime=humid",
+        "humiditySignal=medium",
+        "thriveFit-path+climate moisture/thermal cues",
+        "overall=good survival=reliable growth=supported"
+      ],
+      "rejected": true,
+      "material": false
+    },
+    {
+      "plant": "common-thyme",
+      "site": "yehiam",
+      "flags": {
+        "overallPos": true,
+        "survPos": true,
+        "growPos": true,
+        "flowerPos": false,
+        "fruitPos": false,
+        "any": true
+      },
+      "reasons": [
+        "overall-positive-ok-moisture-humid-without-atmospheric-high-or-borderline"
+      ],
+      "authorized": [
+        "frostSensitivity=medium",
+        "freezingRisk=low",
+        "coldestMonthMeanMinC=7.75",
+        "thermalRegime=cool-seasonal",
+        "thriveFit-path+climate moisture/thermal cues",
+        "overall=good survival=reliable growth=supported"
+      ],
+      "rejected": true,
+      "material": false
+    },
+    {
+      "plant": "garden-sage",
+      "site": "yehiam",
+      "flags": {
+        "overallPos": true,
+        "survPos": true,
+        "growPos": true,
+        "flowerPos": false,
+        "fruitPos": false,
+        "any": true
+      },
+      "reasons": [
+        "overall-positive-ok-moisture-humid-without-atmospheric-high-or-borderline"
+      ],
+      "authorized": [
+        "frostSensitivity=medium",
+        "freezingRisk=low",
+        "coldestMonthMeanMinC=7.75",
+        "thermalRegime=cool-seasonal",
+        "thriveFit-path+climate moisture/thermal cues",
+        "overall=good survival=reliable growth=supported"
+      ],
+      "rejected": true,
+      "material": false
+    }
+  ],
+  "falsePositiveAuditedCount": 121,
+  "falsePositiveAuthorizedCount": 115,
   "falsePositiveMaterialCount": 0,
   "CONFIDENT_RESULTS_DEPENDING_ON_HEURISTIC_EVIDENCE": 0,
   "confidentHeuristicExamples": [],
@@ -561,12 +716,14 @@
     "diversity": {
       "durian": {
         "overallUnique": [
+          "blocked",
           "borderline",
-          "blocked"
+          "good"
         ],
         "survivalUnique": [
+          "unreliable",
           "constrained",
-          "unreliable"
+          "reliable"
         ],
         "climateVaried": true,
         "outcomeVaried": true,
@@ -583,7 +740,7 @@
       },
       "sweet-cherry": {
         "overallUnique": [
-          "borderline"
+          "good"
         ],
         "survivalUnique": [
           "reliable"
@@ -603,13 +760,14 @@
       },
       "carob": {
         "overallUnique": [
+          "good",
           "borderline"
         ],
         "survivalUnique": [
           "reliable"
         ],
         "climateVaried": true,
-        "outcomeVaried": false,
+        "outcomeVaried": true,
         "moistureRegimes": [
           "semi-arid",
           "dry-subhumid",
@@ -623,7 +781,7 @@
       },
       "loquat": {
         "overallUnique": [
-          "borderline"
+          "good"
         ],
         "survivalUnique": [
           "reliable"
@@ -643,10 +801,11 @@
       },
       "southern-magnolia": {
         "overallUnique": [
-          "borderline"
+          "blocked",
+          "good"
         ],
         "survivalUnique": [
-          "constrained",
+          "unreliable",
           "reliable"
         ],
         "climateVaried": true,
@@ -664,13 +823,14 @@
       },
       "oleander": {
         "overallUnique": [
+          "good",
           "borderline"
         ],
         "survivalUnique": [
           "reliable"
         ],
         "climateVaried": true,
-        "outcomeVaried": false,
+        "outcomeVaried": true,
         "moistureRegimes": [
           "semi-arid",
           "dry-subhumid",
@@ -684,13 +844,14 @@
       },
       "garden-sage": {
         "overallUnique": [
+          "good",
           "borderline"
         ],
         "survivalUnique": [
           "reliable"
         ],
         "climateVaried": true,
-        "outcomeVaried": false,
+        "outcomeVaried": true,
         "moistureRegimes": [
           "semi-arid",
           "dry-subhumid",
@@ -704,7 +865,7 @@
       },
       "english-walnut": {
         "overallUnique": [
-          "borderline"
+          "good"
         ],
         "survivalUnique": [
           "reliable"
@@ -724,13 +885,15 @@
       },
       "jaboticaba": {
         "overallUnique": [
+          "blocked",
           "borderline"
         ],
         "survivalUnique": [
+          "unreliable",
           "constrained"
         ],
         "climateVaried": true,
-        "outcomeVaried": false,
+        "outcomeVaried": true,
         "moistureRegimes": [
           "semi-arid",
           "dry-subhumid",
@@ -788,7 +951,11 @@
       },
       "plantsWithOutcomeVariation": [
         "durian",
-        "southern-magnolia"
+        "carob",
+        "southern-magnolia",
+        "oleander",
+        "garden-sage",
+        "jaboticaba"
       ]
     },
     "note": "Identical nearby outcomes kept when evaluator bands match; climate class diversity recorded separately"
@@ -811,11 +978,10 @@
       "overall": "borderline",
       "survival": "constrained",
       "limiting": [
-        "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
-        "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
-        "Coldest-month mean lows (~7.75°C) are below the warm tropical reliability band; damaging cold can occur without literal frost.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
+        "Plant evidence indicates warm / tropical establishment needs; climate has material cool/frost/highland evidence.",
+        "Coldest-month mean lows (~7.75°C) create chilling stress for this warm-tropical plant, but low freezing risk does not justify a hard survival failure.",
+        "Coldest-month mean lows (~7.75°C) can constrain flowering for a warm-tropical plant even without damaging frost.",
+        "Can grow, but reliable fruit production is not expected.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "note": "Natural path is blocked by frost/cool-season evidence — not an auto-Not-Recommended from low representativeness alone"
@@ -831,12 +997,13 @@
       ]
     },
     "durianAtYehiam": {
-      "overall": "blocked",
-      "survival": "unreliable",
+      "overall": "borderline",
+      "survival": "constrained",
       "limiting": [
-        "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
-        "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
-        "Coldest-month mean lows (~7.75°C) are below the warm tropical reliability band; damaging cold can occur without literal frost.",
+        "Plant evidence indicates warm / tropical establishment needs; climate has material cool/frost/highland evidence.",
+        "Coldest-month mean lows (~7.75°C) create chilling stress for this warm-tropical plant, but low freezing risk does not justify a hard survival failure.",
+        "Coldest-month mean lows (~7.75°C) can constrain flowering for a warm-tropical plant even without damaging frost.",
+        "Can grow, but reliable fruit production is not expected.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "representativenessAdjustment": null
@@ -909,6 +1076,7 @@
     "byPlant": {
       "bay-laurel": {
         "overallUnique": [
+          "good",
           "borderline"
         ],
         "moistureRegimes": [
@@ -919,15 +1087,18 @@
         ],
         "notBlanketNotRecommended": true,
         "humidSampleOverall": [
-          "borderline"
+          "borderline",
+          "good"
         ],
         "semiAridSampleOverall": [
+          "good",
           "borderline"
         ],
-        "climateSensitive": false
+        "climateSensitive": true
       },
       "oleander": {
         "overallUnique": [
+          "good",
           "borderline"
         ],
         "moistureRegimes": [
@@ -938,15 +1109,18 @@
         ],
         "notBlanketNotRecommended": true,
         "humidSampleOverall": [
-          "borderline"
+          "borderline",
+          "good"
         ],
         "semiAridSampleOverall": [
+          "good",
           "borderline"
         ],
-        "climateSensitive": false
+        "climateSensitive": true
       },
       "common-thyme": {
         "overallUnique": [
+          "good",
           "borderline"
         ],
         "moistureRegimes": [
@@ -957,15 +1131,18 @@
         ],
         "notBlanketNotRecommended": true,
         "humidSampleOverall": [
-          "borderline"
+          "borderline",
+          "good"
         ],
         "semiAridSampleOverall": [
+          "good",
           "borderline"
         ],
-        "climateSensitive": false
+        "climateSensitive": true
       },
       "garden-sage": {
         "overallUnique": [
+          "good",
           "borderline"
         ],
         "moistureRegimes": [
@@ -976,12 +1153,14 @@
         ],
         "notBlanketNotRecommended": true,
         "humidSampleOverall": [
-          "borderline"
+          "borderline",
+          "good"
         ],
         "semiAridSampleOverall": [
+          "good",
           "borderline"
         ],
-        "climateSensitive": false
+        "climateSensitive": true
       }
     }
   },
@@ -1026,6 +1205,7 @@
     "optionalClaimFields": [
       "quantitative.minimum_survival_temperature_c",
       "quantitative.preferred_minimum_temperature_c",
+      "quantitative.optimum_growth_temperature_min_c",
       "quantitative.chill_hours_min",
       "quantitative.chill_hours_max",
       "quantitative.maximum_tolerated_temperature_c",
@@ -1044,15 +1224,16 @@
     {
       "plant": "durian",
       "site": "yehiam",
-      "overall": "blocked",
-      "survival": "unreliable",
-      "growth": "poor",
-      "flowering": "unlikely",
+      "overall": "borderline",
+      "survival": "constrained",
+      "growth": "constrained",
+      "flowering": "constrained",
       "fruiting": "unreliable",
       "limitingFactors": [
-        "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
-        "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
-        "Coldest-month mean lows (~7.75°C) are below the warm tropical reliability band; damaging cold can occur without literal frost.",
+        "Plant evidence indicates warm / tropical establishment needs; climate has material cool/frost/highland evidence.",
+        "Coldest-month mean lows (~7.75°C) create chilling stress for this warm-tropical plant, but low freezing risk does not justify a hard survival failure.",
+        "Coldest-month mean lows (~7.75°C) can constrain flowering for a warm-tropical plant even without damaging frost.",
+        "Can grow, but reliable fruit production is not expected.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [],
@@ -1103,16 +1284,16 @@
         "overall": "low"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
-        "survival": "unreliable",
-        "growth": "poor",
-        "flowering": "unlikely",
+        "version": "1.1.0-outcome-severity-preserve",
+        "survival": "constrained",
+        "growth": "constrained",
+        "flowering": "constrained",
         "fruiting": "unreliable",
         "demotions": [],
         "warnings": [],
         "traces": {
           "Survival": {
-            "status": "unreliable",
+            "status": "constrained",
             "demoted": false,
             "reason": null,
             "materialEvidence": {
@@ -1132,35 +1313,28 @@
               "hasHeuristic": false,
               "hasUnknown": false,
               "allSource": true
-            },
-            "dimension": "Survival"
+            }
           },
           "Growth": {
-            "status": "poor",
+            "status": "constrained",
             "demoted": false,
             "reason": null,
             "materialEvidence": {
               "fields": [
                 {
-                  "field": "frostSensitivity",
-                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
                   "value": "high"
-                },
-                {
-                  "field": "coldTolerance",
-                  "evidenceClass": "SOURCE_SUPPORTED",
-                  "value": "low"
                 }
               ],
-              "hasSource": true,
-              "hasHeuristic": false,
+              "hasSource": false,
+              "hasHeuristic": true,
               "hasUnknown": false,
-              "allSource": true
-            },
-            "dimension": "Growth"
+              "allSource": false
+            }
           },
           "Flowering": {
-            "status": "unlikely",
+            "status": "constrained",
             "demoted": false,
             "reason": null,
             "materialEvidence": {
@@ -1175,8 +1349,7 @@
               "hasHeuristic": false,
               "hasUnknown": false,
               "allSource": true
-            },
-            "dimension": "Flowering"
+            }
           },
           "Fruiting": {
             "status": "unreliable",
@@ -1200,30 +1373,29 @@
         }
       },
       "suitability": {
-        "recommendationLevel": "blocked",
-        "survivalFit": 25,
-        "thriveFit": 25,
+        "recommendationLevel": "borderline",
+        "survivalFit": 75,
+        "thriveFit": 35,
         "floweringFit": 70,
         "fruitingFit": 70,
         "warnings": [
-          "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
-          "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band."
+          "Plant evidence indicates warm / tropical establishment needs; climate has material cool/frost/highland evidence."
         ],
-        "explanationText": "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
+        "explanationText": "",
         "forbidsGenericFrostStub": true,
         "forbidsGenericThriveStub": true,
-        "coldAuthority": "tropical-damaging-cold",
-        "coldConfidence": "high",
+        "coldAuthority": "neutral-baseline",
+        "coldConfidence": "medium",
         "plantRequiresYearRoundWarm": true,
         "coldAssessment": {
-          "survivalHint": "unreliable",
-          "confidence": "high",
-          "reason": "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
-          "survivalFit": 25,
-          "thriveFit": 25,
-          "authority": "tropical-damaging-cold"
+          "survivalHint": null,
+          "confidence": "medium",
+          "reason": null,
+          "survivalFit": 75,
+          "thriveFit": 75,
+          "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "mediterranean",
@@ -1269,7 +1441,9 @@
         ],
         "meanVpdPa": 853.8,
         "structuralColdRisk": "elevated",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 7.75,
+        "warmestMonthMeanMaxC": 28.25,
         "annualPrecipitationMm": 1293.6,
         "annualPetMm": 1487.6,
         "aridityIndex": 0.87,
@@ -1284,10 +1458,19 @@
           "structuralColdRisk": "elevated",
           "freezingRisk": "low",
           "broadClimateOverride": "mediterranean",
-          "drySeasonSignal": false,
+          "drySeasonSignal": true,
+          "drySummerSignal": true,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "cool-seasonal",
           "elevationM": 441,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 6,
+            "maxConsecutiveDryMonths": 6,
+            "drySummerSignal": true,
+            "minWarmMonthPrecipMm": 1.8,
+            "maxCoolMonthPrecipMm": 339.8,
             "coldestMonthMeanMinC": 7.75,
             "warmestMonthMeanMaxC": 28.25,
             "annualPrecipitationMm": 1293.6,
@@ -2533,9 +2716,9 @@
       "flowering": "unlikely",
       "fruiting": "unreliable",
       "limitingFactors": [
-        "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
-        "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
         "Frost risk is too high for this plant.",
+        "Plant evidence indicates warm / tropical establishment needs; climate has material cool/frost/highland evidence.",
+        "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [],
@@ -2584,7 +2767,7 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "unreliable",
         "growth": "poor",
         "flowering": "unlikely",
@@ -2677,7 +2860,7 @@
         "floweringFit": 70,
         "fruitingFit": 70,
         "warnings": [
-          "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
+          "Plant evidence indicates warm / tropical establishment needs; climate has material cool/frost/highland evidence.",
           "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band."
         ],
         "explanationText": "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
@@ -2694,7 +2877,7 @@
           "thriveFit": 25,
           "authority": "tropical-damaging-cold"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "temperate",
@@ -2740,7 +2923,9 @@
         ],
         "meanVpdPa": 373.7,
         "structuralColdRisk": "high",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": -8.25,
+        "warmestMonthMeanMaxC": 20.05,
         "annualPrecipitationMm": 672.3,
         "annualPetMm": 610.7,
         "aridityIndex": 1.101,
@@ -2756,9 +2941,18 @@
           "freezingRisk": "high",
           "broadClimateOverride": "temperate",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "frost-prone",
           "elevationM": 40.2,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 1,
+            "maxConsecutiveDryMonths": 1,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": 33.5,
+            "maxCoolMonthPrecipMm": 80,
             "coldestMonthMeanMinC": -8.25,
             "warmestMonthMeanMaxC": 20.05,
             "annualPrecipitationMm": 672.3,
@@ -3982,14 +4176,15 @@
     {
       "plant": "durian",
       "site": "singapore",
-      "overall": "borderline",
+      "overall": "good",
       "survival": "reliable",
-      "growth": "constrained",
+      "growth": "supported",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
-        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
+        "Survival uses monthly-mean normals only; damaging extreme cold/heat authority is absent — strong positive capped.",
+        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment.",
+        "Species-level evidence only — cultivar-specific hardiness/chill/flowering unknown; confidence bounded."
       ],
       "unknownEvidence": [
         "flowering-climate-comparison",
@@ -4040,41 +4235,13 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
-        "growth": "constrained",
+        "growth": "supported",
         "flowering": "unknown",
         "fruiting": "unknown",
-        "demotions": [
-          {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
-            "materialEvidence": {
-              "fields": [
-                {
-                  "field": "frostSensitivity",
-                  "evidenceClass": "SOURCE_SUPPORTED",
-                  "value": "high"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "high"
-                }
-              ],
-              "hasSource": true,
-              "hasHeuristic": true,
-              "hasUnknown": false,
-              "allSource": false
-            },
-            "dimension": "Growth"
-          }
-        ],
-        "warnings": [
-          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
-        ],
+        "demotions": [],
+        "warnings": [],
         "traces": {
           "Survival": {
             "status": "reliable",
@@ -4101,27 +4268,21 @@
             "dimension": "Survival"
           },
           "Growth": {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "status": "supported",
+            "demoted": false,
+            "reason": null,
             "materialEvidence": {
               "fields": [
                 {
                   "field": "frostSensitivity",
                   "evidenceClass": "SOURCE_SUPPORTED",
                   "value": "high"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "high"
                 }
               ],
               "hasSource": true,
-              "hasHeuristic": true,
+              "hasHeuristic": false,
               "hasUnknown": false,
-              "allSource": false
+              "allSource": true
             },
             "dimension": "Growth"
           },
@@ -4184,7 +4345,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "tropical",
@@ -4230,7 +4391,9 @@
         ],
         "meanVpdPa": 1253.3,
         "structuralColdRisk": "low",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 24.85,
+        "warmestMonthMeanMaxC": 28.75,
         "annualPrecipitationMm": 2423.3,
         "annualPetMm": 1731.8,
         "aridityIndex": 1.399,
@@ -4246,9 +4409,18 @@
           "freezingRisk": "low",
           "broadClimateOverride": "tropical",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": true,
+          "coolSeasonSignal": false,
           "thermalRegime": "year-round-warm",
           "elevationM": 20,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 0,
+            "maxConsecutiveDryMonths": 0,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": null,
+            "maxCoolMonthPrecipMm": null,
             "coldestMonthMeanMinC": 24.85,
             "warmestMonthMeanMaxC": 28.75,
             "annualPrecipitationMm": 2423.3,
@@ -5472,14 +5644,15 @@
     {
       "plant": "durian",
       "site": "kochi",
-      "overall": "borderline",
+      "overall": "good",
       "survival": "reliable",
-      "growth": "constrained",
+      "growth": "supported",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
-        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
+        "Survival uses monthly-mean normals only; damaging extreme cold/heat authority is absent — strong positive capped.",
+        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment.",
+        "Species-level evidence only — cultivar-specific hardiness/chill/flowering unknown; confidence bounded."
       ],
       "unknownEvidence": [
         "flowering-climate-comparison",
@@ -5530,41 +5703,13 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
-        "growth": "constrained",
+        "growth": "supported",
         "flowering": "unknown",
         "fruiting": "unknown",
-        "demotions": [
-          {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
-            "materialEvidence": {
-              "fields": [
-                {
-                  "field": "frostSensitivity",
-                  "evidenceClass": "SOURCE_SUPPORTED",
-                  "value": "high"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "high"
-                }
-              ],
-              "hasSource": true,
-              "hasHeuristic": true,
-              "hasUnknown": false,
-              "allSource": false
-            },
-            "dimension": "Growth"
-          }
-        ],
-        "warnings": [
-          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
-        ],
+        "demotions": [],
+        "warnings": [],
         "traces": {
           "Survival": {
             "status": "reliable",
@@ -5591,27 +5736,21 @@
             "dimension": "Survival"
           },
           "Growth": {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "status": "supported",
+            "demoted": false,
+            "reason": null,
             "materialEvidence": {
               "fields": [
                 {
                   "field": "frostSensitivity",
                   "evidenceClass": "SOURCE_SUPPORTED",
                   "value": "high"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "high"
                 }
               ],
               "hasSource": true,
-              "hasHeuristic": true,
+              "hasHeuristic": false,
               "hasUnknown": false,
-              "allSource": false
+              "allSource": true
             },
             "dimension": "Growth"
           },
@@ -5674,13 +5813,13 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "tropical",
         "freezingRisk": "low",
         "humiditySignal": "borderline",
-        "drySeasonSignal": false,
+        "drySeasonSignal": true,
         "alwaysHot": true,
         "coolSeasonSignal": false,
         "isFrostFreeGrowingClimate": true,
@@ -5720,7 +5859,9 @@
         ],
         "meanVpdPa": 1207.7,
         "structuralColdRisk": "low",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 24.35,
+        "warmestMonthMeanMaxC": 29.65,
         "annualPrecipitationMm": 2992,
         "annualPetMm": 1602.5,
         "aridityIndex": 1.867,
@@ -5735,10 +5876,19 @@
           "structuralColdRisk": "low",
           "freezingRisk": "low",
           "broadClimateOverride": "tropical",
-          "drySeasonSignal": false,
+          "drySeasonSignal": true,
+          "drySummerSignal": false,
+          "alwaysHot": true,
+          "coolSeasonSignal": false,
           "thermalRegime": "year-round-warm",
           "elevationM": 9,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 4,
+            "maxConsecutiveDryMonths": 4,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": null,
+            "maxCoolMonthPrecipMm": null,
             "coldestMonthMeanMinC": 24.35,
             "warmestMonthMeanMaxC": 29.65,
             "annualPrecipitationMm": 2992,
@@ -6962,17 +7112,16 @@
     {
       "plant": "durian",
       "site": "cairo",
-      "overall": "borderline",
-      "survival": "constrained",
-      "growth": "constrained",
+      "overall": "blocked",
+      "survival": "unreliable",
+      "growth": "poor",
       "flowering": "unlikely",
       "fruiting": "unreliable",
       "limitingFactors": [
-        "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
-        "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
+        "Plant evidence indicates warm / tropical establishment needs; climate has material cool/frost/highland evidence.",
         "Structural moisture regime (hyper-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
+        "Survival severity preserved from plant trait + climate; confidence provisional (trait evidence not SOURCE_SUPPORTED).",
+        "Growth severity preserved from plant trait + climate; confidence provisional (trait evidence not SOURCE_SUPPORTED).",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [],
@@ -7021,17 +7170,19 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
-        "survival": "constrained",
-        "growth": "constrained",
+        "version": "1.1.0-outcome-severity-preserve",
+        "survival": "unreliable",
+        "growth": "poor",
         "flowering": "unlikely",
         "fruiting": "unreliable",
         "demotions": [
           {
-            "status": "constrained",
-            "demoted": true,
+            "status": "unreliable",
+            "demoted": false,
+            "severityPreserved": true,
+            "confidenceProvisional": true,
             "previousStatus": "unreliable",
-            "reason": "evidence-strength:Survival:confident-unreliable-requires-SOURCE_SUPPORTED-on-material-traits",
+            "reason": "evidence-strength:Survival:severe-unreliable-preserved-heuristic-with-authoritative-climate",
             "materialEvidence": {
               "fields": [
                 {
@@ -7048,10 +7199,12 @@
             "dimension": "Survival"
           },
           {
-            "status": "constrained",
-            "demoted": true,
+            "status": "poor",
+            "demoted": false,
+            "severityPreserved": true,
+            "confidenceProvisional": true,
             "previousStatus": "poor",
-            "reason": "evidence-strength:Growth:confident-poor-requires-SOURCE_SUPPORTED-on-material-traits",
+            "reason": "evidence-strength:Growth:severe-poor-preserved-heuristic-with-authoritative-climate",
             "materialEvidence": {
               "fields": [
                 {
@@ -7069,15 +7222,17 @@
           }
         ],
         "warnings": [
-          "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
-          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
+          "Survival severity preserved from plant trait + climate; confidence provisional (trait evidence not SOURCE_SUPPORTED).",
+          "Growth severity preserved from plant trait + climate; confidence provisional (trait evidence not SOURCE_SUPPORTED)."
         ],
         "traces": {
           "Survival": {
-            "status": "constrained",
-            "demoted": true,
+            "status": "unreliable",
+            "demoted": false,
+            "severityPreserved": true,
+            "confidenceProvisional": true,
             "previousStatus": "unreliable",
-            "reason": "evidence-strength:Survival:confident-unreliable-requires-SOURCE_SUPPORTED-on-material-traits",
+            "reason": "evidence-strength:Survival:severe-unreliable-preserved-heuristic-with-authoritative-climate",
             "materialEvidence": {
               "fields": [
                 {
@@ -7094,10 +7249,12 @@
             "dimension": "Survival"
           },
           "Growth": {
-            "status": "constrained",
-            "demoted": true,
+            "status": "poor",
+            "demoted": false,
+            "severityPreserved": true,
+            "confidenceProvisional": true,
             "previousStatus": "poor",
-            "reason": "evidence-strength:Growth:confident-poor-requires-SOURCE_SUPPORTED-on-material-traits",
+            "reason": "evidence-strength:Growth:severe-poor-preserved-heuristic-with-authoritative-climate",
             "materialEvidence": {
               "fields": [
                 {
@@ -7154,30 +7311,29 @@
         }
       },
       "suitability": {
-        "recommendationLevel": "blocked",
-        "survivalFit": 25,
-        "thriveFit": 25,
+        "recommendationLevel": "borderline",
+        "survivalFit": 75,
+        "thriveFit": 35,
         "floweringFit": 70,
         "fruitingFit": 70,
         "warnings": [
-          "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
-          "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band."
+          "Plant evidence indicates warm / tropical establishment needs; climate has material cool/frost/highland evidence."
         ],
-        "explanationText": "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
+        "explanationText": "",
         "forbidsGenericFrostStub": true,
         "forbidsGenericThriveStub": true,
-        "coldAuthority": "tropical-damaging-cold",
-        "coldConfidence": "high",
+        "coldAuthority": "neutral-baseline",
+        "coldConfidence": "medium",
         "plantRequiresYearRoundWarm": true,
         "coldAssessment": {
-          "survivalHint": "unreliable",
-          "confidence": "high",
-          "reason": "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
-          "survivalFit": 25,
-          "thriveFit": 25,
-          "authority": "tropical-damaging-cold"
+          "survivalHint": null,
+          "confidence": "medium",
+          "reason": null,
+          "survivalFit": 75,
+          "thriveFit": 75,
+          "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "arid",
@@ -7223,7 +7379,9 @@
         ],
         "meanVpdPa": 1352.8,
         "structuralColdRisk": "elevated",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 8.15,
+        "warmestMonthMeanMaxC": 35.95,
         "annualPrecipitationMm": 19.8,
         "annualPetMm": 1423.6,
         "aridityIndex": 0.014,
@@ -7239,9 +7397,18 @@
           "freezingRisk": "low",
           "broadClimateOverride": "arid",
           "drySeasonSignal": true,
+          "drySummerSignal": true,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "cool-seasonal",
           "elevationM": 21,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 12,
+            "maxConsecutiveDryMonths": 12,
+            "drySummerSignal": true,
+            "minWarmMonthPrecipMm": 0.1,
+            "maxCoolMonthPrecipMm": 3.8,
             "coldestMonthMeanMinC": 8.15,
             "warmestMonthMeanMaxC": 35.95,
             "annualPrecipitationMm": 19.8,
@@ -8471,9 +8638,9 @@
       "flowering": "unlikely",
       "fruiting": "unreliable",
       "limitingFactors": [
-        "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
-        "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
         "Frost risk is too high for this plant.",
+        "Plant evidence indicates warm / tropical establishment needs; climate has material cool/frost/highland evidence.",
+        "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [],
@@ -8522,7 +8689,7 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "unreliable",
         "growth": "poor",
         "flowering": "unlikely",
@@ -8615,7 +8782,7 @@
         "floweringFit": 70,
         "fruitingFit": 70,
         "warnings": [
-          "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
+          "Plant evidence indicates warm / tropical establishment needs; climate has material cool/frost/highland evidence.",
           "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band."
         ],
         "explanationText": "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
@@ -8632,7 +8799,7 @@
           "thriveFit": 25,
           "authority": "tropical-damaging-cold"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "temperate",
@@ -8678,7 +8845,9 @@
         ],
         "meanVpdPa": 731.8,
         "structuralColdRisk": "high",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": -0.35,
+        "warmestMonthMeanMaxC": 29.35,
         "annualPrecipitationMm": 1517.5,
         "annualPetMm": 934.5,
         "aridityIndex": 1.624,
@@ -8694,9 +8863,18 @@
           "freezingRisk": "high",
           "broadClimateOverride": "temperate",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "frost-prone",
           "elevationM": 35,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 0,
+            "maxConsecutiveDryMonths": 0,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": 123.8,
+            "maxCoolMonthPrecipMm": 195.4,
             "coldestMonthMeanMinC": -0.35,
             "warmestMonthMeanMaxC": 29.35,
             "annualPrecipitationMm": 1517.5,
@@ -9920,15 +10098,16 @@
     {
       "plant": "durian",
       "site": "quito",
-      "overall": "blocked",
-      "survival": "unreliable",
-      "growth": "poor",
-      "flowering": "unlikely",
+      "overall": "borderline",
+      "survival": "constrained",
+      "growth": "constrained",
+      "flowering": "constrained",
       "fruiting": "unreliable",
       "limitingFactors": [
-        "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
-        "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
-        "Coldest-month mean lows (~8.65°C) are below the warm tropical reliability band; damaging cold can occur without literal frost.",
+        "Plant evidence indicates warm / tropical establishment needs; climate has material cool/frost/highland evidence.",
+        "Coldest-month mean lows (~8.65°C) create chilling stress for this warm-tropical plant, but low freezing risk does not justify a hard survival failure.",
+        "Coldest-month mean lows (~8.65°C) can constrain flowering for a warm-tropical plant even without damaging frost.",
+        "Can grow, but reliable fruit production is not expected.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [],
@@ -9977,16 +10156,16 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
-        "survival": "unreliable",
-        "growth": "poor",
-        "flowering": "unlikely",
+        "version": "1.1.0-outcome-severity-preserve",
+        "survival": "constrained",
+        "growth": "constrained",
+        "flowering": "constrained",
         "fruiting": "unreliable",
         "demotions": [],
         "warnings": [],
         "traces": {
           "Survival": {
-            "status": "unreliable",
+            "status": "constrained",
             "demoted": false,
             "reason": null,
             "materialEvidence": {
@@ -10006,11 +10185,10 @@
               "hasHeuristic": false,
               "hasUnknown": false,
               "allSource": true
-            },
-            "dimension": "Survival"
+            }
           },
           "Growth": {
-            "status": "poor",
+            "status": "constrained",
             "demoted": false,
             "reason": null,
             "materialEvidence": {
@@ -10019,22 +10197,16 @@
                   "field": "frostSensitivity",
                   "evidenceClass": "SOURCE_SUPPORTED",
                   "value": "high"
-                },
-                {
-                  "field": "coldTolerance",
-                  "evidenceClass": "SOURCE_SUPPORTED",
-                  "value": "low"
                 }
               ],
               "hasSource": true,
               "hasHeuristic": false,
               "hasUnknown": false,
               "allSource": true
-            },
-            "dimension": "Growth"
+            }
           },
           "Flowering": {
-            "status": "unlikely",
+            "status": "constrained",
             "demoted": false,
             "reason": null,
             "materialEvidence": {
@@ -10049,8 +10221,7 @@
               "hasHeuristic": false,
               "hasUnknown": false,
               "allSource": true
-            },
-            "dimension": "Flowering"
+            }
           },
           "Fruiting": {
             "status": "unreliable",
@@ -10074,30 +10245,29 @@
         }
       },
       "suitability": {
-        "recommendationLevel": "blocked",
-        "survivalFit": 25,
-        "thriveFit": 25,
+        "recommendationLevel": "borderline",
+        "survivalFit": 75,
+        "thriveFit": 35,
         "floweringFit": 70,
         "fruitingFit": 70,
         "warnings": [
-          "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
-          "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band."
+          "Plant evidence indicates warm / tropical establishment needs; climate has material cool/frost/highland evidence."
         ],
-        "explanationText": "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
+        "explanationText": "",
         "forbidsGenericFrostStub": true,
         "forbidsGenericThriveStub": true,
-        "coldAuthority": "tropical-damaging-cold",
-        "coldConfidence": "high",
+        "coldAuthority": "neutral-baseline",
+        "coldConfidence": "medium",
         "plantRequiresYearRoundWarm": true,
         "coldAssessment": {
-          "survivalHint": "unreliable",
-          "confidence": "high",
-          "reason": "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
-          "survivalFit": 25,
-          "thriveFit": 25,
-          "authority": "tropical-damaging-cold"
+          "survivalHint": null,
+          "confidence": "medium",
+          "reason": null,
+          "survivalFit": 75,
+          "thriveFit": 75,
+          "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "highland-tropical",
@@ -10105,7 +10275,7 @@
         "humiditySignal": "borderline",
         "drySeasonSignal": false,
         "alwaysHot": false,
-        "coolSeasonSignal": true,
+        "coolSeasonSignal": false,
         "isFrostFreeGrowingClimate": false,
         "thermalRegime": "cool-highland",
         "elevationM": 2854,
@@ -10143,7 +10313,9 @@
         ],
         "meanVpdPa": 503.3,
         "structuralColdRisk": "elevated",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 8.65,
+        "warmestMonthMeanMaxC": 17.45,
         "annualPrecipitationMm": 2086.2,
         "annualPetMm": 1315.6,
         "aridityIndex": 1.586,
@@ -10159,9 +10331,18 @@
           "freezingRisk": "low",
           "broadClimateOverride": "highland-tropical",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": false,
+          "coolSeasonSignal": false,
           "thermalRegime": "cool-highland",
           "elevationM": 2854,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 2,
+            "maxConsecutiveDryMonths": 2,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": null,
+            "maxCoolMonthPrecipMm": null,
             "coldestMonthMeanMinC": 8.65,
             "warmestMonthMeanMaxC": 17.45,
             "annualPrecipitationMm": 2086.2,
@@ -11385,18 +11566,20 @@
     {
       "plant": "sweet-cherry",
       "site": "yehiam",
-      "overall": "borderline",
+      "overall": "good",
       "survival": "reliable",
-      "growth": "constrained",
+      "growth": "supported",
       "flowering": "unknown",
-      "fruiting": "unreliable",
+      "fruiting": "unknown",
       "limitingFactors": [
-        "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
-        "Climate is too cool / not frost-free for sourced fruiting needs.",
-        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
+        "Survival uses monthly-mean normals only; damaging extreme cold/heat authority is absent — strong positive capped.",
+        "Cool season exists ≠ proven chill-hour sufficiency; fruiting stays bounded.",
+        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment.",
+        "Species-level evidence only — cultivar-specific hardiness/chill/flowering unknown; confidence bounded."
       ],
       "unknownEvidence": [
-        "flowering-climate-comparison"
+        "flowering-climate-comparison",
+        "fruiting-climate-comparison"
       ],
       "needsReview": false,
       "representativenessAdjustment": null,
@@ -11445,11 +11628,11 @@
         "overall": "low"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
-        "growth": "constrained",
+        "growth": "supported",
         "flowering": "unknown",
-        "fruiting": "unreliable",
+        "fruiting": "unknown",
         "demotions": [],
         "warnings": [],
         "traces": {
@@ -11478,7 +11661,7 @@
             "dimension": "Survival"
           },
           "Growth": {
-            "status": "constrained",
+            "status": "supported",
             "demoted": false,
             "reason": null,
             "materialEvidence": {
@@ -11493,7 +11676,8 @@
               "hasHeuristic": false,
               "hasUnknown": false,
               "allSource": true
-            }
+            },
+            "dimension": "Growth"
           },
           "Flowering": {
             "status": "unknown",
@@ -11514,7 +11698,7 @@
             }
           },
           "Fruiting": {
-            "status": "unreliable",
+            "status": "unknown",
             "demoted": false,
             "reason": null,
             "materialEvidence": {
@@ -11529,26 +11713,23 @@
               "hasHeuristic": false,
               "hasUnknown": false,
               "allSource": true
-            },
-            "dimension": "Fruiting"
+            }
           }
         }
       },
       "suitability": {
         "recommendationLevel": "borderline",
         "survivalFit": 75,
-        "thriveFit": 35,
+        "thriveFit": 75,
         "floweringFit": 70,
         "fruitingFit": 70,
-        "warnings": [
-          "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland."
-        ],
+        "warnings": [],
         "explanationText": "",
         "forbidsGenericFrostStub": true,
         "forbidsGenericThriveStub": true,
         "coldAuthority": "neutral-baseline",
         "coldConfidence": "medium",
-        "plantRequiresYearRoundWarm": true,
+        "plantRequiresYearRoundWarm": false,
         "coldAssessment": {
           "survivalHint": null,
           "confidence": "medium",
@@ -11557,7 +11738,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "mediterranean",
@@ -11603,7 +11784,9 @@
         ],
         "meanVpdPa": 853.8,
         "structuralColdRisk": "elevated",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 7.75,
+        "warmestMonthMeanMaxC": 28.25,
         "annualPrecipitationMm": 1293.6,
         "annualPetMm": 1487.6,
         "aridityIndex": 0.87,
@@ -11618,10 +11801,19 @@
           "structuralColdRisk": "elevated",
           "freezingRisk": "low",
           "broadClimateOverride": "mediterranean",
-          "drySeasonSignal": false,
+          "drySeasonSignal": true,
+          "drySummerSignal": true,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "cool-seasonal",
           "elevationM": 441,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 6,
+            "maxConsecutiveDryMonths": 6,
+            "drySummerSignal": true,
+            "minWarmMonthPrecipMm": 1.8,
+            "maxCoolMonthPrecipMm": 339.8,
             "coldestMonthMeanMinC": 7.75,
             "warmestMonthMeanMaxC": 28.25,
             "annualPrecipitationMm": 1293.6,
@@ -12863,17 +13055,16 @@
       "site": "helsinki",
       "overall": "borderline",
       "survival": "constrained",
-      "growth": "constrained",
+      "growth": "supported",
       "flowering": "unknown",
-      "fruiting": "unreliable",
+      "fruiting": "unknown",
       "limitingFactors": [
-        "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
         "Medium frostSensitivity + strongly cold monthly means; no provenanced hardiness / extremes — conditional, not confident Not Recommended.",
-        "Climate is too cool / not frost-free for sourced fruiting needs.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [
-        "flowering-climate-comparison"
+        "flowering-climate-comparison",
+        "fruiting-climate-comparison"
       ],
       "needsReview": false,
       "representativenessAdjustment": null,
@@ -12920,11 +13111,11 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "constrained",
-        "growth": "constrained",
+        "growth": "supported",
         "flowering": "unknown",
-        "fruiting": "unreliable",
+        "fruiting": "unknown",
         "demotions": [],
         "warnings": [],
         "traces": {
@@ -12952,7 +13143,7 @@
             }
           },
           "Growth": {
-            "status": "constrained",
+            "status": "supported",
             "demoted": false,
             "reason": null,
             "materialEvidence": {
@@ -12967,7 +13158,8 @@
               "hasHeuristic": false,
               "hasUnknown": false,
               "allSource": true
-            }
+            },
+            "dimension": "Growth"
           },
           "Flowering": {
             "status": "unknown",
@@ -12988,7 +13180,7 @@
             }
           },
           "Fruiting": {
-            "status": "unreliable",
+            "status": "unknown",
             "demoted": false,
             "reason": null,
             "materialEvidence": {
@@ -13003,19 +13195,17 @@
               "hasHeuristic": false,
               "hasUnknown": false,
               "allSource": true
-            },
-            "dimension": "Fruiting"
+            }
           }
         }
       },
       "suitability": {
         "recommendationLevel": "borderline",
         "survivalFit": 55,
-        "thriveFit": 35,
+        "thriveFit": 50,
         "floweringFit": 70,
         "fruitingFit": 70,
         "warnings": [
-          "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
           "Medium frostSensitivity + strongly cold monthly means; no provenanced hardiness / extremes — conditional, not confident Not Recommended."
         ],
         "explanationText": "",
@@ -13023,7 +13213,7 @@
         "forbidsGenericThriveStub": true,
         "coldAuthority": "frostSensitivity-medium-bounded",
         "coldConfidence": "low",
-        "plantRequiresYearRoundWarm": true,
+        "plantRequiresYearRoundWarm": false,
         "coldAssessment": {
           "survivalHint": "constrained",
           "confidence": "low",
@@ -13032,7 +13222,7 @@
           "thriveFit": 50,
           "authority": "frostSensitivity-medium-bounded"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "temperate",
@@ -13078,7 +13268,9 @@
         ],
         "meanVpdPa": 373.7,
         "structuralColdRisk": "high",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": -8.25,
+        "warmestMonthMeanMaxC": 20.05,
         "annualPrecipitationMm": 672.3,
         "annualPetMm": 610.7,
         "aridityIndex": 1.101,
@@ -13094,9 +13286,18 @@
           "freezingRisk": "high",
           "broadClimateOverride": "temperate",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "frost-prone",
           "elevationM": 40.2,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 1,
+            "maxConsecutiveDryMonths": 1,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": 33.5,
+            "maxCoolMonthPrecipMm": 80,
             "coldestMonthMeanMinC": -8.25,
             "warmestMonthMeanMaxC": 20.05,
             "annualPrecipitationMm": 672.3,
@@ -14322,7 +14523,7 @@
       "site": "singapore",
       "overall": "borderline",
       "survival": "reliable",
-      "growth": "poor",
+      "growth": "constrained",
       "flowering": "unlikely",
       "fruiting": "unreliable",
       "limitingFactors": [
@@ -14377,9 +14578,9 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
-        "growth": "poor",
+        "growth": "constrained",
         "flowering": "unlikely",
         "fruiting": "unreliable",
         "demotions": [],
@@ -14410,7 +14611,7 @@
             "dimension": "Survival"
           },
           "Growth": {
-            "status": "poor",
+            "status": "constrained",
             "demoted": false,
             "reason": null,
             "materialEvidence": {
@@ -14425,8 +14626,7 @@
               "hasHeuristic": false,
               "hasUnknown": false,
               "allSource": true
-            },
-            "dimension": "Growth"
+            }
           },
           "Flowering": {
             "status": "unlikely",
@@ -14469,7 +14669,7 @@
         }
       },
       "suitability": {
-        "recommendationLevel": "borderline",
+        "recommendationLevel": "good",
         "survivalFit": 75,
         "thriveFit": 30,
         "floweringFit": 70,
@@ -14482,7 +14682,7 @@
         "forbidsGenericThriveStub": true,
         "coldAuthority": "neutral-baseline",
         "coldConfidence": "medium",
-        "plantRequiresYearRoundWarm": true,
+        "plantRequiresYearRoundWarm": false,
         "coldAssessment": {
           "survivalHint": null,
           "confidence": "medium",
@@ -14491,7 +14691,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "tropical",
@@ -14537,7 +14737,9 @@
         ],
         "meanVpdPa": 1253.3,
         "structuralColdRisk": "low",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 24.85,
+        "warmestMonthMeanMaxC": 28.75,
         "annualPrecipitationMm": 2423.3,
         "annualPetMm": 1731.8,
         "aridityIndex": 1.399,
@@ -14553,9 +14755,18 @@
           "freezingRisk": "low",
           "broadClimateOverride": "tropical",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": true,
+          "coolSeasonSignal": false,
           "thermalRegime": "year-round-warm",
           "elevationM": 20,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 0,
+            "maxConsecutiveDryMonths": 0,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": null,
+            "maxCoolMonthPrecipMm": null,
             "coldestMonthMeanMinC": 24.85,
             "warmestMonthMeanMaxC": 28.75,
             "annualPrecipitationMm": 2423.3,
@@ -15781,7 +15992,7 @@
       "site": "kochi",
       "overall": "borderline",
       "survival": "reliable",
-      "growth": "poor",
+      "growth": "constrained",
       "flowering": "unlikely",
       "fruiting": "unreliable",
       "limitingFactors": [
@@ -15836,9 +16047,9 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
-        "growth": "poor",
+        "growth": "constrained",
         "flowering": "unlikely",
         "fruiting": "unreliable",
         "demotions": [],
@@ -15869,7 +16080,7 @@
             "dimension": "Survival"
           },
           "Growth": {
-            "status": "poor",
+            "status": "constrained",
             "demoted": false,
             "reason": null,
             "materialEvidence": {
@@ -15884,8 +16095,7 @@
               "hasHeuristic": false,
               "hasUnknown": false,
               "allSource": true
-            },
-            "dimension": "Growth"
+            }
           },
           "Flowering": {
             "status": "unlikely",
@@ -15928,7 +16138,7 @@
         }
       },
       "suitability": {
-        "recommendationLevel": "borderline",
+        "recommendationLevel": "good",
         "survivalFit": 75,
         "thriveFit": 30,
         "floweringFit": 70,
@@ -15941,7 +16151,7 @@
         "forbidsGenericThriveStub": true,
         "coldAuthority": "neutral-baseline",
         "coldConfidence": "medium",
-        "plantRequiresYearRoundWarm": true,
+        "plantRequiresYearRoundWarm": false,
         "coldAssessment": {
           "survivalHint": null,
           "confidence": "medium",
@@ -15950,13 +16160,13 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "tropical",
         "freezingRisk": "low",
         "humiditySignal": "borderline",
-        "drySeasonSignal": false,
+        "drySeasonSignal": true,
         "alwaysHot": true,
         "coolSeasonSignal": false,
         "isFrostFreeGrowingClimate": true,
@@ -15996,7 +16206,9 @@
         ],
         "meanVpdPa": 1207.7,
         "structuralColdRisk": "low",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 24.35,
+        "warmestMonthMeanMaxC": 29.65,
         "annualPrecipitationMm": 2992,
         "annualPetMm": 1602.5,
         "aridityIndex": 1.867,
@@ -16011,10 +16223,19 @@
           "structuralColdRisk": "low",
           "freezingRisk": "low",
           "broadClimateOverride": "tropical",
-          "drySeasonSignal": false,
+          "drySeasonSignal": true,
+          "drySummerSignal": false,
+          "alwaysHot": true,
+          "coolSeasonSignal": false,
           "thermalRegime": "year-round-warm",
           "elevationM": 9,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 4,
+            "maxConsecutiveDryMonths": 4,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": null,
+            "maxCoolMonthPrecipMm": null,
             "coldestMonthMeanMinC": 24.35,
             "warmestMonthMeanMaxC": 29.65,
             "annualPrecipitationMm": 2992,
@@ -17242,14 +17463,14 @@
       "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
-      "fruiting": "unreliable",
+      "fruiting": "unknown",
       "limitingFactors": [
-        "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
-        "Climate is too cool / not frost-free for sourced fruiting needs.",
+        "Natural climate water is too limited for this medium-water plant; irrigation reliability is unknown, so strong growth suitability is withheld.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [
-        "flowering-climate-comparison"
+        "flowering-climate-comparison",
+        "fruiting-climate-comparison"
       ],
       "needsReview": false,
       "representativenessAdjustment": null,
@@ -17296,11 +17517,11 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
         "growth": "constrained",
         "flowering": "unknown",
-        "fruiting": "unreliable",
+        "fruiting": "unknown",
         "demotions": [],
         "warnings": [],
         "traces": {
@@ -17338,12 +17559,17 @@
                   "field": "frostSensitivity",
                   "evidenceClass": "SOURCE_SUPPORTED",
                   "value": "medium"
+                },
+                {
+                  "field": "waterNeeds",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "medium"
                 }
               ],
               "hasSource": true,
-              "hasHeuristic": false,
+              "hasHeuristic": true,
               "hasUnknown": false,
-              "allSource": true
+              "allSource": false
             }
           },
           "Flowering": {
@@ -17365,7 +17591,7 @@
             }
           },
           "Fruiting": {
-            "status": "unreliable",
+            "status": "unknown",
             "demoted": false,
             "reason": null,
             "materialEvidence": {
@@ -17380,26 +17606,23 @@
               "hasHeuristic": false,
               "hasUnknown": false,
               "allSource": true
-            },
-            "dimension": "Fruiting"
+            }
           }
         }
       },
       "suitability": {
         "recommendationLevel": "borderline",
         "survivalFit": 75,
-        "thriveFit": 35,
+        "thriveFit": 75,
         "floweringFit": 70,
         "fruitingFit": 70,
-        "warnings": [
-          "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland."
-        ],
+        "warnings": [],
         "explanationText": "",
         "forbidsGenericFrostStub": true,
         "forbidsGenericThriveStub": true,
         "coldAuthority": "neutral-baseline",
         "coldConfidence": "medium",
-        "plantRequiresYearRoundWarm": true,
+        "plantRequiresYearRoundWarm": false,
         "coldAssessment": {
           "survivalHint": null,
           "confidence": "medium",
@@ -17408,7 +17631,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "arid",
@@ -17454,7 +17677,9 @@
         ],
         "meanVpdPa": 1352.8,
         "structuralColdRisk": "elevated",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 8.15,
+        "warmestMonthMeanMaxC": 35.95,
         "annualPrecipitationMm": 19.8,
         "annualPetMm": 1423.6,
         "aridityIndex": 0.014,
@@ -17470,9 +17695,18 @@
           "freezingRisk": "low",
           "broadClimateOverride": "arid",
           "drySeasonSignal": true,
+          "drySummerSignal": true,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "cool-seasonal",
           "elevationM": 21,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 12,
+            "maxConsecutiveDryMonths": 12,
+            "drySummerSignal": true,
+            "minWarmMonthPrecipMm": 0.1,
+            "maxCoolMonthPrecipMm": 3.8,
             "coldestMonthMeanMinC": 8.15,
             "warmestMonthMeanMaxC": 35.95,
             "annualPrecipitationMm": 19.8,
@@ -18698,17 +18932,16 @@
       "site": "tokyo",
       "overall": "borderline",
       "survival": "constrained",
-      "growth": "constrained",
+      "growth": "supported",
       "flowering": "unknown",
-      "fruiting": "unreliable",
+      "fruiting": "unknown",
       "limitingFactors": [
-        "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
         "Medium frostSensitivity + frost-prone monthly class; no provenanced hardiness / extremes — conditional.",
-        "Climate is too cool / not frost-free for sourced fruiting needs.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [
-        "flowering-climate-comparison"
+        "flowering-climate-comparison",
+        "fruiting-climate-comparison"
       ],
       "needsReview": false,
       "representativenessAdjustment": null,
@@ -18755,11 +18988,11 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "constrained",
-        "growth": "constrained",
+        "growth": "supported",
         "flowering": "unknown",
-        "fruiting": "unreliable",
+        "fruiting": "unknown",
         "demotions": [],
         "warnings": [],
         "traces": {
@@ -18787,7 +19020,7 @@
             }
           },
           "Growth": {
-            "status": "constrained",
+            "status": "supported",
             "demoted": false,
             "reason": null,
             "materialEvidence": {
@@ -18802,7 +19035,8 @@
               "hasHeuristic": false,
               "hasUnknown": false,
               "allSource": true
-            }
+            },
+            "dimension": "Growth"
           },
           "Flowering": {
             "status": "unknown",
@@ -18823,7 +19057,7 @@
             }
           },
           "Fruiting": {
-            "status": "unreliable",
+            "status": "unknown",
             "demoted": false,
             "reason": null,
             "materialEvidence": {
@@ -18838,19 +19072,17 @@
               "hasHeuristic": false,
               "hasUnknown": false,
               "allSource": true
-            },
-            "dimension": "Fruiting"
+            }
           }
         }
       },
       "suitability": {
         "recommendationLevel": "borderline",
         "survivalFit": 65,
-        "thriveFit": 35,
+        "thriveFit": 65,
         "floweringFit": 70,
         "fruitingFit": 70,
         "warnings": [
-          "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
           "Medium frostSensitivity + frost-prone monthly class; no provenanced hardiness / extremes — conditional."
         ],
         "explanationText": "",
@@ -18858,7 +19090,7 @@
         "forbidsGenericThriveStub": true,
         "coldAuthority": "frostSensitivity-medium-bounded",
         "coldConfidence": "low",
-        "plantRequiresYearRoundWarm": true,
+        "plantRequiresYearRoundWarm": false,
         "coldAssessment": {
           "survivalHint": "constrained",
           "confidence": "low",
@@ -18867,7 +19099,7 @@
           "thriveFit": 65,
           "authority": "frostSensitivity-medium-bounded"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "temperate",
@@ -18913,7 +19145,9 @@
         ],
         "meanVpdPa": 731.8,
         "structuralColdRisk": "high",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": -0.35,
+        "warmestMonthMeanMaxC": 29.35,
         "annualPrecipitationMm": 1517.5,
         "annualPetMm": 934.5,
         "aridityIndex": 1.624,
@@ -18929,9 +19163,18 @@
           "freezingRisk": "high",
           "broadClimateOverride": "temperate",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "frost-prone",
           "elevationM": 35,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 0,
+            "maxConsecutiveDryMonths": 0,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": 123.8,
+            "maxCoolMonthPrecipMm": 195.4,
             "coldestMonthMeanMinC": -0.35,
             "warmestMonthMeanMaxC": 29.35,
             "annualPrecipitationMm": 1517.5,
@@ -20155,19 +20398,20 @@
     {
       "plant": "sweet-cherry",
       "site": "quito",
-      "overall": "borderline",
+      "overall": "good",
       "survival": "reliable",
-      "growth": "constrained",
+      "growth": "supported",
       "flowering": "unknown",
-      "fruiting": "unreliable",
+      "fruiting": "unknown",
       "limitingFactors": [
-        "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
-        "Climate is too cool / not frost-free for sourced fruiting needs.",
+        "Survival uses monthly-mean normals only; damaging extreme cold/heat authority is absent — strong positive capped.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment.",
+        "Species-level evidence only — cultivar-specific hardiness/chill/flowering unknown; confidence bounded.",
         "Near-equatorial / low thermal amplitude — temperate spring/autumn calendar cues are not forced."
       ],
       "unknownEvidence": [
-        "flowering-climate-comparison"
+        "flowering-climate-comparison",
+        "fruiting-climate-comparison"
       ],
       "needsReview": false,
       "representativenessAdjustment": null,
@@ -20214,11 +20458,11 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
-        "growth": "constrained",
+        "growth": "supported",
         "flowering": "unknown",
-        "fruiting": "unreliable",
+        "fruiting": "unknown",
         "demotions": [],
         "warnings": [],
         "traces": {
@@ -20247,7 +20491,7 @@
             "dimension": "Survival"
           },
           "Growth": {
-            "status": "constrained",
+            "status": "supported",
             "demoted": false,
             "reason": null,
             "materialEvidence": {
@@ -20262,7 +20506,8 @@
               "hasHeuristic": false,
               "hasUnknown": false,
               "allSource": true
-            }
+            },
+            "dimension": "Growth"
           },
           "Flowering": {
             "status": "unknown",
@@ -20283,7 +20528,7 @@
             }
           },
           "Fruiting": {
-            "status": "unreliable",
+            "status": "unknown",
             "demoted": false,
             "reason": null,
             "materialEvidence": {
@@ -20298,26 +20543,23 @@
               "hasHeuristic": false,
               "hasUnknown": false,
               "allSource": true
-            },
-            "dimension": "Fruiting"
+            }
           }
         }
       },
       "suitability": {
         "recommendationLevel": "borderline",
         "survivalFit": 75,
-        "thriveFit": 35,
+        "thriveFit": 75,
         "floweringFit": 70,
         "fruitingFit": 70,
-        "warnings": [
-          "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland."
-        ],
+        "warnings": [],
         "explanationText": "",
         "forbidsGenericFrostStub": true,
         "forbidsGenericThriveStub": true,
         "coldAuthority": "neutral-baseline",
         "coldConfidence": "medium",
-        "plantRequiresYearRoundWarm": true,
+        "plantRequiresYearRoundWarm": false,
         "coldAssessment": {
           "survivalHint": null,
           "confidence": "medium",
@@ -20326,7 +20568,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "highland-tropical",
@@ -20334,7 +20576,7 @@
         "humiditySignal": "borderline",
         "drySeasonSignal": false,
         "alwaysHot": false,
-        "coolSeasonSignal": true,
+        "coolSeasonSignal": false,
         "isFrostFreeGrowingClimate": false,
         "thermalRegime": "cool-highland",
         "elevationM": 2854,
@@ -20372,7 +20614,9 @@
         ],
         "meanVpdPa": 503.3,
         "structuralColdRisk": "elevated",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 8.65,
+        "warmestMonthMeanMaxC": 17.45,
         "annualPrecipitationMm": 2086.2,
         "annualPetMm": 1315.6,
         "aridityIndex": 1.586,
@@ -20388,9 +20632,18 @@
           "freezingRisk": "low",
           "broadClimateOverride": "highland-tropical",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": false,
+          "coolSeasonSignal": false,
           "thermalRegime": "cool-highland",
           "elevationM": 2854,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 2,
+            "maxConsecutiveDryMonths": 2,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": null,
+            "maxCoolMonthPrecipMm": null,
             "coldestMonthMeanMinC": 8.65,
             "warmestMonthMeanMaxC": 17.45,
             "annualPrecipitationMm": 2086.2,
@@ -21614,14 +21867,15 @@
     {
       "plant": "carob",
       "site": "yehiam",
-      "overall": "borderline",
+      "overall": "good",
       "survival": "reliable",
-      "growth": "constrained",
+      "growth": "supported",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
-        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
+        "Survival uses monthly-mean normals only; damaging extreme cold/heat authority is absent — strong positive capped.",
+        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment.",
+        "Species-level evidence only — cultivar-specific hardiness/chill/flowering unknown; confidence bounded."
       ],
       "unknownEvidence": [
         "flowering-climate-comparison",
@@ -21674,41 +21928,13 @@
         "overall": "low"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
-        "growth": "constrained",
+        "growth": "supported",
         "flowering": "unknown",
         "fruiting": "unknown",
-        "demotions": [
-          {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
-            "materialEvidence": {
-              "fields": [
-                {
-                  "field": "frostSensitivity",
-                  "evidenceClass": "SOURCE_SUPPORTED",
-                  "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
-                }
-              ],
-              "hasSource": true,
-              "hasHeuristic": true,
-              "hasUnknown": false,
-              "allSource": false
-            },
-            "dimension": "Growth"
-          }
-        ],
-        "warnings": [
-          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
-        ],
+        "demotions": [],
+        "warnings": [],
         "traces": {
           "Survival": {
             "status": "reliable",
@@ -21735,27 +21961,21 @@
             "dimension": "Survival"
           },
           "Growth": {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "status": "supported",
+            "demoted": false,
+            "reason": null,
             "materialEvidence": {
               "fields": [
                 {
                   "field": "frostSensitivity",
                   "evidenceClass": "SOURCE_SUPPORTED",
                   "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
                 }
               ],
               "hasSource": true,
-              "hasHeuristic": true,
+              "hasHeuristic": false,
               "hasUnknown": false,
-              "allSource": false
+              "allSource": true
             },
             "dimension": "Growth"
           },
@@ -21818,7 +22038,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "mediterranean",
@@ -21864,7 +22084,9 @@
         ],
         "meanVpdPa": 853.8,
         "structuralColdRisk": "elevated",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 7.75,
+        "warmestMonthMeanMaxC": 28.25,
         "annualPrecipitationMm": 1293.6,
         "annualPetMm": 1487.6,
         "aridityIndex": 0.87,
@@ -21879,10 +22101,19 @@
           "structuralColdRisk": "elevated",
           "freezingRisk": "low",
           "broadClimateOverride": "mediterranean",
-          "drySeasonSignal": false,
+          "drySeasonSignal": true,
+          "drySummerSignal": true,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "cool-seasonal",
           "elevationM": 441,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 6,
+            "maxConsecutiveDryMonths": 6,
+            "drySummerSignal": true,
+            "minWarmMonthPrecipMm": 1.8,
+            "maxCoolMonthPrecipMm": 339.8,
             "coldestMonthMeanMinC": 7.75,
             "warmestMonthMeanMaxC": 28.25,
             "annualPrecipitationMm": 1293.6,
@@ -23181,7 +23412,7 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "constrained",
         "growth": "constrained",
         "flowering": "unknown",
@@ -23291,7 +23522,7 @@
           "thriveFit": 50,
           "authority": "frostSensitivity-medium-bounded"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "temperate",
@@ -23337,7 +23568,9 @@
         ],
         "meanVpdPa": 373.7,
         "structuralColdRisk": "high",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": -8.25,
+        "warmestMonthMeanMaxC": 20.05,
         "annualPrecipitationMm": 672.3,
         "annualPetMm": 610.7,
         "aridityIndex": 1.101,
@@ -23353,9 +23586,18 @@
           "freezingRisk": "high",
           "broadClimateOverride": "temperate",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "frost-prone",
           "elevationM": 40.2,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 1,
+            "maxConsecutiveDryMonths": 1,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": 33.5,
+            "maxCoolMonthPrecipMm": 80,
             "coldestMonthMeanMinC": -8.25,
             "warmestMonthMeanMaxC": 20.05,
             "annualPrecipitationMm": 672.3,
@@ -24637,7 +24879,7 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
         "growth": "constrained",
         "flowering": "unknown",
@@ -24746,7 +24988,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "tropical",
@@ -24792,7 +25034,9 @@
         ],
         "meanVpdPa": 1253.3,
         "structuralColdRisk": "low",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 24.85,
+        "warmestMonthMeanMaxC": 28.75,
         "annualPrecipitationMm": 2423.3,
         "annualPetMm": 1731.8,
         "aridityIndex": 1.399,
@@ -24808,9 +25052,18 @@
           "freezingRisk": "low",
           "broadClimateOverride": "tropical",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": true,
+          "coolSeasonSignal": false,
           "thermalRegime": "year-round-warm",
           "elevationM": 20,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 0,
+            "maxConsecutiveDryMonths": 0,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": null,
+            "maxCoolMonthPrecipMm": null,
             "coldestMonthMeanMinC": 24.85,
             "warmestMonthMeanMaxC": 28.75,
             "annualPrecipitationMm": 2423.3,
@@ -26092,7 +26345,7 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
         "growth": "constrained",
         "flowering": "unknown",
@@ -26201,13 +26454,13 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "tropical",
         "freezingRisk": "low",
         "humiditySignal": "borderline",
-        "drySeasonSignal": false,
+        "drySeasonSignal": true,
         "alwaysHot": true,
         "coolSeasonSignal": false,
         "isFrostFreeGrowingClimate": true,
@@ -26247,7 +26500,9 @@
         ],
         "meanVpdPa": 1207.7,
         "structuralColdRisk": "low",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 24.35,
+        "warmestMonthMeanMaxC": 29.65,
         "annualPrecipitationMm": 2992,
         "annualPetMm": 1602.5,
         "aridityIndex": 1.867,
@@ -26262,10 +26517,19 @@
           "structuralColdRisk": "low",
           "freezingRisk": "low",
           "broadClimateOverride": "tropical",
-          "drySeasonSignal": false,
+          "drySeasonSignal": true,
+          "drySummerSignal": false,
+          "alwaysHot": true,
+          "coolSeasonSignal": false,
           "thermalRegime": "year-round-warm",
           "elevationM": 9,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 4,
+            "maxConsecutiveDryMonths": 4,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": null,
+            "maxCoolMonthPrecipMm": null,
             "coldestMonthMeanMinC": 24.35,
             "warmestMonthMeanMaxC": 29.65,
             "annualPrecipitationMm": 2992,
@@ -27489,14 +27753,15 @@
     {
       "plant": "carob",
       "site": "cairo",
-      "overall": "borderline",
+      "overall": "good",
       "survival": "reliable",
-      "growth": "constrained",
+      "growth": "supported",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
-        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
+        "Survival uses monthly-mean normals only; damaging extreme cold/heat authority is absent — strong positive capped.",
+        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment.",
+        "Species-level evidence only — cultivar-specific hardiness/chill/flowering unknown; confidence bounded."
       ],
       "unknownEvidence": [
         "flowering-climate-comparison",
@@ -27547,41 +27812,13 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
-        "growth": "constrained",
+        "growth": "supported",
         "flowering": "unknown",
         "fruiting": "unknown",
-        "demotions": [
-          {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
-            "materialEvidence": {
-              "fields": [
-                {
-                  "field": "frostSensitivity",
-                  "evidenceClass": "SOURCE_SUPPORTED",
-                  "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
-                }
-              ],
-              "hasSource": true,
-              "hasHeuristic": true,
-              "hasUnknown": false,
-              "allSource": false
-            },
-            "dimension": "Growth"
-          }
-        ],
-        "warnings": [
-          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
-        ],
+        "demotions": [],
+        "warnings": [],
         "traces": {
           "Survival": {
             "status": "reliable",
@@ -27608,27 +27845,21 @@
             "dimension": "Survival"
           },
           "Growth": {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "status": "supported",
+            "demoted": false,
+            "reason": null,
             "materialEvidence": {
               "fields": [
                 {
                   "field": "frostSensitivity",
                   "evidenceClass": "SOURCE_SUPPORTED",
                   "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
                 }
               ],
               "hasSource": true,
-              "hasHeuristic": true,
+              "hasHeuristic": false,
               "hasUnknown": false,
-              "allSource": false
+              "allSource": true
             },
             "dimension": "Growth"
           },
@@ -27691,7 +27922,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "arid",
@@ -27737,7 +27968,9 @@
         ],
         "meanVpdPa": 1352.8,
         "structuralColdRisk": "elevated",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 8.15,
+        "warmestMonthMeanMaxC": 35.95,
         "annualPrecipitationMm": 19.8,
         "annualPetMm": 1423.6,
         "aridityIndex": 0.014,
@@ -27753,9 +27986,18 @@
           "freezingRisk": "low",
           "broadClimateOverride": "arid",
           "drySeasonSignal": true,
+          "drySummerSignal": true,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "cool-seasonal",
           "elevationM": 21,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 12,
+            "maxConsecutiveDryMonths": 12,
+            "drySummerSignal": true,
+            "minWarmMonthPrecipMm": 0.1,
+            "maxCoolMonthPrecipMm": 3.8,
             "coldestMonthMeanMinC": 8.15,
             "warmestMonthMeanMaxC": 35.95,
             "annualPrecipitationMm": 19.8,
@@ -28981,12 +29223,11 @@
       "site": "tokyo",
       "overall": "borderline",
       "survival": "constrained",
-      "growth": "constrained",
+      "growth": "supported",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
         "Medium frostSensitivity + frost-prone monthly class; no provenanced hardiness / extremes — conditional.",
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [
@@ -29038,41 +29279,13 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "constrained",
-        "growth": "constrained",
+        "growth": "supported",
         "flowering": "unknown",
         "fruiting": "unknown",
-        "demotions": [
-          {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
-            "materialEvidence": {
-              "fields": [
-                {
-                  "field": "frostSensitivity",
-                  "evidenceClass": "SOURCE_SUPPORTED",
-                  "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
-                }
-              ],
-              "hasSource": true,
-              "hasHeuristic": true,
-              "hasUnknown": false,
-              "allSource": false
-            },
-            "dimension": "Growth"
-          }
-        ],
-        "warnings": [
-          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
-        ],
+        "demotions": [],
+        "warnings": [],
         "traces": {
           "Survival": {
             "status": "constrained",
@@ -29098,27 +29311,21 @@
             }
           },
           "Growth": {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "status": "supported",
+            "demoted": false,
+            "reason": null,
             "materialEvidence": {
               "fields": [
                 {
                   "field": "frostSensitivity",
                   "evidenceClass": "SOURCE_SUPPORTED",
                   "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
                 }
               ],
               "hasSource": true,
-              "hasHeuristic": true,
+              "hasHeuristic": false,
               "hasUnknown": false,
-              "allSource": false
+              "allSource": true
             },
             "dimension": "Growth"
           },
@@ -29183,7 +29390,7 @@
           "thriveFit": 65,
           "authority": "frostSensitivity-medium-bounded"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "temperate",
@@ -29229,7 +29436,9 @@
         ],
         "meanVpdPa": 731.8,
         "structuralColdRisk": "high",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": -0.35,
+        "warmestMonthMeanMaxC": 29.35,
         "annualPrecipitationMm": 1517.5,
         "annualPetMm": 934.5,
         "aridityIndex": 1.624,
@@ -29245,9 +29454,18 @@
           "freezingRisk": "high",
           "broadClimateOverride": "temperate",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "frost-prone",
           "elevationM": 35,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 0,
+            "maxConsecutiveDryMonths": 0,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": 123.8,
+            "maxCoolMonthPrecipMm": 195.4,
             "coldestMonthMeanMinC": -0.35,
             "warmestMonthMeanMaxC": 29.35,
             "annualPrecipitationMm": 1517.5,
@@ -30529,7 +30747,7 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
         "growth": "constrained",
         "flowering": "unknown",
@@ -30638,7 +30856,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "highland-tropical",
@@ -30646,7 +30864,7 @@
         "humiditySignal": "borderline",
         "drySeasonSignal": false,
         "alwaysHot": false,
-        "coolSeasonSignal": true,
+        "coolSeasonSignal": false,
         "isFrostFreeGrowingClimate": false,
         "thermalRegime": "cool-highland",
         "elevationM": 2854,
@@ -30684,7 +30902,9 @@
         ],
         "meanVpdPa": 503.3,
         "structuralColdRisk": "elevated",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 8.65,
+        "warmestMonthMeanMaxC": 17.45,
         "annualPrecipitationMm": 2086.2,
         "annualPetMm": 1315.6,
         "aridityIndex": 1.586,
@@ -30700,9 +30920,18 @@
           "freezingRisk": "low",
           "broadClimateOverride": "highland-tropical",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": false,
+          "coolSeasonSignal": false,
           "thermalRegime": "cool-highland",
           "elevationM": 2854,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 2,
+            "maxConsecutiveDryMonths": 2,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": null,
+            "maxCoolMonthPrecipMm": null,
             "coldestMonthMeanMinC": 8.65,
             "warmestMonthMeanMaxC": 17.45,
             "annualPrecipitationMm": 2086.2,
@@ -31926,14 +32155,15 @@
     {
       "plant": "bay-laurel",
       "site": "yehiam",
-      "overall": "borderline",
+      "overall": "good",
       "survival": "reliable",
-      "growth": "constrained",
+      "growth": "supported",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
-        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
+        "Survival uses monthly-mean normals only; damaging extreme cold/heat authority is absent — strong positive capped.",
+        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment.",
+        "Species-level evidence only — cultivar-specific hardiness/chill/flowering unknown; confidence bounded."
       ],
       "unknownEvidence": [
         "flowering-climate-comparison",
@@ -31986,41 +32216,13 @@
         "overall": "low"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
-        "growth": "constrained",
+        "growth": "supported",
         "flowering": "unknown",
         "fruiting": "unknown",
-        "demotions": [
-          {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
-            "materialEvidence": {
-              "fields": [
-                {
-                  "field": "frostSensitivity",
-                  "evidenceClass": "SOURCE_SUPPORTED",
-                  "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
-                }
-              ],
-              "hasSource": true,
-              "hasHeuristic": true,
-              "hasUnknown": false,
-              "allSource": false
-            },
-            "dimension": "Growth"
-          }
-        ],
-        "warnings": [
-          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
-        ],
+        "demotions": [],
+        "warnings": [],
         "traces": {
           "Survival": {
             "status": "reliable",
@@ -32047,27 +32249,21 @@
             "dimension": "Survival"
           },
           "Growth": {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "status": "supported",
+            "demoted": false,
+            "reason": null,
             "materialEvidence": {
               "fields": [
                 {
                   "field": "frostSensitivity",
                   "evidenceClass": "SOURCE_SUPPORTED",
                   "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
                 }
               ],
               "hasSource": true,
-              "hasHeuristic": true,
+              "hasHeuristic": false,
               "hasUnknown": false,
-              "allSource": false
+              "allSource": true
             },
             "dimension": "Growth"
           },
@@ -32130,7 +32326,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "mediterranean",
@@ -32176,7 +32372,9 @@
         ],
         "meanVpdPa": 853.8,
         "structuralColdRisk": "elevated",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 7.75,
+        "warmestMonthMeanMaxC": 28.25,
         "annualPrecipitationMm": 1293.6,
         "annualPetMm": 1487.6,
         "aridityIndex": 0.87,
@@ -32191,10 +32389,19 @@
           "structuralColdRisk": "elevated",
           "freezingRisk": "low",
           "broadClimateOverride": "mediterranean",
-          "drySeasonSignal": false,
+          "drySeasonSignal": true,
+          "drySummerSignal": true,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "cool-seasonal",
           "elevationM": 441,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 6,
+            "maxConsecutiveDryMonths": 6,
+            "drySummerSignal": true,
+            "minWarmMonthPrecipMm": 1.8,
+            "maxCoolMonthPrecipMm": 339.8,
             "coldestMonthMeanMinC": 7.75,
             "warmestMonthMeanMaxC": 28.25,
             "annualPrecipitationMm": 1293.6,
@@ -33493,7 +33700,7 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "constrained",
         "growth": "constrained",
         "flowering": "unknown",
@@ -33603,7 +33810,7 @@
           "thriveFit": 50,
           "authority": "frostSensitivity-medium-bounded"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "temperate",
@@ -33649,7 +33856,9 @@
         ],
         "meanVpdPa": 373.7,
         "structuralColdRisk": "high",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": -8.25,
+        "warmestMonthMeanMaxC": 20.05,
         "annualPrecipitationMm": 672.3,
         "annualPetMm": 610.7,
         "aridityIndex": 1.101,
@@ -33665,9 +33874,18 @@
           "freezingRisk": "high",
           "broadClimateOverride": "temperate",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "frost-prone",
           "elevationM": 40.2,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 1,
+            "maxConsecutiveDryMonths": 1,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": 33.5,
+            "maxCoolMonthPrecipMm": 80,
             "coldestMonthMeanMinC": -8.25,
             "warmestMonthMeanMaxC": 20.05,
             "annualPrecipitationMm": 672.3,
@@ -34950,7 +35168,7 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
         "growth": "constrained",
         "flowering": "unknown",
@@ -35059,7 +35277,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "tropical",
@@ -35105,7 +35323,9 @@
         ],
         "meanVpdPa": 1253.3,
         "structuralColdRisk": "low",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 24.85,
+        "warmestMonthMeanMaxC": 28.75,
         "annualPrecipitationMm": 2423.3,
         "annualPetMm": 1731.8,
         "aridityIndex": 1.399,
@@ -35121,9 +35341,18 @@
           "freezingRisk": "low",
           "broadClimateOverride": "tropical",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": true,
+          "coolSeasonSignal": false,
           "thermalRegime": "year-round-warm",
           "elevationM": 20,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 0,
+            "maxConsecutiveDryMonths": 0,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": null,
+            "maxCoolMonthPrecipMm": null,
             "coldestMonthMeanMinC": 24.85,
             "warmestMonthMeanMaxC": 28.75,
             "annualPrecipitationMm": 2423.3,
@@ -36406,7 +36635,7 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
         "growth": "constrained",
         "flowering": "unknown",
@@ -36515,13 +36744,13 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "tropical",
         "freezingRisk": "low",
         "humiditySignal": "borderline",
-        "drySeasonSignal": false,
+        "drySeasonSignal": true,
         "alwaysHot": true,
         "coolSeasonSignal": false,
         "isFrostFreeGrowingClimate": true,
@@ -36561,7 +36790,9 @@
         ],
         "meanVpdPa": 1207.7,
         "structuralColdRisk": "low",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 24.35,
+        "warmestMonthMeanMaxC": 29.65,
         "annualPrecipitationMm": 2992,
         "annualPetMm": 1602.5,
         "aridityIndex": 1.867,
@@ -36576,10 +36807,19 @@
           "structuralColdRisk": "low",
           "freezingRisk": "low",
           "broadClimateOverride": "tropical",
-          "drySeasonSignal": false,
+          "drySeasonSignal": true,
+          "drySummerSignal": false,
+          "alwaysHot": true,
+          "coolSeasonSignal": false,
           "thermalRegime": "year-round-warm",
           "elevationM": 9,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 4,
+            "maxConsecutiveDryMonths": 4,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": null,
+            "maxCoolMonthPrecipMm": null,
             "coldestMonthMeanMinC": 24.35,
             "warmestMonthMeanMaxC": 29.65,
             "annualPrecipitationMm": 2992,
@@ -37803,14 +38043,15 @@
     {
       "plant": "bay-laurel",
       "site": "cairo",
-      "overall": "borderline",
+      "overall": "good",
       "survival": "reliable",
-      "growth": "constrained",
+      "growth": "supported",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
-        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
+        "Survival uses monthly-mean normals only; damaging extreme cold/heat authority is absent — strong positive capped.",
+        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment.",
+        "Species-level evidence only — cultivar-specific hardiness/chill/flowering unknown; confidence bounded."
       ],
       "unknownEvidence": [
         "flowering-climate-comparison",
@@ -37861,41 +38102,13 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
-        "growth": "constrained",
+        "growth": "supported",
         "flowering": "unknown",
         "fruiting": "unknown",
-        "demotions": [
-          {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
-            "materialEvidence": {
-              "fields": [
-                {
-                  "field": "frostSensitivity",
-                  "evidenceClass": "SOURCE_SUPPORTED",
-                  "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
-                }
-              ],
-              "hasSource": true,
-              "hasHeuristic": true,
-              "hasUnknown": false,
-              "allSource": false
-            },
-            "dimension": "Growth"
-          }
-        ],
-        "warnings": [
-          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
-        ],
+        "demotions": [],
+        "warnings": [],
         "traces": {
           "Survival": {
             "status": "reliable",
@@ -37922,27 +38135,21 @@
             "dimension": "Survival"
           },
           "Growth": {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "status": "supported",
+            "demoted": false,
+            "reason": null,
             "materialEvidence": {
               "fields": [
                 {
                   "field": "frostSensitivity",
                   "evidenceClass": "SOURCE_SUPPORTED",
                   "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
                 }
               ],
               "hasSource": true,
-              "hasHeuristic": true,
+              "hasHeuristic": false,
               "hasUnknown": false,
-              "allSource": false
+              "allSource": true
             },
             "dimension": "Growth"
           },
@@ -38005,7 +38212,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "arid",
@@ -38051,7 +38258,9 @@
         ],
         "meanVpdPa": 1352.8,
         "structuralColdRisk": "elevated",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 8.15,
+        "warmestMonthMeanMaxC": 35.95,
         "annualPrecipitationMm": 19.8,
         "annualPetMm": 1423.6,
         "aridityIndex": 0.014,
@@ -38067,9 +38276,18 @@
           "freezingRisk": "low",
           "broadClimateOverride": "arid",
           "drySeasonSignal": true,
+          "drySummerSignal": true,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "cool-seasonal",
           "elevationM": 21,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 12,
+            "maxConsecutiveDryMonths": 12,
+            "drySummerSignal": true,
+            "minWarmMonthPrecipMm": 0.1,
+            "maxCoolMonthPrecipMm": 3.8,
             "coldestMonthMeanMinC": 8.15,
             "warmestMonthMeanMaxC": 35.95,
             "annualPrecipitationMm": 19.8,
@@ -39295,12 +39513,11 @@
       "site": "tokyo",
       "overall": "borderline",
       "survival": "constrained",
-      "growth": "constrained",
+      "growth": "supported",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
         "Medium frostSensitivity + frost-prone monthly class; no provenanced hardiness / extremes — conditional.",
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [
@@ -39352,41 +39569,13 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "constrained",
-        "growth": "constrained",
+        "growth": "supported",
         "flowering": "unknown",
         "fruiting": "unknown",
-        "demotions": [
-          {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
-            "materialEvidence": {
-              "fields": [
-                {
-                  "field": "frostSensitivity",
-                  "evidenceClass": "SOURCE_SUPPORTED",
-                  "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
-                }
-              ],
-              "hasSource": true,
-              "hasHeuristic": true,
-              "hasUnknown": false,
-              "allSource": false
-            },
-            "dimension": "Growth"
-          }
-        ],
-        "warnings": [
-          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
-        ],
+        "demotions": [],
+        "warnings": [],
         "traces": {
           "Survival": {
             "status": "constrained",
@@ -39412,27 +39601,21 @@
             }
           },
           "Growth": {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "status": "supported",
+            "demoted": false,
+            "reason": null,
             "materialEvidence": {
               "fields": [
                 {
                   "field": "frostSensitivity",
                   "evidenceClass": "SOURCE_SUPPORTED",
                   "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
                 }
               ],
               "hasSource": true,
-              "hasHeuristic": true,
+              "hasHeuristic": false,
               "hasUnknown": false,
-              "allSource": false
+              "allSource": true
             },
             "dimension": "Growth"
           },
@@ -39497,7 +39680,7 @@
           "thriveFit": 65,
           "authority": "frostSensitivity-medium-bounded"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "temperate",
@@ -39543,7 +39726,9 @@
         ],
         "meanVpdPa": 731.8,
         "structuralColdRisk": "high",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": -0.35,
+        "warmestMonthMeanMaxC": 29.35,
         "annualPrecipitationMm": 1517.5,
         "annualPetMm": 934.5,
         "aridityIndex": 1.624,
@@ -39559,9 +39744,18 @@
           "freezingRisk": "high",
           "broadClimateOverride": "temperate",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "frost-prone",
           "elevationM": 35,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 0,
+            "maxConsecutiveDryMonths": 0,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": 123.8,
+            "maxCoolMonthPrecipMm": 195.4,
             "coldestMonthMeanMinC": -0.35,
             "warmestMonthMeanMaxC": 29.35,
             "annualPrecipitationMm": 1517.5,
@@ -40844,7 +41038,7 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
         "growth": "constrained",
         "flowering": "unknown",
@@ -40953,7 +41147,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "highland-tropical",
@@ -40961,7 +41155,7 @@
         "humiditySignal": "borderline",
         "drySeasonSignal": false,
         "alwaysHot": false,
-        "coolSeasonSignal": true,
+        "coolSeasonSignal": false,
         "isFrostFreeGrowingClimate": false,
         "thermalRegime": "cool-highland",
         "elevationM": 2854,
@@ -40999,7 +41193,9 @@
         ],
         "meanVpdPa": 503.3,
         "structuralColdRisk": "elevated",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 8.65,
+        "warmestMonthMeanMaxC": 17.45,
         "annualPrecipitationMm": 2086.2,
         "annualPetMm": 1315.6,
         "aridityIndex": 1.586,
@@ -41015,9 +41211,18 @@
           "freezingRisk": "low",
           "broadClimateOverride": "highland-tropical",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": false,
+          "coolSeasonSignal": false,
           "thermalRegime": "cool-highland",
           "elevationM": 2854,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 2,
+            "maxConsecutiveDryMonths": 2,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": null,
+            "maxCoolMonthPrecipMm": null,
             "coldestMonthMeanMinC": 8.65,
             "warmestMonthMeanMaxC": 17.45,
             "annualPrecipitationMm": 2086.2,
@@ -42241,14 +42446,15 @@
     {
       "plant": "oleander",
       "site": "yehiam",
-      "overall": "borderline",
+      "overall": "good",
       "survival": "reliable",
-      "growth": "constrained",
+      "growth": "supported",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
-        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
+        "Survival uses monthly-mean normals only; damaging extreme cold/heat authority is absent — strong positive capped.",
+        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment.",
+        "Species-level evidence only — cultivar-specific hardiness/chill/flowering unknown; confidence bounded."
       ],
       "unknownEvidence": [
         "flowering-climate-comparison",
@@ -42301,41 +42507,13 @@
         "overall": "low"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
-        "growth": "constrained",
+        "growth": "supported",
         "flowering": "unknown",
         "fruiting": "unknown",
-        "demotions": [
-          {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
-            "materialEvidence": {
-              "fields": [
-                {
-                  "field": "frostSensitivity",
-                  "evidenceClass": "SOURCE_SUPPORTED",
-                  "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
-                }
-              ],
-              "hasSource": true,
-              "hasHeuristic": true,
-              "hasUnknown": false,
-              "allSource": false
-            },
-            "dimension": "Growth"
-          }
-        ],
-        "warnings": [
-          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
-        ],
+        "demotions": [],
+        "warnings": [],
         "traces": {
           "Survival": {
             "status": "reliable",
@@ -42362,27 +42540,21 @@
             "dimension": "Survival"
           },
           "Growth": {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "status": "supported",
+            "demoted": false,
+            "reason": null,
             "materialEvidence": {
               "fields": [
                 {
                   "field": "frostSensitivity",
                   "evidenceClass": "SOURCE_SUPPORTED",
                   "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
                 }
               ],
               "hasSource": true,
-              "hasHeuristic": true,
+              "hasHeuristic": false,
               "hasUnknown": false,
-              "allSource": false
+              "allSource": true
             },
             "dimension": "Growth"
           },
@@ -42445,7 +42617,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "mediterranean",
@@ -42491,7 +42663,9 @@
         ],
         "meanVpdPa": 853.8,
         "structuralColdRisk": "elevated",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 7.75,
+        "warmestMonthMeanMaxC": 28.25,
         "annualPrecipitationMm": 1293.6,
         "annualPetMm": 1487.6,
         "aridityIndex": 0.87,
@@ -42506,10 +42680,19 @@
           "structuralColdRisk": "elevated",
           "freezingRisk": "low",
           "broadClimateOverride": "mediterranean",
-          "drySeasonSignal": false,
+          "drySeasonSignal": true,
+          "drySummerSignal": true,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "cool-seasonal",
           "elevationM": 441,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 6,
+            "maxConsecutiveDryMonths": 6,
+            "drySummerSignal": true,
+            "minWarmMonthPrecipMm": 1.8,
+            "maxCoolMonthPrecipMm": 339.8,
             "coldestMonthMeanMinC": 7.75,
             "warmestMonthMeanMaxC": 28.25,
             "annualPrecipitationMm": 1293.6,
@@ -43808,7 +43991,7 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "constrained",
         "growth": "constrained",
         "flowering": "unknown",
@@ -43918,7 +44101,7 @@
           "thriveFit": 50,
           "authority": "frostSensitivity-medium-bounded"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "temperate",
@@ -43964,7 +44147,9 @@
         ],
         "meanVpdPa": 373.7,
         "structuralColdRisk": "high",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": -8.25,
+        "warmestMonthMeanMaxC": 20.05,
         "annualPrecipitationMm": 672.3,
         "annualPetMm": 610.7,
         "aridityIndex": 1.101,
@@ -43980,9 +44165,18 @@
           "freezingRisk": "high",
           "broadClimateOverride": "temperate",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "frost-prone",
           "elevationM": 40.2,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 1,
+            "maxConsecutiveDryMonths": 1,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": 33.5,
+            "maxCoolMonthPrecipMm": 80,
             "coldestMonthMeanMinC": -8.25,
             "warmestMonthMeanMaxC": 20.05,
             "annualPrecipitationMm": 672.3,
@@ -45264,7 +45458,7 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
         "growth": "constrained",
         "flowering": "unknown",
@@ -45373,7 +45567,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "tropical",
@@ -45419,7 +45613,9 @@
         ],
         "meanVpdPa": 1253.3,
         "structuralColdRisk": "low",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 24.85,
+        "warmestMonthMeanMaxC": 28.75,
         "annualPrecipitationMm": 2423.3,
         "annualPetMm": 1731.8,
         "aridityIndex": 1.399,
@@ -45435,9 +45631,18 @@
           "freezingRisk": "low",
           "broadClimateOverride": "tropical",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": true,
+          "coolSeasonSignal": false,
           "thermalRegime": "year-round-warm",
           "elevationM": 20,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 0,
+            "maxConsecutiveDryMonths": 0,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": null,
+            "maxCoolMonthPrecipMm": null,
             "coldestMonthMeanMinC": 24.85,
             "warmestMonthMeanMaxC": 28.75,
             "annualPrecipitationMm": 2423.3,
@@ -46719,7 +46924,7 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
         "growth": "constrained",
         "flowering": "unknown",
@@ -46828,13 +47033,13 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "tropical",
         "freezingRisk": "low",
         "humiditySignal": "borderline",
-        "drySeasonSignal": false,
+        "drySeasonSignal": true,
         "alwaysHot": true,
         "coolSeasonSignal": false,
         "isFrostFreeGrowingClimate": true,
@@ -46874,7 +47079,9 @@
         ],
         "meanVpdPa": 1207.7,
         "structuralColdRisk": "low",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 24.35,
+        "warmestMonthMeanMaxC": 29.65,
         "annualPrecipitationMm": 2992,
         "annualPetMm": 1602.5,
         "aridityIndex": 1.867,
@@ -46889,10 +47096,19 @@
           "structuralColdRisk": "low",
           "freezingRisk": "low",
           "broadClimateOverride": "tropical",
-          "drySeasonSignal": false,
+          "drySeasonSignal": true,
+          "drySummerSignal": false,
+          "alwaysHot": true,
+          "coolSeasonSignal": false,
           "thermalRegime": "year-round-warm",
           "elevationM": 9,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 4,
+            "maxConsecutiveDryMonths": 4,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": null,
+            "maxCoolMonthPrecipMm": null,
             "coldestMonthMeanMinC": 24.35,
             "warmestMonthMeanMaxC": 29.65,
             "annualPrecipitationMm": 2992,
@@ -48116,14 +48332,15 @@
     {
       "plant": "oleander",
       "site": "cairo",
-      "overall": "borderline",
+      "overall": "good",
       "survival": "reliable",
-      "growth": "constrained",
+      "growth": "supported",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
-        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
+        "Survival uses monthly-mean normals only; damaging extreme cold/heat authority is absent — strong positive capped.",
+        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment.",
+        "Species-level evidence only — cultivar-specific hardiness/chill/flowering unknown; confidence bounded."
       ],
       "unknownEvidence": [
         "flowering-climate-comparison",
@@ -48174,41 +48391,13 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
-        "growth": "constrained",
+        "growth": "supported",
         "flowering": "unknown",
         "fruiting": "unknown",
-        "demotions": [
-          {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
-            "materialEvidence": {
-              "fields": [
-                {
-                  "field": "frostSensitivity",
-                  "evidenceClass": "SOURCE_SUPPORTED",
-                  "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
-                }
-              ],
-              "hasSource": true,
-              "hasHeuristic": true,
-              "hasUnknown": false,
-              "allSource": false
-            },
-            "dimension": "Growth"
-          }
-        ],
-        "warnings": [
-          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
-        ],
+        "demotions": [],
+        "warnings": [],
         "traces": {
           "Survival": {
             "status": "reliable",
@@ -48235,27 +48424,21 @@
             "dimension": "Survival"
           },
           "Growth": {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "status": "supported",
+            "demoted": false,
+            "reason": null,
             "materialEvidence": {
               "fields": [
                 {
                   "field": "frostSensitivity",
                   "evidenceClass": "SOURCE_SUPPORTED",
                   "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
                 }
               ],
               "hasSource": true,
-              "hasHeuristic": true,
+              "hasHeuristic": false,
               "hasUnknown": false,
-              "allSource": false
+              "allSource": true
             },
             "dimension": "Growth"
           },
@@ -48318,7 +48501,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "arid",
@@ -48364,7 +48547,9 @@
         ],
         "meanVpdPa": 1352.8,
         "structuralColdRisk": "elevated",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 8.15,
+        "warmestMonthMeanMaxC": 35.95,
         "annualPrecipitationMm": 19.8,
         "annualPetMm": 1423.6,
         "aridityIndex": 0.014,
@@ -48380,9 +48565,18 @@
           "freezingRisk": "low",
           "broadClimateOverride": "arid",
           "drySeasonSignal": true,
+          "drySummerSignal": true,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "cool-seasonal",
           "elevationM": 21,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 12,
+            "maxConsecutiveDryMonths": 12,
+            "drySummerSignal": true,
+            "minWarmMonthPrecipMm": 0.1,
+            "maxCoolMonthPrecipMm": 3.8,
             "coldestMonthMeanMinC": 8.15,
             "warmestMonthMeanMaxC": 35.95,
             "annualPrecipitationMm": 19.8,
@@ -49608,12 +49802,11 @@
       "site": "tokyo",
       "overall": "borderline",
       "survival": "constrained",
-      "growth": "constrained",
+      "growth": "supported",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
         "Medium frostSensitivity + frost-prone monthly class; no provenanced hardiness / extremes — conditional.",
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [
@@ -49665,41 +49858,13 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "constrained",
-        "growth": "constrained",
+        "growth": "supported",
         "flowering": "unknown",
         "fruiting": "unknown",
-        "demotions": [
-          {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
-            "materialEvidence": {
-              "fields": [
-                {
-                  "field": "frostSensitivity",
-                  "evidenceClass": "SOURCE_SUPPORTED",
-                  "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
-                }
-              ],
-              "hasSource": true,
-              "hasHeuristic": true,
-              "hasUnknown": false,
-              "allSource": false
-            },
-            "dimension": "Growth"
-          }
-        ],
-        "warnings": [
-          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
-        ],
+        "demotions": [],
+        "warnings": [],
         "traces": {
           "Survival": {
             "status": "constrained",
@@ -49725,27 +49890,21 @@
             }
           },
           "Growth": {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "status": "supported",
+            "demoted": false,
+            "reason": null,
             "materialEvidence": {
               "fields": [
                 {
                   "field": "frostSensitivity",
                   "evidenceClass": "SOURCE_SUPPORTED",
                   "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
                 }
               ],
               "hasSource": true,
-              "hasHeuristic": true,
+              "hasHeuristic": false,
               "hasUnknown": false,
-              "allSource": false
+              "allSource": true
             },
             "dimension": "Growth"
           },
@@ -49810,7 +49969,7 @@
           "thriveFit": 65,
           "authority": "frostSensitivity-medium-bounded"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "temperate",
@@ -49856,7 +50015,9 @@
         ],
         "meanVpdPa": 731.8,
         "structuralColdRisk": "high",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": -0.35,
+        "warmestMonthMeanMaxC": 29.35,
         "annualPrecipitationMm": 1517.5,
         "annualPetMm": 934.5,
         "aridityIndex": 1.624,
@@ -49872,9 +50033,18 @@
           "freezingRisk": "high",
           "broadClimateOverride": "temperate",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "frost-prone",
           "elevationM": 35,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 0,
+            "maxConsecutiveDryMonths": 0,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": 123.8,
+            "maxCoolMonthPrecipMm": 195.4,
             "coldestMonthMeanMinC": -0.35,
             "warmestMonthMeanMaxC": 29.35,
             "annualPrecipitationMm": 1517.5,
@@ -51156,7 +51326,7 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
         "growth": "constrained",
         "flowering": "unknown",
@@ -51265,7 +51435,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "highland-tropical",
@@ -51273,7 +51443,7 @@
         "humiditySignal": "borderline",
         "drySeasonSignal": false,
         "alwaysHot": false,
-        "coolSeasonSignal": true,
+        "coolSeasonSignal": false,
         "isFrostFreeGrowingClimate": false,
         "thermalRegime": "cool-highland",
         "elevationM": 2854,
@@ -51311,7 +51481,9 @@
         ],
         "meanVpdPa": 503.3,
         "structuralColdRisk": "elevated",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 8.65,
+        "warmestMonthMeanMaxC": 17.45,
         "annualPrecipitationMm": 2086.2,
         "annualPetMm": 1315.6,
         "aridityIndex": 1.586,
@@ -51327,9 +51499,18 @@
           "freezingRisk": "low",
           "broadClimateOverride": "highland-tropical",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": false,
+          "coolSeasonSignal": false,
           "thermalRegime": "cool-highland",
           "elevationM": 2854,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 2,
+            "maxConsecutiveDryMonths": 2,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": null,
+            "maxCoolMonthPrecipMm": null,
             "coldestMonthMeanMinC": 8.65,
             "warmestMonthMeanMaxC": 17.45,
             "annualPrecipitationMm": 2086.2,
@@ -52553,14 +52734,15 @@
     {
       "plant": "garden-sage",
       "site": "yehiam",
-      "overall": "borderline",
+      "overall": "good",
       "survival": "reliable",
-      "growth": "constrained",
+      "growth": "supported",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
-        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
+        "Survival uses monthly-mean normals only; damaging extreme cold/heat authority is absent — strong positive capped.",
+        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment.",
+        "Species-level evidence only — cultivar-specific hardiness/chill/flowering unknown; confidence bounded."
       ],
       "unknownEvidence": [
         "flowering-climate-comparison",
@@ -52613,41 +52795,13 @@
         "overall": "low"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
-        "growth": "constrained",
+        "growth": "supported",
         "flowering": "unknown",
         "fruiting": "unknown",
-        "demotions": [
-          {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
-            "materialEvidence": {
-              "fields": [
-                {
-                  "field": "frostSensitivity",
-                  "evidenceClass": "SOURCE_SUPPORTED",
-                  "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
-                }
-              ],
-              "hasSource": true,
-              "hasHeuristic": true,
-              "hasUnknown": false,
-              "allSource": false
-            },
-            "dimension": "Growth"
-          }
-        ],
-        "warnings": [
-          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
-        ],
+        "demotions": [],
+        "warnings": [],
         "traces": {
           "Survival": {
             "status": "reliable",
@@ -52674,27 +52828,21 @@
             "dimension": "Survival"
           },
           "Growth": {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "status": "supported",
+            "demoted": false,
+            "reason": null,
             "materialEvidence": {
               "fields": [
                 {
                   "field": "frostSensitivity",
                   "evidenceClass": "SOURCE_SUPPORTED",
                   "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
                 }
               ],
               "hasSource": true,
-              "hasHeuristic": true,
+              "hasHeuristic": false,
               "hasUnknown": false,
-              "allSource": false
+              "allSource": true
             },
             "dimension": "Growth"
           },
@@ -52757,7 +52905,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "mediterranean",
@@ -52803,7 +52951,9 @@
         ],
         "meanVpdPa": 853.8,
         "structuralColdRisk": "elevated",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 7.75,
+        "warmestMonthMeanMaxC": 28.25,
         "annualPrecipitationMm": 1293.6,
         "annualPetMm": 1487.6,
         "aridityIndex": 0.87,
@@ -52818,10 +52968,19 @@
           "structuralColdRisk": "elevated",
           "freezingRisk": "low",
           "broadClimateOverride": "mediterranean",
-          "drySeasonSignal": false,
+          "drySeasonSignal": true,
+          "drySummerSignal": true,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "cool-seasonal",
           "elevationM": 441,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 6,
+            "maxConsecutiveDryMonths": 6,
+            "drySummerSignal": true,
+            "minWarmMonthPrecipMm": 1.8,
+            "maxCoolMonthPrecipMm": 339.8,
             "coldestMonthMeanMinC": 7.75,
             "warmestMonthMeanMaxC": 28.25,
             "annualPrecipitationMm": 1293.6,
@@ -54120,7 +54279,7 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "constrained",
         "growth": "constrained",
         "flowering": "unknown",
@@ -54230,7 +54389,7 @@
           "thriveFit": 50,
           "authority": "frostSensitivity-medium-bounded"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "temperate",
@@ -54276,7 +54435,9 @@
         ],
         "meanVpdPa": 373.7,
         "structuralColdRisk": "high",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": -8.25,
+        "warmestMonthMeanMaxC": 20.05,
         "annualPrecipitationMm": 672.3,
         "annualPetMm": 610.7,
         "aridityIndex": 1.101,
@@ -54292,9 +54453,18 @@
           "freezingRisk": "high",
           "broadClimateOverride": "temperate",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "frost-prone",
           "elevationM": 40.2,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 1,
+            "maxConsecutiveDryMonths": 1,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": 33.5,
+            "maxCoolMonthPrecipMm": 80,
             "coldestMonthMeanMinC": -8.25,
             "warmestMonthMeanMaxC": 20.05,
             "annualPrecipitationMm": 672.3,
@@ -55576,7 +55746,7 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
         "growth": "constrained",
         "flowering": "unknown",
@@ -55685,7 +55855,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "tropical",
@@ -55731,7 +55901,9 @@
         ],
         "meanVpdPa": 1253.3,
         "structuralColdRisk": "low",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 24.85,
+        "warmestMonthMeanMaxC": 28.75,
         "annualPrecipitationMm": 2423.3,
         "annualPetMm": 1731.8,
         "aridityIndex": 1.399,
@@ -55747,9 +55919,18 @@
           "freezingRisk": "low",
           "broadClimateOverride": "tropical",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": true,
+          "coolSeasonSignal": false,
           "thermalRegime": "year-round-warm",
           "elevationM": 20,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 0,
+            "maxConsecutiveDryMonths": 0,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": null,
+            "maxCoolMonthPrecipMm": null,
             "coldestMonthMeanMinC": 24.85,
             "warmestMonthMeanMaxC": 28.75,
             "annualPrecipitationMm": 2423.3,
@@ -57031,7 +57212,7 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
         "growth": "constrained",
         "flowering": "unknown",
@@ -57140,13 +57321,13 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "tropical",
         "freezingRisk": "low",
         "humiditySignal": "borderline",
-        "drySeasonSignal": false,
+        "drySeasonSignal": true,
         "alwaysHot": true,
         "coolSeasonSignal": false,
         "isFrostFreeGrowingClimate": true,
@@ -57186,7 +57367,9 @@
         ],
         "meanVpdPa": 1207.7,
         "structuralColdRisk": "low",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 24.35,
+        "warmestMonthMeanMaxC": 29.65,
         "annualPrecipitationMm": 2992,
         "annualPetMm": 1602.5,
         "aridityIndex": 1.867,
@@ -57201,10 +57384,19 @@
           "structuralColdRisk": "low",
           "freezingRisk": "low",
           "broadClimateOverride": "tropical",
-          "drySeasonSignal": false,
+          "drySeasonSignal": true,
+          "drySummerSignal": false,
+          "alwaysHot": true,
+          "coolSeasonSignal": false,
           "thermalRegime": "year-round-warm",
           "elevationM": 9,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 4,
+            "maxConsecutiveDryMonths": 4,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": null,
+            "maxCoolMonthPrecipMm": null,
             "coldestMonthMeanMinC": 24.35,
             "warmestMonthMeanMaxC": 29.65,
             "annualPrecipitationMm": 2992,
@@ -58428,14 +58620,15 @@
     {
       "plant": "garden-sage",
       "site": "cairo",
-      "overall": "borderline",
+      "overall": "good",
       "survival": "reliable",
-      "growth": "constrained",
+      "growth": "supported",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
-        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
+        "Survival uses monthly-mean normals only; damaging extreme cold/heat authority is absent — strong positive capped.",
+        "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment.",
+        "Species-level evidence only — cultivar-specific hardiness/chill/flowering unknown; confidence bounded."
       ],
       "unknownEvidence": [
         "flowering-climate-comparison",
@@ -58486,41 +58679,13 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
-        "growth": "constrained",
+        "growth": "supported",
         "flowering": "unknown",
         "fruiting": "unknown",
-        "demotions": [
-          {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
-            "materialEvidence": {
-              "fields": [
-                {
-                  "field": "frostSensitivity",
-                  "evidenceClass": "SOURCE_SUPPORTED",
-                  "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
-                }
-              ],
-              "hasSource": true,
-              "hasHeuristic": true,
-              "hasUnknown": false,
-              "allSource": false
-            },
-            "dimension": "Growth"
-          }
-        ],
-        "warnings": [
-          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
-        ],
+        "demotions": [],
+        "warnings": [],
         "traces": {
           "Survival": {
             "status": "reliable",
@@ -58547,27 +58712,21 @@
             "dimension": "Survival"
           },
           "Growth": {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "status": "supported",
+            "demoted": false,
+            "reason": null,
             "materialEvidence": {
               "fields": [
                 {
                   "field": "frostSensitivity",
                   "evidenceClass": "SOURCE_SUPPORTED",
                   "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
                 }
               ],
               "hasSource": true,
-              "hasHeuristic": true,
+              "hasHeuristic": false,
               "hasUnknown": false,
-              "allSource": false
+              "allSource": true
             },
             "dimension": "Growth"
           },
@@ -58630,7 +58789,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "arid",
@@ -58676,7 +58835,9 @@
         ],
         "meanVpdPa": 1352.8,
         "structuralColdRisk": "elevated",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 8.15,
+        "warmestMonthMeanMaxC": 35.95,
         "annualPrecipitationMm": 19.8,
         "annualPetMm": 1423.6,
         "aridityIndex": 0.014,
@@ -58692,9 +58853,18 @@
           "freezingRisk": "low",
           "broadClimateOverride": "arid",
           "drySeasonSignal": true,
+          "drySummerSignal": true,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "cool-seasonal",
           "elevationM": 21,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 12,
+            "maxConsecutiveDryMonths": 12,
+            "drySummerSignal": true,
+            "minWarmMonthPrecipMm": 0.1,
+            "maxCoolMonthPrecipMm": 3.8,
             "coldestMonthMeanMinC": 8.15,
             "warmestMonthMeanMaxC": 35.95,
             "annualPrecipitationMm": 19.8,
@@ -59920,12 +60090,11 @@
       "site": "tokyo",
       "overall": "borderline",
       "survival": "constrained",
-      "growth": "constrained",
+      "growth": "supported",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
         "Medium frostSensitivity + frost-prone monthly class; no provenanced hardiness / extremes — conditional.",
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [
@@ -59977,41 +60146,13 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "constrained",
-        "growth": "constrained",
+        "growth": "supported",
         "flowering": "unknown",
         "fruiting": "unknown",
-        "demotions": [
-          {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
-            "materialEvidence": {
-              "fields": [
-                {
-                  "field": "frostSensitivity",
-                  "evidenceClass": "SOURCE_SUPPORTED",
-                  "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
-                }
-              ],
-              "hasSource": true,
-              "hasHeuristic": true,
-              "hasUnknown": false,
-              "allSource": false
-            },
-            "dimension": "Growth"
-          }
-        ],
-        "warnings": [
-          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
-        ],
+        "demotions": [],
+        "warnings": [],
         "traces": {
           "Survival": {
             "status": "constrained",
@@ -60037,27 +60178,21 @@
             }
           },
           "Growth": {
-            "status": "constrained",
-            "demoted": true,
-            "previousStatus": "supported",
-            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "status": "supported",
+            "demoted": false,
+            "reason": null,
             "materialEvidence": {
               "fields": [
                 {
                   "field": "frostSensitivity",
                   "evidenceClass": "SOURCE_SUPPORTED",
                   "value": "medium"
-                },
-                {
-                  "field": "humidityTolerance",
-                  "evidenceClass": "HEURISTIC_ASSERTION",
-                  "value": "low"
                 }
               ],
               "hasSource": true,
-              "hasHeuristic": true,
+              "hasHeuristic": false,
               "hasUnknown": false,
-              "allSource": false
+              "allSource": true
             },
             "dimension": "Growth"
           },
@@ -60122,7 +60257,7 @@
           "thriveFit": 65,
           "authority": "frostSensitivity-medium-bounded"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "temperate",
@@ -60168,7 +60303,9 @@
         ],
         "meanVpdPa": 731.8,
         "structuralColdRisk": "high",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": -0.35,
+        "warmestMonthMeanMaxC": 29.35,
         "annualPrecipitationMm": 1517.5,
         "annualPetMm": 934.5,
         "aridityIndex": 1.624,
@@ -60184,9 +60321,18 @@
           "freezingRisk": "high",
           "broadClimateOverride": "temperate",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": false,
+          "coolSeasonSignal": true,
           "thermalRegime": "frost-prone",
           "elevationM": 35,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 0,
+            "maxConsecutiveDryMonths": 0,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": 123.8,
+            "maxCoolMonthPrecipMm": 195.4,
             "coldestMonthMeanMinC": -0.35,
             "warmestMonthMeanMaxC": 29.35,
             "annualPrecipitationMm": 1517.5,
@@ -61468,7 +61614,7 @@
         "overall": "high"
       },
       "evidenceStrength": {
-        "version": "1.0.0",
+        "version": "1.1.0-outcome-severity-preserve",
         "survival": "reliable",
         "growth": "constrained",
         "flowering": "unknown",
@@ -61577,7 +61723,7 @@
           "thriveFit": 75,
           "authority": "neutral-baseline"
         },
-        "baselineVersion": "1.0.0-real-world-repair"
+        "baselineVersion": "1.1.0-false-warm-repair"
       },
       "env": {
         "broadClimate": "highland-tropical",
@@ -61585,7 +61731,7 @@
         "humiditySignal": "borderline",
         "drySeasonSignal": false,
         "alwaysHot": false,
-        "coolSeasonSignal": true,
+        "coolSeasonSignal": false,
         "isFrostFreeGrowingClimate": false,
         "thermalRegime": "cool-highland",
         "elevationM": 2854,
@@ -61623,7 +61769,9 @@
         ],
         "meanVpdPa": 503.3,
         "structuralColdRisk": "elevated",
+        "extremeHeatRisk": "unknown",
         "coldestMonthMeanMinC": 8.65,
+        "warmestMonthMeanMaxC": 17.45,
         "annualPrecipitationMm": 2086.2,
         "annualPetMm": 1315.6,
         "aridityIndex": 1.586,
@@ -61639,9 +61787,18 @@
           "freezingRisk": "low",
           "broadClimateOverride": "highland-tropical",
           "drySeasonSignal": false,
+          "drySummerSignal": false,
+          "alwaysHot": false,
+          "coolSeasonSignal": false,
           "thermalRegime": "cool-highland",
           "elevationM": 2854,
+          "terrainAuthorityStatus": "known",
           "evidence": {
+            "dryMonthCount": 2,
+            "maxConsecutiveDryMonths": 2,
+            "drySummerSignal": false,
+            "minWarmMonthPrecipMm": null,
+            "maxCoolMonthPrecipMm": null,
             "coldestMonthMeanMinC": 8.65,
             "warmestMonthMeanMaxC": 17.45,
             "annualPrecipitationMm": 2086.2,
@@ -62863,6 +63020,8 @@
       }
     }
   ],
-  "generatedAt": "2026-08-31T03:54:55.677Z",
+  "batchArg": 1,
+  "batchLabel": "bulk-batch-1-v1",
+  "generatedAt": "2026-10-01T17:12:32.303Z",
   "hardeningVerdict": "CRUVIT_PLANT_CLIMATE_V2_ALIGNMENT_HARDENING: PASS"
 }

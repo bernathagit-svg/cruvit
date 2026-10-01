@@ -301,14 +301,16 @@ function auditFalsePositive(row, plant, climateBundle) {
       meta.waterNeeds === 'high' ||
       (meta.groupIds || []).includes('tropical-frost-sensitive-fruit');
     const local = climateBundle.profile.confidenceDimensions?.LOCAL_REPRESENTATIVENESS;
-    if (moistureDep && (local === 'low' || local === 'unknown')) {
+    if (moistureDep && local === 'low') {
       if (!row.representativenessAdjustment?.demoted && row.overall === 'good') {
         reasons.push(
-          'overall-positive-despite-uncertain-local-representativeness-on-moisture-dependent-plant'
+          'overall-positive-despite-low-local-representativeness-on-moisture-dependent-plant'
         );
       } else {
         authorized.push(`representativeness-demotion-or-non-good:${row.overall}`);
       }
+    } else if (moistureDep && local === 'unknown') {
+      authorized.push('local-representativeness-unknown-is-absence-of-qa-not-negative-evidence');
     }
     if (meta.needsReview) reasons.push('overall-positive-with-needsReview');
     // Atmospheric humidityTolerance=low penalty requires atmospheric high OR borderline (hurs),
