@@ -1,0 +1,200 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "plumeria-p2-wave-2-proposal-v1",
+  "identity": {
+    "canonicalSlug": "plumeria",
+    "commonNameEn": "Plumeria",
+    "acceptedScientificName": "Plumeria rubra",
+    "aliases": [
+      "frangipani",
+      "Plumeria rubra"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P2 proposal only. "
+  },
+  "sources": [
+    {
+      "sourceId": "uf-ifas-plumeria",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida IFAS Extension",
+      "title": "Plumeria rubra -- Frangipani",
+      "url": "https://hort.ifas.ufl.edu/trees/PLURUBA.pdf",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "rhs-plumeria-rubra",
+      "institution": "Royal Horticultural Society",
+      "publisher": "Royal Horticultural Society",
+      "title": "Plumeria rubra | frangipani",
+      "url": "https://www.rhs.org.uk/plants/94126/plumeria-rubra/details",
+      "authorityTier": "horticultural_society",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "cruvit-legacy-runtime-context",
+      "institution": "CRUVIT Legacy Catalog",
+      "publisher": "CRUVIT Legacy Catalog",
+      "title": "Existing CRUVIT runtime rule context",
+      "url": "urn:cruvit:legacy-runtime-context",
+      "authorityTier": "internal_legacy",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "plumeria-frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "very_high",
+      "sourceIds": [
+        "uf-ifas-plumeria"
+      ],
+      "shortExcerpt": "Frangipani is very susceptible to freezing temperatures and should be protected from frost.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "plumeria-cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "rhs-plumeria-rubra"
+      ],
+      "shortExcerpt": "RHS hardiness H1B for Plumeria rubra.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "plumeria-heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-plumeria"
+      ],
+      "shortExcerpt": "Fast growth in full sun and tropical/subtropical landscape use support high heat tolerance.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "plumeria-humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "uf-ifas-plumeria"
+      ],
+      "shortExcerpt": "No strong humidity threshold is sourced; retained as a moderate heuristic.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "plumeria-sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "uf-ifas-plumeria"
+      ],
+      "shortExcerpt": "Plants grow quickly in full sun.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "plumeria-water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "uf-ifas-plumeria"
+      ],
+      "shortExcerpt": "Frangipani is fairly drought tolerant.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "plumeria-drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-plumeria"
+      ],
+      "shortExcerpt": "Plants grow on a variety of well-drained soils.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "plumeria-flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Warm frost-free conditions with full sun support flowering.",
+      "sourceIds": [
+        "uf-ifas-plumeria"
+      ],
+      "shortExcerpt": "Plumeria flowers from warm-season branch tips and is very susceptible to freezing temperatures.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "plumeria-tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "ornamental",
+        "tropical",
+        "fragrant",
+        "deciduous"
+      ],
+      "sourceIds": [
+        "rhs-plumeria-rubra"
+      ],
+      "shortExcerpt": "Catalog tags: ornamental, tropical, fragrant, deciduous",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "plumeria-legacy-needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "plumeria-legacy-survivalVsThriveNotes",
+      "field": "survivalVsThriveNotes",
+      "status": "asserted",
+      "value": "Can look excellent in warm sheltered gardens; even light frost can defoliate or damage branches.",
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "plumeria-legacy-groupIds",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "frost-sensitive-ornamental",
+        "warm-climate-ornamental"
+      ],
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING",
+    "searchQuery": "Plumeria rubra Plumeria"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-01",
+    "approvedBy": "CRUVIT Owner",
+    "note": "Owner PASS approved in chat on 2026-10-01 for all 13 P2 plants; ingest authorized subject to all QA gates and no silent inference."
+  }
+}

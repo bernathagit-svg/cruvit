@@ -1,0 +1,234 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "coconut-p2-wave-2-proposal-v1",
+  "identity": {
+    "canonicalSlug": "coconut",
+    "commonNameEn": "Coconut Palm",
+    "acceptedScientificName": "Cocos nucifera",
+    "aliases": [
+      "coconut",
+      "coconut palm"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P2 proposal only. "
+  },
+  "sources": [
+    {
+      "sourceId": "rhs-cocos-nucifera",
+      "institution": "Royal Horticultural Society",
+      "publisher": "Royal Horticultural Society",
+      "title": "Cocos nucifera (F) | coconut",
+      "url": "https://www.rhs.org.uk/plants/4061/cocos-nucifera-f/details",
+      "authorityTier": "horticultural_society",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "uf-ifas-coconut-cold",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida IFAS Extension",
+      "title": "Cold Damage on Palms",
+      "url": "https://edis.ifas.ufl.edu/publication/MG318",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "uh-ctahr-coconut",
+      "institution": "University of Hawaii CTAHR",
+      "publisher": "University of Hawaii CTAHR",
+      "title": "Coconut Palms from Seed",
+      "url": "https://www.ctahr.hawaii.edu/oc/freepubs/pdf/OF-25.pdf",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "cruvit-legacy-runtime-context",
+      "institution": "CRUVIT Legacy Catalog",
+      "publisher": "CRUVIT Legacy Catalog",
+      "title": "Existing CRUVIT runtime rule context",
+      "url": "urn:cruvit:legacy-runtime-context",
+      "authorityTier": "internal_legacy",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "coconut-frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "very_high",
+      "sourceIds": [
+        "uf-ifas-coconut-cold"
+      ],
+      "shortExcerpt": "Coconut palms show chilling injury and trunk damage from prolonged chilling or freezing temperatures.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "coconut-cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "rhs-cocos-nucifera"
+      ],
+      "shortExcerpt": "RHS hardiness H1A: under glass all year, above 15°C.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "coconut-heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uh-ctahr-coconut"
+      ],
+      "shortExcerpt": "Young coconuts should be kept warm, preferably never below 70°F and often above 80°F.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "coconut-humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "rhs-cocos-nucifera"
+      ],
+      "shortExcerpt": "Cultivation recommends warm conditions with moderate humidity.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "coconut-sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "rhs-cocos-nucifera"
+      ],
+      "shortExcerpt": "Position: Full sun.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "coconut-water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-cocos-nucifera"
+      ],
+      "shortExcerpt": "Water moderately during the growing season and sparingly in winter.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "coconut-drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "rhs-cocos-nucifera"
+      ],
+      "shortExcerpt": "Moist but well-drained growing conditions; loam/sand compost with sharp sand.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "coconut-flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Flowering requires sustained warm tropical growth conditions.",
+      "sourceIds": [
+        "uh-ctahr-coconut"
+      ],
+      "shortExcerpt": "Flower clusters begin forming after trunk development under warm coconut-growing conditions.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "coconut-fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Nut production requires sustained tropical warmth and avoidance of chilling/freezing injury.",
+      "sourceIds": [
+        "uh-ctahr-coconut",
+        "uf-ifas-coconut-cold"
+      ],
+      "shortExcerpt": "Healthy trees produce nuts under warm tropical culture; cold injury occurs in Cocos nucifera during chilling/freezing exposure.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "coconut-tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "palm",
+        "tropical",
+        "fruit",
+        "coastal"
+      ],
+      "sourceIds": [
+        "rhs-cocos-nucifera"
+      ],
+      "shortExcerpt": "Catalog tags: palm, tropical, fruit, coastal",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "coconut-legacy-needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "coconut-legacy-survivalVsThriveNotes",
+      "field": "survivalVsThriveNotes",
+      "status": "asserted",
+      "value": "Reliable growth and fruiting need frost-free tropical or subtropical conditions.",
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "coconut-legacy-groupIds",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "tropical-frost-sensitive-fruit",
+        "hot-dry-palm"
+      ],
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "coconut-legacy-hardBlockRules",
+      "field": "hardBlockRules",
+      "status": "asserted",
+      "value": [
+        "no-small-container"
+      ],
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING",
+    "searchQuery": "Cocos nucifera Coconut Palm"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-01",
+    "approvedBy": "CRUVIT Owner",
+    "note": "Owner PASS approved in chat on 2026-10-01 for all 13 P2 plants; ingest authorized subject to all QA gates and no silent inference."
+  }
+}

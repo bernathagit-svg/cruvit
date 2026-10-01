@@ -1,0 +1,191 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "cypress-p2-wave-1-proposal-v1",
+  "identity": {
+    "canonicalSlug": "cypress",
+    "commonNameEn": "Italian Cypress",
+    "acceptedScientificName": "Cupressus sempervirens",
+    "aliases": [
+      "Italian cypress",
+      "Mediterranean cypress"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P2 full-catalog revalidation proposal. Source-backed facts plus explicitly labeled heuristic interpretations; not approved for ingest."
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-cupressus-sempervirens",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Cupressus sempervirens",
+      "url": "https://plants.ces.ncsu.edu/plants/cupressus-sempervirens/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "cruvit-legacy-runtime-context",
+      "institution": "CRUVIT Legacy Catalog",
+      "publisher": "CRUVIT Legacy Catalog",
+      "title": "Existing CRUVIT runtime rule context",
+      "url": "urn:cruvit:legacy-runtime-context",
+      "authorityTier": "internal_legacy",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "cypress-frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-cupressus-sempervirens"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zones 7a-10b; whole-plant frost ordinal retained conservatively as heuristic.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "cypress-cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-cupressus-sempervirens"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 7a through 10b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "cypress-heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-cupressus-sempervirens"
+      ],
+      "shortExcerpt": "Resistance To Challenges includes Heat.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "cypress-humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-cupressus-sempervirens"
+      ],
+      "shortExcerpt": "Resistance To Challenges includes Humidity.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "cypress-sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-cupressus-sempervirens"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cypress-water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-cupressus-sempervirens"
+      ],
+      "shortExcerpt": "Becomes highly drought tolerant as it ages; young plants need adequate water until established.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "cypress-drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-cupressus-sempervirens"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist; Occasionally Dry.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cypress-flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "No true flowers; pollen cones appear in early spring.",
+      "sourceIds": [
+        "ncsu-cupressus-sempervirens"
+      ],
+      "shortExcerpt": "No flowers, pollen cones appear in the early spring.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cypress-tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "ornamental",
+        "tree",
+        "evergreen",
+        "screen"
+      ],
+      "sourceIds": [
+        "ncsu-cupressus-sempervirens"
+      ],
+      "shortExcerpt": "Catalog tags: ornamental, tree, evergreen, screen",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cypress-legacy-needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "cypress-legacy-survivalVsThriveNotes",
+      "field": "survivalVsThriveNotes",
+      "status": "asserted",
+      "value": "Well suited to hot dry summers with drainage; prolonged humid heat and wet soil reduce performance.",
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "cypress-legacy-groupIds",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "humid-sensitive-mediterranean",
+        "warm-dry-structural-shrub"
+      ],
+      "sourceIds": [
+        "cruvit-legacy-runtime-context"
+      ],
+      "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING",
+    "searchQuery": "Cupressus sempervirens Italian Cypress"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-01",
+    "approvedBy": "CRUVIT Owner",
+    "note": "Owner PASS approved in chat on 2026-10-01 for all 13 P2 plants; ingest authorized subject to all QA gates and no silent inference."
+  }
+}
