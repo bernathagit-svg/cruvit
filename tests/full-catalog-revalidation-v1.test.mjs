@@ -1,0 +1,22 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { spawnSync } from 'node:child_process';
+const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+test('full catalog revalidation remains internally consistent',()=>{
+  const run=spawnSync(process.execPath,['scripts/full-catalog-revalidation-v1.mjs'],{cwd:ROOT,encoding:'utf8'});
+  assert.equal(run.status,0,run.stderr||run.stdout);
+  const report=JSON.parse(fs.readFileSync(path.join(ROOT,'tests/_full-catalog-revalidation-v1-report.json'),'utf8'));
+  const queue=JSON.parse(fs.readFileSync(path.join(ROOT,'data/catalog/revalidation/full-catalog-revalidation-queue-2026-10-01-v1.json'),'utf8'));
+  const s=report.unified.statusCounts;
+  assert.equal(s.PASS_FULL+s.UNKNOWN_VALID+s.RESEARCH_REQUIRED+s.CONTRADICTION,report.coverage.unifiedUnique);
+  assert.equal(report.packets.counts.A,report.packets.unique);
+  assert.equal(report.packets.counts.B+report.packets.counts.C+report.packets.counts.D,0);
+  assert.equal(report.packets.realContradictionHolds.length,0);
+  assert.equal(queue.total,s.RESEARCH_REQUIRED);
+  assert.equal(Object.values(queue.priorityCounts).reduce((a,b)=>a+b,0),queue.total);
+  assert.ok(queue.rows.every(r=>r.source==='RUNTIME_ONLY'));
+  assert.equal(s.CONTRADICTION,0);
+});

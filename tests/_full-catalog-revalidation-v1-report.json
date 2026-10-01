@@ -1,0 +1,4265 @@
+{
+  "contract": "cruvit-full-catalog-revalidation-v1",
+  "generatedAt": "2026-10-01T17:12:30.138Z",
+  "runtime": {
+    "total": 123,
+    "counts": {
+      "A": 21,
+      "B": 89,
+      "C": 0,
+      "D": 13
+    },
+    "gates": {
+      "PASS": 21,
+      "PARTIAL": 63,
+      "HOLD": 26,
+      "REJECT": 13
+    },
+    "canonicalUnique": 123
+  },
+  "packets": {
+    "files": 89,
+    "unique": 89,
+    "counts": {
+      "A": 89,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "gates": {
+      "PASS": 89,
+      "PARTIAL": 0,
+      "HOLD": 0,
+      "REJECT": 0
+    },
+    "canonicalUnique": 89,
+    "canonicalCounts": {
+      "A": 89,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "realContradictionHolds": []
+  },
+  "coverage": {
+    "unifiedUnique": 153,
+    "overlap": 59,
+    "runtimeOnlyCount": 64,
+    "packetOnlyCount": 30,
+    "runtimeOnly": [
+      "agapanthus",
+      "almond",
+      "aloe-vera",
+      "areca-palm",
+      "avocado",
+      "azalea",
+      "banana",
+      "basil",
+      "black-eyed-susan-vine",
+      "cacao",
+      "camellia",
+      "cedar",
+      "cherimoya",
+      "coconut",
+      "coffee",
+      "cucumber",
+      "cycas",
+      "cyclamen",
+      "cypress",
+      "date-palm",
+      "dragon-fruit",
+      "eggplant",
+      "ficus-benjamina",
+      "fiddle-leaf-fig",
+      "geranium",
+      "ginger",
+      "grapevine",
+      "guava",
+      "hibiscus",
+      "jackfruit",
+      "japanese-maple",
+      "kiwi",
+      "lemon",
+      "lemongrass",
+      "lychee",
+      "mandarin",
+      "mango",
+      "melaleuca",
+      "monstera",
+      "moringa",
+      "mulberry",
+      "oak-tree",
+      "olive",
+      "orange",
+      "orchid",
+      "papaya",
+      "passionfruit",
+      "pine-tree",
+      "pineapple",
+      "pistachio",
+      "plumeria",
+      "queen-palm",
+      "rambutan",
+      "rose",
+      "rosemary",
+      "snake-plant",
+      "starfruit",
+      "strawberry-guava",
+      "strelitzia",
+      "succulent",
+      "sunflower",
+      "sweet-pepper",
+      "tomato",
+      "zz-plant"
+    ],
+    "packetOnly": [
+      "artichoke",
+      "asparagus",
+      "blackberry",
+      "blackcurrant",
+      "boxwood",
+      "chestnut",
+      "chives",
+      "cilantro",
+      "clematis",
+      "cranberry",
+      "crepe-myrtle",
+      "dill",
+      "elderberry",
+      "flowering-dogwood",
+      "hazelnut",
+      "jujube",
+      "medlar",
+      "okra",
+      "oregano",
+      "parsley",
+      "pecan",
+      "pitanga",
+      "rhubarb",
+      "sapodilla",
+      "sea-buckthorn",
+      "serviceberry",
+      "soursop",
+      "sweet-potato",
+      "tamarind",
+      "yucca"
+    ],
+    "aliasMappings": {
+      "apple-tree": "apple",
+      "pear-tree": "pear",
+      "peach-tree": "peach",
+      "plum-tree": "plum",
+      "fig-tree": "fig",
+      "grape-vine": "grapevine",
+      "passion-fruit": "passionfruit",
+      "english-lavender": "lavender",
+      "spearmint": "mint",
+      "common-jasmine": "jasmine",
+      "bigleaf-hydrangea": "hydrangea",
+      "lesser-bougainvillea": "bougainvillea",
+      "bell-pepper": "sweet-pepper"
+    }
+  },
+  "unified": {
+    "counts": {
+      "A": 93,
+      "B": 52,
+      "C": 0,
+      "D": 8
+    },
+    "gates": {
+      "PASS": 93,
+      "PARTIAL": 27,
+      "HOLD": 25,
+      "REJECT": 8
+    },
+    "statusCounts": {
+      "PASS_FULL": 93,
+      "UNKNOWN_VALID": 11,
+      "RESEARCH_REQUIRED": 49,
+      "CONTRADICTION": 0
+    },
+    "reasonFrequency": {
+      "COMPLETE_FOR_CLASS_A": 93,
+      "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A": 12,
+      "MISSING_FROST_SENSITIVITY": 8,
+      "FLOWERING_REQUIREMENTS_MISSING": 39,
+      "FRUITING_REQUIREMENTS_MISSING": 47,
+      "MISSING_TRAIT_EVIDENCE": 41,
+      "LEGACY_META_ONLY": 8,
+      "NEEDS_REVIEW": 25,
+      "HUMIDITY_UNKNOWN": 47
+    }
+  },
+  "researchQueue": {
+    "total": 49,
+    "priorityCounts": {
+      "P0_IDENTITY_OR_CORE_BLOCK": 12,
+      "P1_REVIEW_HOLD": 22,
+      "P2_EVIDENCE_ENRICHMENT": 15
+    },
+    "rows": [
+      {
+        "slug": "agapanthus",
+        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
+        "readiness": "D",
+        "gate": "REJECT",
+        "reasons": [
+          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+          "MISSING_FROST_SENSITIVITY",
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "LEGACY_META_ONLY"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "azalea",
+        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
+        "readiness": "D",
+        "gate": "REJECT",
+        "reasons": [
+          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+          "MISSING_FROST_SENSITIVITY",
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "LEGACY_META_ONLY"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "banana",
+        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
+        "readiness": "D",
+        "gate": "REJECT",
+        "reasons": [
+          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+          "MISSING_FROST_SENSITIVITY",
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "LEGACY_META_ONLY"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "camellia",
+        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
+        "readiness": "D",
+        "gate": "REJECT",
+        "reasons": [
+          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+          "MISSING_FROST_SENSITIVITY",
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "LEGACY_META_ONLY"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "geranium",
+        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
+        "readiness": "D",
+        "gate": "REJECT",
+        "reasons": [
+          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+          "MISSING_FROST_SENSITIVITY",
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "LEGACY_META_ONLY"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "melaleuca",
+        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
+        "readiness": "D",
+        "gate": "REJECT",
+        "reasons": [
+          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+          "MISSING_FROST_SENSITIVITY",
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "LEGACY_META_ONLY"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "mulberry",
+        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
+        "readiness": "D",
+        "gate": "REJECT",
+        "reasons": [
+          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+          "MISSING_FROST_SENSITIVITY",
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "LEGACY_META_ONLY"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "oak-tree",
+        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
+        "readiness": "B",
+        "gate": "PARTIAL",
+        "reasons": [
+          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "orchid",
+        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "pine-tree",
+        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "rose",
+        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "succulent",
+        "priority": "P0_IDENTITY_OR_CORE_BLOCK",
+        "readiness": "D",
+        "gate": "REJECT",
+        "reasons": [
+          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+          "MISSING_FROST_SENSITIVITY",
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "LEGACY_META_ONLY"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "areca-palm",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "cedar",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "coffee",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "cucumber",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "dragon-fruit",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "eggplant",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "fiddle-leaf-fig",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "ginger",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "jackfruit",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "lemongrass",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "moringa",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "papaya",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "pineapple",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "queen-palm",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FRUITING_REQUIREMENTS_MISSING",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "rambutan",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "snake-plant",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "starfruit",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "strawberry-guava",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "sunflower",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "sweet-pepper",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "tomato",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "zz-plant",
+        "priority": "P1_REVIEW_HOLD",
+        "readiness": "B",
+        "gate": "HOLD",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE",
+          "NEEDS_REVIEW"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "almond",
+        "priority": "P2_EVIDENCE_ENRICHMENT",
+        "readiness": "B",
+        "gate": "PARTIAL",
+        "reasons": [
+          "MISSING_TRAIT_EVIDENCE"
+        ],
+        "unknownOutcomes": [],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "cacao",
+        "priority": "P2_EVIDENCE_ENRICHMENT",
+        "readiness": "B",
+        "gate": "PARTIAL",
+        "reasons": [
+          "MISSING_TRAIT_EVIDENCE"
+        ],
+        "unknownOutcomes": [],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "cherimoya",
+        "priority": "P2_EVIDENCE_ENRICHMENT",
+        "readiness": "B",
+        "gate": "PARTIAL",
+        "reasons": [
+          "MISSING_TRAIT_EVIDENCE"
+        ],
+        "unknownOutcomes": [],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "coconut",
+        "priority": "P2_EVIDENCE_ENRICHMENT",
+        "readiness": "B",
+        "gate": "PARTIAL",
+        "reasons": [
+          "MISSING_TRAIT_EVIDENCE"
+        ],
+        "unknownOutcomes": [],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "cypress",
+        "priority": "P2_EVIDENCE_ENRICHMENT",
+        "readiness": "B",
+        "gate": "PARTIAL",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "grapevine",
+        "priority": "P2_EVIDENCE_ENRICHMENT",
+        "readiness": "B",
+        "gate": "PARTIAL",
+        "reasons": [],
+        "unknownOutcomes": [],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "guava",
+        "priority": "P2_EVIDENCE_ENRICHMENT",
+        "readiness": "B",
+        "gate": "PARTIAL",
+        "reasons": [],
+        "unknownOutcomes": [],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "japanese-maple",
+        "priority": "P2_EVIDENCE_ENRICHMENT",
+        "readiness": "B",
+        "gate": "PARTIAL",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "kiwi",
+        "priority": "P2_EVIDENCE_ENRICHMENT",
+        "readiness": "B",
+        "gate": "PARTIAL",
+        "reasons": [
+          "MISSING_TRAIT_EVIDENCE"
+        ],
+        "unknownOutcomes": [],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "lychee",
+        "priority": "P2_EVIDENCE_ENRICHMENT",
+        "readiness": "B",
+        "gate": "PARTIAL",
+        "reasons": [],
+        "unknownOutcomes": [],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "mandarin",
+        "priority": "P2_EVIDENCE_ENRICHMENT",
+        "readiness": "B",
+        "gate": "PARTIAL",
+        "reasons": [],
+        "unknownOutcomes": [],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "orange",
+        "priority": "P2_EVIDENCE_ENRICHMENT",
+        "readiness": "B",
+        "gate": "PARTIAL",
+        "reasons": [],
+        "unknownOutcomes": [],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "passionfruit",
+        "priority": "P2_EVIDENCE_ENRICHMENT",
+        "readiness": "B",
+        "gate": "PARTIAL",
+        "reasons": [],
+        "unknownOutcomes": [],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "pistachio",
+        "priority": "P2_EVIDENCE_ENRICHMENT",
+        "readiness": "B",
+        "gate": "PARTIAL",
+        "reasons": [
+          "MISSING_TRAIT_EVIDENCE"
+        ],
+        "unknownOutcomes": [],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "plumeria",
+        "priority": "P2_EVIDENCE_ENRICHMENT",
+        "readiness": "B",
+        "gate": "PARTIAL",
+        "reasons": [
+          "FRUITING_REQUIREMENTS_MISSING",
+          "MISSING_TRAIT_EVIDENCE"
+        ],
+        "unknownOutcomes": [
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      }
+    ]
+  },
+  "rows": [
+    {
+      "slug": "acerola",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "acerola"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/acerola.packet.json",
+          "packetId": "acerola-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "acerola"
+        }
+      ]
+    },
+    {
+      "slug": "agapanthus",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "D",
+      "gate": "REJECT",
+      "reasons": [
+        "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+        "MISSING_FROST_SENSITIVITY",
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "LEGACY_META_ONLY"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "agapanthus"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "almond",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "MISSING_TRAIT_EVIDENCE"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "almond"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "aloe-vera",
+      "source": "RUNTIME_ONLY",
+      "status": "UNKNOWN_VALID",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "aloe-vera"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "apple",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "apple"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/apple.packet.json",
+          "packetId": "apple-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "apple"
+        }
+      ]
+    },
+    {
+      "slug": "apricot",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "apricot"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/apricot.packet.json",
+          "packetId": "apricot-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "apricot"
+        }
+      ]
+    },
+    {
+      "slug": "areca-palm",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "areca-palm"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "artichoke",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/artichoke.packet.json",
+          "packetId": "artichoke-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "artichoke"
+        }
+      ]
+    },
+    {
+      "slug": "asparagus",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/asparagus.packet.json",
+          "packetId": "asparagus-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "asparagus"
+        }
+      ]
+    },
+    {
+      "slug": "avocado",
+      "source": "RUNTIME_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "avocado"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "azalea",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "D",
+      "gate": "REJECT",
+      "reasons": [
+        "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+        "MISSING_FROST_SENSITIVITY",
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "LEGACY_META_ONLY"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "azalea"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "banana",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "D",
+      "gate": "REJECT",
+      "reasons": [
+        "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+        "MISSING_FROST_SENSITIVITY",
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "LEGACY_META_ONLY"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "banana"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "basil",
+      "source": "RUNTIME_ONLY",
+      "status": "UNKNOWN_VALID",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "FRUITING_REQUIREMENTS_MISSING"
+      ],
+      "unknownOutcomes": [
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "basil"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "bay-laurel",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "bay-laurel"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/bay-laurel.packet.json",
+          "packetId": "bay-laurel-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "bay-laurel"
+        }
+      ]
+    },
+    {
+      "slug": "black-eyed-susan-vine",
+      "source": "RUNTIME_ONLY",
+      "status": "UNKNOWN_VALID",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "FRUITING_REQUIREMENTS_MISSING"
+      ],
+      "unknownOutcomes": [
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "black-eyed-susan-vine"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "blackberry",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/blackberry.packet.json",
+          "packetId": "blackberry-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "blackberry"
+        }
+      ]
+    },
+    {
+      "slug": "blackcurrant",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/blackcurrant.packet.json",
+          "packetId": "blackcurrant-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "blackcurrant"
+        }
+      ]
+    },
+    {
+      "slug": "blue-gum",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "blue-gum"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/blue-gum.packet.json",
+          "packetId": "blue-gum-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "blue-gum"
+        }
+      ]
+    },
+    {
+      "slug": "blueberry",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "blueberry"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/blueberry.packet.json",
+          "packetId": "blueberry-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "blueberry"
+        }
+      ]
+    },
+    {
+      "slug": "borage",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "borage"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/borage.packet.json",
+          "packetId": "borage-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "borage"
+        }
+      ]
+    },
+    {
+      "slug": "bougainvillea",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "bougainvillea"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/lesser-bougainvillea.packet.json",
+          "packetId": "lesser-bougainvillea-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "lesser-bougainvillea"
+        }
+      ]
+    },
+    {
+      "slug": "boxwood",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/boxwood.packet.json",
+          "packetId": "boxwood-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "boxwood"
+        }
+      ]
+    },
+    {
+      "slug": "breadfruit",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "breadfruit"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/breadfruit.packet.json",
+          "packetId": "breadfruit-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "breadfruit"
+        }
+      ]
+    },
+    {
+      "slug": "broccoli",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "broccoli"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/broccoli.packet.json",
+          "packetId": "broccoli-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "broccoli"
+        }
+      ]
+    },
+    {
+      "slug": "cacao",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "MISSING_TRAIT_EVIDENCE"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "cacao"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "camellia",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "D",
+      "gate": "REJECT",
+      "reasons": [
+        "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+        "MISSING_FROST_SENSITIVITY",
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "LEGACY_META_ONLY"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "camellia"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "carob",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "carob"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/carob.packet.json",
+          "packetId": "carob-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "carob"
+        }
+      ]
+    },
+    {
+      "slug": "carrot",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "carrot"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/carrot.packet.json",
+          "packetId": "carrot-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "carrot"
+        }
+      ]
+    },
+    {
+      "slug": "cedar",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "cedar"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "cherimoya",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "MISSING_TRAIT_EVIDENCE"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "cherimoya"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "chestnut",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/chestnut.packet.json",
+          "packetId": "chestnut-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "chestnut"
+        }
+      ]
+    },
+    {
+      "slug": "chinese-wisteria",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "chinese-wisteria"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/chinese-wisteria.packet.json",
+          "packetId": "chinese-wisteria-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "chinese-wisteria"
+        }
+      ]
+    },
+    {
+      "slug": "chives",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/chives.packet.json",
+          "packetId": "chives-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "chives"
+        }
+      ]
+    },
+    {
+      "slug": "cilantro",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/cilantro.packet.json",
+          "packetId": "cilantro-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "cilantro"
+        }
+      ]
+    },
+    {
+      "slug": "clematis",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/clematis.packet.json",
+          "packetId": "clematis-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "clematis"
+        }
+      ]
+    },
+    {
+      "slug": "coconut",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "MISSING_TRAIT_EVIDENCE"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "coconut"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "coffee",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "coffee"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "common-lilac",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "common-lilac"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/common-lilac.packet.json",
+          "packetId": "common-lilac-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "common-lilac"
+        }
+      ]
+    },
+    {
+      "slug": "common-myrtle",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "common-myrtle"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/common-myrtle.packet.json",
+          "packetId": "common-myrtle-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "common-myrtle"
+        }
+      ]
+    },
+    {
+      "slug": "common-thyme",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "common-thyme"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/common-thyme.packet.json",
+          "packetId": "common-thyme-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "common-thyme"
+        }
+      ]
+    },
+    {
+      "slug": "cranberry",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/cranberry.packet.json",
+          "packetId": "cranberry-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "cranberry"
+        }
+      ]
+    },
+    {
+      "slug": "crepe-myrtle",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/crepe-myrtle.packet.json",
+          "packetId": "crepe-myrtle-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "crepe-myrtle"
+        }
+      ]
+    },
+    {
+      "slug": "cucumber",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "cucumber"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "cycas",
+      "source": "RUNTIME_ONLY",
+      "status": "UNKNOWN_VALID",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "cycas"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "cyclamen",
+      "source": "RUNTIME_ONLY",
+      "status": "UNKNOWN_VALID",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "FRUITING_REQUIREMENTS_MISSING"
+      ],
+      "unknownOutcomes": [
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "cyclamen"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "cypress",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "cypress"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "date-palm",
+      "source": "RUNTIME_ONLY",
+      "status": "UNKNOWN_VALID",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "date-palm"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "dill",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/dill.packet.json",
+          "packetId": "dill-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "dill"
+        }
+      ]
+    },
+    {
+      "slug": "dragon-fruit",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "dragon-fruit"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "durian",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "durian"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/durian.packet.json",
+          "packetId": "durian-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "durian"
+        }
+      ]
+    },
+    {
+      "slug": "eggplant",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "eggplant"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "elderberry",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/elderberry.packet.json",
+          "packetId": "elderberry-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "elderberry"
+        }
+      ]
+    },
+    {
+      "slug": "english-walnut",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "english-walnut"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/english-walnut.packet.json",
+          "packetId": "english-walnut-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "english-walnut"
+        }
+      ]
+    },
+    {
+      "slug": "feijoa",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "feijoa"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/feijoa.packet.json",
+          "packetId": "feijoa-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "feijoa"
+        }
+      ]
+    },
+    {
+      "slug": "ficus-benjamina",
+      "source": "RUNTIME_ONLY",
+      "status": "UNKNOWN_VALID",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "ficus-benjamina"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "fiddle-leaf-fig",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "fiddle-leaf-fig"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "fig",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "fig"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/fig.packet.json",
+          "packetId": "fig-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "fig"
+        }
+      ]
+    },
+    {
+      "slug": "flowering-dogwood",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/flowering-dogwood.packet.json",
+          "packetId": "flowering-dogwood-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "flowering-dogwood"
+        }
+      ]
+    },
+    {
+      "slug": "forsythia",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "forsythia"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/forsythia.packet.json",
+          "packetId": "forsythia-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "forsythia"
+        }
+      ]
+    },
+    {
+      "slug": "french-marigold",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "french-marigold"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/french-marigold.packet.json",
+          "packetId": "french-marigold-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "french-marigold"
+        }
+      ]
+    },
+    {
+      "slug": "garden-pea",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "garden-pea"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/garden-pea.packet.json",
+          "packetId": "garden-pea-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "garden-pea"
+        }
+      ]
+    },
+    {
+      "slug": "garden-peony",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "garden-peony"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/garden-peony.packet.json",
+          "packetId": "garden-peony-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "garden-peony"
+        }
+      ]
+    },
+    {
+      "slug": "garden-sage",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "garden-sage"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/garden-sage.packet.json",
+          "packetId": "garden-sage-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "garden-sage"
+        }
+      ]
+    },
+    {
+      "slug": "geranium",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "D",
+      "gate": "REJECT",
+      "reasons": [
+        "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+        "MISSING_FROST_SENSITIVITY",
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "LEGACY_META_ONLY"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "geranium"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "ginger",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "ginger"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "ginkgo",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "ginkgo"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/ginkgo.packet.json",
+          "packetId": "ginkgo-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "ginkgo"
+        }
+      ]
+    },
+    {
+      "slug": "gooseberry",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "gooseberry"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/gooseberry.packet.json",
+          "packetId": "gooseberry-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "gooseberry"
+        }
+      ]
+    },
+    {
+      "slug": "grapefruit",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "grapefruit"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/grapefruit.packet.json",
+          "packetId": "grapefruit-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "grapefruit"
+        }
+      ]
+    },
+    {
+      "slug": "grapevine",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "grapevine"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "green-bean",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "green-bean"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/green-bean.packet.json",
+          "packetId": "green-bean-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "green-bean"
+        }
+      ]
+    },
+    {
+      "slug": "guava",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "guava"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "hazelnut",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/hazelnut.packet.json",
+          "packetId": "hazelnut-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "hazelnut"
+        }
+      ]
+    },
+    {
+      "slug": "hibiscus",
+      "source": "RUNTIME_ONLY",
+      "status": "UNKNOWN_VALID",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "FRUITING_REQUIREMENTS_MISSING"
+      ],
+      "unknownOutcomes": [
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "hibiscus"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "hydrangea",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "hydrangea"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/bigleaf-hydrangea.packet.json",
+          "packetId": "bigleaf-hydrangea-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "bigleaf-hydrangea"
+        }
+      ]
+    },
+    {
+      "slug": "jaboticaba",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "jaboticaba"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/jaboticaba.packet.json",
+          "packetId": "jaboticaba-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "jaboticaba"
+        }
+      ]
+    },
+    {
+      "slug": "jackfruit",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "jackfruit"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "japanese-maple",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "japanese-maple"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "jasmine",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "jasmine"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/common-jasmine.packet.json",
+          "packetId": "common-jasmine-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "common-jasmine"
+        }
+      ]
+    },
+    {
+      "slug": "jujube",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/jujube.packet.json",
+          "packetId": "jujube-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "jujube"
+        }
+      ]
+    },
+    {
+      "slug": "kiwi",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "MISSING_TRAIT_EVIDENCE"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "kiwi"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "lavender",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "lavender"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/english-lavender.packet.json",
+          "packetId": "english-lavender-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "english-lavender"
+        }
+      ]
+    },
+    {
+      "slug": "lemon",
+      "source": "RUNTIME_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "lemon"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "lemongrass",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "lemongrass"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "lettuce",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "lettuce"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/lettuce.packet.json",
+          "packetId": "lettuce-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "lettuce"
+        }
+      ]
+    },
+    {
+      "slug": "longan",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "longan"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/longan.packet.json",
+          "packetId": "longan-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "longan"
+        }
+      ]
+    },
+    {
+      "slug": "loquat",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "loquat"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/loquat.packet.json",
+          "packetId": "loquat-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "loquat"
+        }
+      ]
+    },
+    {
+      "slug": "lychee",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "lychee"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "mandarin",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "mandarin"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "mango",
+      "source": "RUNTIME_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "mango"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "mangosteen",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "mangosteen"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/mangosteen.packet.json",
+          "packetId": "mangosteen-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "mangosteen"
+        }
+      ]
+    },
+    {
+      "slug": "medlar",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/medlar.packet.json",
+          "packetId": "medlar-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "medlar"
+        }
+      ]
+    },
+    {
+      "slug": "melaleuca",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "D",
+      "gate": "REJECT",
+      "reasons": [
+        "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+        "MISSING_FROST_SENSITIVITY",
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "LEGACY_META_ONLY"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "melaleuca"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "mint",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "mint"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/spearmint.packet.json",
+          "packetId": "spearmint-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "spearmint"
+        }
+      ]
+    },
+    {
+      "slug": "monstera",
+      "source": "RUNTIME_ONLY",
+      "status": "UNKNOWN_VALID",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "monstera"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "moringa",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "moringa"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "mulberry",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "D",
+      "gate": "REJECT",
+      "reasons": [
+        "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+        "MISSING_FROST_SENSITIVITY",
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "LEGACY_META_ONLY"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "mulberry"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "nasturtium",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "nasturtium"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/nasturtium.packet.json",
+          "packetId": "nasturtium-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "nasturtium"
+        }
+      ]
+    },
+    {
+      "slug": "oak-tree",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "oak-tree"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "okra",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/okra.packet.json",
+          "packetId": "okra-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "okra"
+        }
+      ]
+    },
+    {
+      "slug": "oleander",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "oleander"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/oleander.packet.json",
+          "packetId": "oleander-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "oleander"
+        }
+      ]
+    },
+    {
+      "slug": "olive",
+      "source": "RUNTIME_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "olive"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "orange",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "orange"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "orchid",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "orchid"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "oregano",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/oregano.packet.json",
+          "packetId": "oregano-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "oregano"
+        }
+      ]
+    },
+    {
+      "slug": "papaya",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "papaya"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "parsley",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/parsley.packet.json",
+          "packetId": "parsley-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "parsley"
+        }
+      ]
+    },
+    {
+      "slug": "passionfruit",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "passionfruit"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "peach",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "peach"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/peach.packet.json",
+          "packetId": "peach-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "peach"
+        }
+      ]
+    },
+    {
+      "slug": "pear",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "pear"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/pear.packet.json",
+          "packetId": "pear-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "pear"
+        }
+      ]
+    },
+    {
+      "slug": "pecan",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/pecan.packet.json",
+          "packetId": "pecan-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "pecan"
+        }
+      ]
+    },
+    {
+      "slug": "persimmon",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "persimmon"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/persimmon.packet.json",
+          "packetId": "persimmon-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "persimmon"
+        }
+      ]
+    },
+    {
+      "slug": "pine-tree",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "pine-tree"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "pineapple",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "pineapple"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "pistachio",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "MISSING_TRAIT_EVIDENCE"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "pistachio"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "pitanga",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/pitanga.packet.json",
+          "packetId": "pitanga-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "pitanga"
+        }
+      ]
+    },
+    {
+      "slug": "plum",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "plum"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/plum.packet.json",
+          "packetId": "plum-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "plum"
+        }
+      ]
+    },
+    {
+      "slug": "plumeria",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE"
+      ],
+      "unknownOutcomes": [
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "plumeria"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "pomegranate",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "pomegranate"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/pomegranate.packet.json",
+          "packetId": "pomegranate-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "pomegranate"
+        }
+      ]
+    },
+    {
+      "slug": "queen-palm",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FRUITING_REQUIREMENTS_MISSING",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "queen-palm"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "quince",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "quince"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/quince.packet.json",
+          "packetId": "quince-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "quince"
+        }
+      ]
+    },
+    {
+      "slug": "rambutan",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "rambutan"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "raspberry",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "raspberry"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/raspberry.packet.json",
+          "packetId": "raspberry-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "raspberry"
+        }
+      ]
+    },
+    {
+      "slug": "red-currant",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "red-currant"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/red-currant.packet.json",
+          "packetId": "red-currant-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "red-currant"
+        }
+      ]
+    },
+    {
+      "slug": "rhubarb",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/rhubarb.packet.json",
+          "packetId": "rhubarb-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "rhubarb"
+        }
+      ]
+    },
+    {
+      "slug": "rose",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "rose"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "rosemary",
+      "source": "RUNTIME_ONLY",
+      "status": "UNKNOWN_VALID",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "FRUITING_REQUIREMENTS_MISSING"
+      ],
+      "unknownOutcomes": [
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "rosemary"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "sapodilla",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/sapodilla.packet.json",
+          "packetId": "sapodilla-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "sapodilla"
+        }
+      ]
+    },
+    {
+      "slug": "sea-buckthorn",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/sea-buckthorn.packet.json",
+          "packetId": "sea-buckthorn-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "sea-buckthorn"
+        }
+      ]
+    },
+    {
+      "slug": "serviceberry",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/serviceberry.packet.json",
+          "packetId": "serviceberry-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "serviceberry"
+        }
+      ]
+    },
+    {
+      "slug": "silver-birch",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "silver-birch"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/silver-birch.packet.json",
+          "packetId": "silver-birch-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "silver-birch"
+        }
+      ]
+    },
+    {
+      "slug": "snake-plant",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "snake-plant"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "soursop",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/soursop.packet.json",
+          "packetId": "soursop-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "soursop"
+        }
+      ]
+    },
+    {
+      "slug": "southern-magnolia",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "southern-magnolia"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/southern-magnolia.packet.json",
+          "packetId": "southern-magnolia-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "southern-magnolia"
+        }
+      ]
+    },
+    {
+      "slug": "spinach",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "spinach"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/spinach.packet.json",
+          "packetId": "spinach-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "spinach"
+        }
+      ]
+    },
+    {
+      "slug": "starfruit",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "starfruit"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "strawberry",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "strawberry"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/wave1-selective-v1/packets/strawberry.packet.json",
+          "packetId": "strawberry-wave1-selective-v1",
+          "forceReview": false,
+          "nativeSlug": "strawberry"
+        }
+      ]
+    },
+    {
+      "slug": "strawberry-guava",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "strawberry-guava"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "strelitzia",
+      "source": "RUNTIME_ONLY",
+      "status": "UNKNOWN_VALID",
+      "readiness": "B",
+      "gate": "PARTIAL",
+      "reasons": [
+        "FRUITING_REQUIREMENTS_MISSING"
+      ],
+      "unknownOutcomes": [
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "strelitzia"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "succulent",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "D",
+      "gate": "REJECT",
+      "reasons": [
+        "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
+        "MISSING_FROST_SENSITIVITY",
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "LEGACY_META_ONLY"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "succulent"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "sunflower",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "sunflower"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "sweet-cherry",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "sweet-cherry"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/sweet-cherry.packet.json",
+          "packetId": "sweet-cherry-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "sweet-cherry"
+        }
+      ]
+    },
+    {
+      "slug": "sweet-orange",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "sweet-orange"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/sweet-orange.packet.json",
+          "packetId": "sweet-orange-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "sweet-orange"
+        }
+      ]
+    },
+    {
+      "slug": "sweet-pepper",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "sweet-pepper"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "sweet-potato",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/sweet-potato.packet.json",
+          "packetId": "sweet-potato-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "sweet-potato"
+        }
+      ]
+    },
+    {
+      "slug": "tamarind",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/tamarind.packet.json",
+          "packetId": "tamarind-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "tamarind"
+        }
+      ]
+    },
+    {
+      "slug": "tomato",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "tomato"
+      ],
+      "packet": null
+    },
+    {
+      "slug": "turmeric",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "turmeric"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/turmeric.packet.json",
+          "packetId": "turmeric-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "turmeric"
+        }
+      ]
+    },
+    {
+      "slug": "watermelon",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "watermelon"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/watermelon.packet.json",
+          "packetId": "watermelon-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "watermelon"
+        }
+      ]
+    },
+    {
+      "slug": "white-sapote",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "white-sapote"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-1-v1/packets/white-sapote.packet.json",
+          "packetId": "white-sapote-bulk-batch-1-v1",
+          "forceReview": false,
+          "nativeSlug": "white-sapote"
+        }
+      ]
+    },
+    {
+      "slug": "yucca",
+      "source": "PACKET_ONLY",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-2-v1/packets/yucca.packet.json",
+          "packetId": "yucca-bulk-batch-2-v1",
+          "forceReview": false,
+          "nativeSlug": "yucca"
+        }
+      ]
+    },
+    {
+      "slug": "zinnia",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "zinnia"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/zinnia.packet.json",
+          "packetId": "zinnia-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "zinnia"
+        }
+      ]
+    },
+    {
+      "slug": "zucchini",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
+      "reasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "unknownOutcomes": [],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "zucchini"
+      ],
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/bulk-batch-3-v1/packets/zucchini.packet.json",
+          "packetId": "zucchini-bulk-batch-3-v1",
+          "forceReview": false,
+          "nativeSlug": "zucchini"
+        }
+      ]
+    },
+    {
+      "slug": "zz-plant",
+      "source": "RUNTIME_ONLY",
+      "status": "RESEARCH_REQUIRED",
+      "readiness": "B",
+      "gate": "HOLD",
+      "reasons": [
+        "FLOWERING_REQUIREMENTS_MISSING",
+        "FRUITING_REQUIREMENTS_MISSING",
+        "MISSING_TRAIT_EVIDENCE",
+        "NEEDS_REVIEW"
+      ],
+      "unknownOutcomes": [
+        "flowering",
+        "fruiting"
+      ],
+      "realContradiction": false,
+      "runtimeAliases": [
+        "zz-plant"
+      ],
+      "packet": null
+    }
+  ]
+}

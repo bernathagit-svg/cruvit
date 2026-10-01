@@ -665,3 +665,16 @@ test('app.html still documents merge defaults medium (regression guard)', () => 
   // Contract mirrors those defaults; this checkpoint does not rewrite merge behavior.
   assert.equal(SMART_REC_MERGE_DEFAULT_CORE.frostSensitivity, 'medium');
 });
+
+test('packet normalization derives provenance and preserves source-linked non-fruiting purpose', () => {
+  const fp = path.join(ROOT, 'data', 'catalog-expansion', 'batches', 'bulk-batch-1-v1', 'packets', 'common-lilac.packet.json');
+  const packet = JSON.parse(fs.readFileSync(fp, 'utf8').replace(/^\uFEFF/, ''));
+  const plant = normalizeBatch3PacketForClassification(packet);
+  assert.equal(plant.climateTraits.traitProvenance.tags.status, 'asserted');
+  assert.ok(plant.climateTraits.traitProvenance.tags.sourceIds.length > 0);
+  assert.equal(plant.climateTraits.traitProvenance.tags.evidenceClass, 'SOURCE_SUPPORTED');
+  const result = classifyPlantDataReadiness(plant);
+  assert.equal(result.fruitingStanceReady, true);
+  assert.equal(result.unknownOutcomes.includes('fruiting'), false);
+  assert.equal(result.readinessShort, 'A');
+});
