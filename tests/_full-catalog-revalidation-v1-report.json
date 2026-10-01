@@ -1,6 +1,6 @@
 {
   "contract": "cruvit-full-catalog-revalidation-v1",
-  "generatedAt": "2026-10-01T18:05:58.977Z",
+  "generatedAt": "2026-10-01T18:28:36.087Z",
   "runtime": {
     "total": 123,
     "counts": {
@@ -18,23 +18,23 @@
     "canonicalUnique": 123
   },
   "packets": {
-    "files": 89,
-    "unique": 89,
+    "files": 111,
+    "unique": 111,
     "counts": {
-      "A": 89,
+      "A": 111,
       "B": 0,
       "C": 0,
       "D": 0
     },
     "gates": {
-      "PASS": 89,
+      "PASS": 111,
       "PARTIAL": 0,
       "HOLD": 0,
       "REJECT": 0
     },
-    "canonicalUnique": 89,
+    "canonicalUnique": 111,
     "canonicalCounts": {
-      "A": 89,
+      "A": 111,
       "B": 0,
       "C": 0,
       "D": 0
@@ -43,14 +43,13 @@
   },
   "coverage": {
     "unifiedUnique": 153,
-    "overlap": 59,
-    "runtimeOnlyCount": 64,
+    "overlap": 81,
+    "runtimeOnlyCount": 42,
     "packetOnlyCount": 30,
     "runtimeOnly": [
       "agapanthus",
       "almond",
       "aloe-vera",
-      "areca-palm",
       "avocado",
       "azalea",
       "banana",
@@ -58,59 +57,38 @@
       "black-eyed-susan-vine",
       "cacao",
       "camellia",
-      "cedar",
       "cherimoya",
       "coconut",
-      "coffee",
-      "cucumber",
       "cycas",
       "cyclamen",
       "cypress",
       "date-palm",
-      "dragon-fruit",
-      "eggplant",
       "ficus-benjamina",
-      "fiddle-leaf-fig",
       "geranium",
-      "ginger",
       "grapevine",
       "guava",
       "hibiscus",
-      "jackfruit",
       "japanese-maple",
       "kiwi",
       "lemon",
-      "lemongrass",
       "lychee",
       "mandarin",
       "mango",
       "melaleuca",
       "monstera",
-      "moringa",
       "mulberry",
       "oak-tree",
       "olive",
       "orange",
       "orchid",
-      "papaya",
       "passionfruit",
       "pine-tree",
-      "pineapple",
       "pistachio",
       "plumeria",
-      "queen-palm",
-      "rambutan",
       "rose",
       "rosemary",
-      "snake-plant",
-      "starfruit",
-      "strawberry-guava",
       "strelitzia",
-      "succulent",
-      "sunflower",
-      "sweet-pepper",
-      "tomato",
-      "zz-plant"
+      "succulent"
     ],
     "packetOnly": [
       "artichoke",
@@ -162,34 +140,34 @@
   },
   "unified": {
     "counts": {
-      "A": 93,
-      "B": 52,
+      "A": 115,
+      "B": 30,
       "C": 0,
       "D": 8
     },
     "gates": {
-      "PASS": 93,
+      "PASS": 115,
       "PARTIAL": 27,
-      "HOLD": 25,
+      "HOLD": 3,
       "REJECT": 8
     },
     "statusCounts": {
-      "PASS_FULL": 93,
+      "PASS_FULL": 115,
       "UNKNOWN_VALID": 11,
       "BROAD_IDENTITY_VALID": 12,
-      "RESEARCH_REQUIRED": 37,
+      "RESEARCH_REQUIRED": 15,
       "CONTRADICTION": 0
     },
     "reasonFrequency": {
-      "COMPLETE_FOR_CLASS_A": 93,
+      "COMPLETE_FOR_CLASS_A": 115,
       "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A": 12,
       "MISSING_FROST_SENSITIVITY": 8,
-      "FLOWERING_REQUIREMENTS_MISSING": 39,
-      "FRUITING_REQUIREMENTS_MISSING": 47,
-      "MISSING_TRAIT_EVIDENCE": 41,
+      "FLOWERING_REQUIREMENTS_MISSING": 19,
+      "FRUITING_REQUIREMENTS_MISSING": 26,
+      "MISSING_TRAIT_EVIDENCE": 21,
       "LEGACY_META_ONLY": 8,
-      "NEEDS_REVIEW": 25,
-      "HUMIDITY_UNKNOWN": 47
+      "HUMIDITY_UNKNOWN": 47,
+      "NEEDS_REVIEW": 3
     }
   },
   "broadIdentityQueue": {
@@ -294,378 +272,13 @@
     ]
   },
   "researchQueue": {
-    "total": 37,
+    "total": 15,
     "priorityCounts": {
       "P0_IDENTITY_OR_CORE_BLOCK": 0,
-      "P1_REVIEW_HOLD": 22,
+      "P1_REVIEW_HOLD": 0,
       "P2_EVIDENCE_ENRICHMENT": 15
     },
     "rows": [
-      {
-        "slug": "areca-palm",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "cedar",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "coffee",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "cucumber",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "dragon-fruit",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "eggplant",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "fiddle-leaf-fig",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "ginger",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "jackfruit",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "lemongrass",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "moringa",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "papaya",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "pineapple",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "queen-palm",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FRUITING_REQUIREMENTS_MISSING",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "rambutan",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "snake-plant",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "starfruit",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "strawberry-guava",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "sunflower",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "sweet-pepper",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "tomato",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "zz-plant",
-        "priority": "P1_REVIEW_HOLD",
-        "readiness": "B",
-        "gate": "HOLD",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "MISSING_TRAIT_EVIDENCE",
-          "NEEDS_REVIEW"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
       {
         "slug": "almond",
         "priority": "P2_EVIDENCE_ENRICHMENT",
@@ -966,25 +579,26 @@
     },
     {
       "slug": "areca-palm",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "areca-palm"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-a-v1/packets/areca-palm.packet.json",
+          "packetId": "areca-palm-p1-review-closure-wave-a-v1",
+          "forceReview": false,
+          "nativeSlug": "areca-palm"
+        }
+      ]
     },
     {
       "slug": "artichoke",
@@ -1450,25 +1064,26 @@
     },
     {
       "slug": "cedar",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "cedar"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-a-v1/packets/cedar.packet.json",
+          "packetId": "cedar-p1-review-closure-wave-a-v1",
+          "forceReview": false,
+          "nativeSlug": "cedar"
+        }
+      ]
     },
     {
       "slug": "cherimoya",
@@ -1613,25 +1228,26 @@
     },
     {
       "slug": "coffee",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "coffee"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-a-v1/packets/coffee.packet.json",
+          "packetId": "coffee-p1-review-closure-wave-a-v1",
+          "forceReview": false,
+          "nativeSlug": "coffee"
+        }
+      ]
     },
     {
       "slug": "common-lilac",
@@ -1746,25 +1362,26 @@
     },
     {
       "slug": "cucumber",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "cucumber"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-a-v1/packets/cucumber.packet.json",
+          "packetId": "cucumber-p1-review-closure-wave-a-v1",
+          "forceReview": false,
+          "nativeSlug": "cucumber"
+        }
+      ]
     },
     {
       "slug": "cycas",
@@ -1869,25 +1486,26 @@
     },
     {
       "slug": "dragon-fruit",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "dragon-fruit"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-b-v1/packets/dragon-fruit.packet.json",
+          "packetId": "dragon-fruit-p1-review-closure-wave-b-v1",
+          "forceReview": false,
+          "nativeSlug": "dragon-fruit"
+        }
+      ]
     },
     {
       "slug": "durian",
@@ -1914,25 +1532,26 @@
     },
     {
       "slug": "eggplant",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "eggplant"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-a-v1/packets/eggplant.packet.json",
+          "packetId": "eggplant-p1-review-closure-wave-a-v1",
+          "forceReview": false,
+          "nativeSlug": "eggplant"
+        }
+      ]
     },
     {
       "slug": "elderberry",
@@ -2024,25 +1643,26 @@
     },
     {
       "slug": "fiddle-leaf-fig",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "fiddle-leaf-fig"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-a-v1/packets/fiddle-leaf-fig.packet.json",
+          "packetId": "fiddle-leaf-fig-p1-review-closure-wave-a-v1",
+          "forceReview": false,
+          "nativeSlug": "fiddle-leaf-fig"
+        }
+      ]
     },
     {
       "slug": "fig",
@@ -2233,25 +1853,26 @@
     },
     {
       "slug": "ginger",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "ginger"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-a-v1/packets/ginger.packet.json",
+          "packetId": "ginger-p1-review-closure-wave-a-v1",
+          "forceReview": false,
+          "nativeSlug": "ginger"
+        }
+      ]
     },
     {
       "slug": "ginkgo",
@@ -2463,25 +2084,26 @@
     },
     {
       "slug": "jackfruit",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "jackfruit"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-b-v1/packets/jackfruit.packet.json",
+          "packetId": "jackfruit-p1-review-closure-wave-b-v1",
+          "forceReview": false,
+          "nativeSlug": "jackfruit"
+        }
+      ]
     },
     {
       "slug": "japanese-maple",
@@ -2608,25 +2230,26 @@
     },
     {
       "slug": "lemongrass",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "lemongrass"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-a-v1/packets/lemongrass.packet.json",
+          "packetId": "lemongrass-p1-review-closure-wave-a-v1",
+          "forceReview": false,
+          "nativeSlug": "lemongrass"
+        }
+      ]
     },
     {
       "slug": "lettuce",
@@ -2856,25 +2479,26 @@
     },
     {
       "slug": "moringa",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "moringa"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-b-v1/packets/moringa.packet.json",
+          "packetId": "moringa-p1-review-closure-wave-b-v1",
+          "forceReview": false,
+          "nativeSlug": "moringa"
+        }
+      ]
     },
     {
       "slug": "mulberry",
@@ -3067,25 +2691,26 @@
     },
     {
       "slug": "papaya",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "papaya"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-b-v1/packets/papaya.packet.json",
+          "packetId": "papaya-p1-review-closure-wave-b-v1",
+          "forceReview": false,
+          "nativeSlug": "papaya"
+        }
+      ]
     },
     {
       "slug": "parsley",
@@ -3241,25 +2866,26 @@
     },
     {
       "slug": "pineapple",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "pineapple"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-a-v1/packets/pineapple.packet.json",
+          "packetId": "pineapple-p1-review-closure-wave-a-v1",
+          "forceReview": false,
+          "nativeSlug": "pineapple"
+        }
+      ]
     },
     {
       "slug": "pistachio",
@@ -3368,22 +2994,26 @@
     },
     {
       "slug": "queen-palm",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FRUITING_REQUIREMENTS_MISSING",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "queen-palm"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-a-v1/packets/queen-palm.packet.json",
+          "packetId": "queen-palm-p1-review-closure-wave-a-v1",
+          "forceReview": false,
+          "nativeSlug": "queen-palm"
+        }
+      ]
     },
     {
       "slug": "quince",
@@ -3410,25 +3040,26 @@
     },
     {
       "slug": "rambutan",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "rambutan"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-b-v1/packets/rambutan.packet.json",
+          "packetId": "rambutan-p1-review-closure-wave-b-v1",
+          "forceReview": false,
+          "nativeSlug": "rambutan"
+        }
+      ]
     },
     {
       "slug": "raspberry",
@@ -3631,25 +3262,26 @@
     },
     {
       "slug": "snake-plant",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "snake-plant"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-a-v1/packets/snake-plant.packet.json",
+          "packetId": "snake-plant-p1-review-closure-wave-a-v1",
+          "forceReview": false,
+          "nativeSlug": "snake-plant"
+        }
+      ]
     },
     {
       "slug": "soursop",
@@ -3721,25 +3353,26 @@
     },
     {
       "slug": "starfruit",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "starfruit"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-b-v1/packets/starfruit.packet.json",
+          "packetId": "starfruit-p1-review-closure-wave-b-v1",
+          "forceReview": false,
+          "nativeSlug": "starfruit"
+        }
+      ]
     },
     {
       "slug": "strawberry",
@@ -3767,19 +3400,26 @@
     },
     {
       "slug": "strawberry-guava",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "strawberry-guava"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-b-v1/packets/strawberry-guava.packet.json",
+          "packetId": "strawberry-guava-p1-review-closure-wave-b-v1",
+          "forceReview": false,
+          "nativeSlug": "strawberry-guava"
+        }
+      ]
     },
     {
       "slug": "strelitzia",
@@ -3825,25 +3465,26 @@
     },
     {
       "slug": "sunflower",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "sunflower"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-a-v1/packets/sunflower.packet.json",
+          "packetId": "sunflower-p1-review-closure-wave-a-v1",
+          "forceReview": false,
+          "nativeSlug": "sunflower"
+        }
+      ]
     },
     {
       "slug": "sweet-cherry",
@@ -3893,25 +3534,26 @@
     },
     {
       "slug": "sweet-pepper",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "sweet-pepper"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-a-v1/packets/sweet-pepper.packet.json",
+          "packetId": "sweet-pepper-p1-review-closure-wave-a-v1",
+          "forceReview": false,
+          "nativeSlug": "sweet-pepper"
+        }
+      ]
     },
     {
       "slug": "sweet-potato",
@@ -3959,25 +3601,26 @@
     },
     {
       "slug": "tomato",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "tomato"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-a-v1/packets/tomato.packet.json",
+          "packetId": "tomato-p1-review-closure-wave-a-v1",
+          "forceReview": false,
+          "nativeSlug": "tomato"
+        }
+      ]
     },
     {
       "slug": "turmeric",
@@ -4120,25 +3763,26 @@
     },
     {
       "slug": "zz-plant",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "HOLD",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "zz-plant"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/p1-review-closure-wave-a-v1/packets/zz-plant.packet.json",
+          "packetId": "zz-plant-p1-review-closure-wave-a-v1",
+          "forceReview": false,
+          "nativeSlug": "zz-plant"
+        }
+      ]
     }
   ]
 }

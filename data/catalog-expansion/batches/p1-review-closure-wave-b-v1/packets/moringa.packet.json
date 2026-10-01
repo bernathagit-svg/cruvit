@@ -1,0 +1,208 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "moringa-p1-review-closure-wave-b-v1",
+  "identity": {
+    "canonicalSlug": "moringa",
+    "commonNameEn": "Moringa",
+    "acceptedScientificName": "Moringa oleifera",
+    "aliases": [
+      "moringa",
+      "drumstick tree",
+      "horseradish tree",
+      "Moringa oleifera"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P1 review closure Wave B; authoritative tropical-fruit evidence and canonical taxonomy where needed.",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-10-01"
+  },
+  "sources": [
+    {
+      "sourceId": "ucce-moringa-2025",
+      "institution": "University of California Cooperative Extension",
+      "publisher": "UC Agriculture and Natural Resources",
+      "title": "Moringa Oleifera (Miracle tree)",
+      "url": "https://ucanr.edu/site/ucce-central-sierra-agriculture/article/moringa-oleifera-miracle-tree",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    },
+    {
+      "sourceId": "ufifas-moringa-miami",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "UF/IFAS Extension",
+      "title": "Flowering & Shade Trees: Moringa oleifera",
+      "url": "https://sfyl.ifas.ufl.edu/miami-dade/landscapes--gardening/flowering--shade-trees-f---z/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Moringa oleifera",
+      "sourceIds": [
+        "ucce-moringa-2025"
+      ],
+      "shortExcerpt": "Moringa oleifera — canonical identity supported by University of California Cooperative Extension.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "moringa",
+        "drumstick tree",
+        "horseradish tree",
+        "Moringa oleifera"
+      ],
+      "sourceIds": [
+        "ucce-moringa-2025"
+      ],
+      "shortExcerpt": "Current and historical/common names retained as aliases.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ucce-moringa-2025"
+      ],
+      "shortExcerpt": "Moringa is cold sensitive, suited to USDA zone 9b and warmer; winter frosts can kill top growth in California.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Conservative frost-sensitivity interpretation from explicit cold/freeze evidence; not a direct source ordinal."
+    },
+    {
+      "claimId": "cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "ucce-moringa-2025"
+      ],
+      "shortExcerpt": "Moringa is cold sensitive, suited to USDA zone 9b and warmer; winter frosts can kill top growth in California.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Conservative qualitative cold-tolerance interpretation from explicit temperature/hardiness evidence."
+    },
+    {
+      "claimId": "heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ucce-moringa-2025"
+      ],
+      "shortExcerpt": "Fast-growing drought-tolerant plant adapted to hot, dry climates and low water; UF/IFAS lists full sun, low water and good drainage.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ucce-moringa-2025"
+      ],
+      "shortExcerpt": "Fast-growing drought-tolerant plant adapted to hot, dry climates and low water; UF/IFAS lists full sun, low water and good drainage.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ucce-moringa-2025"
+      ],
+      "shortExcerpt": "Fast-growing drought-tolerant plant adapted to hot, dry climates and low water; UF/IFAS lists full sun, low water and good drainage.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ucce-moringa-2025"
+      ],
+      "shortExcerpt": "Fast-growing drought-tolerant plant adapted to hot, dry climates and low water; UF/IFAS lists full sun, low water and good drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ucce-moringa-2025"
+      ],
+      "shortExcerpt": "Fast-growing drought-tolerant plant adapted to hot, dry climates and low water; UF/IFAS lists full sun, low water and good drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "chill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ucce-moringa-2025"
+      ],
+      "shortExcerpt": "No winter-chill requirement is asserted for this tropical/subtropical catalog purpose.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "edible",
+        "tree",
+        "drought-tolerant",
+        "pod"
+      ],
+      "sourceIds": [
+        "ucce-moringa-2025"
+      ],
+      "shortExcerpt": "Catalog tags: edible, tree, drought-tolerant, pod",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "flowering",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "UF/IFAS describes attractive panicles of fragrant cream-colored flowers, particularly during dry weather.",
+      "sourceIds": [
+        "ucce-moringa-2025"
+      ],
+      "shortExcerpt": "UF/IFAS describes attractive panicles of fragrant cream-colored flowers, particularly during dry weather.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruiting",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "UCCE notes that plants are grown for leaves and/or pods; less pruning favors pod production.",
+      "sourceIds": [
+        "ucce-moringa-2025"
+      ],
+      "shortExcerpt": "UCCE notes that plants are grown for leaves and/or pods; less pruning favors pod production.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-01",
+    "approvedBy": "Owner continuation authorization",
+    "notes": "Owner instructed continuation of Full Catalog Revalidation/P1 closure; no paid APIs."
+  }
+}

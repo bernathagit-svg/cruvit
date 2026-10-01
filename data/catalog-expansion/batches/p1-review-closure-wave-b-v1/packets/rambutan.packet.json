@@ -1,0 +1,195 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "rambutan-p1-review-closure-wave-b-v1",
+  "identity": {
+    "canonicalSlug": "rambutan",
+    "commonNameEn": "Rambutan",
+    "acceptedScientificName": "Nephelium lappaceum",
+    "aliases": [
+      "rambutan",
+      "Nephelium lappaceum"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P1 review closure Wave B; authoritative tropical-fruit evidence and canonical taxonomy where needed.",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-10-01"
+  },
+  "sources": [
+    {
+      "sourceId": "uhhilo-rambutan-phenology",
+      "institution": "University of Hawaiʻi at Hilo",
+      "publisher": "Pacific Agriculture and Natural Resources",
+      "title": "Phenology and Fruit Development of Rambutan (Nephelium lappaceum L.) Grown in Hawaiʻi",
+      "url": "https://hilo.hawaii.edu/panr/writing.php?id=167",
+      "authorityTier": "peer_reviewed_publication",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Nephelium lappaceum",
+      "sourceIds": [
+        "uhhilo-rambutan-phenology"
+      ],
+      "shortExcerpt": "Nephelium lappaceum — canonical identity supported by University of Hawaiʻi at Hilo.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "rambutan",
+        "Nephelium lappaceum"
+      ],
+      "sourceIds": [
+        "uhhilo-rambutan-phenology"
+      ],
+      "shortExcerpt": "Current and historical/common names retained as aliases.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uhhilo-rambutan-phenology"
+      ],
+      "shortExcerpt": "Rambutan is a humid-tropical fruit; flowering research cites mean temperatures above 22°C, while its production regions remain warm year-round.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Conservative frost-sensitivity interpretation from explicit cold/freeze evidence; not a direct source ordinal."
+    },
+    {
+      "claimId": "cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "uhhilo-rambutan-phenology"
+      ],
+      "shortExcerpt": "Rambutan is a humid-tropical fruit; flowering research cites mean temperatures above 22°C, while its production regions remain warm year-round.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Conservative qualitative cold-tolerance interpretation from explicit temperature/hardiness evidence."
+    },
+    {
+      "claimId": "heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uhhilo-rambutan-phenology"
+      ],
+      "shortExcerpt": "Native to humid tropical Southeast Asia; Hilo trials averaged 23.8°C with substantial monthly rainfall. Flower induction responds to a short water-stress period, followed by irrigation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uhhilo-rambutan-phenology"
+      ],
+      "shortExcerpt": "Native to humid tropical Southeast Asia; Hilo trials averaged 23.8°C with substantial monthly rainfall. Flower induction responds to a short water-stress period, followed by irrigation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uhhilo-rambutan-phenology"
+      ],
+      "shortExcerpt": "Native to humid tropical Southeast Asia; Hilo trials averaged 23.8°C with substantial monthly rainfall. Flower induction responds to a short water-stress period, followed by irrigation.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun_to_part_shade",
+      "sourceIds": [
+        "uhhilo-rambutan-phenology"
+      ],
+      "shortExcerpt": "Native to humid tropical Southeast Asia; Hilo trials averaged 23.8°C with substantial monthly rainfall. Flower induction responds to a short water-stress period, followed by irrigation.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uhhilo-rambutan-phenology"
+      ],
+      "shortExcerpt": "Native to humid tropical Southeast Asia; Hilo trials averaged 23.8°C with substantial monthly rainfall. Flower induction responds to a short water-stress period, followed by irrigation.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "chill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "uhhilo-rambutan-phenology"
+      ],
+      "shortExcerpt": "No winter-chill requirement is asserted for this tropical/subtropical catalog purpose.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "fruit",
+        "edible",
+        "tropical",
+        "humid"
+      ],
+      "sourceIds": [
+        "uhhilo-rambutan-phenology"
+      ],
+      "shortExcerpt": "Catalog tags: fruit, edible, tropical, humid",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "flowering",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Flower induction requires mean temperatures above 22°C and roughly 2-4 weeks of water stress; excessive rainfall during the expected flowering period favors vegetative growth.",
+      "sourceIds": [
+        "uhhilo-rambutan-phenology"
+      ],
+      "shortExcerpt": "Flower induction requires mean temperatures above 22°C and roughly 2-4 weeks of water stress; excessive rainfall during the expected flowering period favors vegetative growth.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruiting",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "In Hawaiʻi, developing rambutan fruits matured about 18-20 weeks after anthesis; flowering peaks can occur several times per year under suitable conditions.",
+      "sourceIds": [
+        "uhhilo-rambutan-phenology"
+      ],
+      "shortExcerpt": "In Hawaiʻi, developing rambutan fruits matured about 18-20 weeks after anthesis; flowering peaks can occur several times per year under suitable conditions.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-01",
+    "approvedBy": "Owner continuation authorization",
+    "notes": "Owner instructed continuation of Full Catalog Revalidation/P1 closure; no paid APIs."
+  }
+}

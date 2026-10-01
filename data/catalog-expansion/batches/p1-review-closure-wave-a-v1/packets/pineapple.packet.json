@@ -1,0 +1,197 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "pineapple-p1-review-closure-wave-a-v1",
+  "identity": {
+    "canonicalSlug": "pineapple",
+    "commonNameEn": "Pineapple",
+    "acceptedScientificName": "Ananas comosus",
+    "aliases": [
+      "pineapple",
+      "pina",
+      "Ananas comosus"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "P1 review closure Wave A; authoritative extension source plus conservative evidence-class semantics.",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-10-01"
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-ananas-comosus",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "NC State Extension",
+      "title": "Ananas comosus (Pineapple)",
+      "url": "https://plants.ces.ncsu.edu/plants/ananas-comosus/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-01"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Ananas comosus",
+      "sourceIds": [
+        "ncsu-ananas-comosus"
+      ],
+      "shortExcerpt": "Ananas comosus — identity confirmed by North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "pineapple",
+        "pina",
+        "Ananas comosus"
+      ],
+      "sourceIds": [
+        "ncsu-ananas-comosus"
+      ],
+      "shortExcerpt": "Common and historical names retained for canonical identity.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-ananas-comosus"
+      ],
+      "shortExcerpt": "USDA zones 10a-12b; not frost tolerant and should be protected below 50 F.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Conservative frost sensitivity retained from explicit hardiness/cold wording; not inferred from zone alone."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "ncsu-ananas-comosus"
+      ],
+      "shortExcerpt": "USDA zones 10a-12b; not frost tolerant and should be protected below 50 F.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Versioned qualitative cold-tolerance interpretation from explicit hardiness/temperature evidence."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-ananas-comosus"
+      ],
+      "shortExcerpt": "Warm 68-86 F conditions; bright indirect/partial shade; consistently moist but well-drained soil; moderate-high humidity.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-ananas-comosus"
+      ],
+      "shortExcerpt": "Warm 68-86 F conditions; bright indirect/partial shade; consistently moist but well-drained soil; moderate-high humidity.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-ananas-comosus"
+      ],
+      "shortExcerpt": "Warm 68-86 F conditions; bright indirect/partial shade; consistently moist but well-drained soil; moderate-high humidity.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "partial_shade",
+      "sourceIds": [
+        "ncsu-ananas-comosus"
+      ],
+      "shortExcerpt": "Warm 68-86 F conditions; bright indirect/partial shade; consistently moist but well-drained soil; moderate-high humidity.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-ananas-comosus"
+      ],
+      "shortExcerpt": "Warm 68-86 F conditions; bright indirect/partial shade; consistently moist but well-drained soil; moderate-high humidity.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-ananas-comosus"
+      ],
+      "shortExcerpt": "No winter-chill requirement asserted for this catalog purpose.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "fruit",
+        "edible",
+        "bromeliad",
+        "houseplant"
+      ],
+      "sourceIds": [
+        "ncsu-ananas-comosus"
+      ],
+      "shortExcerpt": "Catalog tags: fruit, edible, bromeliad, houseplant",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "A mature plant produces a central spike of many tubular flowers over several weeks.",
+      "sourceIds": [
+        "ncsu-ananas-comosus"
+      ],
+      "shortExcerpt": "A mature plant produces a central spike of many tubular flowers over several weeks.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Flowers fuse during development into the edible syncarp; a single fruit forms after flowering.",
+      "sourceIds": [
+        "ncsu-ananas-comosus"
+      ],
+      "shortExcerpt": "Flowers fuse during development into the edible syncarp; a single fruit forms after flowering.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-01",
+    "approvedBy": "Owner continuation authorization",
+    "notes": "Owner instructed continuation of Full Catalog Revalidation/P1 closure; no paid APIs."
+  }
+}
