@@ -1209,3 +1209,72 @@ test('explicit dry Garden site constrains source-supported medium/high water nee
   });
   assert.equal(lowWater.overall, 'good');
 });
+
+test('frost-free greenhouse protects survival but does not imply tropical warmth for Growth', () => {
+  const meta = {
+    groupIds: ['tropical-frost-sensitive-fruit'],
+    frostSensitivity: 'high',
+    coldTolerance: 'low',
+    heatTolerance: 'high',
+    waterNeeds: 'medium',
+    traitEvidenceClasses: {
+      frostSensitivity: 'SOURCE_SUPPORTED',
+      coldTolerance: 'SOURCE_SUPPORTED',
+      heatTolerance: 'HEURISTIC_ASSERTION',
+      waterNeeds: 'HEURISTIC_ASSERTION'
+    }
+  };
+  const climateProfile = {
+    broadClimate: 'temperate',
+    freezingRisk: 'medium',
+    moistureRegime: 'humid',
+    humiditySignal: 'medium',
+    coldestMonthMeanMinC: 2,
+    warmestMonthMeanMaxC: 23,
+    structuralClimateStatus: 'known'
+  };
+  const suitability = {
+    recommendationLevel: 'good',
+    survivalFit: 80,
+    thriveFit: 80,
+    warnings: [],
+    explanationText: ''
+  };
+  const plant = { slug: 'warm-tropical-demo', climateTraits: meta };
+
+  const greenhouse = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile,
+    suitability,
+    plant,
+    protectedGrowing: true,
+    gardenContext: {
+      plantingMode: 'greenhouse',
+      frostProtection: 'frost_free',
+      irrigationType: 'drip',
+      irrigationReliability: 'high'
+    }
+  });
+  assert.equal(greenhouse.survival, 'reliable');
+  assert.equal(greenhouse.growth, 'constrained');
+  assert.equal(greenhouse.overall, 'borderline');
+  assert.ok(
+    greenhouse.limitingFactors.some((x) =>
+      /frost-free greenhouse protection.*does not prove tropical warmth/i.test(String(x))
+    )
+  );
+
+  const indoor = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile,
+    suitability,
+    plant,
+    protectedGrowing: true,
+    gardenContext: {
+      plantingMode: 'indoor',
+      frostProtection: 'frost_free'
+    }
+  });
+  assert.equal(indoor.survival, 'reliable');
+  assert.equal(indoor.growth, 'supported');
+});

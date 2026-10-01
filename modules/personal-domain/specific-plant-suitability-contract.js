@@ -1302,6 +1302,9 @@ export function deriveSpecificPlantOutcomes({
   const irrigationType = String(gardenContext?.irrigationType ?? gardenContext?.irrigation_type ?? 'unknown').trim().toLowerCase();
   const irrigationReliability = String(gardenContext?.irrigationReliability ?? gardenContext?.irrigation_reliability ?? 'unknown').trim().toLowerCase();
   const moistureTendency = String(gardenContext?.moistureTendency ?? gardenContext?.soilMoistureTendency ?? gardenContext?.moisture_tendency ?? 'unknown').trim().toLowerCase();
+  const protectedPlantingMode = String(gardenContext?.plantingMode ?? gardenContext?.planting_mode ?? '').trim().toLowerCase();
+  const frostProtection = String(gardenContext?.frostProtection ?? gardenContext?.frost_protection ?? 'unknown').trim().toLowerCase();
+  const frostFreeGreenhouse = sheltered && protectedPlantingMode === 'greenhouse' && frostProtection === 'frost_free';
   const reliableIrrigation = irrigationType !== 'none' && (irrigationReliability === 'medium' || irrigationReliability === 'high');
   const irrigationExplicitlyUnavailable =
     irrigationType === 'none' || irrigationReliability === 'none' || irrigationReliability === 'low';
@@ -1607,6 +1610,24 @@ export function deriveSpecificPlantOutcomes({
   } else {
     growth = SPECIFIC_OUTCOME_STATUS.UNKNOWN;
     unknownGaps.push('growth-evidence');
+  }
+
+  // Frost-free greenhouse protection only proves frost protection; it does not prove tropical warmth.
+  // Keep Survival relief, but cap an otherwise strong Growth positive when ambient climate still shows
+  // source-authorized chilling/damaging-cold conflict for a year-round-warm plant.
+  const frostFreeGreenhouseWarmthConstraint =
+    frostFreeGreenhouse &&
+    plantRequiresYearRoundWarmClimate(meta) &&
+    (outdoorDamagingColdUnsupported(meta, env) || outdoorChillingColdConstrained(meta, env));
+  if (frostFreeGreenhouseWarmthConstraint && growth === SPECIFIC_OUTCOME_STATUS.SUPPORTED) {
+    growth = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    evidenceHints.usedWarmNeed = true;
+    evidenceHints.growthFields.push('frostSensitivity', 'coldTolerance');
+    if (!limiting.some((m) => /frost-free greenhouse.*does not prove tropical warmth/i.test(String(m)))) {
+      limiting.push(
+        'Frost-free greenhouse protection removes frost exposure but does not prove tropical warmth; strong growth suitability is withheld unless warmer thermal control is known.'
+      );
+    }
   }
 
   // Irrigation is a conditional garden-site modifier, never a reason to soften a worse climate outcome.
