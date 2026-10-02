@@ -1,0 +1,51 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CRUVIT Broad Identity Runtime Audit V1</title>
+<style>body{font:14px system-ui;background:#111;color:#eee;margin:20px}pre{white-space:pre-wrap;background:#1b1b1b;padding:12px}iframe{position:absolute;left:-9999px;width:1px;height:1px}.pass{color:#8fe3a1}.fail{color:#ff9c9c}</style>
+<h1>Broad Identity Runtime Audit V1</h1><p id="status">Running׳³ֲ³׳’ג‚¬ג„¢׳³ג€™׳’ג‚¬ֲײ²ֲ¬׳²ֲ²ײ²ֲ¦</p><pre id="out"></pre><div id="host"></div>
+<script>
+const SLUGS=['agapanthus','azalea','banana','camellia','geranium','melaleuca','mulberry','oak-tree','orchid','pine-tree','rose','succulent'];
+const SITES=[
+ ['tromso','Troms׳³ֲ²ײ²ֲ³׳²ֲ²ײ²ֲ¸, Norway',69.6492,18.9553],
+ ['london','London, UK',51.5074,-0.1278],
+ ['telaviv','Tel Aviv, Israel',32.0853,34.7818],
+ ['singapore','Singapore',1.2897,103.8501]
+];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function waitFor(fn,ms=30000){const t=Date.now();while(Date.now()-t<ms){try{if(fn())return true}catch{}await sleep(100)}return false}
+(async()=>{
+ const iframe=document.createElement('iframe');iframe.src='../app.html?broadAuditV1='+Date.now();document.getElementById('host').appendChild(iframe);
+ await new Promise((res,rej)=>{iframe.onload=res;iframe.onerror=rej});const cw=iframe.contentWindow;
+ if(!await waitFor(()=>cw&&cw.cruvitSpecificPlantSuitability&&typeof cw.setAppLocation==='function'))throw new Error('runtime not ready');
+ const failures=[],rows=[],identityRows=[];
+ for(const slug of SLUGS){
+  const p=cw.eval('PLANT_LIBRARY.find(x=>x.slug==='+JSON.stringify(slug)+')');
+  if(!p){failures.push({slug,code:'PLANT_NOT_FOUND'});continue}
+  const scientific=String(p.scientific||'');
+  const lowerScientific=scientific.toLowerCase(); const broad=lowerScientific.includes('spp.')||lowerScientific.startsWith('various ');
+  const genus=scientific.split(' ')[0]||'';
+  const exactLookingAliases=(p.aliases||[]).filter(alias=>genus&&String(alias).toLowerCase().startsWith(genus.toLowerCase()+' '));
+  identityRows.push({slug,scientific,aliases:p.aliases||[],exactLookingAliases,broad});
+ }
+ for(const [site,label,lat,lon] of SITES){
+  await cw.setAppLocation({label,resolvedCity:label.split(',')[0],lat,lon,source:'manual'},{skipServerPersist:true});
+  await waitFor(()=>cw.getAppClimateProfile()?.structuralClimateStatus==='known',15000);
+  for(const slug of SLUGS){
+   const p=cw.eval('PLANT_LIBRARY.find(x=>x.slug==='+JSON.stringify(slug)+')');if(!p)continue;
+   const s=cw.cruvitSpecificPlantSuitability.evaluate(p);
+   const positive=s?.positiveRecommendationEligible!==false&&['good','excellent'].includes(String(s?.recommendationLevel||'').toLowerCase());
+   const warning=(s?.warnings||[]).some(w=>/exact species|exact species or cultivar/i.test(String(w)));
+   rows.push({site,slug,level:s?.recommendationLevel,eligible:s?.positiveRecommendationEligible!==false,positive,warning,scientific:p.scientific});
+   if(positive)failures.push({site,slug,code:'BROAD_POSITIVE'});
+   if(s?.positiveRecommendationEligible!==false)failures.push({site,slug,code:'ELIGIBILITY_TRUE'});
+   if(!warning)failures.push({site,slug,code:'WARNING_ABSENT'});
+  }
+ }
+ const summary={contract:'cruvit-broad-identity-runtime-audit-v1',plantCount:SLUGS.length,locationCount:SITES.length,evaluationCount:rows.length,failureCount:failures.length,failures,identityRows,rows};
+ window.CruvitBroadIdentityRuntimeAuditV1=summary;
+ document.getElementById('out').textContent=JSON.stringify(summary,null,2);
+ const st=document.getElementById('status');
+ st.textContent=failures.length?'FAIL '+failures.length:'PASS';
+ st.className=failures.length?'fail':'pass';
+})();
+</script>
