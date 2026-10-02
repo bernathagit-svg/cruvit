@@ -1,0 +1,35 @@
+{
+  "contract": "cruvit-npm-audit-exceptions-v1",
+  "updatedAt": "2026-10-02",
+  "exceptions": [
+    {
+      "package": "image-size",
+      "installedVersion": "2.0.2",
+      "severity": "high",
+      "advisories": [
+        "GHSA-5p2g-fcmc-qvqq",
+        "GHSA-w3rx-r6r6-pgpr"
+      ],
+      "dependencyPath": [
+        "@netlify/blobs@9.1.6",
+        "@netlify/dev-utils@3.2.0",
+        "image-size@2.0.2"
+      ],
+      "reason": "No patched upstream image-size release is currently published. CRUVIT does not call imageSize(), and its only direct @netlify/blobs runtime usage stores text/JSON event lines rather than parsing user images.",
+      "reachableFromUntrustedImageInput": false,
+      "allowedUntil": "2026-11-02",
+      "removeWhen": [
+        "an official patched image-size release becomes installable",
+        "Netlify removes or patches the vulnerable transitive dependency",
+        "CRUVIT introduces any runtime path that passes untrusted image bytes into image-size"
+      ],
+      "launchDisposition": "TEMPORARY_CONSTRAINED_EXCEPTION"
+    }
+  ],
+  "failClosed": {
+    "newAdvisoryIdsAllowed": false,
+    "criticalAllowed": false,
+    "expiredExceptionAllowed": false,
+    "changedDependencyPathAllowed": false
+  }
+}
