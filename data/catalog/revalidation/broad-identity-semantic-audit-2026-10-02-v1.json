@@ -1,0 +1,27 @@
+{
+  "contract": "cruvit-broad-identity-semantic-audit-v1",
+  "createdAt": "2026-10-02",
+  "reviewed": 12,
+  "runtimeLocations": 4,
+  "runtimeEvaluations": 48,
+  "runtimeFailures": 0,
+  "pageErrors": 0,
+  "policy": {
+    "positiveRecommendationBlockedUntilSpeciesResolved": true,
+    "speciesLookingAliasCannotPromoteCanonicalIdentity": true,
+    "exactSpeciesSelectionRequired": true,
+    "noSilentNarrowing": true
+  },
+  "speciesAliasRisks": [
+    {"slug":"camellia","canonicalScientific":"Camellia spp.","alias":"camellia japonica"},
+    {"slug":"melaleuca","canonicalScientific":"Melaleuca spp.","alias":"melaleuca incana"},
+    {"slug":"mulberry","canonicalScientific":"Morus spp.","alias":"morus alba"},
+    {"slug":"mulberry","canonicalScientific":"Morus spp.","alias":"morus nigra"}
+  ],
+  "broadSlugs": [
+    "agapanthus","azalea","banana","camellia","geranium","melaleuca",
+    "mulberry","oak-tree","orchid","pine-tree","rose","succulent"
+  ],
+  "result": "PASS",
+  "note": "All broad identities remained ineligible for positive Smart Recommendations in Tromso, London, Tel Aviv and Singapore. Species-like aliases remain aliases only."
+}
