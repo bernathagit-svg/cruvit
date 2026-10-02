@@ -1,0 +1,35 @@
+{
+  "contract": "cruvit-unknown-valid-purpose-closure-v1",
+  "createdAt": "2026-10-02",
+  "reviewed": 8,
+  "materialFindings": 0,
+  "researchQueueOpened": 0,
+  "unknownValidAfter": 8,
+  "rows": [
+    {"slug":"aloe-vera","unknown":["flowering","fruiting"],"purpose":"succulent foliage/care","accepted":true},
+    {"slug":"basil","unknown":["fruiting"],"purpose":"edible leaf herb","accepted":true},
+    {"slug":"black-eyed-susan-vine","unknown":["fruiting"],"purpose":"ornamental flowering climber","accepted":true},
+    {"slug":"cyclamen","unknown":["fruiting"],"purpose":"cool-season ornamental flowering","accepted":true},
+    {"slug":"ficus-benjamina","unknown":["flowering","fruiting"],"purpose":"foliage tree/houseplant","accepted":true},
+    {"slug":"hibiscus","unknown":["fruiting"],"purpose":"ornamental flowering shrub","accepted":true},
+    {"slug":"rosemary","unknown":["fruiting"],"purpose":"edible aromatic leaf herb","accepted":true},
+    {"slug":"strelitzia","unknown":["fruiting"],"purpose":"ornamental flowering/architectural plant","accepted":true}
+  ],
+  "systemPolicy": {
+    "purposeAwareUnknownValidation": true,
+    "fruitPurposeCannotHideFruitingUnknown": true,
+    "floweringPurposeCannotHideFloweringUnknown": true,
+    "notPermanentWhitelist": true,
+    "tagOrGroupChangeTriggersReevaluation": true,
+    "semanticOpenFindingStillOverridesUnknownValid": true,
+    "noSilentInference": true
+  },
+  "runtimeQA": {
+    "plants": 8,
+    "edibleFilterMatches": ["basil","rosemary"],
+    "floweringFilterMatches": ["black-eyed-susan-vine","cyclamen","hibiscus","strelitzia"],
+    "cases": 6,
+    "failures": 0,
+    "pageErrors": 0
+  }
+}

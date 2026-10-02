@@ -1,6 +1,6 @@
 {
   "contract": "cruvit-full-catalog-revalidation-v1",
-  "generatedAt": "2026-10-02T11:46:32.409Z",
+  "generatedAt": "2026-10-02T11:58:16.735Z",
   "runtime": {
     "total": 123,
     "counts": {
@@ -149,7 +149,9 @@
       "FRUITING_REQUIREMENTS_MISSING": 20,
       "MISSING_TRAIT_EVIDENCE": 12,
       "LEGACY_META_ONLY": 8,
+      "FLOWERING_UNKNOWN_CONFLICTS_WITH_FLOWERING_PURPOSE": 6,
       "HUMIDITY_UNKNOWN": 47,
+      "FRUITING_UNKNOWN_CONFLICTS_WITH_FRUIT_PURPOSE": 4,
       "NEEDS_REVIEW": 3
     }
   },
@@ -274,6 +276,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "acerola"
@@ -299,12 +302,22 @@
         "FLOWERING_REQUIREMENTS_MISSING",
         "FRUITING_REQUIREMENTS_MISSING",
         "MISSING_TRAIT_EVIDENCE",
-        "LEGACY_META_ONLY"
+        "LEGACY_META_ONLY",
+        "FLOWERING_UNKNOWN_CONFLICTS_WITH_FLOWERING_PURPOSE"
       ],
       "unknownOutcomes": [
         "flowering",
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": false,
+        "floweringPurpose": true,
+        "blockers": [
+          "FLOWERING_UNKNOWN_CONFLICTS_WITH_FLOWERING_PURPOSE"
+        ],
+        "appropriate": false
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "agapanthus"
@@ -321,6 +334,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "almond"
@@ -348,6 +362,13 @@
         "flowering",
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": false,
+        "floweringPurpose": false,
+        "blockers": [],
+        "appropriate": true
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "aloe-vera"
@@ -364,6 +385,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "apple"
@@ -387,6 +409,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "apricot"
@@ -410,6 +433,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "areca-palm"
@@ -434,6 +458,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -456,6 +481,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -477,6 +503,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "avocado"
@@ -495,12 +522,22 @@
         "FLOWERING_REQUIREMENTS_MISSING",
         "FRUITING_REQUIREMENTS_MISSING",
         "MISSING_TRAIT_EVIDENCE",
-        "LEGACY_META_ONLY"
+        "LEGACY_META_ONLY",
+        "FLOWERING_UNKNOWN_CONFLICTS_WITH_FLOWERING_PURPOSE"
       ],
       "unknownOutcomes": [
         "flowering",
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": false,
+        "floweringPurpose": true,
+        "blockers": [
+          "FLOWERING_UNKNOWN_CONFLICTS_WITH_FLOWERING_PURPOSE"
+        ],
+        "appropriate": false
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "azalea"
@@ -519,12 +556,22 @@
         "FLOWERING_REQUIREMENTS_MISSING",
         "FRUITING_REQUIREMENTS_MISSING",
         "MISSING_TRAIT_EVIDENCE",
-        "LEGACY_META_ONLY"
+        "LEGACY_META_ONLY",
+        "FRUITING_UNKNOWN_CONFLICTS_WITH_FRUIT_PURPOSE"
       ],
       "unknownOutcomes": [
         "flowering",
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": true,
+        "floweringPurpose": false,
+        "blockers": [
+          "FRUITING_UNKNOWN_CONFLICTS_WITH_FRUIT_PURPOSE"
+        ],
+        "appropriate": false
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "banana"
@@ -543,6 +590,13 @@
       "unknownOutcomes": [
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": false,
+        "floweringPurpose": false,
+        "blockers": [],
+        "appropriate": true
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "basil"
@@ -559,6 +613,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "bay-laurel"
@@ -584,6 +639,13 @@
       "unknownOutcomes": [
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": false,
+        "floweringPurpose": true,
+        "blockers": [],
+        "appropriate": true
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "black-eyed-susan-vine"
@@ -601,6 +663,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -623,6 +686,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -644,6 +708,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "blue-gum"
@@ -668,6 +733,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "blueberry"
@@ -692,6 +758,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "borage"
@@ -716,6 +783,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "bougainvillea"
@@ -740,6 +808,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -761,6 +830,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "breadfruit"
@@ -785,6 +855,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "broccoli"
@@ -808,6 +879,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "cacao"
@@ -833,12 +905,22 @@
         "FLOWERING_REQUIREMENTS_MISSING",
         "FRUITING_REQUIREMENTS_MISSING",
         "MISSING_TRAIT_EVIDENCE",
-        "LEGACY_META_ONLY"
+        "LEGACY_META_ONLY",
+        "FLOWERING_UNKNOWN_CONFLICTS_WITH_FLOWERING_PURPOSE"
       ],
       "unknownOutcomes": [
         "flowering",
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": false,
+        "floweringPurpose": true,
+        "blockers": [
+          "FLOWERING_UNKNOWN_CONFLICTS_WITH_FLOWERING_PURPOSE"
+        ],
+        "appropriate": false
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "camellia"
@@ -855,6 +937,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "carob"
@@ -879,6 +962,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "carrot"
@@ -902,6 +986,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "cedar"
@@ -925,6 +1010,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "cherimoya"
@@ -949,6 +1035,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -970,6 +1057,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "chinese-wisteria"
@@ -993,6 +1081,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -1014,6 +1103,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -1036,6 +1126,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -1057,6 +1148,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "coconut"
@@ -1080,6 +1172,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "coffee"
@@ -1103,6 +1196,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "common-lilac"
@@ -1126,6 +1220,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "common-myrtle"
@@ -1149,6 +1244,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "common-thyme"
@@ -1172,6 +1268,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -1193,6 +1290,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -1214,6 +1312,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "cucumber"
@@ -1237,6 +1336,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "cycas"
@@ -1262,6 +1362,13 @@
       "unknownOutcomes": [
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": false,
+        "floweringPurpose": true,
+        "blockers": [],
+        "appropriate": true
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "cyclamen"
@@ -1278,6 +1385,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "cypress"
@@ -1301,6 +1409,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "date-palm"
@@ -1325,6 +1434,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -1346,6 +1456,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "dragon-fruit"
@@ -1369,6 +1480,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "durian"
@@ -1392,6 +1504,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "eggplant"
@@ -1416,6 +1529,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -1437,6 +1551,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "english-walnut"
@@ -1460,6 +1575,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "feijoa"
@@ -1487,6 +1603,13 @@
         "flowering",
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": false,
+        "floweringPurpose": false,
+        "blockers": [],
+        "appropriate": true
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "ficus-benjamina"
@@ -1503,6 +1626,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "fiddle-leaf-fig"
@@ -1527,6 +1651,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "fig"
@@ -1551,6 +1676,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -1572,6 +1698,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "forsythia"
@@ -1596,6 +1723,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "french-marigold"
@@ -1620,6 +1748,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "garden-pea"
@@ -1643,6 +1772,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "garden-peony"
@@ -1666,6 +1796,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "garden-sage"
@@ -1691,12 +1822,22 @@
         "FLOWERING_REQUIREMENTS_MISSING",
         "FRUITING_REQUIREMENTS_MISSING",
         "MISSING_TRAIT_EVIDENCE",
-        "LEGACY_META_ONLY"
+        "LEGACY_META_ONLY",
+        "FLOWERING_UNKNOWN_CONFLICTS_WITH_FLOWERING_PURPOSE"
       ],
       "unknownOutcomes": [
         "flowering",
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": false,
+        "floweringPurpose": true,
+        "blockers": [
+          "FLOWERING_UNKNOWN_CONFLICTS_WITH_FLOWERING_PURPOSE"
+        ],
+        "appropriate": false
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "geranium"
@@ -1713,6 +1854,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "ginger"
@@ -1736,6 +1878,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "ginkgo"
@@ -1759,6 +1902,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "gooseberry"
@@ -1782,6 +1926,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "grapefruit"
@@ -1805,6 +1950,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "grapevine"
@@ -1829,6 +1975,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "green-bean"
@@ -1852,6 +1999,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "guava"
@@ -1876,6 +2024,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -1899,6 +2048,13 @@
       "unknownOutcomes": [
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": false,
+        "floweringPurpose": true,
+        "blockers": [],
+        "appropriate": true
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "hibiscus"
@@ -1916,6 +2072,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "hydrangea"
@@ -1939,6 +2096,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "jaboticaba"
@@ -1962,6 +2120,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "jackfruit"
@@ -1985,6 +2144,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "japanese-maple"
@@ -2009,6 +2169,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "jasmine"
@@ -2033,6 +2194,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -2054,6 +2216,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "kiwi"
@@ -2078,6 +2241,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "lavender"
@@ -2101,6 +2265,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "lemon"
@@ -2117,6 +2282,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "lemongrass"
@@ -2141,6 +2307,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "lettuce"
@@ -2164,6 +2331,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "longan"
@@ -2187,6 +2355,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "loquat"
@@ -2210,6 +2379,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "lychee"
@@ -2233,6 +2403,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "mandarin"
@@ -2256,6 +2427,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "mango"
@@ -2272,6 +2444,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "mangosteen"
@@ -2296,6 +2469,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -2325,6 +2499,13 @@
         "flowering",
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": false,
+        "floweringPurpose": false,
+        "blockers": [],
+        "appropriate": true
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "melaleuca"
@@ -2341,6 +2522,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "mint"
@@ -2364,6 +2546,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "monstera"
@@ -2387,6 +2570,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "moringa"
@@ -2412,12 +2596,22 @@
         "FLOWERING_REQUIREMENTS_MISSING",
         "FRUITING_REQUIREMENTS_MISSING",
         "MISSING_TRAIT_EVIDENCE",
-        "LEGACY_META_ONLY"
+        "LEGACY_META_ONLY",
+        "FRUITING_UNKNOWN_CONFLICTS_WITH_FRUIT_PURPOSE"
       ],
       "unknownOutcomes": [
         "flowering",
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": true,
+        "floweringPurpose": false,
+        "blockers": [
+          "FRUITING_UNKNOWN_CONFLICTS_WITH_FRUIT_PURPOSE"
+        ],
+        "appropriate": false
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "mulberry"
@@ -2435,6 +2629,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "nasturtium"
@@ -2458,12 +2653,22 @@
         "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A",
         "FLOWERING_REQUIREMENTS_MISSING",
         "FRUITING_REQUIREMENTS_MISSING",
-        "MISSING_TRAIT_EVIDENCE"
+        "MISSING_TRAIT_EVIDENCE",
+        "FRUITING_UNKNOWN_CONFLICTS_WITH_FRUIT_PURPOSE"
       ],
       "unknownOutcomes": [
         "flowering",
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": true,
+        "floweringPurpose": false,
+        "blockers": [
+          "FRUITING_UNKNOWN_CONFLICTS_WITH_FRUIT_PURPOSE"
+        ],
+        "appropriate": false
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "oak-tree"
@@ -2481,6 +2686,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -2502,6 +2708,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "oleander"
@@ -2525,6 +2732,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "olive"
@@ -2541,6 +2749,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "orange",
@@ -2566,12 +2775,22 @@
         "FLOWERING_REQUIREMENTS_MISSING",
         "FRUITING_REQUIREMENTS_MISSING",
         "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "NEEDS_REVIEW",
+        "FLOWERING_UNKNOWN_CONFLICTS_WITH_FLOWERING_PURPOSE"
       ],
       "unknownOutcomes": [
         "flowering",
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": false,
+        "floweringPurpose": true,
+        "blockers": [
+          "FLOWERING_UNKNOWN_CONFLICTS_WITH_FLOWERING_PURPOSE"
+        ],
+        "appropriate": false
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "orchid"
@@ -2588,6 +2807,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -2609,6 +2829,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "papaya"
@@ -2633,6 +2854,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -2654,6 +2876,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "passionfruit"
@@ -2678,6 +2901,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "peach"
@@ -2702,6 +2926,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "pear"
@@ -2726,6 +2951,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -2747,6 +2973,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "persimmon"
@@ -2771,12 +2998,22 @@
         "FLOWERING_REQUIREMENTS_MISSING",
         "FRUITING_REQUIREMENTS_MISSING",
         "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "NEEDS_REVIEW",
+        "FRUITING_UNKNOWN_CONFLICTS_WITH_FRUIT_PURPOSE"
       ],
       "unknownOutcomes": [
         "flowering",
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": true,
+        "floweringPurpose": false,
+        "blockers": [
+          "FRUITING_UNKNOWN_CONFLICTS_WITH_FRUIT_PURPOSE"
+        ],
+        "appropriate": false
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "pine-tree"
@@ -2793,6 +3030,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "pineapple"
@@ -2816,6 +3054,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "pistachio"
@@ -2840,6 +3079,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -2862,6 +3102,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "plum"
@@ -2885,6 +3126,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "plumeria"
@@ -2909,6 +3151,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "pomegranate"
@@ -2932,6 +3175,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "queen-palm"
@@ -2955,6 +3199,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "quince"
@@ -2978,6 +3223,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "rambutan"
@@ -3002,6 +3248,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "raspberry"
@@ -3025,6 +3272,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "red-currant"
@@ -3049,6 +3297,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -3071,12 +3320,22 @@
         "FLOWERING_REQUIREMENTS_MISSING",
         "FRUITING_REQUIREMENTS_MISSING",
         "MISSING_TRAIT_EVIDENCE",
-        "NEEDS_REVIEW"
+        "NEEDS_REVIEW",
+        "FLOWERING_UNKNOWN_CONFLICTS_WITH_FLOWERING_PURPOSE"
       ],
       "unknownOutcomes": [
         "flowering",
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": false,
+        "floweringPurpose": true,
+        "blockers": [
+          "FLOWERING_UNKNOWN_CONFLICTS_WITH_FLOWERING_PURPOSE"
+        ],
+        "appropriate": false
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "rose"
@@ -3095,6 +3354,13 @@
       "unknownOutcomes": [
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": false,
+        "floweringPurpose": false,
+        "blockers": [],
+        "appropriate": true
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "rosemary"
@@ -3112,6 +3378,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -3134,6 +3401,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -3156,6 +3424,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -3177,6 +3446,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "silver-birch"
@@ -3200,6 +3470,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "snake-plant"
@@ -3223,6 +3494,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -3244,6 +3516,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "southern-magnolia"
@@ -3268,6 +3541,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "spinach"
@@ -3291,6 +3565,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "starfruit"
@@ -3315,6 +3590,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "strawberry"
@@ -3338,6 +3614,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "strawberry-guava"
@@ -3363,6 +3640,13 @@
       "unknownOutcomes": [
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": false,
+        "floweringPurpose": true,
+        "blockers": [],
+        "appropriate": true
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "strelitzia"
@@ -3387,6 +3671,13 @@
         "flowering",
         "fruiting"
       ],
+      "purposeAudit": {
+        "policyVersion": "unknown-outcome-purpose-v1",
+        "fruitPurpose": false,
+        "floweringPurpose": false,
+        "blockers": [],
+        "appropriate": true
+      },
       "realContradiction": false,
       "runtimeAliases": [
         "succulent"
@@ -3403,6 +3694,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "sunflower"
@@ -3426,6 +3718,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "sweet-cherry"
@@ -3449,6 +3742,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "sweet-pepper"
@@ -3473,6 +3767,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -3495,6 +3790,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -3516,6 +3812,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "tomato"
@@ -3539,6 +3836,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "turmeric"
@@ -3563,6 +3861,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "watermelon"
@@ -3586,6 +3885,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "white-sapote"
@@ -3609,6 +3909,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [],
       "packet": [
@@ -3631,6 +3932,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "zinnia"
@@ -3655,6 +3957,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "zucchini"
@@ -3678,6 +3981,7 @@
         "COMPLETE_FOR_CLASS_A"
       ],
       "unknownOutcomes": [],
+      "purposeAudit": null,
       "realContradiction": false,
       "runtimeAliases": [
         "zz-plant"
