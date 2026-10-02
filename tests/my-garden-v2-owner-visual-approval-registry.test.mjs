@@ -19,9 +19,15 @@ const lockedImplemented=[
 ];
 
 const approvedVisualOnly=[
-  'upcoming-list',
+  'garden-journal',
+  'notifications',
   'upcoming-calendar',
+  'upcoming-list',
 ];
+
+function sortedIds(rows){
+  return rows.map((x)=>x.id).sort();
+}
 
 test('owner approved integrated preview fingerprint is locked',()=>{
   assert.equal(registry.approvedPreview.ownerPass,true);
@@ -32,28 +38,33 @@ test('owner approved integrated preview fingerprint is locked',()=>{
 });
 
 test('implemented owner-approved screens remain LOCKED_IMPLEMENTED',()=>{
-  const rows=registry.screens.filter((x)=>lockedImplemented.includes(x.id));
-  assert.deepEqual(rows.map((x)=>x.id),lockedImplemented);
+  const rows=registry.screens.filter((x)=>x.state==='LOCKED_IMPLEMENTED');
+  assert.deepEqual(sortedIds(rows),[...lockedImplemented].sort());
   for(const screen of rows){
-    assert.equal(screen.state,'LOCKED_IMPLEMENTED');
     assert.equal(screen.ownerApproved,true);
     assert.match(screen.referenceSha256,/^[a-f0-9]{64}$/);
   }
 });
 
-test('visual-only Owner PASS does not falsely claim implementation completion',()=>{
-  const rows=registry.screens.filter((x)=>approvedVisualOnly.includes(x.id));
-  assert.deepEqual(rows.map((x)=>x.id),approvedVisualOnly);
+test('visual-only Owner PASS stays APPROVED_VISUAL until implementation comparison',()=>{
+  const rows=registry.screens.filter((x)=>x.state==='APPROVED_VISUAL');
+  assert.deepEqual(sortedIds(rows),[...approvedVisualOnly].sort());
   for(const screen of rows){
-    assert.equal(screen.state,'APPROVED_VISUAL');
     assert.equal(screen.ownerApproved,true);
     assert.match(screen.referenceSha256,/^[a-f0-9]{64}$/);
   }
 });
 
-test('registry contains no unclassified owner-approved screen',()=>{
-  const allowed=new Set([...lockedImplemented,...approvedVisualOnly]);
-  assert.equal(registry.screens.every((screen)=>allowed.has(screen.id)),true);
+test('registry contains only recognized approval states',()=>{
+  const allowedStates=new Set(['LOCKED_IMPLEMENTED','APPROVED_VISUAL']);
+  assert.equal(registry.screens.every((screen)=>allowedStates.has(screen.state)),true);
+});
+
+test('every registered screen is classified exactly once',()=>{
+  const expected=new Set([...lockedImplemented,...approvedVisualOnly]);
+  assert.equal(registry.screens.length,expected.size);
+  assert.equal(registry.screens.every((screen)=>expected.has(screen.id)),true);
+  assert.equal(new Set(registry.screens.map((screen)=>screen.id)).size,expected.size);
 });
 
 test('visual approval does not authorize bottom-nav or production writes',()=>{
