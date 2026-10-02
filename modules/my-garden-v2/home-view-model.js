@@ -29,17 +29,21 @@ export function buildMyGardenHomeViewModel({
   const attention = attentionTasks(tasks, plants, today);
   const plantsById = new Map(active.map((p) => [p.id, p]));
 
-  const alertItems = attentionAlerts.map((alert) => Object.freeze({
-    type: 'alert',
-    id: alert.id,
-    title: alert.title ?? alert.label ?? 'Needs attention',
-    detail: alert.detail ?? alert.message ?? '',
-    displayText: alert.displayText ?? alert.display_text ?? null,
-  }));
+  const alertItems = attentionAlerts.map((alert) => {
+    const item = {
+      type: 'alert',
+      id: alert.id,
+      title: alert.title ?? alert.label ?? 'Needs attention',
+      detail: alert.detail ?? alert.message ?? '',
+    };
+    const displayText = alert.displayText ?? alert.display_text ?? null;
+    if (displayText != null) item.displayText = displayText;
+    return Object.freeze(item);
+  });
 
   const taskItems = attention.map((task) => {
     const plant = plantsById.get(taskPlantId(task));
-    return Object.freeze({
+    const item = {
       type: 'task',
       id: task.id,
       taskId: task.id,
@@ -47,8 +51,10 @@ export function buildMyGardenHomeViewModel({
       plantName: plantLabel(plant),
       title: task.title ?? 'Task',
       dueOn: dueDate(task),
-      displayText: task.displayText ?? task.display_text ?? null,
-    });
+    };
+    const displayText = task.displayText ?? task.display_text ?? null;
+    if (displayText != null) item.displayText = displayText;
+    return Object.freeze(item);
   });
 
   const attentionItems = Object.freeze([...alertItems, ...taskItems]);
