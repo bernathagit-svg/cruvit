@@ -6,8 +6,8 @@ const APPROVED = Object.freeze({
   'plant-schedule':'ad56e981c75e407a5601190fdf3ac212fe5607e39bec94d52c683d9aa58dea75',
   'plant-history':'a9be08e731153677bbc4a89291c603cdbfeaac576b3a67ac41d83a2c783dbfa2',
   'add-plant':'aba9460f2caae847dbcf1017abbb71e2c1c9a986e5de89cc27ffdcfe189dbd7b',
-  'upcoming-list':'02871aa9c08b68138bf73b63f49eadb3149b50b3d09bc25393a28f14d25e973c',
-  'upcoming-calendar':'a4cb197a0fd3b72158a951e7fcb023e6db352621dfc721cf99eaa1ca83c8fce4',
+  'upcoming-list':'03cca6920c02e4ec191f9dc1d8cfa197a4c1913a6da9b31af9e1a3b2385d7430',
+  'upcoming-calendar':'322b3ef6c07203be8c5547930bd0a95ce2e79fb8824d01f7b1319f012212b4db',
   'garden-journal':'39017bb6c981198637e34dd8b2d8faadd7668d8f50a00c2e57c7c7e80749758a',
   'notifications':'36110c332c519ad959a173bd5fe6c1175308c847ff491ff5d02064549edf32d7',
 });
