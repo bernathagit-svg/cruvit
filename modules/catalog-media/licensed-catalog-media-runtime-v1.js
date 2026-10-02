@@ -1,3 +1,5 @@
+import { hasConflictingSameGenusTitle } from './licensed-image-pipeline-v1-contract.js';
+
 /**
  * Licensed Catalog Media — runtime consume helpers (no network search).
  * Catalog IMAGE_READY records only; IMAGE_PENDING → placeholder.
@@ -128,6 +130,9 @@ export function isApprovedCatalogMediaRecord(media, plant = null) {
   }
   if (plant && !catalogMediaCompatibleWithPlantIdentity(plant, media)) {
     return { ok: false, reason: 'identity-scope-incompatible' };
+  }
+  if (plant && hasConflictingSameGenusTitle(plant, media.sourceAssetId || '')) {
+    return { ok: false, reason: 'source-title-conflicting-same-genus-binomial' };
   }
   // Optional identity check against plant scientific when both present
   if (plant) {

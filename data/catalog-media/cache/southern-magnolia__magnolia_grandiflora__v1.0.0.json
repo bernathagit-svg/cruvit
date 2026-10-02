@@ -2,27 +2,30 @@
   "status": "IMAGE_READY",
   "media": {
     "imageStatus": "IMAGE_READY",
-    "primaryUrl": "https://upload.wikimedia.org/wikipedia/commons/7/78/Magnolia_flower_Duke_campus.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "url": "https://upload.wikimedia.org/wikipedia/commons/7/78/Magnolia_flower_Duke_campus.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Magnolia_flower_Duke_campus.jpg/960px-Magnolia_flower_Duke_campus.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "primaryUrl": "https://upload.wikimedia.org/wikipedia/commons/3/38/Magnolia_grandiflora_-_flower_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/3/38/Magnolia_grandiflora_-_flower_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "thumbUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/38/Magnolia_grandiflora_-_flower_1.jpg/960px-Magnolia_grandiflora_-_flower_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
     "searchQuery": "Magnolia grandiflora Southern Magnolia",
     "sourceProvider": "wikimedia-commons",
-    "sourceAssetId": "File:Magnolia flower Duke campus.jpg",
-    "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Magnolia_flower_Duke_campus.jpg",
-    "author": "DavetheMage",
-    "license": "CC BY 3.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
-    "licenseNormalized": "cc by 3.0",
+    "sourceAssetId": "File:Magnolia grandiflora - flower 1.jpg",
+    "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Magnolia_grandiflora_-_flower_1.jpg",
+    "author": "Ianaré Sévi",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "licenseNormalized": "cc by-sa 3.0",
     "commercialUseAllowed": true,
     "attributionRequired": true,
-    "attribution": "\"Magnolia flower Duke campus.jpg\" by DavetheMage. CC BY 3.0 (https://creativecommons.org/licenses/by/3.0). Source: https://commons.wikimedia.org/wiki/File:Magnolia_flower_Duke_campus.jpg.",
-    "width": 2560,
-    "height": 1600,
+    "attribution": "\"Magnolia grandiflora - flower 1.jpg\" by Ianaré Sévi. CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0). Source: https://commons.wikimedia.org/wiki/File:Magnolia_grandiflora_-_flower_1.jpg.",
+    "width": 3237,
+    "height": 2592,
     "mimeType": "image/jpeg",
-    "verifiedAt": "2026-08-29T17:38:15.658Z",
+    "verifiedAt": "2026-10-02T12:14:00.958Z",
     "identityConfidence": "high",
     "identityMatchMethod": "binomial-in-metadata",
     "identityScore": 95,
+    "identityScope": "species",
+    "cultivarSpecific": false,
+    "canonicalPlantIdentity": "southern-magnolia",
     "isPrimary": true,
     "transformation": {
       "resized": true,
@@ -32,13 +35,25 @@
     "pipelineVersion": "1.0.0",
     "provenance": {
       "provider": "wikimedia-commons",
-      "fetchedAt": "2026-08-29T17:38:15.658Z",
+      "fetchedAt": "2026-10-02T12:14:00.958Z",
       "licenseSource": "commons-extmetadata",
       "storageStrategy": "reference-third-party"
     }
   },
   "scientific": "Magnolia grandiflora",
   "rejected": [
+    {
+      "candidate": "Magnolia flower Duke campus.jpg",
+      "stage": "identity",
+      "reason": "title-conflicting-same-genus-binomial",
+      "confidence": "none"
+    },
+    {
+      "candidate": "Magnolia wielokwiatowa.png",
+      "stage": "identity",
+      "reason": "title-conflicting-same-genus-binomial",
+      "confidence": "none"
+    },
     {
       "candidate": "MagnoliaIthaca.jpg",
       "stage": "identity",
@@ -48,8 +63,8 @@
     {
       "candidate": "Magnolia Hedge Dallas.jpg",
       "stage": "identity",
-      "reason": "genus-only-match",
-      "confidence": "low"
+      "reason": "title-conflicting-same-genus-binomial",
+      "confidence": "none"
     },
     {
       "candidate": "Southern Magnolia in the Fall, Baton Rouge Louisiana.jpg",
@@ -58,7 +73,7 @@
       "confidence": "low"
     }
   ],
-  "passedCount": 9,
-  "resolvedAt": "2026-08-29T17:38:15.658Z",
+  "passedCount": 7,
+  "resolvedAt": "2026-10-02T12:14:00.958Z",
   "query": "\"Magnolia grandiflora\""
 }

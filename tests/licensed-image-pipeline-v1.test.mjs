@@ -89,7 +89,7 @@ test('identity matching rejects genus-only and common-name collisions', () => {
   assert.equal(genusOnly.ok, false);
   assert.ok(
     genusOnly.reasons.some((r) =>
-      /genus-only|no-scientific|epithet-far|wrong-species/.test(r)
+      /genus-only|no-scientific|epithet-far|wrong-species|title-conflicting/.test(r)
     )
   );
 
@@ -449,4 +449,15 @@ test('write gate report', () => {
   assert.equal(verdict, 'PASS');
   console.log('\nLICENSED_IMAGE_PIPELINE_V1_QUALITY_GATE:', verdict);
   console.log('acceptance:', REPORT.acceptance);
+});
+
+test('candidate title with same genus but wrong species is rejected even if metadata mentions target', () => {
+  const areca = { scientific: 'Dypsis lutescens', commonName: 'Areca Palm', slug: 'areca-palm' };
+  const result = scoreIdentityMatch(areca, {
+    title: 'Dypsis decaryi 2024-01-20 Malaga 03',
+    description: 'Category page also mentions Dypsis lutescens and other Dypsis species',
+    categories: ['Category:Dypsis lutescens', 'Category:Dypsis']
+  });
+  assert.equal(result.ok, false);
+  assert.ok(result.reasons.includes('title-conflicting-same-genus-binomial'));
 });
