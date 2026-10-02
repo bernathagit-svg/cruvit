@@ -9,13 +9,18 @@ const registry=JSON.parse(
   )
 );
 
-const locked=[
+const lockedImplemented=[
   'add-plant',
   'my-plants',
   'plant-care',
   'plant-history',
   'plant-overview',
   'plant-schedule',
+];
+
+const approvedVisualOnly=[
+  'upcoming-list',
+  'upcoming-calendar',
 ];
 
 test('owner approved integrated preview fingerprint is locked',()=>{
@@ -26,13 +31,29 @@ test('owner approved integrated preview fingerprint is locked',()=>{
   );
 });
 
-test('all explicitly owner-approved visual screens are LOCKED_IMPLEMENTED',()=>{
-  assert.deepEqual(registry.screens.map((x)=>x.id),locked);
-  for(const screen of registry.screens){
+test('implemented owner-approved screens remain LOCKED_IMPLEMENTED',()=>{
+  const rows=registry.screens.filter((x)=>lockedImplemented.includes(x.id));
+  assert.deepEqual(rows.map((x)=>x.id),lockedImplemented);
+  for(const screen of rows){
     assert.equal(screen.state,'LOCKED_IMPLEMENTED');
     assert.equal(screen.ownerApproved,true);
     assert.match(screen.referenceSha256,/^[a-f0-9]{64}$/);
   }
+});
+
+test('visual-only Owner PASS does not falsely claim implementation completion',()=>{
+  const rows=registry.screens.filter((x)=>approvedVisualOnly.includes(x.id));
+  assert.deepEqual(rows.map((x)=>x.id),approvedVisualOnly);
+  for(const screen of rows){
+    assert.equal(screen.state,'APPROVED_VISUAL');
+    assert.equal(screen.ownerApproved,true);
+    assert.match(screen.referenceSha256,/^[a-f0-9]{64}$/);
+  }
+});
+
+test('registry contains no unclassified owner-approved screen',()=>{
+  const allowed=new Set([...lockedImplemented,...approvedVisualOnly]);
+  assert.equal(registry.screens.every((screen)=>allowed.has(screen.id)),true);
 });
 
 test('visual approval does not authorize bottom-nav or production writes',()=>{
