@@ -1,0 +1,95 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CRUVIT Smart Rec Semantic Hard-Case Harness V1</title>
+<style>
+body{font:14px system-ui;margin:20px;background:#111;color:#eee}
+pre{white-space:pre-wrap;background:#1b1b1b;padding:12px;border-radius:8px}
+iframe{width:1px;height:1px;border:0;position:absolute;left:-9999px}
+.pass{color:#8fe3a1}.fail{color:#ff9c9c}
+</style>
+<h1>CRUVIT Smart Rec Semantic Hard-Case Harness V1</h1>
+<p id="status">Running…</p><pre id="out"></pre><div id="host"></div>
+<script>
+const LOCS={
+ tromso:['Tromsø, Norway',69.6492,18.9553],
+ helsinki:['Helsinki, Finland',60.1699,24.9384],
+ telaviv:['Tel Aviv, Israel',32.0853,34.7818],
+ singapore:['Singapore',1.2897,103.8501]
+};
+const COLD_TENDER=new Set(['cherimoya','coconut','guava','lychee','mandarin','passionfruit','plumeria','mango','lemon','banana']);
+const CHILL_DEPENDENT=new Set(['almond','kiwi','pistachio','apple']);
+const SUPPORT_DEPENDENT=['grapevine','passionfruit'];
+const NO_SMALL_CONTAINER=['coconut','lychee','mango','banana'];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function waitFor(fn,ms=30000){const t=Date.now();while(Date.now()-t<ms){try{if(fn())return true}catch{}await sleep(100)}return false}
+(async()=>{
+ const fixture=await fetch('../data/catalog/revalidation/semantic-hard-case-fixture-v1.json').then(r=>r.json());
+ const iframe=document.createElement('iframe');iframe.src='../app.html?semanticHardV1='+Date.now();document.getElementById('host').appendChild(iframe);
+ await new Promise((res,rej)=>{iframe.onload=res;iframe.onerror=rej});
+ const cw=iframe.contentWindow;
+ const ready=await waitFor(()=>cw&&typeof cw.setAppLocation==='function'&&typeof cw.smartRecEvaluateSuitability==='function'&&typeof cw.smartRecDeriveValidatedOutcomes==='function');
+ if(!ready)throw new Error('CRUVIT runtime APIs not ready');
+ cw.eval('('+function(rows){for(const row of rows){const x=PLANT_LIBRARY.find(p=>p.slug===row.slug);if(x){x.climateTraits=row.climateTraits;if(row.scientific)x.scientific=row.scientific;if(row.tags?.length)x.tags=row.tags;}}}+')('+JSON.stringify(fixture.rows)+')');
+ async function setLoc(id){
+  const [label,lat,lon]=LOCS[id];
+  await cw.setAppLocation({label,resolvedCity:label.split(',')[0],lat,lon,source:'manual'},{skipServerPersist:true});
+  await waitFor(()=>cw.getAppClimateProfile()?.structuralClimateStatus==='known',15000);
+ }
+ function evalOne(slug,answers={}){
+  const code='(()=>{smartRecSession.answers='+JSON.stringify(answers)+';if(typeof smartRecActiveChips!=="undefined"&&smartRecActiveChips?.clear)smartRecActiveChips.clear();'+
+   'const plant=PLANT_LIBRARY.find(x=>x.slug==='+JSON.stringify(slug)+');if(!plant)return {slug:'+JSON.stringify(slug)+',missing:true};'+
+   'let s=smartRecEvaluateSuitability(plant);const d=smartRecDeriveValidatedOutcomes(plant,s);const gi=smartRecGardenIntelligenceApi();'+
+   'if(gi&&typeof gi.alignSmartRecSuitabilityWithValidatedOutcomes==="function")s=gi.alignSmartRecSuitabilityWithValidatedOutcomes(s,d,{plant,meta:smartRecClimateMetaForPlant(plant),intent:smartRecCurrentContext(),chips:[]});'+
+   'const meta=smartRecClimateMetaForPlant(plant),ctx=smartRecCurrentContext();return {slug:plant.slug,level:s?.recommendationLevel,score:s?.suitabilityScore,eligible:s?.positiveRecommendationEligible!==false,hardBlocked:s?.hardSurvivalBlocked===true,warnings:s?.warnings||[],overall:d?.overall,survival:d?.survival,growth:d?.growth,flowering:d?.flowering,fruiting:d?.fruiting,hasFruitingClimate:!!meta?.reproductiveClimate?.fruiting,fruitTagged:(meta?.groupIds||[]).some(g=>/fruit|citrus|berry/i.test(String(g)))||(plant.tags||[]).some(t=>["fruit","citrus","berry"].includes(String(t).toLowerCase())),broad:/\\bspp\\.?\\b/i.test(String(plant.scientific||""))||/^various\\b/i.test(String(plant.scientific||"")),ctx:{supportKnown:ctx.supportContextKnown,supportType:ctx.supportType,container:ctx.containerContext,compact:ctx.compactContainerContext,edible:ctx.edibleIntent}}})()';
+  return cw.eval(code);
+ }
+ const failures=[],observations=[];const isPositive=r=>r&&r.eligible!==false&&['good','excellent'].includes(String(r.level||'').toLowerCase());
+ const fail=(code,r,extra={})=>failures.push({code,...extra,result:r});
+ for(const site of ['tromso','helsinki','telaviv','singapore']){
+  await setLoc(site);
+  const slugs=[...new Set([...COLD_TENDER,...CHILL_DEPENDENT,'grapevine','cypress','fig','pomegranate','succulent','orchid'])];
+  for(const slug of slugs){
+   const r=evalOne(slug,{});if(r.missing)continue;observations.push({site,context:'neutral',...r});
+   if((r.survival==='unreliable'||r.overall==='blocked'||r.hardBlocked)&&isPositive(r))fail('POSITIVE_DESPITE_HARD_FAILURE',r,{site});
+   if(COLD_TENDER.has(slug)&&['tromso','helsinki'].includes(site)){if(isPositive(r))fail('COLD_TENDER_FALSE_POSITIVE',r,{site});if(r.survival==='reliable')fail('COLD_TENDER_SURVIVAL_RELIABLE',r,{site});}
+   if(r.broad&&isPositive(r))fail('BROAD_IDENTITY_FALSE_POSITIVE',r,{site});
+  }
+ }
+ await setLoc('singapore');
+ for(const slug of CHILL_DEPENDENT){
+  const r=evalOne(slug,{q5:'yes-edible'});observations.push({site:'singapore',context:'edible',...r});
+  if(isPositive(r))fail('CHILL_DEPENDENT_EDIBLE_FALSE_POSITIVE',r,{site:'singapore'});
+  if(['supported','reliable'].includes(String(r.fruiting)))fail('CHILL_DEPENDENT_FRUITING_POSITIVE',r,{site:'singapore'});
+ }
+ for(const site of ['telaviv','singapore']){
+  await setLoc(site);
+  for(const slug of [...new Set([...fixture.slugs,'mango','lemon','banana'])]){
+   const r=evalOne(slug,{q5:'yes-edible'});if(r.missing)continue;
+   if(r.fruitTagged&&!r.hasFruitingClimate&&isPositive(r))fail('EDIBLE_POSITIVE_WITHOUT_STRUCTURED_FRUITING_CLIMATE',r,{site});
+  }
+ }
+ await setLoc('telaviv');
+ for(const slug of SUPPORT_DEPENDENT){
+  const no=evalOne(slug,{q1:'balcony',q8:'compact',q9:'privacy',__supportContextKnown:false,__supportType:'none'});
+  const yes=evalOne(slug,{q1:'balcony',q8:'compact',q9:'privacy',__supportContextKnown:true,__supportType:'trellis'});
+  observations.push({site:'telaviv',context:'compact-no-support',...no},{site:'telaviv',context:'compact-with-support',...yes});
+  if(no.ctx.supportKnown!==false)fail('PRIVACY_INVENTED_SUPPORT',no,{site:'telaviv'});
+  if(isPositive(no))fail('SUPPORT_REQUIRED_FALSE_POSITIVE',no,{site:'telaviv'});
+  if(!no.warnings.some(w=>/support|trellis|fence|wall|pole/i.test(w)))fail('SUPPORT_WARNING_MISSING',no,{site:'telaviv'});
+  if(yes.warnings.some(w=>/without a support structure|needs a fence|trellis.*open-lawn/i.test(w)))fail('SUPPORT_WARNING_PERSISTS_WITH_EXPLICIT_SUPPORT',yes,{site:'telaviv'});
+ }
+ for(const slug of NO_SMALL_CONTAINER){
+  const r=evalOne(slug,{q1:'balcony',q8:'compact'});if(r.missing)continue;observations.push({site:'telaviv',context:'compact-container',...r});
+  if(isPositive(r))fail('NO_SMALL_CONTAINER_FALSE_POSITIVE',r,{site:'telaviv'});
+ }
+ for(const slug of ['succulent','orchid']){
+  const r=evalOne(slug,{});if(r.missing)continue;observations.push({site:'telaviv',context:'broad-identity',...r});
+  if(isPositive(r))fail('BROAD_IDENTITY_FALSE_POSITIVE',r,{site:'telaviv'});
+ }
+ const summary={contract:'cruvit-smart-rec-semantic-hard-case-v1',fixtureContract:fixture.contract,locationCount:Object.keys(LOCS).length,fixturePlantCount:fixture.rows.length,observationCount:observations.length,failureCount:failures.length,failures,observations};
+ window.CruvitSemanticHardCaseAuditV1=summary;
+ document.getElementById('out').textContent=JSON.stringify(summary,null,2);
+ const st=document.getElementById('status');st.textContent=failures.length?'FAIL '+failures.length:'PASS';st.className=failures.length?'fail':'pass';
+ if(failures.length)console.error('CRUVIT_SEMANTIC_HARD_CASE_V1_FAIL',summary);else console.log('CRUVIT_SEMANTIC_HARD_CASE_V1_PASS',summary);
+})().catch(err=>{document.getElementById('status').textContent='HARNESS ERROR';document.getElementById('status').className='fail';document.getElementById('out').textContent=String(err?.stack||err);console.error(err)});
+</script>

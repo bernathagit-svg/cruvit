@@ -1,0 +1,3511 @@
+{
+  "contract": "cruvit-semantic-hard-case-fixture-v1",
+  "generatedAt": "2026-10-02",
+  "source": "owner-approved catalog expansion packets",
+  "slugs": [
+    "almond",
+    "cherimoya",
+    "coconut",
+    "cypress",
+    "grapevine",
+    "guava",
+    "japanese-maple",
+    "kiwi",
+    "lychee",
+    "mandarin",
+    "passionfruit",
+    "pistachio",
+    "plumeria",
+    "pomegranate",
+    "apple",
+    "fig"
+  ],
+  "rows": [
+    {
+      "slug": "almond",
+      "scientific": "Prunus dulcis",
+      "tags": [
+        "nut",
+        "tree",
+        "deciduous",
+        "orchard"
+      ],
+      "climateTraits": {
+        "frostSensitivity": "medium",
+        "coldTolerance": "medium",
+        "heatTolerance": "medium",
+        "sunNeeds": "full_sun",
+        "waterNeeds": "medium",
+        "drainageNeeds": "high",
+        "needsWinterChill": true,
+        "floweringRequirements": "Early spring bloom; spring frost can damage flowers and reduce nut set.",
+        "fruitingRequirements": "Reliable nut set requires compatible cross-pollination and avoidance of damaging spring frost.",
+        "humidityTolerance": "medium",
+        "survivalVsThriveNotes": "Trees may grow in mild climates, but reliable nut set depends on adequate chill and dry ripening conditions.",
+        "groupIds": [
+          "warm-dry-mediterranean-fruit",
+          "temperate-chill-fruit-tree"
+        ],
+        "needsReview": false,
+        "floweringEvidenceClass": "SOURCE_SUPPORTED",
+        "reproductiveClimate": {
+          "contractVersion": "reproductive-climate-v1",
+          "flowering": {
+            "requiresCoolSeason": true,
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM",
+            "sourceIds": [
+              "ucanr-almond-ipm"
+            ],
+            "transformRef": "winter-chill-to-cool-season-v1@1.0.0",
+            "sourceExcerpt": "true Almonds are adapted to areas with adequate chilling, about 400 to 500 hours below 45°F."
+          },
+          "fruiting": {
+            "requiresCoolSeason": true,
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM",
+            "sourceIds": [
+              "ucanr-almond-ipm"
+            ],
+            "transformRef": "winter-chill-to-cool-season-v1@1.0.0",
+            "sourceExcerpt": "true Almonds are adapted to areas with adequate chilling, about 400 to 500 hours below 45°F."
+          }
+        },
+        "traitEvidenceClasses": {
+          "frostSensitivity": "HEURISTIC_ASSERTION",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "HEURISTIC_ASSERTION",
+          "sunNeeds": "SOURCE_SUPPORTED",
+          "waterNeeds": "HEURISTIC_ASSERTION",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "needsWinterChill": "SOURCE_SUPPORTED",
+          "floweringRequirements": "SOURCE_SUPPORTED",
+          "fruitingRequirements": "SOURCE_SUPPORTED",
+          "humidityTolerance": "HEURISTIC_ASSERTION",
+          "survivalVsThriveNotes": "HEURISTIC_ASSERTION",
+          "groupIds": "HEURISTIC_ASSERTION"
+        },
+        "traitProvenance": {
+          "frostSensitivity": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "usu-almond-home"
+            ],
+            "shortExcerpt": "Woody stems and branches can be damaged by extreme winter cold; spring frosts commonly damage flowers.",
+            "status": "asserted"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "usu-almond-treebrowser"
+            ],
+            "shortExcerpt": "Hardiness Zone 6-7.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "usu-almond-home"
+            ],
+            "shortExcerpt": "Almonds can be grown successfully in Utah’s warmest areas and are adapted to warm climates.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "usu-almond-home"
+            ],
+            "shortExcerpt": "Almonds need full sun.",
+            "status": "asserted"
+          },
+          "waterNeeds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "usu-almond-home"
+            ],
+            "shortExcerpt": "Mature trees benefit from less frequent, longer, deeper irrigation.",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "usu-almond-treebrowser"
+            ],
+            "shortExcerpt": "Prefers a light, well-drained soil.",
+            "status": "asserted"
+          },
+          "needsWinterChill": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ucanr-almond-ipm"
+            ],
+            "shortExcerpt": "Almonds are adapted to areas with adequate chilling, about 400 to 500 hours below 45°F.",
+            "status": "asserted"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "usu-almond-home"
+            ],
+            "shortExcerpt": "Almonds flower with or before peaches; spring frosts can damage flowers.",
+            "status": "asserted"
+          },
+          "fruitingRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "usu-almond-home"
+            ],
+            "shortExcerpt": "Most almonds are not self-fruitful; compatible pollen and bees are required, and frost can prevent fruiting.",
+            "status": "asserted"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "survivalVsThriveNotes": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "groupIds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          }
+        },
+        "plantKnowledge": {
+          "plantKnowledgeContractVersion": "1.0.0",
+          "sources": [
+            {
+              "sourceId": "usu-almond-treebrowser",
+              "institution": "Utah State University Extension",
+              "publisher": "Utah State University Extension",
+              "title": "Almond | TreeBrowser",
+              "url": "https://extension.usu.edu/treebrowser/catalog/almond",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "usu-almond-home",
+              "institution": "Utah State University Extension",
+              "publisher": "Utah State University Extension",
+              "title": "How to Grow Almonds in Your Garden",
+              "url": "https://extension.usu.edu/yardandgarden/research/almonds-in-the-home-garden",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "ucanr-almond-ipm",
+              "institution": "University of California Statewide IPM Program",
+              "publisher": "University of California Statewide IPM Program",
+              "title": "Cultural Tips for Growing Almond",
+              "url": "https://ipm.ucanr.edu/home-and-landscape/cultural-tips-for-growing-almond/",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "cruvit-legacy-runtime-context",
+              "institution": "CRUVIT Legacy Catalog",
+              "publisher": "CRUVIT Legacy Catalog",
+              "title": "Existing CRUVIT runtime rule context",
+              "url": "urn:cruvit:legacy-runtime-context",
+              "authorityTier": "internal_legacy",
+              "verifiedAt": "2026-10-01"
+            }
+          ],
+          "warnings": [],
+          "importantNotes": [],
+          "regionalRestrictions": [],
+          "invasiveness": {},
+          "plantingRequirements": {},
+          "soilRequirements": {},
+          "maintenance": {},
+          "pestsAndDiseases": [],
+          "cultivarCaveats": {},
+          "toxicity": {},
+          "physicalHazards": {},
+          "allergenicity": {},
+          "harvestUseWarnings": {}
+        },
+        "designMetadata": {
+          "contractVersion": "design-metadata-v1",
+          "tags": [
+            "nut",
+            "tree",
+            "deciduous",
+            "orchard"
+          ],
+          "growth": null,
+          "matureSize": null,
+          "leafHabit": {
+            "state": "DECIDUOUS",
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "evidence": [
+              {
+                "field": "tags",
+                "state": "DECIDUOUS",
+                "evidenceClass": "SOURCE_SUPPORTED",
+                "sourceIds": [
+                  "usu-almond-treebrowser"
+                ],
+                "shortExcerpt": "Catalog tags: nut, tree, deciduous, orchard"
+              }
+            ]
+          },
+          "seasonalityResearchRequired": false,
+          "sourcePacket": "almond-p2-wave-1-proposal-v1"
+        }
+      },
+      "packetId": "almond-p2-wave-1-proposal-v1"
+    },
+    {
+      "slug": "cherimoya",
+      "scientific": "Annona cherimola",
+      "tags": [
+        "subtropical",
+        "fruit",
+        "tree",
+        "hand-pollination"
+      ],
+      "climateTraits": {
+        "frostSensitivity": "high",
+        "coldTolerance": "low",
+        "heatTolerance": "medium",
+        "humidityTolerance": "low",
+        "sunNeeds": "full_sun",
+        "waterNeeds": "medium",
+        "drainageNeeds": "high",
+        "floweringRequirements": "Mild relatively frost-free conditions support flowering; hand pollination is commonly used to improve set.",
+        "fruitingRequirements": "Sunny mild conditions, good drainage, and reliable pollination are needed for fruit production.",
+        "survivalVsThriveNotes": "Needs cool winters without hard freeze and warm frost-free summers; fruiting often needs pollination help.",
+        "groupIds": [
+          "humid-subtropical-fruit-tree",
+          "tropical-frost-sensitive-fruit"
+        ],
+        "needsReview": false,
+        "floweringEvidenceClass": "SOURCE_SUPPORTED",
+        "traitEvidenceClasses": {
+          "frostSensitivity": "HEURISTIC_ASSERTION",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "HEURISTIC_ASSERTION",
+          "humidityTolerance": "SOURCE_SUPPORTED",
+          "sunNeeds": "SOURCE_SUPPORTED",
+          "waterNeeds": "HEURISTIC_ASSERTION",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "floweringRequirements": "SOURCE_SUPPORTED",
+          "fruitingRequirements": "SOURCE_SUPPORTED",
+          "survivalVsThriveNotes": "HEURISTIC_ASSERTION",
+          "groupIds": "HEURISTIC_ASSERTION"
+        },
+        "traitProvenance": {
+          "frostSensitivity": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ucanr-cherimoya"
+            ],
+            "shortExcerpt": "Requires a relatively frost-free environment; mature hardy varieties tolerate only short periods around 26°F.",
+            "status": "asserted"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ucanr-cherimoya"
+            ],
+            "shortExcerpt": "Mature trees of hardy varieties tolerate short periods around 26°F; prolonged hard freeze is unsuitable.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ucanr-cherimoya"
+            ],
+            "shortExcerpt": "Sunny warmth is needed for flavor, but inland trees need protection from extremely hot temperatures and dry winds.",
+            "status": "asserted"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ucanr-cherimoya"
+            ],
+            "shortExcerpt": "Cherimoya will not tolerate prolonged high humidity.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ucanr-cherimoya"
+            ],
+            "shortExcerpt": "A sunny location is needed because sufficient heat is required for good flavor.",
+            "status": "asserted"
+          },
+          "waterNeeds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ucanr-cherimoya"
+            ],
+            "shortExcerpt": "Good watering practices are important; soil should not become excessively dry or wet.",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ucanr-cherimoya"
+            ],
+            "shortExcerpt": "The most critical soil requirement is good drainage.",
+            "status": "asserted"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ucanr-cherimoya"
+            ],
+            "shortExcerpt": "The crop is normally hand pollinated; cherimoya requires a relatively frost-free environment.",
+            "status": "asserted"
+          },
+          "fruitingRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ucanr-cherimoya"
+            ],
+            "shortExcerpt": "Sunny warmth develops flavor; good drainage is critical and the crop is commonly hand pollinated.",
+            "status": "asserted"
+          },
+          "survivalVsThriveNotes": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "groupIds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          }
+        },
+        "plantKnowledge": {
+          "plantKnowledgeContractVersion": "1.0.0",
+          "sources": [
+            {
+              "sourceId": "ucanr-cherimoya",
+              "institution": "University of California Cooperative Extension",
+              "publisher": "University of California Cooperative Extension",
+              "title": "Cherimoya | Topics in Subtropics",
+              "url": "https://ucanr.edu/blog/topics-subtropics/article/cherimoya",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "cruvit-legacy-runtime-context",
+              "institution": "CRUVIT Legacy Catalog",
+              "publisher": "CRUVIT Legacy Catalog",
+              "title": "Existing CRUVIT runtime rule context",
+              "url": "urn:cruvit:legacy-runtime-context",
+              "authorityTier": "internal_legacy",
+              "verifiedAt": "2026-10-01"
+            }
+          ],
+          "warnings": [],
+          "importantNotes": [],
+          "regionalRestrictions": [],
+          "invasiveness": {},
+          "plantingRequirements": {},
+          "soilRequirements": {},
+          "maintenance": {},
+          "pestsAndDiseases": [],
+          "cultivarCaveats": {},
+          "toxicity": {},
+          "physicalHazards": {},
+          "allergenicity": {},
+          "harvestUseWarnings": {}
+        },
+        "designMetadata": {
+          "contractVersion": "design-metadata-v1",
+          "tags": [
+            "subtropical",
+            "fruit",
+            "tree",
+            "hand-pollination"
+          ],
+          "growth": null,
+          "matureSize": null,
+          "leafHabit": {
+            "state": "UNKNOWN",
+            "evidenceClass": "UNKNOWN",
+            "evidence": []
+          },
+          "seasonalityResearchRequired": true,
+          "sourcePacket": "cherimoya-p2-wave-2-proposal-v1"
+        }
+      },
+      "packetId": "cherimoya-p2-wave-2-proposal-v1"
+    },
+    {
+      "slug": "coconut",
+      "scientific": "Cocos nucifera",
+      "tags": [
+        "palm",
+        "tropical",
+        "fruit",
+        "coastal"
+      ],
+      "climateTraits": {
+        "frostSensitivity": "very_high",
+        "coldTolerance": "very_low",
+        "heatTolerance": "high",
+        "humidityTolerance": "high",
+        "sunNeeds": "full_sun",
+        "waterNeeds": "medium",
+        "drainageNeeds": "high",
+        "floweringRequirements": "Flowering requires sustained warm tropical growth conditions.",
+        "fruitingRequirements": "Nut production requires sustained tropical warmth and avoidance of chilling/freezing injury.",
+        "needsWinterChill": false,
+        "survivalVsThriveNotes": "Reliable growth and fruiting need frost-free tropical or subtropical conditions.",
+        "groupIds": [
+          "tropical-frost-sensitive-fruit",
+          "hot-dry-palm"
+        ],
+        "hardBlockRules": [
+          "no-small-container"
+        ],
+        "needsReview": false,
+        "floweringEvidenceClass": "HEURISTIC_ASSERTION",
+        "traitEvidenceClasses": {
+          "frostSensitivity": "HEURISTIC_ASSERTION",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "HEURISTIC_ASSERTION",
+          "humidityTolerance": "HEURISTIC_ASSERTION",
+          "sunNeeds": "SOURCE_SUPPORTED",
+          "waterNeeds": "SOURCE_SUPPORTED",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "floweringRequirements": "HEURISTIC_ASSERTION",
+          "fruitingRequirements": "HEURISTIC_ASSERTION",
+          "needsWinterChill": "HEURISTIC_ASSERTION",
+          "survivalVsThriveNotes": "HEURISTIC_ASSERTION",
+          "groupIds": "HEURISTIC_ASSERTION",
+          "hardBlockRules": "HEURISTIC_ASSERTION"
+        },
+        "traitProvenance": {
+          "frostSensitivity": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uf-ifas-coconut-cold"
+            ],
+            "shortExcerpt": "Coconut palms show chilling injury and trunk damage from prolonged chilling or freezing temperatures.",
+            "status": "asserted"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "rhs-cocos-nucifera"
+            ],
+            "shortExcerpt": "RHS hardiness H1A: under glass all year, above 15°C.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uh-ctahr-coconut"
+            ],
+            "shortExcerpt": "Young coconuts should be kept warm, preferably never below 70°F and often above 80°F.",
+            "status": "asserted"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "rhs-cocos-nucifera"
+            ],
+            "shortExcerpt": "Cultivation recommends warm conditions with moderate humidity.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "rhs-cocos-nucifera"
+            ],
+            "shortExcerpt": "Position: Full sun.",
+            "status": "asserted"
+          },
+          "waterNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "rhs-cocos-nucifera"
+            ],
+            "shortExcerpt": "Water moderately during the growing season and sparingly in winter.",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "rhs-cocos-nucifera"
+            ],
+            "shortExcerpt": "Moist but well-drained growing conditions; loam/sand compost with sharp sand.",
+            "status": "asserted"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uh-ctahr-coconut"
+            ],
+            "shortExcerpt": "Flower clusters begin forming after trunk development under warm coconut-growing conditions.",
+            "status": "asserted"
+          },
+          "fruitingRequirements": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uh-ctahr-coconut",
+              "uf-ifas-coconut-cold"
+            ],
+            "shortExcerpt": "Healthy trees produce nuts under warm tropical culture; cold injury occurs in Cocos nucifera during chilling/freezing exposure.",
+            "status": "asserted"
+          },
+          "needsWinterChill": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "survivalVsThriveNotes": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "groupIds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "hardBlockRules": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          }
+        },
+        "plantKnowledge": {
+          "plantKnowledgeContractVersion": "1.0.0",
+          "sources": [
+            {
+              "sourceId": "rhs-cocos-nucifera",
+              "institution": "Royal Horticultural Society",
+              "publisher": "Royal Horticultural Society",
+              "title": "Cocos nucifera (F) | coconut",
+              "url": "https://www.rhs.org.uk/plants/4061/cocos-nucifera-f/details",
+              "authorityTier": "horticultural_society",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "uf-ifas-coconut-cold",
+              "institution": "University of Florida IFAS Extension",
+              "publisher": "University of Florida IFAS Extension",
+              "title": "Cold Damage on Palms",
+              "url": "https://edis.ifas.ufl.edu/publication/MG318",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "uh-ctahr-coconut",
+              "institution": "University of Hawaii CTAHR",
+              "publisher": "University of Hawaii CTAHR",
+              "title": "Coconut Palms from Seed",
+              "url": "https://www.ctahr.hawaii.edu/oc/freepubs/pdf/OF-25.pdf",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "cruvit-legacy-runtime-context",
+              "institution": "CRUVIT Legacy Catalog",
+              "publisher": "CRUVIT Legacy Catalog",
+              "title": "Existing CRUVIT runtime rule context",
+              "url": "urn:cruvit:legacy-runtime-context",
+              "authorityTier": "internal_legacy",
+              "verifiedAt": "2026-10-01"
+            }
+          ],
+          "warnings": [],
+          "importantNotes": [],
+          "regionalRestrictions": [],
+          "invasiveness": {},
+          "plantingRequirements": {},
+          "soilRequirements": {},
+          "maintenance": {},
+          "pestsAndDiseases": [],
+          "cultivarCaveats": {},
+          "toxicity": {},
+          "physicalHazards": {},
+          "allergenicity": {},
+          "harvestUseWarnings": {}
+        },
+        "designMetadata": {
+          "contractVersion": "design-metadata-v1",
+          "tags": [
+            "palm",
+            "tropical",
+            "fruit",
+            "coastal"
+          ],
+          "growth": null,
+          "matureSize": null,
+          "leafHabit": {
+            "state": "UNKNOWN",
+            "evidenceClass": "UNKNOWN",
+            "evidence": []
+          },
+          "seasonalityResearchRequired": true,
+          "sourcePacket": "coconut-p2-wave-2-proposal-v1"
+        }
+      },
+      "packetId": "coconut-p2-wave-2-proposal-v1"
+    },
+    {
+      "slug": "cypress",
+      "scientific": "Cupressus sempervirens",
+      "tags": [
+        "ornamental",
+        "tree",
+        "evergreen",
+        "screen"
+      ],
+      "climateTraits": {
+        "frostSensitivity": "medium",
+        "coldTolerance": "low",
+        "heatTolerance": "high",
+        "humidityTolerance": "high",
+        "sunNeeds": "full_sun",
+        "waterNeeds": "low",
+        "drainageNeeds": "high",
+        "floweringRequirements": "No true flowers; pollen cones appear in early spring.",
+        "needsWinterChill": false,
+        "survivalVsThriveNotes": "Well suited to hot dry summers with drainage; prolonged humid heat and wet soil reduce performance.",
+        "groupIds": [
+          "humid-sensitive-mediterranean",
+          "warm-dry-structural-shrub"
+        ],
+        "needsReview": false,
+        "floweringEvidenceClass": "SOURCE_SUPPORTED",
+        "traitEvidenceClasses": {
+          "frostSensitivity": "HEURISTIC_ASSERTION",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "HEURISTIC_ASSERTION",
+          "humidityTolerance": "HEURISTIC_ASSERTION",
+          "sunNeeds": "SOURCE_SUPPORTED",
+          "waterNeeds": "HEURISTIC_ASSERTION",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "floweringRequirements": "SOURCE_SUPPORTED",
+          "needsWinterChill": "HEURISTIC_ASSERTION",
+          "survivalVsThriveNotes": "HEURISTIC_ASSERTION",
+          "groupIds": "HEURISTIC_ASSERTION"
+        },
+        "traitProvenance": {
+          "frostSensitivity": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-cupressus-sempervirens"
+            ],
+            "shortExcerpt": "USDA Plant Hardiness Zones 7a-10b; whole-plant frost ordinal retained conservatively as heuristic.",
+            "status": "asserted"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-cupressus-sempervirens"
+            ],
+            "shortExcerpt": "USDA Plant Hardiness Zone: 7a through 10b.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-cupressus-sempervirens"
+            ],
+            "shortExcerpt": "Resistance To Challenges includes Heat.",
+            "status": "asserted"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-cupressus-sempervirens"
+            ],
+            "shortExcerpt": "Resistance To Challenges includes Humidity.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-cupressus-sempervirens"
+            ],
+            "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+            "status": "asserted"
+          },
+          "waterNeeds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-cupressus-sempervirens"
+            ],
+            "shortExcerpt": "Becomes highly drought tolerant as it ages; young plants need adequate water until established.",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-cupressus-sempervirens"
+            ],
+            "shortExcerpt": "Soil Drainage: Good Drainage; Moist; Occasionally Dry.",
+            "status": "asserted"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-cupressus-sempervirens"
+            ],
+            "shortExcerpt": "No flowers, pollen cones appear in the early spring.",
+            "status": "asserted"
+          },
+          "needsWinterChill": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "survivalVsThriveNotes": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "groupIds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          }
+        },
+        "plantKnowledge": {
+          "plantKnowledgeContractVersion": "1.0.0",
+          "sources": [
+            {
+              "sourceId": "ncsu-cupressus-sempervirens",
+              "institution": "North Carolina State University Extension Gardener",
+              "publisher": "North Carolina State University Extension Gardener",
+              "title": "Cupressus sempervirens",
+              "url": "https://plants.ces.ncsu.edu/plants/cupressus-sempervirens/",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "cruvit-legacy-runtime-context",
+              "institution": "CRUVIT Legacy Catalog",
+              "publisher": "CRUVIT Legacy Catalog",
+              "title": "Existing CRUVIT runtime rule context",
+              "url": "urn:cruvit:legacy-runtime-context",
+              "authorityTier": "internal_legacy",
+              "verifiedAt": "2026-10-01"
+            }
+          ],
+          "warnings": [],
+          "importantNotes": [],
+          "regionalRestrictions": [],
+          "invasiveness": {},
+          "plantingRequirements": {},
+          "soilRequirements": {},
+          "maintenance": {},
+          "pestsAndDiseases": [],
+          "cultivarCaveats": {},
+          "toxicity": {},
+          "physicalHazards": {},
+          "allergenicity": {},
+          "harvestUseWarnings": {}
+        },
+        "designMetadata": {
+          "contractVersion": "design-metadata-v1",
+          "tags": [
+            "ornamental",
+            "tree",
+            "evergreen",
+            "screen"
+          ],
+          "growth": null,
+          "matureSize": null,
+          "leafHabit": {
+            "state": "EVERGREEN",
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "evidence": [
+              {
+                "field": "tags",
+                "state": "EVERGREEN",
+                "evidenceClass": "SOURCE_SUPPORTED",
+                "sourceIds": [
+                  "ncsu-cupressus-sempervirens"
+                ],
+                "shortExcerpt": "Catalog tags: ornamental, tree, evergreen, screen"
+              }
+            ]
+          },
+          "seasonalityResearchRequired": false,
+          "sourcePacket": "cypress-p2-wave-1-proposal-v1"
+        }
+      },
+      "packetId": "cypress-p2-wave-1-proposal-v1"
+    },
+    {
+      "slug": "grapevine",
+      "scientific": "Vitis vinifera",
+      "tags": [
+        "fruit",
+        "vine",
+        "climber",
+        "edible"
+      ],
+      "climateTraits": {
+        "frostSensitivity": "medium",
+        "coldTolerance": "medium",
+        "heatTolerance": "medium",
+        "humidityTolerance": "low",
+        "sunNeeds": "full_sun",
+        "waterNeeds": "medium",
+        "drainageNeeds": "high",
+        "floweringRequirements": "Spring flowering performs best with full sun, air circulation, and low frost exposure.",
+        "fruitingRequirements": "Reliable fruit production needs full sun, well-drained soil, support/training, and avoidance of hot-humid disease pressure.",
+        "survivalVsThriveNotes": "Needs a fence, wall, pole, trellis, or similar support instead of open-lawn placement.",
+        "groupIds": [
+          "warm-dry-mediterranean-fruit",
+          "support-dependent-plant"
+        ],
+        "hardBlockRules": [
+          "needs-support"
+        ],
+        "needsDrySeason": true,
+        "needsReview": false,
+        "floweringEvidenceClass": "HEURISTIC_ASSERTION",
+        "reproductiveClimate": {
+          "contractVersion": "reproductive-climate-v1",
+          "fruiting": {
+            "summerHeatBand": "hot",
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM",
+            "sourceIds": [
+              "ncsu-vitis-vinifera"
+            ],
+            "transformRef": "qualitative-summer-heat-band-v1@1.0.0",
+            "sourceExcerpt": "Reliable fruit production needs full sun, well-drained soil, support/training, and avoidance of hot-humid disease pressure. Hot and humid summers negatively affect fruit production; support and training should be provided."
+          }
+        },
+        "traitEvidenceClasses": {
+          "frostSensitivity": "HEURISTIC_ASSERTION",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "HEURISTIC_ASSERTION",
+          "humidityTolerance": "HEURISTIC_ASSERTION",
+          "sunNeeds": "SOURCE_SUPPORTED",
+          "waterNeeds": "HEURISTIC_ASSERTION",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "floweringRequirements": "HEURISTIC_ASSERTION",
+          "fruitingRequirements": "HEURISTIC_ASSERTION",
+          "survivalVsThriveNotes": "HEURISTIC_ASSERTION",
+          "groupIds": "HEURISTIC_ASSERTION",
+          "hardBlockRules": "HEURISTIC_ASSERTION",
+          "needsDrySeason": "HEURISTIC_ASSERTION"
+        },
+        "traitProvenance": {
+          "frostSensitivity": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-vitis-vinifera"
+            ],
+            "shortExcerpt": "Vines should be protected from winter winds and frost; spring frost risk affects new shoots and production.",
+            "status": "asserted"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-vitis-vinifera"
+            ],
+            "shortExcerpt": "USDA Plant Hardiness Zone: 6a through 10b.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-vitis-vinifera"
+            ],
+            "shortExcerpt": "Hot and humid summers negatively affect fruit production; heat fit is retained conservatively as medium.",
+            "status": "asserted"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-vitis-vinifera"
+            ],
+            "shortExcerpt": "Hot and humid summers negatively affect fruit production and disease pressure is frequent.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-vitis-vinifera"
+            ],
+            "shortExcerpt": "The common grape prefers full sun.",
+            "status": "asserted"
+          },
+          "waterNeeds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-vitis-vinifera"
+            ],
+            "shortExcerpt": "Soil Drainage includes Moist and Occasionally Dry; water need retained as moderate.",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-vitis-vinifera"
+            ],
+            "shortExcerpt": "The common grape prefers well-drained soil.",
+            "status": "asserted"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-vitis-vinifera"
+            ],
+            "shortExcerpt": "Numerous tiny flowers bloom in spring; the vine prefers full sun, good circulation and frost-protected sites.",
+            "status": "asserted"
+          },
+          "fruitingRequirements": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-vitis-vinifera"
+            ],
+            "shortExcerpt": "Hot and humid summers negatively affect fruit production; support and training should be provided.",
+            "status": "asserted"
+          },
+          "survivalVsThriveNotes": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "groupIds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "hardBlockRules": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "needsDrySeason": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          }
+        },
+        "plantKnowledge": {
+          "plantKnowledgeContractVersion": "1.0.0",
+          "sources": [
+            {
+              "sourceId": "ncsu-vitis-vinifera",
+              "institution": "North Carolina State University Extension Gardener",
+              "publisher": "North Carolina State University Extension Gardener",
+              "title": "Vitis vinifera",
+              "url": "https://plants.ces.ncsu.edu/plants/vitis-vinifera/",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "cruvit-legacy-runtime-context",
+              "institution": "CRUVIT Legacy Catalog",
+              "publisher": "CRUVIT Legacy Catalog",
+              "title": "Existing CRUVIT runtime rule context",
+              "url": "urn:cruvit:legacy-runtime-context",
+              "authorityTier": "internal_legacy",
+              "verifiedAt": "2026-10-01"
+            }
+          ],
+          "warnings": [],
+          "importantNotes": [],
+          "regionalRestrictions": [],
+          "invasiveness": {},
+          "plantingRequirements": {},
+          "soilRequirements": {},
+          "maintenance": {},
+          "pestsAndDiseases": [],
+          "cultivarCaveats": {},
+          "toxicity": {},
+          "physicalHazards": {},
+          "allergenicity": {},
+          "harvestUseWarnings": {}
+        },
+        "designMetadata": {
+          "contractVersion": "design-metadata-v1",
+          "tags": [
+            "fruit",
+            "vine",
+            "climber",
+            "edible"
+          ],
+          "growth": null,
+          "matureSize": null,
+          "leafHabit": {
+            "state": "UNKNOWN",
+            "evidenceClass": "UNKNOWN",
+            "evidence": []
+          },
+          "seasonalityResearchRequired": true,
+          "sourcePacket": "grapevine-p2-wave-1-proposal-v1"
+        }
+      },
+      "packetId": "grapevine-p2-wave-1-proposal-v1"
+    },
+    {
+      "slug": "guava",
+      "scientific": "Psidium guajava",
+      "tags": [
+        "fruit",
+        "tree",
+        "subtropical",
+        "edible"
+      ],
+      "climateTraits": {
+        "frostSensitivity": "high",
+        "coldTolerance": "very_low",
+        "heatTolerance": "high",
+        "humidityTolerance": "medium",
+        "sunNeeds": "full_sun",
+        "waterNeeds": "medium",
+        "drainageNeeds": "high",
+        "floweringRequirements": "Warm, bright conditions and low freeze risk support flowering.",
+        "fruitingRequirements": "Reliable fruit production needs warm subtropical/tropical conditions and protection from damaging cold.",
+        "survivalVsThriveNotes": "May survive in protected warm sites, but thriving and reliable fruiting are much narrower than a simple warm-climate tag suggests.",
+        "groupIds": [
+          "tropical-frost-sensitive-fruit"
+        ],
+        "needsReview": false,
+        "floweringEvidenceClass": "HEURISTIC_ASSERTION",
+        "traitEvidenceClasses": {
+          "frostSensitivity": "SOURCE_SUPPORTED",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "HEURISTIC_ASSERTION",
+          "humidityTolerance": "HEURISTIC_ASSERTION",
+          "sunNeeds": "SOURCE_SUPPORTED",
+          "waterNeeds": "SOURCE_SUPPORTED",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "floweringRequirements": "HEURISTIC_ASSERTION",
+          "fruitingRequirements": "HEURISTIC_ASSERTION",
+          "survivalVsThriveNotes": "HEURISTIC_ASSERTION",
+          "groupIds": "HEURISTIC_ASSERTION"
+        },
+        "traitProvenance": {
+          "frostSensitivity": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "uf-ifas-guava"
+            ],
+            "shortExcerpt": "Young guava may be killed at 27–28°F; lower temperatures can damage or kill stems, limbs and trunk.",
+            "status": "asserted"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "rhs-psidium-guajava"
+            ],
+            "shortExcerpt": "RHS hardiness H2: tolerant of low temperatures but not surviving being frozen.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uf-ifas-guava"
+            ],
+            "shortExcerpt": "Ideal growth and production temperatures are 73–82°F; guava is adapted to warm subtropical to tropical climates.",
+            "status": "asserted"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uf-ifas-guava"
+            ],
+            "shortExcerpt": "Warm subtropical/tropical adaptation supports a moderate humidity stance without inventing a numeric threshold.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "rhs-psidium-guajava"
+            ],
+            "shortExcerpt": "Position: Full sun.",
+            "status": "asserted"
+          },
+          "waterNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "rhs-psidium-guajava"
+            ],
+            "shortExcerpt": "Moist but well-drained growing conditions.",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "rhs-psidium-guajava"
+            ],
+            "shortExcerpt": "Moist but well-drained soil is specified.",
+            "status": "asserted"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "rhs-psidium-guajava",
+              "uf-ifas-guava"
+            ],
+            "shortExcerpt": "Flowers may be produced year-round on new shoots; cold and drought slow or stop growth.",
+            "status": "asserted"
+          },
+          "fruitingRequirements": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uf-ifas-guava"
+            ],
+            "shortExcerpt": "Guava is adapted to warm subtropical/tropical climates; damaging cold can kill productive wood.",
+            "status": "asserted"
+          },
+          "survivalVsThriveNotes": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "groupIds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          }
+        },
+        "plantKnowledge": {
+          "plantKnowledgeContractVersion": "1.0.0",
+          "sources": [
+            {
+              "sourceId": "rhs-psidium-guajava",
+              "institution": "Royal Horticultural Society",
+              "publisher": "Royal Horticultural Society",
+              "title": "Psidium guajava (F) | common guava",
+              "url": "https://www.rhs.org.uk/plants/21375/psidium-guajava-f/details",
+              "authorityTier": "horticultural_society",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "uf-ifas-guava",
+              "institution": "University of Florida IFAS Extension",
+              "publisher": "University of Florida IFAS Extension",
+              "title": "Guava Growing in the Florida Home Landscape",
+              "url": "https://edis.ifas.ufl.edu/publication/MG045",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "cruvit-legacy-runtime-context",
+              "institution": "CRUVIT Legacy Catalog",
+              "publisher": "CRUVIT Legacy Catalog",
+              "title": "Existing CRUVIT runtime rule context",
+              "url": "urn:cruvit:legacy-runtime-context",
+              "authorityTier": "internal_legacy",
+              "verifiedAt": "2026-10-01"
+            }
+          ],
+          "warnings": [],
+          "importantNotes": [],
+          "regionalRestrictions": [],
+          "invasiveness": {},
+          "plantingRequirements": {},
+          "soilRequirements": {},
+          "maintenance": {},
+          "pestsAndDiseases": [],
+          "cultivarCaveats": {},
+          "toxicity": {},
+          "physicalHazards": {},
+          "allergenicity": {},
+          "harvestUseWarnings": {}
+        },
+        "designMetadata": {
+          "contractVersion": "design-metadata-v1",
+          "tags": [
+            "fruit",
+            "tree",
+            "subtropical",
+            "edible"
+          ],
+          "growth": null,
+          "matureSize": null,
+          "leafHabit": {
+            "state": "UNKNOWN",
+            "evidenceClass": "UNKNOWN",
+            "evidence": []
+          },
+          "seasonalityResearchRequired": true,
+          "sourcePacket": "guava-p2-wave-2-proposal-v1"
+        }
+      },
+      "packetId": "guava-p2-wave-2-proposal-v1"
+    },
+    {
+      "slug": "japanese-maple",
+      "scientific": "Acer palmatum",
+      "tags": [
+        "ornamental",
+        "tree",
+        "deciduous"
+      ],
+      "climateTraits": {
+        "frostSensitivity": "low",
+        "coldTolerance": "medium",
+        "heatTolerance": "low",
+        "sunNeeds": "partial_shade",
+        "waterNeeds": "medium",
+        "drainageNeeds": "high",
+        "floweringRequirements": "Small red-to-purple flowers appear in spring.",
+        "humidityTolerance": "medium",
+        "needsWinterChill": true,
+        "survivalVsThriveNotes": "Can persist in warm gardens with shade and irrigation, but leaf quality declines in sustained heat and alkaline soil.",
+        "groupIds": [
+          "acid-soil-cool-moisture",
+          "cool-season-shade"
+        ],
+        "needsReview": false,
+        "floweringEvidenceClass": "SOURCE_SUPPORTED",
+        "traitEvidenceClasses": {
+          "frostSensitivity": "HEURISTIC_ASSERTION",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "HEURISTIC_ASSERTION",
+          "sunNeeds": "SOURCE_SUPPORTED",
+          "waterNeeds": "SOURCE_SUPPORTED",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "floweringRequirements": "SOURCE_SUPPORTED",
+          "humidityTolerance": "HEURISTIC_ASSERTION",
+          "needsWinterChill": "HEURISTIC_ASSERTION",
+          "survivalVsThriveNotes": "HEURISTIC_ASSERTION",
+          "groupIds": "HEURISTIC_ASSERTION"
+        },
+        "traitProvenance": {
+          "frostSensitivity": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-acer-palmatum"
+            ],
+            "shortExcerpt": "USDA Zones 5a-8b support whole-plant hardiness; young leaves are frost-sensitive, which is stage-specific and does not set the whole-plant ordinal.",
+            "status": "asserted"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-acer-palmatum"
+            ],
+            "shortExcerpt": "USDA Plant Hardiness Zone: 5a through 8b.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-acer-palmatum"
+            ],
+            "shortExcerpt": "Excess sun, drying wind and drought can cause leaf scorch; warm-site heat tolerance retained conservatively as low.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-acer-palmatum"
+            ],
+            "shortExcerpt": "Plant in dappled shade.",
+            "status": "asserted"
+          },
+          "waterNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-acer-palmatum"
+            ],
+            "shortExcerpt": "Plant in evenly moist soil; young leaves are not drought tolerant.",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-acer-palmatum"
+            ],
+            "shortExcerpt": "Plant in evenly moist, well-drained soil.",
+            "status": "asserted"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-acer-palmatum"
+            ],
+            "shortExcerpt": "Flowers are small and red to purple; bloom time is spring.",
+            "status": "asserted"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "needsWinterChill": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "survivalVsThriveNotes": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "groupIds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          }
+        },
+        "plantKnowledge": {
+          "plantKnowledgeContractVersion": "1.0.0",
+          "sources": [
+            {
+              "sourceId": "ncsu-acer-palmatum",
+              "institution": "North Carolina State University Extension Gardener",
+              "publisher": "North Carolina State University Extension Gardener",
+              "title": "Acer palmatum",
+              "url": "https://plants.ces.ncsu.edu/plants/acer-palmatum/",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "cruvit-legacy-runtime-context",
+              "institution": "CRUVIT Legacy Catalog",
+              "publisher": "CRUVIT Legacy Catalog",
+              "title": "Existing CRUVIT runtime rule context",
+              "url": "urn:cruvit:legacy-runtime-context",
+              "authorityTier": "internal_legacy",
+              "verifiedAt": "2026-10-01"
+            }
+          ],
+          "warnings": [],
+          "importantNotes": [],
+          "regionalRestrictions": [],
+          "invasiveness": {},
+          "plantingRequirements": {},
+          "soilRequirements": {},
+          "maintenance": {},
+          "pestsAndDiseases": [],
+          "cultivarCaveats": {},
+          "toxicity": {},
+          "physicalHazards": {},
+          "allergenicity": {},
+          "harvestUseWarnings": {}
+        },
+        "designMetadata": {
+          "contractVersion": "design-metadata-v1",
+          "tags": [
+            "ornamental",
+            "tree",
+            "deciduous"
+          ],
+          "growth": null,
+          "matureSize": null,
+          "leafHabit": {
+            "state": "DECIDUOUS",
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "evidence": [
+              {
+                "field": "tags",
+                "state": "DECIDUOUS",
+                "evidenceClass": "SOURCE_SUPPORTED",
+                "sourceIds": [
+                  "ncsu-acer-palmatum"
+                ],
+                "shortExcerpt": "Catalog tags: ornamental, tree, deciduous"
+              }
+            ]
+          },
+          "seasonalityResearchRequired": false,
+          "sourcePacket": "japanese-maple-p2-wave-1-proposal-v1"
+        }
+      },
+      "packetId": "japanese-maple-p2-wave-1-proposal-v1"
+    },
+    {
+      "slug": "kiwi",
+      "scientific": "Actinidia deliciosa",
+      "tags": [
+        "fruit",
+        "vine",
+        "climber",
+        "deciduous",
+        "support"
+      ],
+      "climateTraits": {
+        "frostSensitivity": "low",
+        "coldTolerance": "low",
+        "heatTolerance": "medium",
+        "sunNeeds": "full_sun",
+        "waterNeeds": "high",
+        "drainageNeeds": "high",
+        "needsWinterChill": true,
+        "floweringRequirements": "Reliable bloom requires appropriate winter dormancy/chill and protection of early young growth from spring frost.",
+        "fruitingRequirements": "Fuzzy kiwifruit needs roughly 225-240 frost-free days, full sun, and compatible pollination for reliable fruit production.",
+        "humidityTolerance": "medium",
+        "survivalVsThriveNotes": "Vine may grow in mild warm sites, but reliable fruiting depends on adequate winter chill and cross-pollination.",
+        "groupIds": [
+          "subtropical-fruiting-climber",
+          "support-dependent-plant",
+          "temperate-chill-fruit-tree"
+        ],
+        "needsReview": false,
+        "floweringEvidenceClass": "HEURISTIC_ASSERTION",
+        "reproductiveClimate": {
+          "contractVersion": "reproductive-climate-v1",
+          "flowering": {
+            "requiresCoolSeason": true,
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM",
+            "sourceIds": [
+              "osu-kiwifruit-home"
+            ],
+            "transformRef": "winter-chill-to-cool-season-v1@1.0.0",
+            "sourceExcerpt": "true After the winter cold or chilling requirement is satisfied and temperatures warm, buds break; fuzzy kiwifruit has a defined winter dormancy requirement."
+          },
+          "fruiting": {
+            "requiresCoolSeason": true,
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM",
+            "sourceIds": [
+              "osu-kiwifruit-home"
+            ],
+            "sourceExcerpt": "true After the winter cold or chilling requirement is satisfied and temperatures warm, buds break; fuzzy kiwifruit has a defined winter dormancy requirement.",
+            "requiresFrostFree": true,
+            "transformRefs": [
+              "winter-chill-to-cool-season-v1@1.0.0",
+              "explicit-frost-free-fruiting-requirement-v1@1.0.0"
+            ]
+          }
+        },
+        "traitEvidenceClasses": {
+          "frostSensitivity": "HEURISTIC_ASSERTION",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "HEURISTIC_ASSERTION",
+          "sunNeeds": "SOURCE_SUPPORTED",
+          "waterNeeds": "HEURISTIC_ASSERTION",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "needsWinterChill": "SOURCE_SUPPORTED",
+          "floweringRequirements": "HEURISTIC_ASSERTION",
+          "fruitingRequirements": "SOURCE_SUPPORTED",
+          "humidityTolerance": "HEURISTIC_ASSERTION",
+          "survivalVsThriveNotes": "HEURISTIC_ASSERTION",
+          "groupIds": "HEURISTIC_ASSERTION"
+        },
+        "traitProvenance": {
+          "frostSensitivity": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "osu-kiwifruit-home"
+            ],
+            "shortExcerpt": "Dormant fuzzy kiwifruit is cold hardy to about 0-10°F, while newly developing shoots are frost-sensitive; stage-specific injury is not promoted to whole-plant sensitivity.",
+            "status": "asserted"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-actinidia-deliciosa"
+            ],
+            "shortExcerpt": "USDA Plant Hardiness Zone: 7a through 9b.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "osu-kiwifruit-home"
+            ],
+            "shortExcerpt": "Fuzzy kiwifruit is adapted to warmer regions and needs a long frost-free growing season; heat tolerance retained as medium.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "osu-kiwifruit-home"
+            ],
+            "shortExcerpt": "Ideal environmental conditions include full sun exposure.",
+            "status": "asserted"
+          },
+          "waterNeeds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "osu-kiwifruit-home"
+            ],
+            "shortExcerpt": "Fertile soil with moderate water-holding capacity is recommended; vines require consistent growing-season moisture.",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "osu-kiwifruit-home"
+            ],
+            "shortExcerpt": "Kiwifruit vines are sensitive to poor drainage and roots can suffocate in waterlogged soil.",
+            "status": "asserted"
+          },
+          "needsWinterChill": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "osu-kiwifruit-home"
+            ],
+            "shortExcerpt": "After the winter cold or chilling requirement is satisfied and temperatures warm, buds break; fuzzy kiwifruit has a defined winter dormancy requirement.",
+            "status": "asserted"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "osu-kiwifruit-home"
+            ],
+            "shortExcerpt": "Kiwifruit break bud early; newly developing young shoots are sensitive to frost injury.",
+            "status": "asserted"
+          },
+          "fruitingRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "osu-kiwifruit-home"
+            ],
+            "shortExcerpt": "Actinidia deliciosa needs about 225 to 240 frost-free days; site selection favors full sun.",
+            "status": "asserted"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "survivalVsThriveNotes": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "groupIds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          }
+        },
+        "plantKnowledge": {
+          "plantKnowledgeContractVersion": "1.0.0",
+          "sources": [
+            {
+              "sourceId": "ncsu-actinidia-deliciosa",
+              "institution": "North Carolina State University Extension Gardener",
+              "publisher": "North Carolina State University Extension Gardener",
+              "title": "Actinidia deliciosa",
+              "url": "https://plants.ces.ncsu.edu/plants/actinidia-deliciosa/",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "osu-kiwifruit-home",
+              "institution": "Oregon State University Extension Service",
+              "publisher": "Oregon State University Extension Service",
+              "title": "Growing kiwifruit in your home garden",
+              "url": "https://extension.oregonstate.edu/catalog/em-9322-growing-kiwifruit-your-home-garden",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "cruvit-legacy-runtime-context",
+              "institution": "CRUVIT Legacy Catalog",
+              "publisher": "CRUVIT Legacy Catalog",
+              "title": "Existing CRUVIT runtime rule context",
+              "url": "urn:cruvit:legacy-runtime-context",
+              "authorityTier": "internal_legacy",
+              "verifiedAt": "2026-10-01"
+            }
+          ],
+          "warnings": [],
+          "importantNotes": [],
+          "regionalRestrictions": [],
+          "invasiveness": {},
+          "plantingRequirements": {},
+          "soilRequirements": {},
+          "maintenance": {},
+          "pestsAndDiseases": [],
+          "cultivarCaveats": {},
+          "toxicity": {},
+          "physicalHazards": {},
+          "allergenicity": {},
+          "harvestUseWarnings": {}
+        },
+        "designMetadata": {
+          "contractVersion": "design-metadata-v1",
+          "tags": [
+            "fruit",
+            "vine",
+            "climber",
+            "deciduous",
+            "support"
+          ],
+          "growth": null,
+          "matureSize": null,
+          "leafHabit": {
+            "state": "DECIDUOUS",
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "evidence": [
+              {
+                "field": "tags",
+                "state": "DECIDUOUS",
+                "evidenceClass": "SOURCE_SUPPORTED",
+                "sourceIds": [
+                  "osu-kiwifruit-home"
+                ],
+                "shortExcerpt": "Catalog tags: fruit, vine, climber, deciduous, support"
+              }
+            ]
+          },
+          "seasonalityResearchRequired": false,
+          "sourcePacket": "kiwi-p2-wave-1-proposal-v1"
+        }
+      },
+      "packetId": "kiwi-p2-wave-1-proposal-v1"
+    },
+    {
+      "slug": "lychee",
+      "scientific": "Litchi chinensis",
+      "tags": [
+        "fruit",
+        "tree",
+        "subtropical",
+        "edible"
+      ],
+      "climateTraits": {
+        "frostSensitivity": "high",
+        "coldTolerance": "very_low",
+        "heatTolerance": "medium",
+        "humidityTolerance": "high",
+        "sunNeeds": "full_sun",
+        "waterNeeds": "high",
+        "drainageNeeds": "high",
+        "floweringRequirements": "Reliable bloom benefits from a cooler, drier nonfreezing winter period.",
+        "fruitingRequirements": "Fruit production needs a cooler seasonal flowering signal followed by warm humid growth and consistent moisture.",
+        "survivalVsThriveNotes": "Warm frost-free conditions may allow survival, but thriving and reliable fruiting are much narrower than a generic subtropical label suggests.",
+        "groupIds": [
+          "humid-subtropical-fruit-tree"
+        ],
+        "hardBlockRules": [
+          "needs-cooler-drier-winter-for-fruit",
+          "no-small-container"
+        ],
+        "needsDrySeason": true,
+        "needsReview": false,
+        "floweringEvidenceClass": "SOURCE_SUPPORTED",
+        "reproductiveClimate": {
+          "contractVersion": "reproductive-climate-v1",
+          "fruiting": {
+            "summerHeatBand": "hot",
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM",
+            "sourceIds": [
+              "uf-ifas-lychee-home"
+            ],
+            "transformRef": "qualitative-summer-heat-band-v1@1.0.0",
+            "sourceExcerpt": "Fruit production needs a cooler seasonal flowering signal followed by warm humid growth and consistent moisture. Dry cool winter conditions support flowering, followed by hot humid summer fruit development."
+          }
+        },
+        "traitEvidenceClasses": {
+          "frostSensitivity": "HEURISTIC_ASSERTION",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "HEURISTIC_ASSERTION",
+          "humidityTolerance": "HEURISTIC_ASSERTION",
+          "sunNeeds": "SOURCE_SUPPORTED",
+          "waterNeeds": "SOURCE_SUPPORTED",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "floweringRequirements": "SOURCE_SUPPORTED",
+          "fruitingRequirements": "HEURISTIC_ASSERTION",
+          "survivalVsThriveNotes": "HEURISTIC_ASSERTION",
+          "groupIds": "HEURISTIC_ASSERTION",
+          "hardBlockRules": "HEURISTIC_ASSERTION",
+          "needsDrySeason": "HEURISTIC_ASSERTION"
+        },
+        "traitProvenance": {
+          "frostSensitivity": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uf-ifas-lychee-home"
+            ],
+            "shortExcerpt": "Young lychee trees are damaged by temperatures around 28–32°F; large trees can sustain extensive damage around 24–25°F.",
+            "status": "asserted"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "uf-ifas-lychee-tree"
+            ],
+            "shortExcerpt": "USDA hardiness zones 10 through 11.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uf-ifas-lychee-home"
+            ],
+            "shortExcerpt": "Warm-to-cool subtropical climate with hot humid summers supports growth, but flowering needs a cooler seasonal signal.",
+            "status": "asserted"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uf-ifas-lychee-home"
+            ],
+            "shortExcerpt": "Lychee is adapted to humid subtropical conditions and hot humid summer fruit growth.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "uf-ifas-lychee-tree"
+            ],
+            "shortExcerpt": "Easily grown in full sun.",
+            "status": "asserted"
+          },
+          "waterNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "uf-ifas-lychee-tree"
+            ],
+            "shortExcerpt": "Plants should receive regular watering.",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "uf-ifas-lychee-tree"
+            ],
+            "shortExcerpt": "Deep, fertile, well-drained soil is recommended.",
+            "status": "asserted"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "uf-ifas-lychee-home"
+            ],
+            "shortExcerpt": "Lychee performs in subtropical climates with a dry, cold, nonfreezing winter period.",
+            "status": "asserted"
+          },
+          "fruitingRequirements": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uf-ifas-lychee-home"
+            ],
+            "shortExcerpt": "Dry cool winter conditions support flowering, followed by hot humid summer fruit development.",
+            "status": "asserted"
+          },
+          "survivalVsThriveNotes": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "groupIds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "hardBlockRules": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "needsDrySeason": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          }
+        },
+        "plantKnowledge": {
+          "plantKnowledgeContractVersion": "1.0.0",
+          "sources": [
+            {
+              "sourceId": "uf-ifas-lychee-tree",
+              "institution": "University of Florida IFAS Extension",
+              "publisher": "University of Florida IFAS Extension",
+              "title": "Litchi chinensis: Lychee",
+              "url": "https://edis.ifas.ufl.edu/publication/ST364",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "uf-ifas-lychee-home",
+              "institution": "University of Florida IFAS Extension",
+              "publisher": "University of Florida IFAS Extension",
+              "title": "Lychee Growing in the Florida Home Landscape",
+              "url": "https://edis.ifas.ufl.edu/publication/MG051",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "cruvit-legacy-runtime-context",
+              "institution": "CRUVIT Legacy Catalog",
+              "publisher": "CRUVIT Legacy Catalog",
+              "title": "Existing CRUVIT runtime rule context",
+              "url": "urn:cruvit:legacy-runtime-context",
+              "authorityTier": "internal_legacy",
+              "verifiedAt": "2026-10-01"
+            }
+          ],
+          "warnings": [],
+          "importantNotes": [],
+          "regionalRestrictions": [],
+          "invasiveness": {},
+          "plantingRequirements": {},
+          "soilRequirements": {},
+          "maintenance": {},
+          "pestsAndDiseases": [],
+          "cultivarCaveats": {},
+          "toxicity": {},
+          "physicalHazards": {},
+          "allergenicity": {},
+          "harvestUseWarnings": {}
+        },
+        "designMetadata": {
+          "contractVersion": "design-metadata-v1",
+          "tags": [
+            "fruit",
+            "tree",
+            "subtropical",
+            "edible"
+          ],
+          "growth": null,
+          "matureSize": null,
+          "leafHabit": {
+            "state": "UNKNOWN",
+            "evidenceClass": "UNKNOWN",
+            "evidence": []
+          },
+          "seasonalityResearchRequired": true,
+          "sourcePacket": "lychee-p2-wave-2-proposal-v1"
+        }
+      },
+      "packetId": "lychee-p2-wave-2-proposal-v1"
+    },
+    {
+      "slug": "mandarin",
+      "scientific": "Citrus reticulata",
+      "tags": [
+        "fruit",
+        "citrus",
+        "tree",
+        "evergreen",
+        "edible"
+      ],
+      "climateTraits": {
+        "frostSensitivity": "high",
+        "coldTolerance": "very_low",
+        "heatTolerance": "medium",
+        "humidityTolerance": "medium",
+        "sunNeeds": "full_sun",
+        "waterNeeds": "medium",
+        "drainageNeeds": "high",
+        "floweringRequirements": "Spring flowering needs bright light and protection from damaging frost.",
+        "fruitingRequirements": "Reliable fruiting is cultivar-dependent and needs adequate warmth, light, moisture, and low freeze risk.",
+        "survivalVsThriveNotes": "Mandarins are somewhat forgiving citrus, but winter cold still reduces canopy quality and reliable fruiting.",
+        "groupIds": [
+          "warm-citrus-fruit-tree"
+        ],
+        "warningFlags": [
+          "thorny"
+        ],
+        "needsReview": false,
+        "floweringEvidenceClass": "HEURISTIC_ASSERTION",
+        "traitEvidenceClasses": {
+          "frostSensitivity": "HEURISTIC_ASSERTION",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "HEURISTIC_ASSERTION",
+          "humidityTolerance": "HEURISTIC_ASSERTION",
+          "sunNeeds": "HEURISTIC_ASSERTION",
+          "waterNeeds": "SOURCE_SUPPORTED",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "floweringRequirements": "HEURISTIC_ASSERTION",
+          "fruitingRequirements": "HEURISTIC_ASSERTION",
+          "survivalVsThriveNotes": "HEURISTIC_ASSERTION",
+          "groupIds": "HEURISTIC_ASSERTION",
+          "warningFlags": "HEURISTIC_ASSERTION"
+        },
+        "traitProvenance": {
+          "frostSensitivity": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uf-ifas-cold-hardy-citrus"
+            ],
+            "shortExcerpt": "Cold hardiness varies widely among mandarins; cold-hardy selections still require cultivar/rootstock-specific interpretation.",
+            "status": "asserted"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "rhs-mandarin-group"
+            ],
+            "shortExcerpt": "RHS Mandarin Group hardiness H2: low-temperature tolerant but not surviving freezing.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "rhs-mandarin-group"
+            ],
+            "shortExcerpt": "Best grown in a cool or temperate conservatory/greenhouse and moved outdoors in summer; heat tolerance retained as medium.",
+            "status": "asserted"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "rhs-mandarin-group"
+            ],
+            "shortExcerpt": "Moist but well-drained culture supports a moderate humidity stance.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "rhs-mandarin-group"
+            ],
+            "shortExcerpt": "Cultivation calls for full light with shade from hot sun under glass.",
+            "status": "asserted"
+          },
+          "waterNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "rhs-mandarin-group"
+            ],
+            "shortExcerpt": "Water freely during spring/summer growth and sparingly in winter.",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "rhs-mandarin-group"
+            ],
+            "shortExcerpt": "Loam-based compost with grit; moist but well-drained growing conditions.",
+            "status": "asserted"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "rhs-mandarin-group"
+            ],
+            "shortExcerpt": "Fragrant white flowers are borne in spring; cultivation is sheltered and nonfreezing.",
+            "status": "asserted"
+          },
+          "fruitingRequirements": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "rhs-mandarin-group",
+              "uf-ifas-cold-hardy-citrus"
+            ],
+            "shortExcerpt": "Mandarins differ in cold hardiness; fruit follows spring flowering under protected cultivation.",
+            "status": "asserted"
+          },
+          "survivalVsThriveNotes": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "groupIds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "warningFlags": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          }
+        },
+        "plantKnowledge": {
+          "plantKnowledgeContractVersion": "1.0.0",
+          "sources": [
+            {
+              "sourceId": "rhs-mandarin-group",
+              "institution": "Royal Horticultural Society",
+              "publisher": "Royal Horticultural Society",
+              "title": "Citrus reticulata Mandarin Group (F)",
+              "url": "https://www.rhs.org.uk/plants/105707/citrus-reticulata-mandarin-group-f/details",
+              "authorityTier": "horticultural_society",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "uf-ifas-cold-hardy-citrus",
+              "institution": "University of Florida IFAS Extension",
+              "publisher": "University of Florida IFAS Extension",
+              "title": "Cold Hardy Citrus",
+              "url": "https://ufdcimages.uflib.ufl.edu/IR/00/00/46/24/00001/CH02900.PDF",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "cruvit-legacy-runtime-context",
+              "institution": "CRUVIT Legacy Catalog",
+              "publisher": "CRUVIT Legacy Catalog",
+              "title": "Existing CRUVIT runtime rule context",
+              "url": "urn:cruvit:legacy-runtime-context",
+              "authorityTier": "internal_legacy",
+              "verifiedAt": "2026-10-01"
+            }
+          ],
+          "warnings": [],
+          "importantNotes": [],
+          "regionalRestrictions": [],
+          "invasiveness": {},
+          "plantingRequirements": {},
+          "soilRequirements": {},
+          "maintenance": {},
+          "pestsAndDiseases": [],
+          "cultivarCaveats": {},
+          "toxicity": {},
+          "physicalHazards": {},
+          "allergenicity": {},
+          "harvestUseWarnings": {}
+        },
+        "designMetadata": {
+          "contractVersion": "design-metadata-v1",
+          "tags": [
+            "fruit",
+            "citrus",
+            "tree",
+            "evergreen",
+            "edible"
+          ],
+          "growth": null,
+          "matureSize": null,
+          "leafHabit": {
+            "state": "UNKNOWN",
+            "evidenceClass": "UNKNOWN",
+            "evidence": [
+              {
+                "field": "tags",
+                "state": "EVERGREEN",
+                "evidenceClass": "HEURISTIC_ASSERTION",
+                "sourceIds": [
+                  "rhs-mandarin-group"
+                ],
+                "shortExcerpt": "Catalog tags: fruit, citrus, tree, evergreen, edible"
+              }
+            ]
+          },
+          "seasonalityResearchRequired": true,
+          "sourcePacket": "mandarin-p2-wave-2-proposal-v1"
+        }
+      },
+      "packetId": "mandarin-p2-wave-2-proposal-v1"
+    },
+    {
+      "slug": "passionfruit",
+      "scientific": "Passiflora edulis",
+      "tags": [
+        "fruit",
+        "vine",
+        "climber",
+        "edible",
+        "support"
+      ],
+      "climateTraits": {
+        "frostSensitivity": "very_high",
+        "coldTolerance": "very_low",
+        "heatTolerance": "medium",
+        "humidityTolerance": "medium",
+        "sunNeeds": "full_sun",
+        "waterNeeds": "medium",
+        "drainageNeeds": "high",
+        "floweringRequirements": "Warm bright conditions, full sun, support, and protection from cold favor flowering.",
+        "fruitingRequirements": "Reliable fruiting needs warmth, full sun, regular water, trellis support, and frost protection.",
+        "survivalVsThriveNotes": "Needs a fence, wall, pole, trellis, or similar support instead of open-lawn placement.",
+        "groupIds": [
+          "subtropical-fruiting-climber",
+          "support-dependent-plant"
+        ],
+        "hardBlockRules": [
+          "needs-support"
+        ],
+        "needsReview": false,
+        "floweringEvidenceClass": "HEURISTIC_ASSERTION",
+        "traitEvidenceClasses": {
+          "frostSensitivity": "HEURISTIC_ASSERTION",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "HEURISTIC_ASSERTION",
+          "humidityTolerance": "HEURISTIC_ASSERTION",
+          "sunNeeds": "SOURCE_SUPPORTED",
+          "waterNeeds": "HEURISTIC_ASSERTION",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "floweringRequirements": "HEURISTIC_ASSERTION",
+          "fruitingRequirements": "SOURCE_SUPPORTED",
+          "survivalVsThriveNotes": "HEURISTIC_ASSERTION",
+          "groupIds": "HEURISTIC_ASSERTION",
+          "hardBlockRules": "HEURISTIC_ASSERTION"
+        },
+        "traitProvenance": {
+          "frostSensitivity": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uf-ifas-passionfruit"
+            ],
+            "shortExcerpt": "Young plants should be planted after frost risk; cold below about 50°F is a management concern and freezing exposure requires protection.",
+            "status": "asserted"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "rhs-passiflora-edulis"
+            ],
+            "shortExcerpt": "RHS hardiness H1A for Passiflora edulis.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uf-ifas-passionfruit"
+            ],
+            "shortExcerpt": "Best growth temperatures are warm; planting guidance avoids temperatures above about 90°F during establishment.",
+            "status": "asserted"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uf-ifas-passionfruit"
+            ],
+            "shortExcerpt": "Florida culture supports moderate humid-condition tolerance without a numeric humidity threshold.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "uf-ifas-passionfruit"
+            ],
+            "shortExcerpt": "Passion fruit grows best in full sun or where vines can reach full sun after climbing.",
+            "status": "asserted"
+          },
+          "waterNeeds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uf-ifas-passionfruit"
+            ],
+            "shortExcerpt": "Irrigation is needed during dry periods; moderate drought tolerance is reported in landscape guidance.",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "uf-ifas-passionfruit"
+            ],
+            "shortExcerpt": "Passion fruit vines should be planted in well-drained soils.",
+            "status": "asserted"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uf-ifas-passionfruit"
+            ],
+            "shortExcerpt": "Full sun is recommended; cold/frost exposure is avoided for young plants.",
+            "status": "asserted"
+          },
+          "fruitingRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "uf-ifas-passionfruit"
+            ],
+            "shortExcerpt": "Full sun, well-drained soil and irrigation are recommended; fruit ripens about 70–80 days after pollination.",
+            "status": "asserted"
+          },
+          "survivalVsThriveNotes": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "groupIds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "hardBlockRules": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          }
+        },
+        "plantKnowledge": {
+          "plantKnowledgeContractVersion": "1.0.0",
+          "sources": [
+            {
+              "sourceId": "rhs-passiflora-edulis",
+              "institution": "Royal Horticultural Society",
+              "publisher": "Royal Horticultural Society",
+              "title": "Passiflora edulis (F) | purple granadilla",
+              "url": "https://www.rhs.org.uk/plants/69583/passiflora-edulis-f/details",
+              "authorityTier": "horticultural_society",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "uf-ifas-passionfruit",
+              "institution": "University of Florida IFAS Extension",
+              "publisher": "University of Florida IFAS Extension",
+              "title": "The Passion Fruit in Florida",
+              "url": "https://edis.ifas.ufl.edu/publication/HS1406",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "cruvit-legacy-runtime-context",
+              "institution": "CRUVIT Legacy Catalog",
+              "publisher": "CRUVIT Legacy Catalog",
+              "title": "Existing CRUVIT runtime rule context",
+              "url": "urn:cruvit:legacy-runtime-context",
+              "authorityTier": "internal_legacy",
+              "verifiedAt": "2026-10-01"
+            }
+          ],
+          "warnings": [],
+          "importantNotes": [],
+          "regionalRestrictions": [],
+          "invasiveness": {},
+          "plantingRequirements": {},
+          "soilRequirements": {},
+          "maintenance": {},
+          "pestsAndDiseases": [],
+          "cultivarCaveats": {},
+          "toxicity": {},
+          "physicalHazards": {},
+          "allergenicity": {},
+          "harvestUseWarnings": {}
+        },
+        "designMetadata": {
+          "contractVersion": "design-metadata-v1",
+          "tags": [
+            "fruit",
+            "vine",
+            "climber",
+            "edible",
+            "support"
+          ],
+          "growth": null,
+          "matureSize": null,
+          "leafHabit": {
+            "state": "UNKNOWN",
+            "evidenceClass": "UNKNOWN",
+            "evidence": []
+          },
+          "seasonalityResearchRequired": true,
+          "sourcePacket": "passionfruit-p2-wave-2-proposal-v1"
+        }
+      },
+      "packetId": "passionfruit-p2-wave-2-proposal-v1"
+    },
+    {
+      "slug": "pistachio",
+      "scientific": "Pistacia vera",
+      "tags": [
+        "nut",
+        "tree",
+        "deciduous",
+        "orchard"
+      ],
+      "climateTraits": {
+        "frostSensitivity": "medium",
+        "coldTolerance": "high",
+        "heatTolerance": "high",
+        "humidityTolerance": "low",
+        "sunNeeds": "full_sun",
+        "waterNeeds": "medium",
+        "drainageNeeds": "high",
+        "needsWinterChill": true,
+        "floweringRequirements": "High winter chilling is required; male and female trees are needed for pollination.",
+        "fruitingRequirements": "Nut production needs winter chill, pollination, and warm dry summer ripening conditions.",
+        "survivalVsThriveNotes": "Reliable nut production needs winter chill, hot dry ripening season and a compatible pollinator tree.",
+        "groupIds": [
+          "warm-dry-mediterranean-fruit",
+          "temperate-chill-fruit-tree"
+        ],
+        "needsReview": false,
+        "floweringEvidenceClass": "SOURCE_SUPPORTED",
+        "reproductiveClimate": {
+          "contractVersion": "reproductive-climate-v1",
+          "flowering": {
+            "requiresCoolSeason": true,
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM",
+            "sourceIds": [
+              "ucanr-pistachio-calendar"
+            ],
+            "transformRef": "winter-chill-to-cool-season-v1@1.0.0",
+            "sourceExcerpt": "true About 850 hours below 45°F are required for pistachio flowering and production."
+          },
+          "fruiting": {
+            "requiresCoolSeason": true,
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM",
+            "sourceIds": [
+              "ucanr-pistachio-calendar"
+            ],
+            "transformRef": "winter-chill-to-cool-season-v1@1.0.0",
+            "sourceExcerpt": "true About 850 hours below 45°F are required for pistachio flowering and production."
+          }
+        },
+        "traitEvidenceClasses": {
+          "frostSensitivity": "HEURISTIC_ASSERTION",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "SOURCE_SUPPORTED",
+          "humidityTolerance": "HEURISTIC_ASSERTION",
+          "sunNeeds": "HEURISTIC_ASSERTION",
+          "waterNeeds": "HEURISTIC_ASSERTION",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "needsWinterChill": "SOURCE_SUPPORTED",
+          "floweringRequirements": "SOURCE_SUPPORTED",
+          "fruitingRequirements": "SOURCE_SUPPORTED",
+          "survivalVsThriveNotes": "HEURISTIC_ASSERTION",
+          "groupIds": "HEURISTIC_ASSERTION"
+        },
+        "traitProvenance": {
+          "frostSensitivity": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ucanr-pistachio-calendar"
+            ],
+            "shortExcerpt": "Trees tolerate short winter cold near 27°F, while leaves and flowers are injured by early fall or spring frost; whole-plant sensitivity retained as medium.",
+            "status": "asserted"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ucanr-pistachio-dormancy-cold",
+              "usu-pistachio-treebrowser"
+            ],
+            "shortExcerpt": "UC notes that increasingly dormant Pistacia vera seedlings can survive about 10°F and colder; USU lists Pistacia vera in USDA zones 4-9 and reports established fruiting trees in Logan, Utah.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ucanr-pistachio-calendar"
+            ],
+            "shortExcerpt": "Warm, dry weather from July to early September is important for proper kernel maturation.",
+            "status": "asserted"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ucanr-pistachio-calendar"
+            ],
+            "shortExcerpt": "Heavy rainfall during pollination reduces fruit set and promotes wet-weather diseases.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ucanr-pistachio-calendar"
+            ],
+            "shortExcerpt": "Pistachio orchard culture is a full-sun nut-tree system; hot dry ripening weather is required.",
+            "status": "asserted"
+          },
+          "waterNeeds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ucanr-pistachio-calendar"
+            ],
+            "shortExcerpt": "Established trees tolerate drought, but quality kernel production requires substantial summer irrigation.",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ucanr-pistachio-calendar"
+            ],
+            "shortExcerpt": "Deep, light- to medium-textured, well-drained soils are preferred; wet soil promotes root/crown disease.",
+            "status": "asserted"
+          },
+          "needsWinterChill": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ucanr-pistachio-calendar"
+            ],
+            "shortExcerpt": "About 850 hours below 45°F are required for pistachio flowering and production.",
+            "status": "asserted"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ucanr-pistachio-calendar"
+            ],
+            "shortExcerpt": "About 850 hours below 45°F are required; male and female flowers occur on separate trees.",
+            "status": "asserted"
+          },
+          "fruitingRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ucanr-pistachio-calendar"
+            ],
+            "shortExcerpt": "High chilling plus warm dry July–early September weather are important for kernel maturation.",
+            "status": "asserted"
+          },
+          "survivalVsThriveNotes": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "groupIds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          }
+        },
+        "plantKnowledge": {
+          "plantKnowledgeContractVersion": "1.0.0",
+          "sources": [
+            {
+              "sourceId": "ucanr-pistachio-calendar",
+              "institution": "University of California Cooperative Extension",
+              "publisher": "University of California Cooperative Extension",
+              "title": "Pistachio: Calendar of Operations for Home Gardeners",
+              "url": "https://ucanr.edu/sites/default/files/2010-06/18997.pdf",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "ucanr-pistachio-climate",
+              "institution": "University of California Cooperative Extension",
+              "publisher": "University of California Cooperative Extension",
+              "title": "California Pistachio Research: Climate & Cultivars",
+              "url": "https://ucanr.edu/site/california-pistachio-research/climate-cultivars",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "ucanr-pistachio-dormancy-cold",
+              "institution": "University of California Cooperative Extension",
+              "publisher": "University of California Cooperative Extension",
+              "title": "Pistachio Notes: winter dormancy and cold survival",
+              "url": "https://ucanr.edu/sites/default/files/2023-02/Pistachio_Notes_Newsletter96633.pdf",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "usu-pistachio-treebrowser",
+              "institution": "Utah State University Extension",
+              "publisher": "Utah State University Extension",
+              "title": "Pistachio | TreeBrowser",
+              "url": "https://extension.usu.edu/treebrowser/catalog/pistachio",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "cruvit-legacy-runtime-context",
+              "institution": "CRUVIT Legacy Catalog",
+              "publisher": "CRUVIT Legacy Catalog",
+              "title": "Existing CRUVIT runtime rule context",
+              "url": "urn:cruvit:legacy-runtime-context",
+              "authorityTier": "internal_legacy",
+              "verifiedAt": "2026-10-01"
+            }
+          ],
+          "warnings": [],
+          "importantNotes": [],
+          "regionalRestrictions": [],
+          "invasiveness": {},
+          "plantingRequirements": {},
+          "soilRequirements": {},
+          "maintenance": {},
+          "pestsAndDiseases": [],
+          "cultivarCaveats": {},
+          "toxicity": {},
+          "physicalHazards": {},
+          "allergenicity": {},
+          "harvestUseWarnings": {}
+        },
+        "designMetadata": {
+          "contractVersion": "design-metadata-v1",
+          "tags": [
+            "nut",
+            "tree",
+            "deciduous",
+            "orchard"
+          ],
+          "growth": null,
+          "matureSize": null,
+          "leafHabit": {
+            "state": "UNKNOWN",
+            "evidenceClass": "UNKNOWN",
+            "evidence": [
+              {
+                "field": "tags",
+                "state": "DECIDUOUS",
+                "evidenceClass": "HEURISTIC_ASSERTION",
+                "sourceIds": [
+                  "ucanr-pistachio-climate"
+                ],
+                "shortExcerpt": "Catalog tags: nut, tree, deciduous, orchard"
+              }
+            ]
+          },
+          "seasonalityResearchRequired": true,
+          "sourcePacket": "pistachio-p2-wave-2-proposal-v1"
+        }
+      },
+      "packetId": "pistachio-p2-wave-2-proposal-v1"
+    },
+    {
+      "slug": "plumeria",
+      "scientific": "Plumeria rubra",
+      "tags": [
+        "ornamental",
+        "tropical",
+        "fragrant",
+        "deciduous"
+      ],
+      "climateTraits": {
+        "frostSensitivity": "very_high",
+        "coldTolerance": "very_low",
+        "heatTolerance": "high",
+        "humidityTolerance": "medium",
+        "sunNeeds": "full_sun",
+        "waterNeeds": "low",
+        "drainageNeeds": "high",
+        "floweringRequirements": "Warm frost-free conditions with full sun support flowering.",
+        "needsWinterChill": false,
+        "survivalVsThriveNotes": "Can look excellent in warm sheltered gardens; even light frost can defoliate or damage branches.",
+        "groupIds": [
+          "frost-sensitive-ornamental",
+          "warm-climate-ornamental"
+        ],
+        "needsReview": false,
+        "floweringEvidenceClass": "HEURISTIC_ASSERTION",
+        "traitEvidenceClasses": {
+          "frostSensitivity": "SOURCE_SUPPORTED",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "HEURISTIC_ASSERTION",
+          "humidityTolerance": "HEURISTIC_ASSERTION",
+          "sunNeeds": "SOURCE_SUPPORTED",
+          "waterNeeds": "HEURISTIC_ASSERTION",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "floweringRequirements": "HEURISTIC_ASSERTION",
+          "needsWinterChill": "HEURISTIC_ASSERTION",
+          "survivalVsThriveNotes": "HEURISTIC_ASSERTION",
+          "groupIds": "HEURISTIC_ASSERTION"
+        },
+        "traitProvenance": {
+          "frostSensitivity": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "uf-ifas-plumeria"
+            ],
+            "shortExcerpt": "Frangipani is very susceptible to freezing temperatures and should be protected from frost.",
+            "status": "asserted"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "rhs-plumeria-rubra"
+            ],
+            "shortExcerpt": "RHS hardiness H1B for Plumeria rubra.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uf-ifas-plumeria"
+            ],
+            "shortExcerpt": "Fast growth in full sun and tropical/subtropical landscape use support high heat tolerance.",
+            "status": "asserted"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uf-ifas-plumeria"
+            ],
+            "shortExcerpt": "No strong humidity threshold is sourced; retained as a moderate heuristic.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "uf-ifas-plumeria"
+            ],
+            "shortExcerpt": "Plants grow quickly in full sun.",
+            "status": "asserted"
+          },
+          "waterNeeds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uf-ifas-plumeria"
+            ],
+            "shortExcerpt": "Frangipani is fairly drought tolerant.",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "uf-ifas-plumeria"
+            ],
+            "shortExcerpt": "Plants grow on a variety of well-drained soils.",
+            "status": "asserted"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "uf-ifas-plumeria"
+            ],
+            "shortExcerpt": "Plumeria flowers from warm-season branch tips and is very susceptible to freezing temperatures.",
+            "status": "asserted"
+          },
+          "needsWinterChill": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "survivalVsThriveNotes": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          },
+          "groupIds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "cruvit-legacy-runtime-context"
+            ],
+            "shortExcerpt": "Existing CRUVIT runtime rule context preserved unchanged for E2E continuity; pending independent source validation.",
+            "status": "asserted"
+          }
+        },
+        "plantKnowledge": {
+          "plantKnowledgeContractVersion": "1.0.0",
+          "sources": [
+            {
+              "sourceId": "uf-ifas-plumeria",
+              "institution": "University of Florida IFAS Extension",
+              "publisher": "University of Florida IFAS Extension",
+              "title": "Plumeria rubra -- Frangipani",
+              "url": "https://hort.ifas.ufl.edu/trees/PLURUBA.pdf",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "rhs-plumeria-rubra",
+              "institution": "Royal Horticultural Society",
+              "publisher": "Royal Horticultural Society",
+              "title": "Plumeria rubra | frangipani",
+              "url": "https://www.rhs.org.uk/plants/94126/plumeria-rubra/details",
+              "authorityTier": "horticultural_society",
+              "verifiedAt": "2026-10-01"
+            },
+            {
+              "sourceId": "cruvit-legacy-runtime-context",
+              "institution": "CRUVIT Legacy Catalog",
+              "publisher": "CRUVIT Legacy Catalog",
+              "title": "Existing CRUVIT runtime rule context",
+              "url": "urn:cruvit:legacy-runtime-context",
+              "authorityTier": "internal_legacy",
+              "verifiedAt": "2026-10-01"
+            }
+          ],
+          "warnings": [],
+          "importantNotes": [],
+          "regionalRestrictions": [],
+          "invasiveness": {},
+          "plantingRequirements": {},
+          "soilRequirements": {},
+          "maintenance": {},
+          "pestsAndDiseases": [],
+          "cultivarCaveats": {},
+          "toxicity": {},
+          "physicalHazards": {},
+          "allergenicity": {},
+          "harvestUseWarnings": {}
+        },
+        "designMetadata": {
+          "contractVersion": "design-metadata-v1",
+          "tags": [
+            "ornamental",
+            "tropical",
+            "fragrant",
+            "deciduous"
+          ],
+          "growth": null,
+          "matureSize": null,
+          "leafHabit": {
+            "state": "DECIDUOUS",
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "evidence": [
+              {
+                "field": "tags",
+                "state": "DECIDUOUS",
+                "evidenceClass": "SOURCE_SUPPORTED",
+                "sourceIds": [
+                  "rhs-plumeria-rubra"
+                ],
+                "shortExcerpt": "Catalog tags: ornamental, tropical, fragrant, deciduous"
+              }
+            ]
+          },
+          "seasonalityResearchRequired": false,
+          "sourcePacket": "plumeria-p2-wave-2-proposal-v1"
+        }
+      },
+      "packetId": "plumeria-p2-wave-2-proposal-v1"
+    },
+    {
+      "slug": "pomegranate",
+      "scientific": "Punica granatum",
+      "tags": [
+        "mediterranean",
+        "fruit",
+        "shrub",
+        "heat-tolerant"
+      ],
+      "climateTraits": {
+        "groupIds": [
+          "mediterranean-fruit"
+        ],
+        "frostSensitivity": "high",
+        "coldTolerance": "low",
+        "heatTolerance": "high",
+        "waterNeeds": "low",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "high",
+        "needsWinterChill": false,
+        "floweringRequirements": "Showy orange-red flowers in late spring to summer.",
+        "fruitingRequirements": "Edible leathery berries with arils; best set in hot summers.",
+        "needsReview": false,
+        "floweringEvidenceClass": "SOURCE_SUPPORTED",
+        "reproductiveBiology": {
+          "self_fertile": true
+        },
+        "reproductiveClimate": {
+          "contractVersion": "reproductive-climate-v1",
+          "fruiting": {
+            "summerHeatBand": "hot",
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-punica-granatum"
+            ],
+            "sourceExcerpt": "Best fruit in hot, dry summers; zones to 10b.",
+            "transformRef": "qualitative summer-heat phrase → controlled CRUVIT summerHeatBand=hot"
+          }
+        },
+        "traitEvidenceClasses": {
+          "groupIds": "HEURISTIC_ASSERTION",
+          "frostSensitivity": "SOURCE_SUPPORTED",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "SOURCE_SUPPORTED",
+          "humidityTolerance": "UNKNOWN",
+          "waterNeeds": "SOURCE_SUPPORTED",
+          "sunNeeds": "SOURCE_SUPPORTED",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "needsWinterChill": "HEURISTIC_ASSERTION",
+          "floweringRequirements": "SOURCE_SUPPORTED",
+          "fruitingRequirements": "SOURCE_SUPPORTED",
+          "reproductiveClimate.fruiting.summerHeatBand": "HEURISTIC_ASSERTION",
+          "reproductive.self_fertile": "HEURISTIC_ASSERTION"
+        },
+        "traitProvenance": {
+          "groupIds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-punica-granatum"
+            ],
+            "shortExcerpt": "Structural groupIds: mediterranean-fruit",
+            "status": "asserted"
+          },
+          "frostSensitivity": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-punica-granatum"
+            ],
+            "shortExcerpt": "USDA Plant Hardiness Zone: 7a–10b; damaged by hard freezes.",
+            "status": "asserted"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-punica-granatum"
+            ],
+            "shortExcerpt": "USDA Plant Hardiness Zone: 7a–10b.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-punica-granatum"
+            ],
+            "shortExcerpt": "Best fruit in hot, dry summers; zones to 10b.",
+            "status": "asserted"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "UNKNOWN",
+            "sourceIds": [
+              "ncsu-punica-granatum"
+            ],
+            "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+            "status": "unknown"
+          },
+          "waterNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-punica-granatum"
+            ],
+            "shortExcerpt": "Soil Drainage: Good Drainage; drought-tolerant when established.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-punica-granatum"
+            ],
+            "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-punica-granatum"
+            ],
+            "shortExcerpt": "Soil Drainage: Good Drainage.",
+            "status": "asserted"
+          },
+          "needsWinterChill": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-punica-granatum"
+            ],
+            "shortExcerpt": "Warm-climate deciduous shrub; no chill-hour figure published.",
+            "status": "asserted"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-punica-granatum"
+            ],
+            "shortExcerpt": "Orange-red flowers bloom in late spring to summer.",
+            "status": "asserted"
+          },
+          "fruitingRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-punica-granatum"
+            ],
+            "shortExcerpt": "Edible fruit with juicy arils ripens in fall.",
+            "status": "asserted"
+          },
+          "reproductiveClimate.fruiting.summerHeatBand": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-punica-granatum"
+            ],
+            "shortExcerpt": "Best fruit in hot, dry summers; zones to 10b.",
+            "status": "asserted"
+          },
+          "reproductive.self_fertile": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-punica-granatum"
+            ],
+            "shortExcerpt": "Most pomegranates self-fruitful; cross-pollination can improve yield — not stated on NCSU.",
+            "status": "asserted"
+          }
+        },
+        "plantKnowledge": {
+          "plantKnowledgeContractVersion": "1.0.0",
+          "sources": [
+            {
+              "sourceId": "ncsu-punica-granatum",
+              "institution": "North Carolina State University Extension Gardener",
+              "publisher": "North Carolina State University Extension Gardener",
+              "title": "Punica granatum (Pomegranate)",
+              "url": "https://plants.ces.ncsu.edu/plants/punica-granatum/",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-08-31"
+            }
+          ],
+          "warnings": [],
+          "importantNotes": [],
+          "regionalRestrictions": [],
+          "invasiveness": {},
+          "plantingRequirements": {},
+          "soilRequirements": {},
+          "maintenance": {},
+          "pestsAndDiseases": [],
+          "cultivarCaveats": {},
+          "toxicity": {},
+          "physicalHazards": {},
+          "allergenicity": {},
+          "harvestUseWarnings": {}
+        },
+        "designMetadata": {
+          "contractVersion": "design-metadata-v1",
+          "tags": [
+            "mediterranean",
+            "fruit",
+            "shrub",
+            "heat-tolerant"
+          ],
+          "growth": "Woody landscape plant",
+          "matureSize": null,
+          "leafHabit": {
+            "state": "UNKNOWN",
+            "evidenceClass": "UNKNOWN",
+            "evidence": [
+              {
+                "field": "needsWinterChill",
+                "state": "DECIDUOUS",
+                "evidenceClass": "HEURISTIC_ASSERTION",
+                "sourceIds": [
+                  "ncsu-punica-granatum"
+                ],
+                "shortExcerpt": "Warm-climate deciduous shrub; no chill-hour figure published."
+              }
+            ]
+          },
+          "seasonalityResearchRequired": true,
+          "sourcePacket": "pomegranate-bulk-batch-3-v1"
+        }
+      },
+      "packetId": "pomegranate-bulk-batch-3-v1"
+    },
+    {
+      "slug": "apple",
+      "scientific": "Malus domestica",
+      "tags": [
+        "temperate",
+        "fruit",
+        "tree",
+        "chill"
+      ],
+      "climateTraits": {
+        "groupIds": [
+          "temperate-chill-fruit-tree"
+        ],
+        "frostSensitivity": "medium",
+        "coldTolerance": "high",
+        "heatTolerance": "medium",
+        "humidityTolerance": "medium",
+        "waterNeeds": "medium",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "high",
+        "needsWinterChill": true,
+        "floweringRequirements": "White to pink flowers in spring on previous-season wood.",
+        "fruitingRequirements": "Edible pomes ripen mid-summer to autumn depending on cultivar.",
+        "needsReview": false,
+        "floweringEvidenceClass": "SOURCE_SUPPORTED",
+        "reproductiveBiology": {
+          "requires_pollinator": true,
+          "cultivar_dependency": true
+        },
+        "reproductiveClimate": {
+          "contractVersion": "reproductive-climate-v1",
+          "flowering": {
+            "requiresCoolSeason": true,
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM",
+            "sourceIds": [
+              "ncsu-malus-domestica"
+            ],
+            "transformRef": "winter-chill-to-cool-season-v1@1.0.0",
+            "sourceExcerpt": "true Temperate deciduous fruit tree flowering in spring after dormancy; chill hours not quantified on page."
+          },
+          "fruiting": {
+            "requiresCoolSeason": true,
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM",
+            "sourceIds": [
+              "ncsu-malus-domestica"
+            ],
+            "transformRef": "winter-chill-to-cool-season-v1@1.0.0",
+            "sourceExcerpt": "true Temperate deciduous fruit tree flowering in spring after dormancy; chill hours not quantified on page."
+          }
+        },
+        "traitEvidenceClasses": {
+          "groupIds": "HEURISTIC_ASSERTION",
+          "frostSensitivity": "SOURCE_SUPPORTED",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "HEURISTIC_ASSERTION",
+          "humidityTolerance": "HEURISTIC_ASSERTION",
+          "waterNeeds": "SOURCE_SUPPORTED",
+          "sunNeeds": "SOURCE_SUPPORTED",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "needsWinterChill": "HEURISTIC_ASSERTION",
+          "floweringRequirements": "SOURCE_SUPPORTED",
+          "fruitingRequirements": "SOURCE_SUPPORTED",
+          "reproductive.requires_pollinator": "HEURISTIC_ASSERTION",
+          "reproductive.cultivar_dependency": "HEURISTIC_ASSERTION"
+        },
+        "traitProvenance": {
+          "groupIds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-malus-domestica"
+            ],
+            "shortExcerpt": "Structural groupIds: temperate-chill-fruit-tree",
+            "status": "asserted"
+          },
+          "frostSensitivity": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-malus-domestica"
+            ],
+            "shortExcerpt": "USDA Plant Hardiness Zone: 3a–8b; spring blossoms are frost-sensitive.",
+            "status": "asserted"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-malus-domestica"
+            ],
+            "shortExcerpt": "USDA Plant Hardiness Zone: 3a, 3b, 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-malus-domestica"
+            ],
+            "shortExcerpt": "Zones listed to 8b; no heat-mortality rating published on NCSU page.",
+            "status": "asserted"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ucipm-apple-scab-humidity"
+            ],
+            "shortExcerpt": "UC IPM identifies wet periods, temperature and relative humidity as important drivers of apple scab infection.",
+            "status": "asserted"
+          },
+          "waterNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-malus-domestica"
+            ],
+            "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-malus-domestica"
+            ],
+            "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-malus-domestica"
+            ],
+            "shortExcerpt": "Soil Drainage: Good Drainage.",
+            "status": "asserted"
+          },
+          "needsWinterChill": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-malus-domestica"
+            ],
+            "shortExcerpt": "Temperate deciduous fruit tree flowering in spring after dormancy; chill hours not quantified on page.",
+            "status": "asserted"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-malus-domestica"
+            ],
+            "shortExcerpt": "Showy white to pink flowers appear in spring.",
+            "status": "asserted"
+          },
+          "fruitingRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-malus-domestica"
+            ],
+            "shortExcerpt": "Edible fruit (pome) ripens in summer to fall.",
+            "status": "asserted"
+          },
+          "reproductive.requires_pollinator": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-malus-domestica"
+            ],
+            "shortExcerpt": "Most dessert apple cultivars need a compatible pollenizer; NCSU page does not state pollination type.",
+            "status": "asserted"
+          },
+          "reproductive.cultivar_dependency": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-malus-domestica"
+            ],
+            "shortExcerpt": "Pollination and chill needs vary strongly by cultivar.",
+            "status": "asserted"
+          }
+        },
+        "plantKnowledge": {
+          "plantKnowledgeContractVersion": "1.0.0",
+          "sources": [
+            {
+              "sourceId": "ncsu-malus-domestica",
+              "institution": "North Carolina State University Extension Gardener",
+              "publisher": "North Carolina State University Extension Gardener",
+              "title": "Malus domestica (Apple)",
+              "url": "https://plants.ces.ncsu.edu/plants/malus-domestica/",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-08-31"
+            },
+            {
+              "sourceId": "ucipm-apple-scab-humidity",
+              "institution": "University of California Statewide Integrated Pest Management Program",
+              "publisher": "University of California Agriculture and Natural Resources",
+              "title": "Apple Scab / Apple / Agriculture: Pest Management Guidelines",
+              "url": "https://ipm.ucanr.edu/agriculture/apple/apple-scab/",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-09-25"
+            }
+          ],
+          "warnings": [],
+          "importantNotes": [],
+          "regionalRestrictions": [],
+          "invasiveness": {},
+          "plantingRequirements": {},
+          "soilRequirements": {},
+          "maintenance": {},
+          "pestsAndDiseases": [],
+          "cultivarCaveats": {},
+          "toxicity": {},
+          "physicalHazards": {},
+          "allergenicity": {},
+          "harvestUseWarnings": {}
+        },
+        "designMetadata": {
+          "contractVersion": "design-metadata-v1",
+          "tags": [
+            "temperate",
+            "fruit",
+            "tree",
+            "chill"
+          ],
+          "growth": "Tree",
+          "matureSize": null,
+          "leafHabit": {
+            "state": "UNKNOWN",
+            "evidenceClass": "UNKNOWN",
+            "evidence": [
+              {
+                "field": "needsWinterChill",
+                "state": "DECIDUOUS",
+                "evidenceClass": "HEURISTIC_ASSERTION",
+                "sourceIds": [
+                  "ncsu-malus-domestica"
+                ],
+                "shortExcerpt": "Temperate deciduous fruit tree flowering in spring after dormancy; chill hours not quantified on page."
+              }
+            ]
+          },
+          "seasonalityResearchRequired": true,
+          "sourcePacket": "apple-bulk-batch-3-v1"
+        }
+      },
+      "packetId": "apple-bulk-batch-3-v1"
+    },
+    {
+      "slug": "fig",
+      "scientific": "Ficus carica",
+      "tags": [
+        "mediterranean",
+        "fruit",
+        "shrub",
+        "drought-tolerant"
+      ],
+      "climateTraits": {
+        "groupIds": [
+          "mediterranean-fruit"
+        ],
+        "frostSensitivity": "high",
+        "coldTolerance": "low",
+        "heatTolerance": "high",
+        "waterNeeds": "low",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "high",
+        "needsWinterChill": false,
+        "floweringRequirements": "Flowers enclosed inside the syconium (not showy externally).",
+        "fruitingRequirements": "Edible figs (syconia) ripen in summer to fall depending on crop type.",
+        "needsReview": false,
+        "floweringEvidenceClass": "SOURCE_SUPPORTED",
+        "reproductiveBiology": {
+          "self_fertile": true
+        },
+        "traitEvidenceClasses": {
+          "groupIds": "HEURISTIC_ASSERTION",
+          "frostSensitivity": "SOURCE_SUPPORTED",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "SOURCE_SUPPORTED",
+          "humidityTolerance": "UNKNOWN",
+          "waterNeeds": "SOURCE_SUPPORTED",
+          "sunNeeds": "SOURCE_SUPPORTED",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "needsWinterChill": "HEURISTIC_ASSERTION",
+          "floweringRequirements": "SOURCE_SUPPORTED",
+          "fruitingRequirements": "SOURCE_SUPPORTED",
+          "reproductive.self_fertile": "HEURISTIC_ASSERTION"
+        },
+        "traitProvenance": {
+          "groupIds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-ficus-carica"
+            ],
+            "shortExcerpt": "Structural groupIds: mediterranean-fruit",
+            "status": "asserted"
+          },
+          "frostSensitivity": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-ficus-carica"
+            ],
+            "shortExcerpt": "USDA Plant Hardiness Zone: 7a–10b; top-killed by hard freezes in colder zones.",
+            "status": "asserted"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-ficus-carica"
+            ],
+            "shortExcerpt": "USDA Plant Hardiness Zone: 7a–10b.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-ficus-carica"
+            ],
+            "shortExcerpt": "Thrives in hot, dry Mediterranean-type summers; zones to 10b.",
+            "status": "asserted"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "UNKNOWN",
+            "sourceIds": [
+              "ncsu-ficus-carica"
+            ],
+            "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+            "status": "unknown"
+          },
+          "waterNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-ficus-carica"
+            ],
+            "shortExcerpt": "Soil Drainage: Good Drainage; drought-tolerant once established.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-ficus-carica"
+            ],
+            "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-ficus-carica"
+            ],
+            "shortExcerpt": "Soil Drainage: Good Drainage.",
+            "status": "asserted"
+          },
+          "needsWinterChill": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-ficus-carica"
+            ],
+            "shortExcerpt": "Mediterranean deciduous/semideciduous; no quantified chill requirement on NCSU.",
+            "status": "asserted"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-ficus-carica"
+            ],
+            "shortExcerpt": "Flowers are inside the fruit (syconium).",
+            "status": "asserted"
+          },
+          "fruitingRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-ficus-carica"
+            ],
+            "shortExcerpt": "Edible fruit (syconium) ripens in summer and fall.",
+            "status": "asserted"
+          },
+          "reproductive.self_fertile": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-ficus-carica"
+            ],
+            "shortExcerpt": "Common edible fig cultivars are typically parthenocarpic (no wasp needed); NCSU notes edible fruit.",
+            "status": "asserted"
+          }
+        },
+        "plantKnowledge": {
+          "plantKnowledgeContractVersion": "1.0.0",
+          "sources": [
+            {
+              "sourceId": "ncsu-ficus-carica",
+              "institution": "North Carolina State University Extension Gardener",
+              "publisher": "North Carolina State University Extension Gardener",
+              "title": "Ficus carica (Common Fig)",
+              "url": "https://plants.ces.ncsu.edu/plants/ficus-carica/",
+              "authorityTier": "university_extension",
+              "verifiedAt": "2026-08-31"
+            }
+          ],
+          "warnings": [],
+          "importantNotes": [],
+          "regionalRestrictions": [],
+          "invasiveness": {},
+          "plantingRequirements": {},
+          "soilRequirements": {},
+          "maintenance": {},
+          "pestsAndDiseases": [],
+          "cultivarCaveats": {},
+          "toxicity": {},
+          "physicalHazards": {},
+          "allergenicity": {},
+          "harvestUseWarnings": {}
+        },
+        "designMetadata": {
+          "contractVersion": "design-metadata-v1",
+          "tags": [
+            "mediterranean",
+            "fruit",
+            "shrub",
+            "drought-tolerant"
+          ],
+          "growth": "Woody landscape plant",
+          "matureSize": null,
+          "leafHabit": {
+            "state": "UNKNOWN",
+            "evidenceClass": "UNKNOWN",
+            "evidence": [
+              {
+                "field": "needsWinterChill",
+                "state": "DECIDUOUS",
+                "evidenceClass": "HEURISTIC_ASSERTION",
+                "sourceIds": [
+                  "ncsu-ficus-carica"
+                ],
+                "shortExcerpt": "Mediterranean deciduous/semideciduous; no quantified chill requirement on NCSU."
+              }
+            ]
+          },
+          "seasonalityResearchRequired": true,
+          "sourcePacket": "fig-bulk-batch-3-v1"
+        }
+      },
+      "packetId": "fig-bulk-batch-3-v1"
+    }
+  ]
+}
