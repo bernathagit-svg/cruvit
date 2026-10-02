@@ -3,7 +3,7 @@ const TASK_STATES = new Set(['pending', 'completed', 'cancelled']);
 function requireId(row, label) {
   const id = row?.id;
   if (typeof id !== 'string' || !id.trim()) {
-    throw new Error(\`\${label}_id_required\`);
+    throw new Error(`${label}_id_required`);
   }
   return id;
 }
@@ -12,7 +12,7 @@ function uniqueRows(rows, label) {
   const seen = new Set();
   return (rows || []).map((row) => {
     const id = requireId(row, label);
-    if (seen.has(id)) throw new Error(\`duplicate_\${label}_id:\${id}\`);
+    if (seen.has(id)) throw new Error(`duplicate_${label}_id:${id}`);
     seen.add(id);
     return row;
   });
@@ -25,10 +25,10 @@ export function taskState(task) {
   const hasCancelled = Boolean(task.cancelled_at || task.cancelledAt || task.cancellation);
 
   if (explicit != null) {
-    if (!TASK_STATES.has(explicit)) throw new Error(\`invalid_task_state:\${explicit}\`);
-    if (explicit === 'pending' && (hasDone || hasCancelled)) throw new Error(\`contradictory_task_state:\${task.id}\`);
-    if (explicit === 'completed' && hasCancelled) throw new Error(\`contradictory_task_state:\${task.id}\`);
-    if (explicit === 'cancelled' && hasDone) throw new Error(\`contradictory_task_state:\${task.id}\`);
+    if (!TASK_STATES.has(explicit)) throw new Error(`invalid_task_state:${explicit}`);
+    if (explicit === 'pending' && (hasDone || hasCancelled)) throw new Error(`contradictory_task_state:${task.id}`);
+    if (explicit === 'completed' && hasCancelled) throw new Error(`contradictory_task_state:${task.id}`);
+    if (explicit === 'cancelled' && hasDone) throw new Error(`contradictory_task_state:${task.id}`);
     return explicit;
   }
   if (hasCancelled) return 'cancelled';
@@ -72,7 +72,7 @@ function dateOnly(value) {
   if (value == null) return null;
   const s = String(value);
   const m = /^(\\d{4}-\\d{2}-\\d{2})/.exec(s);
-  if (!m) throw new Error(\`invalid_date:\${s}\`);
+  if (!m) throw new Error(`invalid_date:${s}`);
   return m[1];
 }
 
@@ -122,7 +122,7 @@ export function gardenJournal(events, { plantId = null, eventType = null } = {})
 export function assertSameTaskIdentity(rowsByView) {
   const canonical = new Map();
   for (const [view, rows] of Object.entries(rowsByView || {})) {
-    for (const row of uniqueRows(rows, \`task_\${view}\`)) {
+    for (const row of uniqueRows(rows, `task_${view}`)) {
       const id = row.id;
       const fingerprint = JSON.stringify({
         id,
@@ -133,7 +133,7 @@ export function assertSameTaskIdentity(rowsByView) {
       });
       if (!canonical.has(id)) canonical.set(id, { fingerprint, view });
       else if (canonical.get(id).fingerprint !== fingerprint) {
-        throw new Error(\`task_projection_conflict:\${id}:\${canonical.get(id).view}:\${view}\`);
+        throw new Error(`task_projection_conflict:${id}:${canonical.get(id).view}:${view}`);
       }
     }
   }
