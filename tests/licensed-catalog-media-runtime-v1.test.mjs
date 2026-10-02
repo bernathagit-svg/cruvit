@@ -284,3 +284,24 @@ test('coverage generator promotes approved packet identities with exact licensed
     assert.ok(row.packetId,slug+' must retain approved packet provenance');
   }
 });
+
+test('stored READY media is rejected when source title names another species in the same genus', () => {
+  const plant = { slug: 'areca-palm', name: 'Areca Palm', scientific: 'Dypsis lutescens' };
+  const media = {
+    imageStatus: IMAGE_READY,
+    primaryUrl: 'https://example.com/dypsis-decaryi.jpg',
+    sourceProvider: 'wikimedia-commons',
+    sourcePageUrl: 'https://commons.wikimedia.org/wiki/File:Dypsis_decaryi.jpg',
+    sourceAssetId: 'File:Dypsis decaryi 2024-01-20 Malaga 03.jpg',
+    author: 'A',
+    license: 'CC BY-SA 4.0',
+    commercialUseAllowed: true,
+    attributionRequired: true,
+    attribution: 'A · CC BY-SA 4.0',
+    identityConfidence: 'high',
+    searchQuery: 'Dypsis lutescens Areca Palm'
+  };
+  const approved = isApprovedCatalogMediaRecord(media, plant);
+  assert.equal(approved.ok, false);
+  assert.equal(approved.reason, 'source-title-conflicting-same-genus-binomial');
+});

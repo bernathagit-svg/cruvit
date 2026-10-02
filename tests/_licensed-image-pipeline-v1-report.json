@@ -81,7 +81,7 @@
       "case": "genus-only",
       "rejected": true,
       "reasons": [
-        "epithet-far-from-genus-or-wrong-species-context"
+        "title-conflicting-same-genus-binomial"
       ]
     },
     {
@@ -106,8 +106,8 @@
       "license": "CC BY-SA 3.0",
       "attributionRequired": true,
       "pendingReason": null,
-      "searchMs": 1012.0740000000001,
-      "licenseValidationMs": 0.6216999999999189,
+      "searchMs": 5765.3378999999995,
+      "licenseValidationMs": 1.2296999999998661,
       "candidateCount": 10,
       "passedCount": 9,
       "rejectedTop": [
@@ -126,8 +126,8 @@
       "license": "CC BY-SA 3.0",
       "attributionRequired": true,
       "pendingReason": null,
-      "searchMs": 717.8756000000001,
-      "licenseValidationMs": 0.3338999999996304,
+      "searchMs": 1487.2390999999998,
+      "licenseValidationMs": 0.7040999999999258,
       "candidateCount": 10,
       "passedCount": 4,
       "rejectedTop": [
@@ -154,19 +154,14 @@
       "slug": "cypress",
       "scientific": "Cupressus sempervirens",
       "status": "IMAGE_READY",
-      "license": "CC BY-SA 4.0",
+      "license": "CC BY-SA 3.0",
       "attributionRequired": true,
       "pendingReason": null,
-      "searchMs": 762.6383000000001,
-      "licenseValidationMs": 2.0954999999999018,
-      "candidateCount": 10,
-      "passedCount": 6,
+      "searchMs": 2430.1526000000013,
+      "licenseValidationMs": 0.9398999999993976,
+      "candidateCount": 9,
+      "passedCount": 5,
       "rejectedTop": [
-        {
-          "candidate": "Med Cypress.jpg",
-          "stage": "attribution",
-          "reason": "attribution-required-but-author-missing"
-        },
         {
           "candidate": "Ermita de Santo Domingo, Lécera, Zaragoza, España, 2017-01-04, DD 103-105 HDR.jpg",
           "stage": "identity",
@@ -174,7 +169,13 @@
           "confidence": "none"
         },
         {
-          "candidate": "Zentralbibliothek Zürich - Brissago. Kirche mit Cypressen - 991085797419705501.jpg",
+          "candidate": "A View From the Bekaa.png",
+          "stage": "identity",
+          "reason": "common-name-without-scientific",
+          "confidence": "none"
+        },
+        {
+          "candidate": "Cipres - Jardin de la Isla - Aranjuez 01.jpg",
           "stage": "identity",
           "reason": "common-name-without-scientific",
           "confidence": "none"
@@ -188,8 +189,8 @@
       "license": "CC BY 4.0",
       "attributionRequired": true,
       "pendingReason": null,
-      "searchMs": 1070.3623999999995,
-      "licenseValidationMs": 0.3386000000000422,
+      "searchMs": 3146.2358000000004,
+      "licenseValidationMs": 0.5221000000001368,
       "candidateCount": 10,
       "passedCount": 8,
       "rejectedTop": [
@@ -214,16 +215,16 @@
       "license": "CC BY 3.0",
       "attributionRequired": true,
       "pendingReason": null,
-      "searchMs": 681.5860000000002,
-      "licenseValidationMs": 0.6032999999997628,
+      "searchMs": 1406.421400000001,
+      "licenseValidationMs": 1.0477999999984604,
       "candidateCount": 10,
       "passedCount": 10,
       "rejectedTop": []
     }
   ],
   "performance": {
-    "batch5Ms": 6078.109399999999,
-    "perPlantMeanMs": 848.90726
+    "batch5Ms": 16046.504200000001,
+    "perPlantMeanMs": 2847.07736
   },
   "idempotency": {
     "reuseStable": true,
@@ -234,5 +235,5 @@
     "pending": 0,
     "verdict": "PASS"
   },
-  "generatedAt": "2026-09-14T15:58:49.742Z"
+  "generatedAt": "2026-10-02T12:21:07.798Z"
 }

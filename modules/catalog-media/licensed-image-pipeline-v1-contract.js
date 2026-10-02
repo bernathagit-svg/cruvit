@@ -237,6 +237,19 @@ export function scoreCatalogPortraitPreference(candidate) {
   return score;
 }
 
+
+export function hasConflictingSameGenusTitle(plant, title) {
+  const sci = parseScientificBinomial(plant?.scientific || plant?.acceptedScientificName || '');
+  if (!sci || sci.ambiguous || sci.genusOnly || !sci.genus || !sci.epithet) return false;
+  const rawTitle = String(title || '').replace(/^File:/i, '').trim();
+  if (!rawTitle) return false;
+  const targetRe = new RegExp(`\\b${sci.genus}\\s+${sci.epithet}\\b`, 'i');
+  if (targetRe.test(rawTitle)) return false;
+  const sameGenus = rawTitle.match(new RegExp(`\\b${sci.genus}\\s+([A-Za-z][A-Za-z-]{2,})\\b`));
+  if (!sameGenus) return false;
+  return String(sameGenus[1] || '').toLowerCase() !== String(sci.epithet || '').toLowerCase();
+}
+
 /**
  * Identity match against candidate title/description/categories.
  * Scientific binomial is primary authority.
@@ -271,6 +284,15 @@ export function scoreIdentityMatch(plant, candidate) {
   const genusL = sci.genus.toLowerCase();
   const epithetL = (sci.epithet || '').toLowerCase();
   const binomialL = sci.binomial.toLowerCase();
+
+  if (hasConflictingSameGenusTitle(plant, title)) {
+    return {
+      ok: false,
+      confidence: 'none',
+      score: 0,
+      reasons: ['title-conflicting-same-genus-binomial']
+    };
+  }
 
   const hasBinomial =
     blob.includes(binomialL) ||
@@ -664,6 +686,7 @@ export function reuseCachedResolution(plant, cached, options = {}) {
   const sci = String(plant.scientific || '').toLowerCase();
   const cachedSci = String(cached.scientific || media.provenance?.scientific || '').toLowerCase();
   if (sci && cachedSci && sci !== cachedSci) return null;
+  if (hasConflictingSameGenusTitle(plant, media.sourceAssetId || '')) return null;
   return {
     status: IMAGE_READY,
     media: { ...media, fromCache: true },
