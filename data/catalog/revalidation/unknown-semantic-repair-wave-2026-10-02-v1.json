@@ -1,0 +1,59 @@
+{
+  "contract": "cruvit-unknown-semantic-repair-wave-v1",
+  "createdAt": "2026-10-02",
+  "ownerApproved": false,
+  "rows": [
+    {
+      "slug": "monstera",
+      "readiness": "A",
+      "gate": "PASS",
+      "contradictionHold": false,
+      "materializationOk": true,
+      "tags": [
+        "fruit",
+        "edible",
+        "houseplant",
+        "vine",
+        "poisonous",
+        "tropical"
+      ],
+      "reproductiveBiology": {
+        "self_fertile": true
+      },
+      "reproductiveClimate": {
+        "contractVersion": "reproductive-climate-v1",
+        "fruiting": {
+          "summerHeatBand": "warm",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM",
+          "sourceIds": [
+            "uf-ifas-monstera-fruit",
+            "uf-ifas-poisonous-houseplants"
+          ],
+          "transformRef": "qualitative-summer-heat-band-v1@1.0.0",
+          "sourceExcerpt": "Fruit production is an outdoor warm-climate outcome; fruit takes about 12–14 months to mature and only fully ripe pulp should be eaten. UF/IFAS documents fruit maturation, edible ripe pulp, and calcium-oxalate hazard in unripe fruit."
+        }
+      }
+    },
+    {
+      "slug": "cycas",
+      "readiness": "A",
+      "gate": "PASS",
+      "contradictionHold": false,
+      "materializationOk": true,
+      "tags": [
+        "ornamental",
+        "cycad",
+        "gymnosperm",
+        "poisonous",
+        "houseplant"
+      ],
+      "reproductiveBiology": {
+        "dioecious": true,
+        "requires_pollinator": true,
+        "sex_requirement": "male_and_female_plants"
+      },
+      "reproductiveClimate": null
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CRUVIT Unknown Semantic Proposal Runtime V1</title>
+<style>body{font:14px system-ui;background:#111;color:#eee;margin:20px}pre{white-space:pre-wrap;background:#1b1b1b;padding:12px}iframe{position:absolute;left:-9999px;width:1px;height:1px}.pass{color:#8fe3a1}.fail{color:#ff9c9c}</style>
+<h1>Unknown Semantic Proposal Runtime V1</h1><p id="status">Running…</p><pre id="out"></pre><div id="host"></div>
+<script type="module">
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function waitFor(fn,ms=30000){const t=Date.now();while(Date.now()-t<ms){try{if(fn())return true}catch{}await sleep(100)}return false}
+const {materializePlantCatalogItemFromPacket}=await import('../modules/catalog-expansion/catalog-expansion-v1-contract.js');
+const load=async slug=>fetch('../data/catalog/revalidation/semantic-audit-proposals-v1/'+slug+'.proposal.json').then(r=>r.json());
+const proposals=await Promise.all(['monstera','cycas'].map(load));
+const rows=proposals.map(p=>{
+ const sim={...p,humanApproval:{approvedForIngest:true,approvedAt:'SIMULATION_ONLY',note:'browser QA only'}};
+ const m=materializePlantCatalogItemFromPacket(sim);
+ if(!m.ok)throw new Error(p.identity.canonicalSlug+': '+m.errors.join('; '));
+ return {slug:m.item.slug,scientific:m.item.scientific,tags:m.item.tags,climateTraits:m.item.climateTraits};
+});
+const iframe=document.createElement('iframe');iframe.src='../app.html?unknownSemanticV1='+Date.now();document.getElementById('host').appendChild(iframe);
+await new Promise((res,rej)=>{iframe.onload=res;iframe.onerror=rej});const cw=iframe.contentWindow;
+if(!await waitFor(()=>cw&&typeof cw.setAppLocation==='function'&&typeof cw.smartRecEvaluateSuitability==='function'))throw new Error('runtime not ready');
+cw.eval('('+function(rows){for(const row of rows){const x=PLANT_LIBRARY.find(p=>p.slug===row.slug);if(x){x.climateTraits=row.climateTraits;x.scientific=row.scientific;x.tags=row.tags;}}}+')('+JSON.stringify(rows)+')');
+await cw.setAppLocation({label:'Singapore',resolvedCity:'Singapore',lat:1.2897,lon:103.8501,source:'manual'},{skipServerPersist:true});
+await waitFor(()=>cw.getAppClimateProfile()?.structuralClimateStatus==='known',15000);
+function one(slug,answers){
+ const code='(()=>{smartRecSession.answers='+JSON.stringify(answers)+';const plant=PLANT_LIBRARY.find(x=>x.slug==='+JSON.stringify(slug)+');let s=smartRecEvaluateSuitability(plant);const d=smartRecDeriveValidatedOutcomes(plant,s);const gi=smartRecGardenIntelligenceApi();if(gi&&typeof gi.alignSmartRecSuitabilityWithValidatedOutcomes==="function")s=gi.alignSmartRecSuitabilityWithValidatedOutcomes(s,d,{plant,meta:smartRecClimateMetaForPlant(plant),intent:smartRecCurrentContext(),chips:[]});return {level:s.recommendationLevel,eligible:s.positiveRecommendationEligible!==false,warnings:s.warnings||[],overall:d?.overall,flowering:d?.flowering,fruiting:d?.fruiting,meta:smartRecClimateMetaForPlant(plant)}})()';
+ return cw.eval(code);
+}
+const cases={
+ monsteraOutdoorEdible:one('monstera',{q1:'ground',q5:'yes-edible',__supportContextKnown:true,__supportType:'trellis'}),
+ monsteraIndoorEdible:one('monstera',{q1:'indoor',q5:'yes-edible',__supportContextKnown:true,__supportType:'moss-pole'}),
+ monsteraSafe:one('monstera',{q1:'indoor',q4:'pet-safe',__supportContextKnown:true,__supportType:'moss-pole'}),
+ cycasEdible:one('cycas',{q1:'ground',q5:'yes-edible'}),
+ cycasSafe:one('cycas',{q1:'ground',q4:'pet-safe'})
+};
+const failures=[];
+const has=(x,re)=>x.warnings.some(w=>re.test(w));
+if(!has(cases.monsteraOutdoorEdible,/fully ripe fruit|unripe fruit/i))failures.push({code:'MONSTERA_RIPE_ONLY_WARNING_MISSING',result:cases.monsteraOutdoorEdible});
+if(cases.monsteraIndoorEdible.eligible!==false)failures.push({code:'MONSTERA_INDOOR_EDIBLE_FALSE_POSITIVE',result:cases.monsteraIndoorEdible});
+if(cases.monsteraSafe.eligible!==false)failures.push({code:'MONSTERA_SAFE_INTENT_NOT_BLOCKED',result:cases.monsteraSafe});
+if(cases.cycasSafe.eligible!==false)failures.push({code:'CYCAS_SAFE_INTENT_NOT_BLOCKED',result:cases.cycasSafe});
+if((cases.cycasEdible.meta?.groupIds||[]).some(g=>/fruit|edible/i.test(String(g))))failures.push({code:'CYCAS_WRONGLY_FRUIT_ORIENTED',result:cases.cycasEdible});
+const summary={contract:'cruvit-unknown-semantic-proposal-runtime-v1',caseCount:Object.keys(cases).length,failureCount:failures.length,failures,cases};
+window.CruvitUnknownSemanticProposalRuntimeV1=summary;
+document.getElementById('out').textContent=JSON.stringify(summary,null,2);
+const st=document.getElementById('status');st.textContent=failures.length?'FAIL '+failures.length:'PASS';st.className=failures.length?'fail':'pass';
+</script>

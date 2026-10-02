@@ -1,6 +1,6 @@
 {
   "contract": "cruvit-full-catalog-revalidation-v1",
-  "generatedAt": "2026-10-02T10:48:40.591Z",
+  "generatedAt": "2026-10-02T11:09:25.501Z",
   "runtime": {
     "total": 123,
     "counts": {
@@ -138,9 +138,9 @@
     },
     "statusCounts": {
       "PASS_FULL": 130,
-      "UNKNOWN_VALID": 10,
+      "UNKNOWN_VALID": 8,
       "BROAD_IDENTITY_VALID": 12,
-      "RESEARCH_REQUIRED": 0,
+      "RESEARCH_REQUIRED": 2,
       "CONTRADICTION": 0
     },
     "reasonFrequency": {
@@ -152,6 +152,7 @@
       "MISSING_TRAIT_EVIDENCE": 12,
       "LEGACY_META_ONLY": 8,
       "HUMIDITY_UNKNOWN": 47,
+      "SEMANTIC_AUDIT_OPEN_FINDING": 2,
       "NEEDS_REVIEW": 3
     }
   },
@@ -257,13 +258,46 @@
     ]
   },
   "researchQueue": {
-    "total": 0,
+    "total": 2,
     "priorityCounts": {
       "P0_IDENTITY_OR_CORE_BLOCK": 0,
       "P1_REVIEW_HOLD": 0,
-      "P2_EVIDENCE_ENRICHMENT": 0
+      "P2_EVIDENCE_ENRICHMENT": 2
     },
-    "rows": []
+    "rows": [
+      {
+        "slug": "cycas",
+        "priority": "P2_EVIDENCE_ENRICHMENT",
+        "readiness": "B",
+        "gate": "PARTIAL",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "SEMANTIC_AUDIT_OPEN_FINDING"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      },
+      {
+        "slug": "monstera",
+        "priority": "P2_EVIDENCE_ENRICHMENT",
+        "readiness": "B",
+        "gate": "PARTIAL",
+        "reasons": [
+          "FLOWERING_REQUIREMENTS_MISSING",
+          "FRUITING_REQUIREMENTS_MISSING",
+          "SEMANTIC_AUDIT_OPEN_FINDING"
+        ],
+        "unknownOutcomes": [
+          "flowering",
+          "fruiting"
+        ],
+        "source": "RUNTIME_ONLY"
+      }
+    ]
   },
   "rows": [
     {
@@ -1232,12 +1266,13 @@
     {
       "slug": "cycas",
       "source": "RUNTIME_ONLY",
-      "status": "UNKNOWN_VALID",
+      "status": "RESEARCH_REQUIRED",
       "readiness": "B",
       "gate": "PARTIAL",
       "reasons": [
         "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING"
+        "FRUITING_REQUIREMENTS_MISSING",
+        "SEMANTIC_AUDIT_OPEN_FINDING"
       ],
       "unknownOutcomes": [
         "flowering",
@@ -2356,12 +2391,13 @@
     {
       "slug": "monstera",
       "source": "RUNTIME_ONLY",
-      "status": "UNKNOWN_VALID",
+      "status": "RESEARCH_REQUIRED",
       "readiness": "B",
       "gate": "PARTIAL",
       "reasons": [
         "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING"
+        "FRUITING_REQUIREMENTS_MISSING",
+        "SEMANTIC_AUDIT_OPEN_FINDING"
       ],
       "unknownOutcomes": [
         "flowering",

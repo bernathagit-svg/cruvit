@@ -43,3 +43,12 @@ test('specific plant check does not itself create edible intent',()=>{
   assert.match(body,/smartRecSession\.answers=\{\}/);
   assert.doesNotMatch(body,/yes-edible|food-herbs/);
 });
+
+test('ripe-fruit-only edible plants always surface an explicit edible-intent warning',()=>{
+  const start=app.indexOf("function smartRecEvaluateSuitability(p)");
+  const end=app.indexOf("function searchCatalogForSpecificPlantCheck",start);
+  assert.ok(start>=0&&end>start);
+  const body=app.slice(start,end);
+  assert.match(body,/ctx\.edibleIntent&&meta\.warningFlags\.includes\('ripe_fruit_only'\)/);
+  assert.match(body,/Only fully ripe fruit is edible; unripe fruit and other plant parts may be irritating or toxic/);
+});
