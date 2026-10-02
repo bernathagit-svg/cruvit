@@ -1,0 +1,261 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "cycas-semantic-audit-proposal-v1",
+  "identity": {
+    "canonicalSlug": "cycas",
+    "commonNameEn": "Sago Palm / Cycas",
+    "acceptedScientificName": "Cycas revoluta",
+    "aliases": [
+      "sago palm",
+      "king sago palm",
+      "cycas",
+      "Cycas revoluta"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Semantic audit repair proposal: gymnosperm non-flowering semantics, dioecy and seed toxicity modeled explicitly."
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-cycas-revoluta",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Sago Palm - Cycas revoluta",
+      "url": "https://plants.ces.ncsu.edu/plants/cycas-revoluta/common-name/sago-palm/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-02"
+    },
+    {
+      "sourceId": "uf-ifas-cycas",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida IFAS Extension",
+      "title": "Cycas revoluta, Sago Palm",
+      "url": "https://edis.ifas.ufl.edu/publication/FR316",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-02"
+    },
+    {
+      "sourceId": "uf-ifas-sago-pests",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida IFAS Extension",
+      "title": "Key Plant, Key Pests: Sago Palm",
+      "url": "https://edis.ifas.ufl.edu/publication/EP608",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-02"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "cycas-frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-cycas-revoluta",
+        "uf-ifas-sago-pests"
+      ],
+      "shortExcerpt": "Frost damages foliage and UF/IFAS states the plant is not freeze tolerant.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cycas-cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "uf-ifas-sago-pests",
+        "ncsu-cycas-revoluta"
+      ],
+      "shortExcerpt": "UF/IFAS lists USDA zones 8–11; NCSU notes plants do not survive below about 15°F.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "cycas-heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "uf-ifas-sago-pests"
+      ],
+      "shortExcerpt": "Grows in full sun or partial shade in subtropical climates; no extreme-heat limit is asserted.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "cycas-humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "uf-ifas-sago-pests"
+      ],
+      "shortExcerpt": "Indoor/outdoor subtropical adaptation supports a medium humidity heuristic; no hard humidity threshold is sourced.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "cycas-water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-cycas-revoluta",
+        "uf-ifas-sago-pests"
+      ],
+      "shortExcerpt": "Established plants are drought resistant and intolerant of overwatering.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "cycas-sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "partial_shade",
+      "sourceIds": [
+        "ncsu-cycas-revoluta",
+        "uf-ifas-sago-pests"
+      ],
+      "shortExcerpt": "Sources support full sun to partial shade; partial shade is retained as the conservative general placement.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cycas-drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-cycas-revoluta"
+      ],
+      "shortExcerpt": "NCSU states soil should be well-drained and poor drainage/overwatering can cause root rot.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cycas-flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Not applicable: Cycas revoluta is a gymnosperm and does not produce flowers; male and female plants produce separate reproductive cones.",
+      "sourceIds": [
+        "ncsu-cycas-revoluta",
+        "uf-ifas-cycas"
+      ],
+      "shortExcerpt": "NCSU explicitly states the plant does not flower and produces cones with exposed seeds.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cycas-fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Not applicable: Cycas revoluta does not produce botanical fruit; pollinated female plants produce toxic seeds that mature in a seedhead.",
+      "sourceIds": [
+        "ncsu-cycas-revoluta"
+      ],
+      "shortExcerpt": "NCSU documents separate male/female plants, pollination, seedhead production, and severe seed toxicity.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cycas-tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "ornamental",
+        "cycad",
+        "gymnosperm",
+        "poisonous",
+        "houseplant"
+      ],
+      "sourceIds": [
+        "ncsu-cycas-revoluta",
+        "uf-ifas-cycas"
+      ],
+      "shortExcerpt": "Sources identify a poisonous ornamental cycad/gymnosperm commonly grown indoors and outdoors.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cycas-warnings",
+      "field": "warningFlags",
+      "status": "asserted",
+      "value": [
+        "toxic_pets",
+        "toxic_humans",
+        "toxic_seeds",
+        "spiny"
+      ],
+      "sourceIds": [
+        "ncsu-cycas-revoluta",
+        "uf-ifas-cycas"
+      ],
+      "shortExcerpt": "All parts contain cycasin; seeds have the highest toxin concentration; foliage is spiny.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cycas-repro-dio",
+      "field": "reproductive.dioecious",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-cycas-revoluta"
+      ],
+      "shortExcerpt": "NCSU states separate male and female plants are required to produce seeds.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cycas-repro-poll",
+      "field": "reproductive.requires_pollinator",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-cycas-revoluta"
+      ],
+      "shortExcerpt": "Seed production requires pollination between male and female plants; pollination occurs by insects or wind.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cycas-repro-sex",
+      "field": "reproductive.sex_requirement",
+      "status": "asserted",
+      "value": "male_and_female_plants",
+      "sourceIds": [
+        "ncsu-cycas-revoluta"
+      ],
+      "shortExcerpt": "Male and female plants are separate and both are needed for seed production.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cycas-groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "warm-climate-palm",
+        "pet-child-caution"
+      ],
+      "sourceIds": [
+        "ncsu-cycas-revoluta",
+        "uf-ifas-sago-pests"
+      ],
+      "shortExcerpt": "Legacy structural groups retained with source-backed warm-climate and toxicity context.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "cycas-survival",
+      "field": "survivalVsThriveNotes",
+      "status": "asserted",
+      "value": "This slow toxic ornamental tolerates drought once established but is not freeze tolerant and requires good drainage.",
+      "sourceIds": [
+        "ncsu-cycas-revoluta",
+        "uf-ifas-sago-pests"
+      ],
+      "shortExcerpt": "Source-backed survival versus care summary.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING",
+    "searchQuery": "Cycas revoluta"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-02",
+    "approvedBy": "CRUVIT Owner",
+    "note": "Owner PASS approved in chat on 2026-10-02; canonical and production ingest authorized subject to all QA gates and no silent inference."
+  }
+}

@@ -1,54 +1,58 @@
 {
-  "contract": "cruvit-semantic-audit-open-findings-v1",
-  "updatedAt": "2026-10-02",
-  "rows": [
-    {
-      "findingId": "SEM-2026-10-02-DATE-PALM-FRUIT-PURPOSE",
-      "slug": "date-palm",
-      "scientific": "Phoenix dactylifera",
-      "status": "RESOLVED",
-      "severity": "MATERIAL_DATA_GAP",
-      "queuePriority": "P2_EVIDENCE_ENRICHMENT",
-      "reason": "Exact-species runtime record is classified UNKNOWN_VALID but lacks canonical fruit/edible purpose, flowering/fruiting evidence, and reproductive pollination biology for a known fruit crop.",
-      "requiredAction": "Owner-reviewed source-backed canonical packet before clearing finding.",
-      "sources": [
-        "https://ask.ifas.ufl.edu/publication/FR314",
-        "https://arboretum.arizona.edu/palms",
-        "https://ucanr.edu/node/154297/printable/print",
-        "https://www.extension.msstate.edu/publications/palms-cycads-for-the-midsouth-landscape"
-      ],
-      "resolvedAt": "2026-10-02",
-      "resolution": "Owner-approved Class A packet ingested to canonical production and verified by readback."
-    },
-    {
-      "findingId": "SEM-2026-10-02-MONSTERA-EDIBLE-SAFETY",
-      "slug": "monstera",
-      "scientific": "Monstera deliciosa",
-      "status": "OPEN",
-      "severity": "MATERIAL_DATA_GAP",
-      "queuePriority": "P2_EVIDENCE_ENRICHMENT",
-      "reason": "Exact-species runtime record models Monstera only as a toxic houseplant, omitting its edible fully-ripe fruit, unripe-fruit calcium-oxalate hazard, and source-backed fruiting requirements.",
-      "requiredAction": "Owner-reviewed source-backed canonical packet before clearing finding.",
-      "sources": [
-        "https://plants.ces.ncsu.edu/plants/monstera-deliciosa/",
-        "https://ask.ifas.ufl.edu/publication/hs311",
-        "https://edis.ifas.ufl.edu/publication/EP639"
-      ]
-    },
-    {
-      "findingId": "SEM-2026-10-02-CYCAS-NOT-APPLICABLE-REPRO",
-      "slug": "cycas",
-      "scientific": "Cycas revoluta",
-      "status": "OPEN",
-      "severity": "SEMANTIC_MODEL_GAP",
-      "queuePriority": "P2_EVIDENCE_ENRICHMENT",
-      "reason": "Exact-species runtime record leaves flowering and fruiting UNKNOWN even though Cycas revoluta is a gymnosperm that does not flower or produce botanical fruit; it forms separate male/female cones and seeds.",
-      "requiredAction": "Owner-reviewed source-backed canonical packet with explicit not-applicable flowering/fruiting semantics before clearing finding.",
-      "sources": [
-        "https://plants.ces.ncsu.edu/plants/cycas-revoluta/common-name/sago-palm/",
-        "https://edis.ifas.ufl.edu/publication/FR316",
-        "https://edis.ifas.ufl.edu/publication/EP608"
-      ]
-    }
-  ]
+    "contract":  "cruvit-semantic-audit-open-findings-v1",
+    "updatedAt":  "2026-10-02",
+    "rows":  [
+                 {
+                     "findingId":  "SEM-2026-10-02-DATE-PALM-FRUIT-PURPOSE",
+                     "slug":  "date-palm",
+                     "scientific":  "Phoenix dactylifera",
+                     "status":  "RESOLVED",
+                     "severity":  "MATERIAL_DATA_GAP",
+                     "queuePriority":  "P2_EVIDENCE_ENRICHMENT",
+                     "reason":  "Exact-species runtime record is classified UNKNOWN_VALID but lacks canonical fruit/edible purpose, flowering/fruiting evidence, and reproductive pollination biology for a known fruit crop.",
+                     "requiredAction":  "Owner-reviewed source-backed canonical packet before clearing finding.",
+                     "sources":  [
+                                     "https://ask.ifas.ufl.edu/publication/FR314",
+                                     "https://arboretum.arizona.edu/palms",
+                                     "https://ucanr.edu/node/154297/printable/print",
+                                     "https://www.extension.msstate.edu/publications/palms-cycads-for-the-midsouth-landscape"
+                                 ],
+                     "resolvedAt":  "2026-10-02",
+                     "resolution":  "Owner-approved Class A packet ingested to canonical production and verified by readback."
+                 },
+                 {
+                     "findingId":  "SEM-2026-10-02-MONSTERA-EDIBLE-SAFETY",
+                     "slug":  "monstera",
+                     "scientific":  "Monstera deliciosa",
+                     "status":  "RESOLVED",
+                     "severity":  "MATERIAL_DATA_GAP",
+                     "queuePriority":  "P2_EVIDENCE_ENRICHMENT",
+                     "reason":  "Exact-species runtime record models Monstera only as a toxic houseplant, omitting its edible fully-ripe fruit, unripe-fruit calcium-oxalate hazard, and source-backed fruiting requirements.",
+                     "requiredAction":  "Owner-reviewed source-backed canonical packet before clearing finding.",
+                     "sources":  [
+                                     "https://plants.ces.ncsu.edu/plants/monstera-deliciosa/",
+                                     "https://ask.ifas.ufl.edu/publication/hs311",
+                                     "https://edis.ifas.ufl.edu/publication/EP639"
+                                 ],
+                     "resolvedAt":  "2026-10-02",
+                     "resolution":  "Owner-approved Class A packet ingested to canonical production and verified by readback."
+                 },
+                 {
+                     "findingId":  "SEM-2026-10-02-CYCAS-NOT-APPLICABLE-REPRO",
+                     "slug":  "cycas",
+                     "scientific":  "Cycas revoluta",
+                     "status":  "RESOLVED",
+                     "severity":  "SEMANTIC_MODEL_GAP",
+                     "queuePriority":  "P2_EVIDENCE_ENRICHMENT",
+                     "reason":  "Exact-species runtime record leaves flowering and fruiting UNKNOWN even though Cycas revoluta is a gymnosperm that does not flower or produce botanical fruit; it forms separate male/female cones and seeds.",
+                     "requiredAction":  "Owner-reviewed source-backed canonical packet with explicit not-applicable flowering/fruiting semantics before clearing finding.",
+                     "sources":  [
+                                     "https://plants.ces.ncsu.edu/plants/cycas-revoluta/common-name/sago-palm/",
+                                     "https://edis.ifas.ufl.edu/publication/FR316",
+                                     "https://edis.ifas.ufl.edu/publication/EP608"
+                                 ],
+                     "resolvedAt":  "2026-10-02",
+                     "resolution":  "Owner-approved Class A packet ingested to canonical production and verified by readback."
+                 }
+             ]
 }
