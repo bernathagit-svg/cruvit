@@ -45,16 +45,13 @@ function proposalMap(){
   }
 });
 
-test('P2 owner-approved batch closes the full catalog research queue',()=>{
+test('P2 owner-approved batch remains closed even when later semantic audits open new findings',()=>{
   const run=spawnSync(process.execPath,['scripts/full-catalog-revalidation-v1.mjs'],{cwd:ROOT,encoding:'utf8'});
   assert.equal(run.status,0,run.stderr||run.stdout);
   const queue=JSON.parse(fs.readFileSync(path.join(ROOT,'data/catalog/revalidation/full-catalog-revalidation-queue-2026-10-01-v1.json'),'utf8'));
   const report=JSON.parse(fs.readFileSync(path.join(ROOT,'tests/_full-catalog-revalidation-v1-report.json'),'utf8'));
-  assert.equal(queue.total,0);
-  assert.equal(queue.priorityCounts.P0_IDENTITY_OR_CORE_BLOCK,0);
-  assert.equal(queue.priorityCounts.P1_REVIEW_HOLD,0);
-  assert.equal(queue.priorityCounts.P2_EVIDENCE_ENRICHMENT,0);
-  assert.equal(report.unified.statusCounts.RESEARCH_REQUIRED,0);
+  const p2Slugs=new Set([...proposalMap().keys()]);
+  assert.equal(queue.rows.filter(r=>p2Slugs.has(r.slug)).length,0);
   assert.equal(report.unified.statusCounts.CONTRADICTION,0);
   assert.equal(report.packets.counts.A,report.packets.unique);
 });

@@ -1,0 +1,58 @@
+{
+  "contract": "cruvit-semantic-hard-case-audit-v1",
+  "createdAt": "2026-10-02",
+  "browserRuntime": {
+    "locations": 4,
+    "fixturePlants": 16,
+    "observations": 94,
+    "failures": 0,
+    "pageErrors": 0
+  },
+  "invariantsCovered": [
+    "no positive recommendation after hard survival failure",
+    "cold-tender plants cannot become positive in Tromso/Helsinki",
+    "chill-dependent edible crops cannot fruit positively in Singapore",
+    "fruit recommendation requires structured fruiting climate",
+    "privacy intent cannot invent physical support",
+    "support-dependent plants are blocked without support in compact/container context",
+    "explicit support removes support-missing warning",
+    "no-small-container plants cannot become positive in compact containers",
+    "broad identities cannot receive positive Smart Recommendations"
+  ],
+  "regression": {
+    "focusedNodeTests": 111,
+    "pass": 111,
+    "fail": 0
+  },  "catalogAfterAudit": {
+    "passFull": 129,
+    "unknownValid": 10,
+    "broadIdentityValid": 12,
+    "researchRequired": 1,
+    "contradiction": 0,
+    "researchQueue": 1
+  },
+  "materialFinding": {
+    "slug": "date-palm",
+    "scientific": "Phoenix dactylifera",
+    "findingId": "SEM-2026-10-02-DATE-PALM-FRUIT-PURPOSE",
+    "status": "OPEN",
+    "reason": "Runtime-only exact-species record omitted fruit/edible purpose and reproductive evidence for a known date fruit crop.",
+    "proposal": {
+      "validation": "PASS",
+      "readiness": "A",
+      "gate": "PASS",
+      "contradictionHold": false,
+      "ownerApproved": false,
+      "structuredFruitingClimate": "hot",
+      "dioecious": true,
+      "requiresPollinator": true,
+      "cultivarDependency": true
+    }
+  },
+  "governance": {
+    "semanticOpenFindingsOverrideUnknownValid": true,
+    "noSilentInference": true,
+    "canonicalIngestPerformed": false,
+    "ownerPassRequiredToCloseFinding": true
+  }
+}
