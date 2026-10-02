@@ -1,0 +1,111 @@
+{
+  "contract": "cruvit-launch-auth-persistence-security-checkpoint-v1",
+  "createdAt": "2026-10-02",
+  "scope": "authenticated persistence, RLS isolation, premium RPC review, launch security",
+  "supabase": {
+    "project": "cruvit-production",
+    "tables": {
+      "garden_profiles": {
+        "rlsEnabled": true,
+        "forceRls": true,
+        "policies": 4
+      },
+      "garden_plants": {
+        "rlsEnabled": true,
+        "forceRls": true,
+        "policies": 4
+      },
+      "garden_tasks": {
+        "rlsEnabled": true,
+        "forceRls": true,
+        "policies": 4
+      }
+    },
+    "liveTransactionalProof": {
+      "ownGardenVisible": 1,
+      "foreignGardenVisible": 0,
+      "ownPlantInsert": true,
+      "ownTaskInsert": true,
+      "foreignPlantVisible": 0,
+      "foreignTaskVisible": 0,
+      "foreignPlantUpdateRows": 0,
+      "foreignTaskDeleteRows": 0,
+      "foreignInsertBlocked": true,
+      "crossGardenMoveBlocked": true,
+      "freshSessionPlantReadback": true,
+      "freshSessionTaskReadback": true,
+      "locationSaveReadback": true,
+      "foreignLocationVisible": 0,
+      "cleanup": {
+        "gardensLeft": 0,
+        "plantsLeft": 0,
+        "tasksLeft": 0
+      }
+    },
+    "integrity": {
+      "plantIdempotencyUnique": "garden_profile_id + client_instance_id",
+      "taskIdempotencyUnique": "garden_profile_id + client_instance_id",
+      "plantOwnershipTrigger": true,
+      "taskOwnershipTrigger": true,
+      "taskPlantForeignKey": true,
+      "plantGardenForeignKey": true,
+      "profileLocationNormalizer": true
+    }
+  },
+  "clientPersistence": {
+    "focusedContractTests": 64,
+    "pass": 64,
+    "fail": 0,
+    "verifies": [
+      "server round-trip preserves canonical/scientific identity",
+      "instance status and task state survive hydration",
+      "stale hydration is rejected across user/garden drift",
+      "multi-garden rows remain isolated",
+      "sign-out restores pre-auth local snapshot without letting localStorage impersonate authenticated server truth"
+    ]
+  },
+  "premiumRpcSecurity": {
+    "functions": [
+      "consume_premium_action",
+      "refund_premium_action"
+    ],
+    "securityDefiner": true,
+    "publicExecute": false,
+    "anonExecute": false,
+    "authenticatedExecute": true,
+    "serviceRoleExecute": true,
+    "searchPathPinned": true,
+    "authUidScoped": true,
+    "transactionalAbuseProof": {
+      "userAConsume": "CONSUMED",
+      "userBCrossRefund": "CONSUME_NOT_FOUND",
+      "rollbackClean": true
+    },
+    "disposition": "INTENTIONAL_AUTHENTICATED_RPC_WITH_USER_SCOPING"
+  },
+  "qaRuntimeCapabilities": {
+    "rlsEnabled": true,
+    "anonSelect": false,
+    "authenticatedSelect": false,
+    "anonInsert": false,
+    "authenticatedInsert": false,
+    "disposition": "FAIL_CLOSED_QA_TABLE"
+  },
+  "dependencySecurity": {
+    "npmAuditHigh": 1,
+    "package": "image-size@2.0.2",
+    "patchedOfficialReleaseAvailable": false,
+    "reachableFromUntrustedImageInput": false,
+    "exception": "config/security/npm-audit-exceptions-v1.json"
+  },
+  "openLaunchSecurityItems": [
+    {
+      "item": "Enable Supabase Leaked Password Protection",
+      "severity": "WARN",
+      "status": "OPEN",
+      "source": "Supabase Security Advisor",
+      "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection"
+    }
+  ],
+  "checkpointStatus": "PERSISTENCE_GREEN_ONE_AUTH_SETTING_OPEN"
+}
