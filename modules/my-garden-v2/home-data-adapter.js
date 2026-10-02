@@ -1,5 +1,6 @@
 import { createMyGardenReadRepository } from './supabase-read-repository.js';
 import { buildMyGardenHomeViewModel, assertHomeViewModelConsistency } from './home-view-model.js';
+import { resolveGardenPhoto } from './garden-photo-projection.js';
 
 function requireDateOnly(today) {
   if (typeof today !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(today)) {
@@ -24,11 +25,17 @@ export function createMyGardenHomeDataAdapter(supabase) {
 
     assertHomeViewModelConsistency(viewModel);
 
+    const gardenPhoto = resolveGardenPhoto({
+      gardenProfile: snapshot.profile,
+      media: snapshot.media,
+    });
+
     return Object.freeze({
       garden: snapshot.profile,
+      gardenPhoto,
       viewModel,
-      // Media/events are intentionally not projected into Home here.
-      // Home stays a summary surface; those domains are consumed by their own screens.
+      // Events are intentionally not projected directly into Home.
+      // Home remains a summary/read-model surface.
     });
   }
 
