@@ -7,13 +7,34 @@ Main merge: NO
 
 ## Current verification
 Latest isolated CI:
-- tests: 127
-- pass: 127
+- tests: 184
+- pass: 184
 - fail: 0
 
-## Read-only implementation foundation complete
+Current verified branch head:
+- 5f0d1eb4d89f38294e34a3d9775fca2db6f18b80
 
-### My Garden Home
+## Owner visual state
+
+### LOCKED_IMPLEMENTED
+- Add Plant
+- My Plants
+- Plant Detail → Overview
+- Plant Detail → Care
+- Plant Detail → Schedule
+- Plant Detail → History
+
+### APPROVED_VISUAL · implementation comparison still required
+- Upcoming → List
+- Upcoming → Calendar
+- Garden Journal
+- Notifications
+
+Bottom navigation / center +:
+- explicitly deferred
+- no behavior redesign authorized
+
+## My Garden Home
 - canonical Supabase snapshot
 - dynamic active plant count
 - dynamic upcoming count
@@ -21,107 +42,108 @@ Latest isolated CI:
 - fail-safe Garden Photo resolution
 - exact approved Home DOM renderer
 - exact approved CSS vendored and fingerprint-locked
-- no bottom-nav redesign
 
-### My Plants
-- exact Plant Instance IDs
+## My Plants
+- one canonical renderer path only
+- exact approved v2 card/camera geometry
+- exact Plant Instance identity
 - garden area projection
-- personal cover photo via garden_plants.cover_media_id
-- system-image fallback
+- personal cover via garden_plants.cover_media_id
+- short-lived signed URL for private user-garden-media
+- signed URL failure falls back to approved CRUVIT system artwork
+- no raw private storage path exposed as public URL
 - per-card camera action bound to exact plant ID
-- shared projection with Plant Detail
 
-### Plant Detail foundation
-- same Plant Instance across Overview / Care / Schedule / History
-- same personal photo as My Plants
-- archived state is read-only
-- no silent plant substitution
+## Plant Detail
+- one canonical controller across Overview / Care / Schedule / History
+- same Plant Instance ID across all tabs
+- same personal cover identity as My Plants
+- same signed private media used in approved hero + detail-card slots
+- exact approved photo/camera geometry
+- archived plant is read-only
+- signed media failure falls back without breaking screen
 
-### Overview
+## Overview
 - exact catalog slug resolution only
 - no fuzzy alias substitution
-- no botanical-size -> personal-height inference
+- no botanical-size → personal-height inference
 - added_at not relabeled as planted date
 - phenology requires provenance
 - missing catalog knowledge remains unknown
 
-### Care
-- care guidance separated from concrete Task date/state
-- linked next action must reference same Task ID
+## Care
+- care guidance separated from Task date/state
+- linked next action references same Task ID
 - garden-adapted climate guidance requires reliable location
 - missing warning data remains unknown
 
-### Schedule / Upcoming / Calendar / Notifications
-- one Task projection
-- same Task ID / date / state across all views
-- notifications derived from pending due tasks
-- archived plant tasks excluded from active garden projections
+## Group 2 — one controller only
+A duplicate Upcoming controller and duplicate Journal/Notifications controller were removed.
 
-### Plant History / Garden Journal
-- one Event projection
-- same Event ID across both views
-- no duplicate event store
-- photo history references same media ID
+Canonical controller:
+- modules/my-garden-v2/group-2-screen-controller.js
 
-### Add Plant
-Approved visual entry paths preserved:
-- Scan plant
-- Add manually
-- Get suggestions
-- Search plants
-- Popular for your area
+### Upcoming
+- List and Calendar use canonical garden_tasks
+- same Task IDs
+- same status totals for same scope
+- one shared snapshot via loadUpcomingPair
+- active plant count includes plants with no tasks
+- private personal plant thumbnails use signed URLs
+- optional system thumbnail resolver does not change task identity
+- visual state remains APPROVED_VISUAL_PENDING_COMPARISON
 
-Read-only discovery:
-- uses catalog_plants
-- verified rows only
-- exact canonical slug
-- Popular for area requires reliable location
-- selection does not create Plant Instance until explicit add confirmation
+### Garden Journal
+- canonical garden_events only
+- same Event IDs as Plant History
+- no duplicate Journal store
+- visual state remains APPROVED_VISUAL_PENDING_COMPARISON
 
-### Photo / Archive contracts
-- plant personal photo exact-instance scoped
-- Restore CRUVIT photo clears cover pointer without deleting media/history
-- archive/restore preserve same Plant Instance ID
+### Notifications
+- canonical pending due garden_tasks only
+- no copied notification tasks
+- task/plant identity preserved
+- visual state remains APPROVED_VISUAL_PENDING_COMPARISON
 
-## Live production schema verified read-only
+## Code duplication cleanup completed
+Removed duplicate:
+- modules/my-garden-v2/my-plants-approved-renderer.js
+- tests/my-garden-v2-my-plants-approved-renderer.test.mjs
+- modules/my-garden-v2/upcoming-screen-controller.js
+- tests/my-garden-v2-upcoming-screen-controller.test.mjs
+- modules/my-garden-v2/garden-activity-screens-controller.js
+- tests/my-garden-v2-garden-activity-screens-controller.test.mjs
 
-Project: cruvit-production
+Current principle:
+**one truth + one controller/renderer path per responsibility**
 
-Confirmed gaps:
-1. garden_plants status defaults Healthy and mark defaults check mark
-   -> live Add Plant write blocked until neutral/unassessed state is representable.
+## Production schema verification
+Project:
+- cruvit-production
 
-2. garden_tasks has done boolean but no completed_at/cancelled_at
-   -> full task lifecycle writes blocked.
+Confirmed blockers intentionally not bypassed:
+1. new garden_plants still default to Healthy + check mark
+2. garden_tasks lacks completed_at / cancelled_at
+3. Garden OS event vocabulary lacks all approved Note/Care/Photo/Restore mutations
+4. garden_profiles lacks current Garden Photo pointer
+5. exact sub-area position has no first-class field
+6. production catalog coverage does not yet match every existing garden slug
 
-3. garden_events live vocabulary/data currently only demonstrates task_completed
-   -> note/care/photo/restore history writes require event-contract extension.
+No production migration has been applied.
 
-4. garden_profiles has no current Garden Photo pointer
-   -> multiple garden-overview photos cannot be selected safely yet.
+## Explicitly NOT done
+- no production write activation
+- no production migration
+- no bottom-navigation behavior change
+- no center + behavior change
+- no merge to main
+- no production deploy
 
-5. exact sub-area position like "South side" has no first-class field
-   -> never infer.
+## Next implementation target
+Complete implementation-level visual comparison for APPROVED_VISUAL screens:
+1. Upcoming List
+2. Upcoming Calendar
+3. Garden Journal
+4. Notifications
 
-6. catalog coverage is incomplete relative to existing garden instances
-   -> exact slug missing remains unavailable; no substitution.
-
-## Production catalog observation
-At verification time:
-- catalog_plants rows: 128
-- existing production Garden Plant slugs observed: banana, mango, pineapple
-- exact catalog row found among these: pineapple
-- mango/banana exact catalog knowledge unavailable at verification time
-- Lemon is approved UI reference content, not a current production garden instance
-
-## Explicitly deferred
-- center +
-- complete shared bottom navigation responsibilities
-- schema migrations
-- live writes
-- production deploy
-- merge to main
-
-## Next implementation step
-Build active visual renderer for My Plants and Plant Detail family against the locked references,
-read-only first, with visual comparison before any live writes.
+Only after screenshot comparison + explicit owner implementation PASS may any of these become LOCKED_IMPLEMENTED.
