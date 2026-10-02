@@ -1,0 +1,21 @@
+name: My Garden UI 2.10 Contract Tests
+
+on:
+  push:
+    branches:
+      - my-garden-ui-2.10-contract-20261002
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  my-garden-v2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run isolated My Garden v2 tests
+        run: node --test tests/my-garden-v2*.test.mjs
