@@ -1,0 +1,298 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "date-palm-semantic-audit-proposal-v1",
+  "identity": {
+    "canonicalSlug": "date-palm",
+    "commonNameEn": "Date Palm",
+    "acceptedScientificName": "Phoenix dactylifera",
+    "aliases": [
+      "date palm",
+      "true date palm",
+      "Phoenix dactylifera"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Semantic audit repair proposal: fruit-crop purpose and reproductive biology added from authoritative sources; no silent inference."
+  },
+  "sources": [
+    {
+      "sourceId": "uf-ifas-phoenix-dactylifera",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida IFAS Extension",
+      "title": "Phoenix dactylifera, Date Palm",
+      "url": "https://ask.ifas.ufl.edu/publication/FR314",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-02"
+    },
+    {
+      "sourceId": "ua-date-palm",
+      "institution": "University of Arizona Campus Arboretum",
+      "publisher": "University of Arizona Campus Arboretum",
+      "title": "Palms on the University of Arizona Campus",
+      "url": "https://arboretum.arizona.edu/palms",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-02"
+    },
+    {
+      "sourceId": "ucanr-date-palm-field-day",
+      "institution": "University of California Cooperative Extension",
+      "publisher": "University of California Cooperative Extension",
+      "title": "Date Palm Field Day",
+      "url": "https://ucanr.edu/node/154297/printable/print",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-02"
+    },
+    {
+      "sourceId": "msu-date-palm",
+      "institution": "Mississippi State University Extension Service",
+      "publisher": "Mississippi State University Extension Service",
+      "title": "Palms & Cycads for the Midsouth Landscape",
+      "url": "https://www.extension.msstate.edu/publications/palms-cycads-for-the-midsouth-landscape",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-02"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "date-frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "msu-date-palm"
+      ],
+      "shortExcerpt": "Leaves can burn near 20°F and plants may be killed near 10°F; whole-plant frost sensitivity retained as medium.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "date-cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "msu-date-palm"
+      ],
+      "shortExcerpt": "Mississippi State Extension lists Phoenix dactylifera as USDA zone 8b and reports hardiness around 12°F.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "date-heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ucanr-date-palm-field-day"
+      ],
+      "shortExcerpt": "UC Cooperative Extension states date fruit production needs high heat and arid weather.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "date-humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "uf-ifas-phoenix-dactylifera"
+      ],
+      "shortExcerpt": "UF/IFAS says date palm prefers dry climates but also occurs in humid Florida; fruiting under Gulf Coast humidity is cultivar-limited.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "date-water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ucanr-date-palm-field-day",
+        "uf-ifas-phoenix-dactylifera"
+      ],
+      "shortExcerpt": "Date palms need ample water/groundwater while fruit production favors arid weather.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "date-sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "uf-ifas-phoenix-dactylifera"
+      ],
+      "shortExcerpt": "UF/IFAS states date palm requires full sun for optimal growth.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "date-drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-phoenix-dactylifera"
+      ],
+      "shortExcerpt": "UF/IFAS recommends neutral to acidic, well-drained soils.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "date-flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Male and female flowers occur on separate trees; both sexes are needed in the area for fruit production.",
+      "sourceIds": [
+        "uf-ifas-phoenix-dactylifera",
+        "ua-date-palm"
+      ],
+      "shortExcerpt": "UF/IFAS and University of Arizona describe separate male and female plants and flowers.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "date-fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Edible date production needs male and female trees, hot dry weather, and adequate water; humid climates can sharply limit productive cultivars.",
+      "sourceIds": [
+        "uf-ifas-phoenix-dactylifera",
+        "ucanr-date-palm-field-day"
+      ],
+      "shortExcerpt": "UF/IFAS documents edible dates and both-sex requirement; UC Extension states high heat and arid weather are needed to produce fruit.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "date-tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "fruit",
+        "edible",
+        "palm",
+        "tree"
+      ],
+      "sourceIds": [
+        "uf-ifas-phoenix-dactylifera",
+        "ua-date-palm"
+      ],
+      "shortExcerpt": "Phoenix dactylifera bears edible commercial dates and is a palm tree food crop.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "date-repro-dioecious",
+      "field": "reproductive.dioecious",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ua-date-palm",
+        "uf-ifas-phoenix-dactylifera"
+      ],
+      "shortExcerpt": "Date palms are dioecious, with separate male and female plants.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "date-repro-pollinator",
+      "field": "reproductive.requires_pollinator",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "uf-ifas-phoenix-dactylifera"
+      ],
+      "shortExcerpt": "Fruit production requires female and male trees in the same area.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "date-repro-sex",
+      "field": "reproductive.sex_requirement",
+      "status": "asserted",
+      "value": "male_and_female_plants",
+      "sourceIds": [
+        "uf-ifas-phoenix-dactylifera",
+        "ua-date-palm"
+      ],
+      "shortExcerpt": "Both male and female plants are needed for reliable date fruit production.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "date-repro-compatible",
+      "field": "reproductive.compatible_pollinator_requirement",
+      "status": "asserted",
+      "value": "male_pollen_source_for_female_tree",
+      "sourceIds": [
+        "ua-date-palm"
+      ],
+      "shortExcerpt": "University of Arizona notes pollen is transferred from male flowers to female plants and cultivation may use manual pollination.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "date-repro-cultivar",
+      "field": "reproductive.cultivar_dependency",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "uf-ifas-phoenix-dactylifera"
+      ],
+      "shortExcerpt": "UF/IFAS notes hundreds of date palm varieties and strong differences in fruiting under humid Gulf Coast conditions.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "date-group",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "hot-dry-palm"
+      ],
+      "sourceIds": [
+        "ucanr-date-palm-field-day"
+      ],
+      "shortExcerpt": "Structural group retained from explicit hot/arid palm production ecology.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "date-block",
+      "field": "hardBlockRules",
+      "status": "asserted",
+      "value": [
+        "no-small-container"
+      ],
+      "sourceIds": [
+        "uf-ifas-phoenix-dactylifera",
+        "msu-date-palm"
+      ],
+      "shortExcerpt": "Very large mature palm size supports a no-small-container placement rule.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "date-warning",
+      "field": "warningFlags",
+      "status": "asserted",
+      "value": [
+        "thorny"
+      ],
+      "sourceIds": [
+        "uf-ifas-phoenix-dactylifera"
+      ],
+      "shortExcerpt": "UF/IFAS notes 3-4 inch thorns formed by modified leaflets on the petiole.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "date-survival-thrive",
+      "field": "survivalVsThriveNotes",
+      "status": "asserted",
+      "value": "The palm can grow in some humid or marginal climates, but reliable edible fruit production is much narrower and favors hot arid conditions with adequate irrigation.",
+      "sourceIds": [
+        "uf-ifas-phoenix-dactylifera",
+        "ucanr-date-palm-field-day"
+      ],
+      "shortExcerpt": "Survival/landscape growth is broader than commercial fruit production climate.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING",
+    "searchQuery": "Phoenix dactylifera Date Palm"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-02",
+    "approvedBy": "CRUVIT Owner",
+    "note": "Owner PASS approved in chat on 2026-10-02; canonical ingest authorized subject to all QA gates and no silent inference."
+  }
+}
