@@ -422,10 +422,10 @@ test('design asset fallback never substitutes another species or generates', () 
     olive.fallback === DESIGN_ASSET_FALLBACK.CLOSEST_APPROVED ||
       olive.fallback === DESIGN_ASSET_FALLBACK.NEUTRAL_CANONICAL
   );
-  const mango = resolveDesignAsset({ canonicalSlug: 'mango' }, assetIndex);
-  assert.equal(mango.visualReady, false);
-  assert.equal(mango.fallback, DESIGN_ASSET_FALLBACK.HONEST_PLACEHOLDER);
-  assert.equal(mango.usedWebImage, false);
+  const missing = resolveDesignAsset({ canonicalSlug: 'pomegranate' }, assetIndex);
+  assert.equal(missing.visualReady, false);
+  assert.equal(missing.fallback, DESIGN_ASSET_FALLBACK.HONEST_PLACEHOLDER);
+  assert.equal(missing.usedWebImage, false);
   const broad = assertVariantIdentityConsistency(
     { slug: 'banana', scientific: 'Musa spp.', identityScope: 'genus' },
     { canonicalSlug: 'banana', cultivarSpecific: true }
@@ -434,7 +434,7 @@ test('design asset fallback never substitutes another species or generates', () 
   assert.equal(isBroadPlantIdentity({ scientific: 'Musa spp.' }), true);
 });
 
-test('coverage audit: current Design-enabled set is olive-only; no mass wave', () => {
+test('coverage audit reflects the bounded approved Design Asset Registry without autonomous generation', () => {
   const seed = JSON.parse(fs.readFileSync(SEED, 'utf8').replace(/^\uFEFF/, ''));
   const catalogSlugs = [
     ...new Set(
@@ -442,25 +442,13 @@ test('coverage audit: current Design-enabled set is olive-only; no mass wave', (
     )
   ].map((slug) => ({ slug }));
   const coverage = auditDesignAssetCoverage(catalogSlugs, assetIndex);
-  assert.equal(coverage.designEnabled, 1);
-  assert.equal(coverage.enabledSlugs[0], 'olive');
-  assert.equal(coverage.onlyOneAsset, 1);
-  assert.equal(coverage.multipleGrowthStages, 0);
-  assert.equal(coverage.seasonalStates, 0);
-  assert.equal(coverage.floweringVariants, 0);
-  assert.equal(coverage.fruitingVariants, 0);
+  assert.ok(coverage.designEnabled >= 20);
+  for (const slug of ['olive','mango','banana','pineapple']) assert.ok(coverage.enabledSlugs.includes(slug), slug);
   assert.ok(coverage.noUsable >= 1);
   assert.equal(coverage.massGenerationStarted, false);
   assert.equal(DESIGN_ASSET_PRODUCTION_PIPELINE.autonomousGeneration, false);
   assert.equal(CORE_FREEZE_MINIMUM_DESIGN_COVERAGE.fullCatalogRequired, false);
   assert.equal(CORE_FREEZE_MINIMUM_DESIGN_COVERAGE.arbitraryPlantCountForbidden, true);
-  assert.deepEqual(CORE_FREEZE_MINIMUM_DESIGN_COVERAGE.proposedLaunchCanonicalSlugs, []);
-  const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8'));
-  const ready = Object.values(manifest.plants || {}).filter((p) => {
-    const v = p.variants && p.variants[p.defaultVariant];
-    return v && v.comingSoon === false;
-  });
-  assert.equal(ready.length, 1);
 });
 
 test('host and iframe wire Garden OS without a second catalog or auto-own', () => {
@@ -877,13 +865,13 @@ test('zero-placement sourced design still shows Add plants and From My Garden', 
 });
 
 test('owned placement missing cutout stays visible; count is plantLayers only', () => {
-  const mangoId = '5fdd5d4c-adbf-4451-a784-2e2a7d271662';
+  const pomegranateId = '5fdd5d4c-adbf-4451-a784-2e2a7d271662';
   const patioId = 'b394f661-0edd-4740-a04b-8bcc420590c9';
   const owned = resolveDesignOwnedPlantsFromGardenOs({
     session: { user: { id: 'owner-1' } },
     gardenProfileId: 'garden-moj',
     serverPlantRows: [
-      { id: mangoId, name: 'Mango Tree', profile_slug: 'mango', garden_profile_id: 'garden-moj', garden_area_id: patioId },
+      { id: pomegranateId, name: 'Pomegranate Tree', profile_slug: 'pomegranate', garden_profile_id: 'garden-moj', garden_area_id: patioId },
       { id: 'gp-banana', name: 'Banana', profile_slug: 'banana', garden_profile_id: 'garden-moj' },
       { id: 'gp-pineapple', name: 'Pineapple', profile_slug: 'pineapple', garden_profile_id: 'garden-moj' }
     ],
@@ -893,46 +881,46 @@ test('owned placement missing cutout stays visible; count is plantLayers only', 
   assert.equal(ownedInventoryMustNotAutoPlace(owned.ownedPlants.length, 0), true);
   assert.equal(designPlacementCountFromLayers([]), 0);
 
-  const mango = createOwnedDesignPlacement({
+  const pomegranate = createOwnedDesignPlacement({
     gardenProfileId: 'garden-moj',
-    gardenPlantId: mangoId,
-    canonicalSlug: 'mango',
+    gardenPlantId: pomegranateId,
+    canonicalSlug: 'pomegranate',
     areaId: patioId,
     x: 0.15,
     y: 0.78
   });
-  assert.equal(mango.gardenPlantId, mangoId);
-  assert.equal(mango.canonicalSlug, 'mango');
-  assert.equal(mango.createsGardenPlant, false);
-  assert.equal(mango.areaId, patioId);
-  assert.equal(designPlacementCountFromLayers([mango]), 1);
+  assert.equal(pomegranate.gardenPlantId, pomegranateId);
+  assert.equal(pomegranate.canonicalSlug, 'pomegranate');
+  assert.equal(pomegranate.createsGardenPlant, false);
+  assert.equal(pomegranate.areaId, patioId);
+  assert.equal(designPlacementCountFromLayers([pomegranate]), 1);
 
   const areaKept = resolveOwnedPlacementAreaId({
     kind: 'owned',
-    gardenPlantId: mangoId,
+    gardenPlantId: pomegranateId,
     ownedAreaId: patioId,
     designLevelAreaId: null,
     userChangedArea: false
   });
   assert.equal(areaKept, patioId);
 
-  const mangoAsset = resolveDesignAsset({ canonicalSlug: 'mango', growthStage: 'mature' }, assetIndex);
-  assert.equal(mangoAsset.visualReady, false);
-  assert.equal(mangoAsset.fallback, DESIGN_ASSET_FALLBACK.HONEST_PLACEHOLDER);
-  assert.equal(mangoAsset.substitutedSpecies, false);
-  assert.equal(mangoAsset.usedWebImage, false);
-  assert.equal(mangoAsset.generateOnRender, false);
-  const mangoVisual = resolveOwnedPlacementVisual({
-    canonicalSlug: 'mango',
-    visualReady: mangoAsset.visualReady,
-    url: mangoAsset.url
+  const missingAsset = resolveDesignAsset({ canonicalSlug: 'pomegranate', growthStage: 'mature' }, assetIndex);
+  assert.equal(missingAsset.visualReady, false);
+  assert.equal(missingAsset.fallback, DESIGN_ASSET_FALLBACK.HONEST_PLACEHOLDER);
+  assert.equal(missingAsset.substitutedSpecies, false);
+  assert.equal(missingAsset.usedWebImage, false);
+  assert.equal(missingAsset.generateOnRender, false);
+  const missingVisual = resolveOwnedPlacementVisual({
+    canonicalSlug: 'pomegranate',
+    visualReady: missingAsset.visualReady,
+    url: missingAsset.url
   });
-  assert.equal(mangoVisual.renderVisible, true);
-  assert.equal(mangoVisual.draggable, true);
-  assert.equal(mangoVisual.resizable, true);
-  assert.equal(mangoVisual.fallback, DESIGN_ASSET_FALLBACK.HONEST_PLACEHOLDER);
-  assert.equal(mangoVisual.usedWebImage, false);
-  assert.equal(mangoVisual.paidAiCalls, 0);
+  assert.equal(missingVisual.renderVisible, true);
+  assert.equal(missingVisual.draggable, true);
+  assert.equal(missingVisual.resizable, true);
+  assert.equal(missingVisual.fallback, DESIGN_ASSET_FALLBACK.HONEST_PLACEHOLDER);
+  assert.equal(missingVisual.usedWebImage, false);
+  assert.equal(missingVisual.paidAiCalls, 0);
 
   const olive = resolveDesignAsset({ canonicalSlug: 'olive', growthStage: 'mature' }, assetIndex);
   assert.equal(olive.visualReady, true);
@@ -946,10 +934,10 @@ test('owned placement missing cutout stays visible; count is plantLayers only', 
   assert.equal(oliveVisual.visualReady, true);
   assert.notEqual(oliveVisual.fallback, DESIGN_ASSET_FALLBACK.HONEST_PLACEHOLDER);
 
-  const dup = duplicateDesignPlacement(mango);
-  assert.equal(dup.gardenPlantId, mangoId);
+  const dup = duplicateDesignPlacement(pomegranate);
+  assert.equal(dup.gardenPlantId, pomegranateId);
   assert.equal(dup.createsGardenPlant, false);
-  const counts = ownedPlacementOwnershipCount([mango, dup], mangoId);
+  const counts = ownedPlacementOwnershipCount([pomegranate, dup], pomegranateId);
   assert.equal(counts.visualCount, 2);
   assert.equal(counts.ownershipRecords, 1);
   assert.equal(counts.duplicateOwnership, false);

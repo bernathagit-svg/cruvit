@@ -1,0 +1,60 @@
+{
+  "contract": "cruvit-product-readiness-checkpoint-v1",
+  "createdAt": "2026-10-02",
+  "catalogTruth": {
+    "productionRows": 128,
+    "verifiedClean": 128,
+    "researchQueue": 0,
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "contradictions": 0,
+    "passFull": 132,
+    "unknownValid": 8,
+    "broadIdentityValid": 12
+  },
+  "media": {
+    "productionImageReady": 128,
+    "productionImagePending": 0,
+    "activeCanonicalTotal": 156,
+    "activeCanonicalImageReady": 155,
+    "activeCanonicalImageBlocked": 1,
+    "blockedSlug": "succulent",
+    "blockedReason": "identity-ambiguous",
+    "paidAiCalls": 0
+  },  "broadIdentity": {
+    "reviewed": 12,
+    "runtimeLocations": 4,
+    "runtimeEvaluations": 48,
+    "runtimeFailures": 0,
+    "policy": "positive recommendation blocked until exact species is resolved"
+  },
+  "coreUserJourney": {
+    "plant": "pomegranate",
+    "scientific": "Punica granatum",
+    "location": "Tel Aviv, Israel",
+    "climateKnown": true,
+    "recommendationLevel": "good",
+    "recommendationScore": 81,
+    "smartRecommendationEligible": true,
+    "myGardenProfileSlug": "pomegranate",
+    "myGardenImageReady": true,
+    "careTaskCreated": true,
+    "plantDoctorIdentityPreserved": true,
+    "gardenDesignIdentityPreserved": true,
+    "browserFailures": 0,
+    "pageErrors": 0
+  },  "nextProductWork": {
+    "catalogDataRepairRequired": false,
+    "catalogImageGenerationRequired": false,
+    "broadGenericSucculentImageShouldRemainBlocked": true,
+    "priority": [
+      "expand E2E user journeys beyond the Pomegranate golden path",
+      "verify authenticated server persistence across My Garden flows",
+      "verify Plant Identifier -> My Garden canonical handoff",
+      "verify Garden Design placement -> My Garden canonical handoff",
+      "verify Plant Doctor diagnosis -> care task/calendar writeback",
+      "then move to UX polish and launch-readiness defects"
+    ]
+  }
+}
