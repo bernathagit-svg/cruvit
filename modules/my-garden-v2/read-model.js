@@ -71,7 +71,7 @@ export function pendingGardenTasks(tasks, plants) {
 function dateOnly(value) {
   if (value == null) return null;
   const s = String(value);
-  const m = /^(\\d{4}-\\d{2}-\\d{2})/.exec(s);
+  const m = /^(\d{4}-\d{2}-\d{2})/.exec(s);
   if (!m) throw new Error(`invalid_date:${s}`);
   return m[1];
 }
