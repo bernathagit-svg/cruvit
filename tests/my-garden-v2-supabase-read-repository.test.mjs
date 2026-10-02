@@ -17,7 +17,7 @@ function mockSupabase(responses) {
     calls,
     from(table) {
       calls.push([table,'from']);
-      if (!(table in responses)) throw new Error(\`unexpected_table:\${table}\`);
+      if (!(table in responses)) throw new Error(`unexpected_table:${table}`);
       return new Query(table, responses[table], calls);
     }
   };
