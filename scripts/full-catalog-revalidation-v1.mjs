@@ -4,6 +4,7 @@ import path from 'node:path';
 import { classifyCatalogReadOnly, normalizeBatch3PacketForClassification } from '../modules/personal-domain/plant-data-contract-v1.js';
 import { applyAllBootstrapStructuralClimateTraitsMigrations, getBootstrapSafeClimateTraitsMigrationPayload, getBootstrapUnlockedSixClimateTraitsMigrationPayload } from '../modules/personal-domain/bootstrap-safe-climate-traits-migration-v1.js';
 import { evaluatePacketContradictionDry } from '../modules/personal-domain/catalog-contradiction-gate-v1.js';
+import { auditUnknownOutcomePurpose } from '../modules/personal-domain/unknown-outcome-purpose-v1.js';
 const ROOT=process.cwd();
 const SEMANTIC_FINDINGS_PATH=path.join(ROOT,'data/catalog/revalidation/semantic-audit-open-findings-v1.json');
 const semanticFindingsDoc=fs.existsSync(SEMANTIC_FINDINGS_PATH)?JSON.parse(fs.readFileSync(SEMANTIC_FINDINGS_PATH,'utf8').replace(/^\uFEFF/,'')):{rows:[]};
@@ -19,7 +20,9 @@ for(const part of block.split(/\{slug:'/).slice(1)){
   if(!slug) continue;
   const name=((one.match(/name:'((?:\\'|[^'])*)'/)||[])[1]||slug).replace(/\\'/g,"'");
   const scientific=((one.match(/scientific:'((?:\\'|[^'])*)'/)||[])[1]||'').replace(/\\'/g,"'");
-  bootstrapRecords.set(String(slug).toLowerCase(),{name,scientific});
+  const tagsMatch=one.match(/tags:\[([^\]]*)\]/);
+  const tags=tagsMatch?[...tagsMatch[1].matchAll(/'((?:\\'|[^'])*)'/g)].map(m=>m[1].replace(/\\'/g,"'")):[];
+  bootstrapRecords.set(String(slug).toLowerCase(),{name,scientific,tags});
 }
 const bootstrap=[...bootstrapRecords.keys()];
 const safe=getBootstrapSafeClimateTraitsMigrationPayload(),unlocked=getBootstrapUnlockedSixClimateTraitsMigrationPayload();
@@ -29,7 +32,7 @@ const ALIAS_TO_CANONICAL=Object.freeze({
 });
 const canonicalSlug=(slug)=>ALIAS_TO_CANONICAL[String(slug||'').trim().toLowerCase()]||String(slug||'').trim().toLowerCase();
 const runtimeBy=new Map();
-for(const slug of bootstrap){const m=safe.plants[slug]||unlocked.plants[slug],raw=bootstrapRecords.get(slug)||{};runtimeBy.set(slug,{slug,name:m?.name||raw.name||slug,scientific:m?.scientific||raw.scientific||'Various bootstrap species',aliases:m?.aliases||[],_source:'bootstrap'});}
+for(const slug of bootstrap){const m=safe.plants[slug]||unlocked.plants[slug],raw=bootstrapRecords.get(slug)||{};runtimeBy.set(slug,{slug,name:m?.name||raw.name||slug,scientific:m?.scientific||raw.scientific||'Various bootstrap species',aliases:m?.aliases||[],tags:raw.tags||[],_source:'bootstrap'});}
 applyAllBootstrapStructuralClimateTraitsMigrations([...runtimeBy.values()],Object.fromEntries(runtimeBy));
 for(const p of seed){const slug=String(p.slug||'').toLowerCase();if(slug)runtimeBy.set(slug,{...p,_source:'seed'});}
 function walk(dir,out=[]){for(const e of fs.readdirSync(dir,{withFileTypes:true})){const fp=path.join(dir,e.name);if(e.isDirectory())walk(fp,out);else if(e.name.endsWith('.packet.json')||e.name==='packet.json')out.push(fp);}return out;}
@@ -52,7 +55,31 @@ const unifiedBy=new Map(runtimeCanonicalBy);for(const [slug,p] of packetCanonica
 const unifiedReport=classifyCatalogReadOnly([...unifiedBy.values()]);
 const overlap=[...packetCanonicalBy.keys()].filter(s=>runtimeCanonicalBy.has(s)),runtimeOnly=[...runtimeCanonicalBy.keys()].filter(s=>!packetCanonicalBy.has(s)),packetOnly=[...packetCanonicalBy.keys()].filter(s=>!runtimeCanonicalBy.has(s));
 const validUnknownReasons=new Set(['FLOWERING_REQUIREMENTS_MISSING','FRUITING_REQUIREMENTS_MISSING','HUMIDITY_UNKNOWN']);
-const rows=unifiedReport.rows.map(r=>{const hasPacket=packetCanonicalBy.has(r.slug),hasRuntime=runtimeCanonicalBy.has(r.slug),source=hasPacket?(hasRuntime?'PACKET_OVERLAY_RUNTIME':'PACKET_ONLY'):'RUNTIME_ONLY',contradiction=(packetContradictionsByCanonical.get(r.slug)||[]).some(x=>x?.needsHold===true),semanticFinding=semanticFindingsBySlug.get(String(r.slug||'').toLowerCase())||null;let status='RESEARCH_REQUIRED';if(contradiction)status='CONTRADICTION';else if(semanticFinding)status='RESEARCH_REQUIRED';else if(r.identityScope==='broad')status='BROAD_IDENTITY_VALID';else if(r.readinessShort==='A')status='PASS_FULL';else if((r.unknownOutcomes||[]).length>0&&(r.reasons||[]).every(x=>validUnknownReasons.has(x)))status='UNKNOWN_VALID';const reasons=semanticFinding?[...(r.reasons||[]),'SEMANTIC_AUDIT_OPEN_FINDING']:(r.reasons||[]);return {...r,reasons,source,status,semanticFinding,packet:packetMetaByCanonical.get(r.slug)||null,runtimeAliases:runtimeAliasesByCanonical.get(r.slug)||[],realContradiction:contradiction};}).sort((a,b)=>String(a.slug).localeCompare(String(b.slug)));
+function purposeAuditForUnknown(slug,unknownOutcomes=[]){
+  const plant=unifiedBy.get(slug)||{};
+  return auditUnknownOutcomePurpose({
+    tags:Array.isArray(plant.tags)?plant.tags:[],
+    groupIds:Array.isArray(plant.climateTraits?.groupIds)?plant.climateTraits.groupIds:[],
+    unknownOutcomes
+  });
+}
+const rows=unifiedReport.rows.map(r=>{
+  const hasPacket=packetCanonicalBy.has(r.slug),hasRuntime=runtimeCanonicalBy.has(r.slug);
+  const source=hasPacket?(hasRuntime?'PACKET_OVERLAY_RUNTIME':'PACKET_ONLY'):'RUNTIME_ONLY';
+  const contradiction=(packetContradictionsByCanonical.get(r.slug)||[]).some(x=>x?.needsHold===true);
+  const semanticFinding=semanticFindingsBySlug.get(String(r.slug||'').toLowerCase())||null;
+  const purposeAudit=purposeAuditForUnknown(r.slug,r.unknownOutcomes||[]);
+  let status='RESEARCH_REQUIRED';
+  if(contradiction)status='CONTRADICTION';
+  else if(semanticFinding)status='RESEARCH_REQUIRED';
+  else if(r.identityScope==='broad')status='BROAD_IDENTITY_VALID';
+  else if(r.readinessShort==='A')status='PASS_FULL';
+  else if((r.unknownOutcomes||[]).length>0&&(r.reasons||[]).every(x=>validUnknownReasons.has(x))&&purposeAudit.appropriate)status='UNKNOWN_VALID';
+  const reasons=[...(r.reasons||[])];
+  if(semanticFinding)reasons.push('SEMANTIC_AUDIT_OPEN_FINDING');
+  reasons.push(...purposeAudit.blockers);
+  return {...r,reasons:[...new Set(reasons)],source,status,semanticFinding,purposeAudit,packet:packetMetaByCanonical.get(r.slug)||null,runtimeAliases:runtimeAliasesByCanonical.get(r.slug)||[],realContradiction:contradiction};
+}).sort((a,b)=>String(a.slug).localeCompare(String(b.slug)));
 const statusCounts={PASS_FULL:0,UNKNOWN_VALID:0,BROAD_IDENTITY_VALID:0,RESEARCH_REQUIRED:0,CONTRADICTION:0};for(const row of rows)statusCounts[row.status]=(statusCounts[row.status]||0)+1;
 const reasonFrequency={};for(const row of rows)for(const reason of row.reasons||[])reasonFrequency[reason]=(reasonFrequency[reason]||0)+1;
 const nativeContradictionHolds=[...packetContradictionByNative.entries()].filter(([,x])=>x?.needsHold===true).map(([slug,x])=>({slug,holdFields:x.holdFields||[],counts:x.counts||{}}));
@@ -61,7 +88,7 @@ const broadIdentityQueue=broadIdentityRows.map(r=>({slug:r.slug,scientific:r.sci
 const researchRows=rows.filter(r=>r.status==='RESEARCH_REQUIRED');
 const queue=researchRows.map(r=>{const reasons=r.reasons||[];let priority='P2_EVIDENCE_ENRICHMENT';if(r.readinessShort==='D'||reasons.includes('MISSING_FROST_SENSITIVITY'))priority='P0_IDENTITY_OR_CORE_BLOCK';else if(r.needsReview||reasons.includes('NEEDS_REVIEW'))priority='P1_REVIEW_HOLD';return {slug:r.slug,priority,readiness:r.readinessShort,gate:r.gate,reasons,unknownOutcomes:r.unknownOutcomes||[],source:r.source};}).sort((a,b)=>a.priority.localeCompare(b.priority)||a.slug.localeCompare(b.slug));
 const priorityCounts={P0_IDENTITY_OR_CORE_BLOCK:0,P1_REVIEW_HOLD:0,P2_EVIDENCE_ENRICHMENT:0};for(const row of queue)priorityCounts[row.priority]=(priorityCounts[row.priority]||0)+1;
-const auditRows=rows.map(r=>({slug:r.slug,source:r.source,status:r.status,readiness:r.readinessShort,gate:r.gate,reasons:r.reasons||[],unknownOutcomes:r.unknownOutcomes||[],realContradiction:r.realContradiction===true,runtimeAliases:r.runtimeAliases||[],packet:r.packet||null}));
+const auditRows=rows.map(r=>({slug:r.slug,source:r.source,status:r.status,readiness:r.readinessShort,gate:r.gate,reasons:r.reasons||[],unknownOutcomes:r.unknownOutcomes||[],purposeAudit:(r.unknownOutcomes||[]).length?{policyVersion:r.purposeAudit?.policyVersion||null,fruitPurpose:r.purposeAudit?.fruitPurpose===true,floweringPurpose:r.purposeAudit?.floweringPurpose===true,blockers:r.purposeAudit?.blockers||[],appropriate:r.purposeAudit?.appropriate===true}:null,realContradiction:r.realContradiction===true,runtimeAliases:r.runtimeAliases||[],packet:r.packet||null}));
 const report={contract:'cruvit-full-catalog-revalidation-v1',generatedAt:new Date().toISOString(),runtime:{total:runtimeReport.total,counts:runtimeReport.counts,gates:runtimeReport.gates,canonicalUnique:runtimeCanonicalBy.size},packets:{files:packetFiles.length,unique:packetBy.size,counts:packetReport.counts,gates:packetReport.gates,canonicalUnique:packetCanonicalBy.size,canonicalCounts:canonicalPacketReport.counts,realContradictionHolds:nativeContradictionHolds},coverage:{unifiedUnique:unifiedBy.size,overlap:overlap.length,runtimeOnlyCount:runtimeOnly.length,packetOnlyCount:packetOnly.length,runtimeOnly:runtimeOnly.sort(),packetOnly:packetOnly.sort(),aliasMappings:ALIAS_TO_CANONICAL},unified:{counts:unifiedReport.counts,gates:unifiedReport.gates,statusCounts,reasonFrequency},broadIdentityQueue:{total:broadIdentityQueue.length,rows:broadIdentityQueue},researchQueue:{total:queue.length,priorityCounts,rows:queue},rows:auditRows};
 fs.writeFileSync(path.join(ROOT,'tests/_full-catalog-revalidation-v1-report.json'),JSON.stringify(report,null,2)+'\n');
 fs.writeFileSync(path.join(ROOT,'data/catalog/revalidation/full-catalog-broad-identity-queue-2026-10-01-v1.json'),JSON.stringify({contract:'cruvit-full-catalog-broad-identity-queue-v1',createdAt:'2026-10-01',total:broadIdentityQueue.length,rows:broadIdentityQueue},null,2)+'\n');
