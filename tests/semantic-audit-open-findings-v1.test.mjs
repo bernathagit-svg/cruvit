@@ -10,32 +10,32 @@ import { evaluatePacketContradictionDry } from '../modules/personal-domain/catal
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const proposalPath=path.join(ROOT,'data/catalog/revalidation/semantic-audit-proposals-v1/date-palm.proposal.json');
 const findingPath=path.join(ROOT,'data/catalog/revalidation/semantic-audit-open-findings-v1.json');
-test('date-palm semantic repair proposal is Class A but remains owner-unapproved',()=>{
- const p=JSON.parse(fs.readFileSync(proposalPath,'utf8'));
- assert.equal(p.humanApproval.approvedForIngest,false);
- const simulated={...p,humanApproval:{approvedForIngest:true,approvedAt:'SIMULATION_ONLY',note:'test only'}};
- const v=validateCatalogExpansionPacket(simulated);assert.equal(v.ok,true,v.errors.join('; '));
+test('date-palm approved repair packet is Class A and source-backed',()=>{
+ const approvedPath=path.join(ROOT,'data/catalog-expansion/batches/semantic-audit-owner-approved-v1/packets/date-palm.packet.json');
+ const p=JSON.parse(fs.readFileSync(approvedPath,'utf8'));
+ assert.equal(p.humanApproval.approvedForIngest,true);
+ const v=validateCatalogExpansionPacket(p);assert.equal(v.ok,true,v.errors.join('; '));
  const ready=classifyPlantDataReadiness(normalizeBatch3PacketForClassification(p));
  assert.equal(ready.readinessShort,'A');assert.equal(ready.gate,'PASS');
  const conflict=evaluatePacketContradictionDry(p);assert.equal(conflict.needsHold,false);
- const m=materializePlantCatalogItemFromPacket(simulated);assert.equal(m.ok,true);
+ const m=materializePlantCatalogItemFromPacket(p);assert.equal(m.ok,true);
  assert.ok(m.item.tags.includes('fruit'));assert.ok(m.item.tags.includes('edible'));
  assert.equal(m.item.climateTraits.reproductiveBiology.dioecious,true);
  assert.equal(m.item.climateTraits.reproductiveBiology.requires_pollinator,true);
  assert.equal(m.item.climateTraits.reproductiveClimate.fruiting.summerHeatBand,'hot');
-});test('open semantic finding re-enters full catalog research queue until canonical closure',()=>{
+});
+
+test('resolved semantic finding leaves full catalog research queue closed',()=>{
  const findings=JSON.parse(fs.readFileSync(findingPath,'utf8'));
  const finding=findings.rows.find(r=>r.slug==='date-palm');
- assert.equal(finding.status,'OPEN');
+ assert.equal(finding.status,'RESOLVED');
  const run=spawnSync(process.execPath,['scripts/full-catalog-revalidation-v1.mjs'],{cwd:ROOT,encoding:'utf8'});
  assert.equal(run.status,0,run.stderr||run.stdout);
  const q=JSON.parse(fs.readFileSync(path.join(ROOT,'data/catalog/revalidation/full-catalog-revalidation-queue-2026-10-01-v1.json'),'utf8'));
- const row=q.rows.find(r=>r.slug==='date-palm');
- assert.ok(row);
- assert.equal(row.priority,'P2_EVIDENCE_ENRICHMENT');
- assert.ok(row.reasons.includes('SEMANTIC_AUDIT_OPEN_FINDING'));
+ assert.equal(q.total,0);
  const report=JSON.parse(fs.readFileSync(path.join(ROOT,'tests/_full-catalog-revalidation-v1-report.json'),'utf8'));
- assert.equal(report.unified.statusCounts.RESEARCH_REQUIRED,1);
+ assert.equal(report.unified.statusCounts.RESEARCH_REQUIRED,0);
  assert.equal(report.unified.statusCounts.UNKNOWN_VALID,10);
+ assert.equal(report.unified.statusCounts.PASS_FULL,130);
  assert.equal(report.unified.statusCounts.CONTRADICTION,0);
 });

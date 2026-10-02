@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { validateCatalogExpansionPacket, materializePlantCatalogItemFromPacket } from '../modules/catalog-expansion/catalog-expansion-v1-contract.js';
+import { normalizeBatch3PacketForClassification, classifyPlantDataReadiness } from '../modules/personal-domain/plant-data-contract-v1.js';
+import { evaluatePacketContradictionDry } from '../modules/personal-domain/catalog-contradiction-gate-v1.js';
+const ROOT=process.cwd();
+const src=path.join(ROOT,'data/catalog/revalidation/semantic-audit-proposals-v1/date-palm.proposal.json');
+const out=path.join(ROOT,'data/catalog-expansion/batches/semantic-audit-owner-approved-v1/packets/date-palm.packet.json');
+const p=JSON.parse(fs.readFileSync(src,'utf8').replace(/^\uFEFF/,''));
+p.humanApproval={approvedForIngest:true,approvedAt:'2026-10-02',approvedBy:'CRUVIT Owner',note:'Owner PASS approved in chat on 2026-10-02; canonical ingest authorized subject to all QA gates and no silent inference.'};
+const v=validateCatalogExpansionPacket(p);if(!v.ok)throw new Error(v.errors.join('; '));
+const ready=classifyPlantDataReadiness(normalizeBatch3PacketForClassification(p));
+if(ready.readinessShort!=='A'||ready.gate!=='PASS')throw new Error('readiness '+ready.readinessShort+'/'+ready.gate);
+const conflict=evaluatePacketContradictionDry(p);if(conflict.needsHold)throw new Error('contradiction '+conflict.holdFields.join(','));
+const m=materializePlantCatalogItemFromPacket(p,{updatedAt:'2026-10-02T10:42:00.000Z'});if(!m.ok)throw new Error(m.errors.join('; '));
+fs.mkdirSync(path.dirname(out),{recursive:true});fs.writeFileSync(out,JSON.stringify(p,null,2)+'\n');
+fs.writeFileSync(path.join(ROOT,'data/catalog/revalidation/date-palm-materialized-v1.json'),JSON.stringify({item:m.item,identityRegistryEntry:m.identityRegistryEntry},null,2)+'\n');
+console.log(JSON.stringify({slug:m.item.slug,ready:ready.readinessShort,gate:ready.gate,contradictionHold:false,unknownFields:m.unknownFields,needsReviewFields:m.needsReviewFields},null,2));
