@@ -1,0 +1,27 @@
+/* Only the expressly approved My Garden changes. Native labels/buttons over the original 3D artwork. */
+.pg-scene.botanical-scene{height:693px;background:#34472a url('assets/garden-base-v2.png') 0 0/390px 693px no-repeat;}
+.botanical-scene .pg-copy,.botanical-scene .pg-status,.botanical-scene .pg-camera{display:none!important;}
+.botanical-scene:before{content:'';position:absolute;z-index:1;inset:0 0 auto;height:66px;background:linear-gradient(#0b251b24,transparent);pointer-events:none;}
+.botanical-scene .pg-top{top:18px;left:20px;right:14px;height:43px;z-index:3;}
+.botanical-scene .pg-brand{gap:8px;color:#fff;font-size:18px;letter-spacing:2.2px;text-shadow:0 1px 8px #20352050;}.botanical-scene .pg-brand svg{color:#fff;width:27px;height:29px;}
+.botanical-scene .pg-tools{gap:9px;}.botanical-scene .pg-tools button{width:42px;height:42px;background:#e8e4cf;color:#132111;border:0;padding:10px;}
+.botanical-scene .pg-photo-button{position:absolute;z-index:3;top:71px;left:201px;width:176px;height:45px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:27px;border:1px solid #fffefa;background:#f4f1e3;color:#244323;box-shadow:inset 0 2px 8px #fff8,0 5px 18px #24352320;padding:7px 9px;}
+.botanical-scene .pg-photo-button svg{width:23px;height:23px;flex-shrink:0;}.botanical-scene .pg-photo-button span{font:400 12.8px/17px Georgia,'Times New Roman',serif;white-space:nowrap;}
+.botanical-scene .pg-quick{top:403px;left:14px;right:13px;height:109px;gap:4.5px;z-index:3;}
+.botanical-scene .pg-quick .botanical-tile{position:relative;display:block;padding:0;border:0;border-radius:27px;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:0 6px 15px #1b30101b;overflow:visible;}
+.botanical-scene .botanical-tile>img{position:absolute;inset:0;width:100%;height:100%;border-radius:27px;display:block;object-fit:fill;user-select:none;pointer-events:none;}
+.botanical-scene .botanical-tile>span{position:absolute;left:0;right:0;top:76px;text-align:center;font:400 12.5px/16px Arial,Helvetica,sans-serif;white-space:nowrap;color:#fff;}
+.botanical-scene .botanical-tile[data-tile='plants']>span{color:#234520;}.botanical-scene .botanical-tile[data-tile='journal']>span{font-size:10.5px;}
+.botanical-scene .botanical-tile>small{position:absolute;top:93px;left:0;right:0;margin:0;color:#f6f3df;font:400 10.8px/14px Arial;text-align:center;}
+.botanical-scene .botanical-tile[data-tile='plants']>small{color:#698140;}.botanical-scene .botanical-tile:first-child:after{content:'';position:absolute;left:19%;right:19%;bottom:-8px;height:3px;border-radius:5px;background:#a9d58c;box-shadow:0 0 7px #bddd9536;}
+.botanical-scene .pg-attention{top:528px;left:13px;right:13px;height:68px;padding:8px 15px 8px 12px;grid-template-columns:43px 1fr 14px;gap:11px;border-radius:27px;z-index:3;background:linear-gradient(100deg,#f0ead7fa,#efe7d4f0);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);}
+.botanical-scene .pg-badge{width:43px;height:43px;font-size:28px;background:#fa6e61;border:0;box-shadow:none;}
+.botanical-scene .pg-attention strong{font:400 17.5px/21px Georgia,'Times New Roman',serif;}.botanical-scene .pg-attention small{font:400 9px/14px Arial;white-space:nowrap;}.botanical-scene .pg-attention>svg{width:14px;}
+.botanical-scene .pg-nav{height:84px;border-radius:26px 26px 0 0;padding:10px 0 15px;z-index:3;background:linear-gradient(120deg,#f8f7ecfa,#fffaf3f7);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);align-items:start;}
+.botanical-scene .pg-nav button{height:55px;padding:5px 0 0;gap:5px;}.botanical-scene .pg-nav svg{width:23px;height:23px;}.botanical-scene .pg-nav small{font-size:10.3px;line-height:13px;}
+.botanical-scene .pg-nav .pg-add{top:-13px;width:65px;height:65px;border-width:4px;padding:0;background:radial-gradient(circle at 30% 20%,#315936,#193c20);}.botanical-scene .pg-add svg{width:30px;height:30px;}
+.botanical-home-indicator{position:absolute;bottom:7px;width:123px;height:4px;left:calc(50% - 61.5px);background:#aaa99f;border-radius:8px;pointer-events:none;}
+.botanical-scene .gp-photo-shade{background:linear-gradient(0deg,#1425144d,transparent 35%);}.botanical-scene.gp-custom-photo .pg-brand{text-shadow:0 1px 5px #0009,0 0 14px #203518aa;}
+.gp-preview-wrap:has(.botanical-scene){aspect-ratio:390/693;}.gp-preview-content .botanical-scene{height:693px;}
+.botanical-scene .pg-photo-button:focus-visible,.botanical-scene .botanical-tile:focus-visible{outline:2px solid #fff;outline-offset:4px;}
+@media(prefers-reduced-motion:reduce){.botanical-scene *{scroll-behavior:auto;}}
