@@ -29,29 +29,30 @@ export function buildMyGardenHomeViewModel({
   const attention = attentionTasks(tasks, plants, today);
   const plantsById = new Map(active.map((p) => [p.id, p]));
 
-  const firstTask = attention[0] ?? null;
-  const firstAlert = attentionAlerts[0] ?? null;
+  const alertItems = attentionAlerts.map((alert) => Object.freeze({
+    type: 'alert',
+    id: alert.id,
+    title: alert.title ?? alert.label ?? 'Needs attention',
+    detail: alert.detail ?? alert.message ?? '',
+    displayText: alert.displayText ?? alert.display_text ?? null,
+  }));
 
-  let attentionPreview = null;
-  if (firstAlert) {
-    attentionPreview = Object.freeze({
-      type: 'alert',
-      id: firstAlert.id,
-      title: firstAlert.title ?? firstAlert.label ?? 'Needs attention',
-      detail: firstAlert.detail ?? firstAlert.message ?? '',
-    });
-  } else if (firstTask) {
-    const plant = plantsById.get(taskPlantId(firstTask));
-    attentionPreview = Object.freeze({
+  const taskItems = attention.map((task) => {
+    const plant = plantsById.get(taskPlantId(task));
+    return Object.freeze({
       type: 'task',
-      id: firstTask.id,
-      taskId: firstTask.id,
-      plantId: taskPlantId(firstTask),
+      id: task.id,
+      taskId: task.id,
+      plantId: taskPlantId(task),
       plantName: plantLabel(plant),
-      title: firstTask.title ?? 'Task',
-      dueOn: dueDate(firstTask),
+      title: task.title ?? 'Task',
+      dueOn: dueDate(task),
+      displayText: task.displayText ?? task.display_text ?? null,
     });
-  }
+  });
+
+  const attentionItems = Object.freeze([...alertItems, ...taskItems]);
+  const attentionPreview = attentionItems[0] ?? null;
 
   return Object.freeze({
     counts: Object.freeze({
@@ -60,6 +61,7 @@ export function buildMyGardenHomeViewModel({
       attention: summary.attentionCount,
     }),
     attentionPreview,
+    attentionItems,
     activePlantIds: Object.freeze(active.map((p) => p.id)),
     pendingTaskIds: Object.freeze(pending.map((t) => t.id)),
     attentionTaskIds: Object.freeze(attention.map((t) => t.id)),
@@ -68,9 +70,10 @@ export function buildMyGardenHomeViewModel({
 
 export function assertHomeViewModelConsistency(viewModel) {
   if (!viewModel || typeof viewModel !== 'object') throw new Error('home_view_model_required');
-  const { counts, activePlantIds, pendingTaskIds, attentionTaskIds } = viewModel;
+  const { counts, activePlantIds, pendingTaskIds, attentionTaskIds, attentionItems } = viewModel;
   if (counts.plants !== activePlantIds.length) throw new Error('home_plant_count_mismatch');
   if (counts.upcoming !== pendingTaskIds.length) throw new Error('home_upcoming_count_mismatch');
   if (counts.attention < attentionTaskIds.length) throw new Error('home_attention_count_mismatch');
+  if (!Array.isArray(attentionItems) || attentionItems.length !== counts.attention) throw new Error('home_attention_items_mismatch');
   return true;
 }
