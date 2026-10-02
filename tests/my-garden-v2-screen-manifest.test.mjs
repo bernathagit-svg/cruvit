@@ -17,7 +17,7 @@ test('every approved screen is visually locked', () => {
 });
 
 test('all persistent data dependencies use canonical Garden OS sources', () => {
-  const allowed = new Set(['garden_profiles','garden_plants','garden_areas','garden_tasks','garden_events','garden_media']);
+  const allowed = new Set(['garden_profiles','garden_plants','garden_areas','garden_tasks','garden_events','garden_media','catalog_plants']);
   for (const s of MY_GARDEN_SCREENS) for (const source of s.sources||[]) assert.equal(allowed.has(source), true, `${s.id}:${source}`);
 });
 
