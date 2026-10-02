@@ -10,11 +10,12 @@ const registry=JSON.parse(
 );
 
 const locked=[
+  'add-plant',
   'my-plants',
-  'plant-overview',
   'plant-care',
-  'plant-schedule',
   'plant-history',
+  'plant-overview',
+  'plant-schedule',
 ];
 
 test('owner approved integrated preview fingerprint is locked',()=>{
@@ -25,7 +26,7 @@ test('owner approved integrated preview fingerprint is locked',()=>{
   );
 });
 
-test('exact approved My Plants and Plant Detail family are LOCKED_IMPLEMENTED',()=>{
+test('all explicitly owner-approved visual screens are LOCKED_IMPLEMENTED',()=>{
   assert.deepEqual(registry.screens.map((x)=>x.id),locked);
   for(const screen of registry.screens){
     assert.equal(screen.state,'LOCKED_IMPLEMENTED');
