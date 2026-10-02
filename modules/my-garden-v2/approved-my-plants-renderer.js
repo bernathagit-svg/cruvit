@@ -1,3 +1,5 @@
+import { slotByIndex } from './my-plants-approved-layout.js';
+
 function esc(value) {
   return String(value ?? '')
     .replaceAll('&','&amp;')
@@ -70,13 +72,20 @@ export function renderMyPlantsInteractionLayer(renderModel) {
   if (!renderModel?.visualReference?.locked) {
     throw new Error('my_plants_visual_reference_required');
   }
+  if (renderModel.cards.length > 9) {
+    throw new Error('approved_my_plants_layout_capacity_exceeded');
+  }
 
-  return renderModel.cards.map((card)=>
-    '<article class="my-plants-runtime-card" data-plant-id="'+esc(card.plantId)+'">'+
-      '<button type="button" class="my-plants-open-hit" data-action="open_plant" data-plant-id="'+esc(card.plantId)+'" aria-label="Open '+esc(card.name)+'"></button>'+
-      '<button type="button" class="my-plants-camera-hit" data-action="replace_plant_photo" data-plant-id="'+esc(card.plantId)+'" aria-label="Change photo for '+esc(card.name)+'"></button>'+
-    '</article>'
-  ).join('');
+  return renderModel.cards.map((card,index)=>{
+    const slot=slotByIndex(index);
+    return '<article class="my-plants-runtime-card" data-plant-id="'+esc(card.plantId)+'" '+
+      'style="position:absolute;left:'+slot.left.toFixed(6)+'%;top:'+slot.top.toFixed(6)+'%;width:'+slot.width.toFixed(6)+'%;height:'+slot.height.toFixed(6)+'%">'+
+      '<button type="button" class="my-plants-open-hit" data-action="open_plant" data-plant-id="'+esc(card.plantId)+'" aria-label="Open '+esc(card.name)+'" '+
+        'style="position:absolute;inset:0;border:0;background:transparent"></button>'+
+      '<button type="button" class="my-plants-camera-hit" data-action="replace_plant_photo" data-plant-id="'+esc(card.plantId)+'" aria-label="Change photo for '+esc(card.name)+'" '+
+        'style="position:fixed;left:'+slot.cameraLeft.toFixed(6)+'%;top:'+slot.cameraTop.toFixed(6)+'%;width:34px;height:34px"></button>'+
+    '</article>';
+  }).join('');
 }
 
 export function assertMyPlantsVisualAcceptanceReady(renderModel) {
