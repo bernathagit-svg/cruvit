@@ -6,6 +6,7 @@ import {
   buildUpcomingCalendarScreenViewModel,
   buildNotificationsScreenViewModel,
   assertTaskScreenIdentity,
+  assertUpcomingListCalendarTotalsMatch,
 } from '../modules/my-garden-v2/task-screen-view-models.js';
 
 const plants = [
@@ -61,6 +62,12 @@ test('Calendar selected-day tasks are the same task rows', () => {
 
   assert.deepEqual(vm.selectedDayRows.map((x) => x.id), ['t1', 't3']);
   assert.equal(vm.byDate.get('2026-10-02')[0], vm.selectedDayRows[0]);
+  assert.deepEqual(vm.counts, {
+    toDo: 3,
+    completed: 1,
+    cancelled: 0,
+    all: 4,
+  });
 });
 
 test('Notifications are the due subset of the same task identities', () => {
@@ -100,4 +107,43 @@ test('invalid selected month/date relationship fails loudly', () => {
     }),
     /selected_date_outside_month/
   );
+});
+
+
+test('List and Calendar status totals are identical for the same garden scope', () => {
+  const list = buildUpcomingListScreenViewModel({
+    plants,
+    tasks,
+    filter: 'to_do',
+  });
+  const calendar = buildUpcomingCalendarScreenViewModel({
+    plants,
+    tasks,
+    selectedMonth: '2026-10',
+    selectedDate: '2026-10-02',
+    filter: 'to_do',
+  });
+
+  assert.deepEqual(calendar.counts, list.counts);
+  assert.equal(assertUpcomingListCalendarTotalsMatch({ list, calendar }), true);
+});
+
+test('List and Calendar status totals stay identical under the same plant filter', () => {
+  const list = buildUpcomingListScreenViewModel({
+    plants,
+    tasks,
+    filter: 'all',
+    plantId: 'p1',
+  });
+  const calendar = buildUpcomingCalendarScreenViewModel({
+    plants,
+    tasks,
+    selectedMonth: '2026-10',
+    selectedDate: '2026-10-02',
+    filter: 'all',
+    plantId: 'p1',
+  });
+
+  assert.deepEqual(calendar.counts, list.counts);
+  assert.equal(assertUpcomingListCalendarTotalsMatch({ list, calendar }), true);
 });
