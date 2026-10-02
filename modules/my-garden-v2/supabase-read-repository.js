@@ -128,15 +128,16 @@ export function createMyGardenReadRepository(supabase) {
 
   async function loadGardenSnapshot(gardenProfileId) {
     const id = requireGardenId(gardenProfileId);
-    const [profile, plants, tasks, events, media] = await Promise.all([
+    const [profile, plants, areas, tasks, events, media] = await Promise.all([
       getGardenProfile(id),
       listPlants(id),
+      listAreas(id),
       listTasks(id),
       listEvents(id),
       listMedia(id),
     ]);
     if (!profile) throw new Error(`garden_snapshot:garden_not_found:${id}`);
-    return Object.freeze({ profile, plants, tasks, events, media });
+    return Object.freeze({ profile, plants, areas, tasks, events, media });
   }
 
   return Object.freeze({
