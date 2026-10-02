@@ -1,0 +1,42 @@
+{
+  "contract": "cruvit-unknown-valid-semantic-audit-v1",
+  "createdAt": "2026-10-02",
+  "scope": "All 10 UNKNOWN_VALID exact-species records after Date Palm closure",
+  "reviewed": 10,
+  "materialFindings": 2,
+  "purposeAppropriateUnknown": 8,
+  "openFindings": [
+    {
+      "slug": "monstera",
+      "scientific": "Monstera deliciosa",
+      "reason": "Edible fully-ripe fruit and unripe-fruit safety semantics were absent from the runtime-only record.",
+      "proposalReadiness": "A",
+      "proposalGate": "PASS",
+      "ownerApproved": false
+    },
+    {
+      "slug": "cycas",
+      "scientific": "Cycas revoluta",
+      "reason": "Flowering/fruiting were labeled UNKNOWN although the species is a non-flowering gymnosperm with cones/seeds and dioecious reproduction.",
+      "proposalReadiness": "A",
+      "proposalGate": "PASS",
+      "ownerApproved": false
+    }
+  ],
+  "acceptedUnknowns": [
+    {"slug":"aloe-vera","unknown":["flowering","fruiting"],"reason":"Current catalog purpose is succulent foliage and care; reproductive crop outcomes are not required."},
+    {"slug":"basil","unknown":["fruiting"],"reason":"Current catalog purpose is edible leaf herb; seed outcome is not required for leaf-harvest recommendation."},
+    {"slug":"black-eyed-susan-vine","unknown":["fruiting"],"reason":"Current catalog purpose is ornamental flowering climber; seed outcome is not a recommendation purpose."},
+    {"slug":"cyclamen","unknown":["fruiting"],"reason":"Current catalog purpose is cool-season ornamental flowering; seed outcome is not a recommendation purpose."},
+    {"slug":"ficus-benjamina","unknown":["flowering","fruiting"],"reason":"Current catalog purpose is foliage tree/houseplant; reproductive outcome is not a recommendation purpose."},
+    {"slug":"hibiscus","unknown":["fruiting"],"reason":"Current catalog purpose is ornamental flowering shrub; fruit outcome is not part of current product intent."},
+    {"slug":"rosemary","unknown":["fruiting"],"reason":"Current catalog purpose is edible aromatic leaf herb; fruit/seed outcome is not required for harvest use."},
+    {"slug":"strelitzia","unknown":["fruiting"],"reason":"Current catalog purpose is ornamental flowering/architectural plant; seed outcome is not a recommendation purpose."}
+  ],
+  "policy": {
+    "unknownValidIsNotPermanentWhitelist": true,
+    "semanticAuditOpenFindingOverridesUnknownValid": true,
+    "ownerPassRequiredForCanonicalRepair": true,
+    "noSilentInference": true
+  }
+}

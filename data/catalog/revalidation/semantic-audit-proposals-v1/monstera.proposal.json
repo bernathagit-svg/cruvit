@@ -1,0 +1,255 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "monstera-semantic-audit-proposal-v1",
+  "identity": {
+    "canonicalSlug": "monstera",
+    "commonNameEn": "Monstera",
+    "acceptedScientificName": "Monstera deliciosa",
+    "aliases": [
+      "monstera",
+      "Swiss cheese plant",
+      "ceriman",
+      "Mexican breadfruit",
+      "Monstera deliciosa"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Semantic audit repair proposal: edible-ripe-only fruit purpose and calcium-oxalate safety modeled explicitly; no silent inference."
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-monstera-deliciosa",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Monstera deliciosa",
+      "url": "https://plants.ces.ncsu.edu/plants/monstera-deliciosa/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-02"
+    },
+    {
+      "sourceId": "uf-ifas-monstera-fruit",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida IFAS Extension",
+      "title": "Monstera Growing in the Florida Home Landscape",
+      "url": "https://ask.ifas.ufl.edu/publication/hs311",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-02"
+    },
+    {
+      "sourceId": "uf-ifas-poisonous-houseplants",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida IFAS Extension",
+      "title": "Common Poisonous Houseplant Species in Florida",
+      "url": "https://edis.ifas.ufl.edu/publication/EP639",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-02"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "monstera-frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-monstera-deliciosa"
+      ],
+      "shortExcerpt": "Warm 60–85°F preference and USDA zones 10a–12b support high frost sensitivity as an explicit heuristic.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "monstera-cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "ncsu-monstera-deliciosa"
+      ],
+      "shortExcerpt": "NCSU lists USDA zones 10a–12b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "monstera-heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-monstera-deliciosa",
+        "uf-ifas-monstera-fruit"
+      ],
+      "shortExcerpt": "Warm tropical growth is preferred, but exposed full sun can scorch foliage; retained as medium heat tolerance.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "monstera-humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-monstera-deliciosa"
+      ],
+      "shortExcerpt": "NCSU states Monstera deliciosa prefers high humidity.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "monstera-water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-monstera-deliciosa",
+        "uf-ifas-monstera-fruit"
+      ],
+      "shortExcerpt": "Water thoroughly then allow partial drying; periodic irrigation improves growth and fruit.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "monstera-sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "partial_shade",
+      "sourceIds": [
+        "ncsu-monstera-deliciosa"
+      ],
+      "shortExcerpt": "NCSU lists dappled sunlight and partial shade; fruit production may use more sun.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "monstera-drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-monstera-deliciosa",
+        "uf-ifas-monstera-fruit"
+      ],
+      "shortExcerpt": "NCSU and UF/IFAS require good drainage and warn against flooded/excessively wet soil.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "monstera-flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Mature outdoor vines in warm tropical or warm-subtropical conditions can produce a spadix/spathe; flowering is rare indoors.",
+      "sourceIds": [
+        "ncsu-monstera-deliciosa",
+        "uf-ifas-monstera-fruit"
+      ],
+      "shortExcerpt": "NCSU and UF/IFAS document inflorescences and note flowering is rare in interior cultivation.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "monstera-fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Fruit production is an outdoor warm-climate outcome; fruit takes about 12–14 months to mature and only fully ripe pulp should be eaten.",
+      "sourceIds": [
+        "uf-ifas-monstera-fruit",
+        "uf-ifas-poisonous-houseplants"
+      ],
+      "shortExcerpt": "UF/IFAS documents fruit maturation, edible ripe pulp, and calcium-oxalate hazard in unripe fruit.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "monstera-tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "fruit",
+        "edible",
+        "houseplant",
+        "vine",
+        "poisonous",
+        "tropical"
+      ],
+      "sourceIds": [
+        "ncsu-monstera-deliciosa",
+        "uf-ifas-monstera-fruit"
+      ],
+      "shortExcerpt": "NCSU classifies Monstera deliciosa as edible, poisonous, houseplant and vine; UF/IFAS treats it as a tropical/subtropical fruit crop.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "monstera-support",
+      "field": "hardBlockRules",
+      "status": "asserted",
+      "value": [
+        "needs-support"
+      ],
+      "sourceIds": [
+        "ncsu-monstera-deliciosa"
+      ],
+      "shortExcerpt": "NCSU states sturdy support is necessary to prevent stems from breaking.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "monstera-warnings",
+      "field": "warningFlags",
+      "status": "asserted",
+      "value": [
+        "toxic_pets",
+        "toxic_humans",
+        "ripe_fruit_only",
+        "calcium_oxalate"
+      ],
+      "sourceIds": [
+        "uf-ifas-poisonous-houseplants",
+        "uf-ifas-monstera-fruit"
+      ],
+      "shortExcerpt": "All plant parts and unripe fruit contain irritating calcium oxalate; only ripe fruit pulp is edible.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "monstera-repro-self",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "uf-ifas-poisonous-houseplants"
+      ],
+      "shortExcerpt": "UF/IFAS states the flowers are self-pollinating.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "monstera-groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "tropical-shade-houseplant",
+        "support-dependent-plant",
+        "pet-child-caution",
+        "tropical-fruit"
+      ],
+      "sourceIds": [
+        "ncsu-monstera-deliciosa",
+        "uf-ifas-monstera-fruit"
+      ],
+      "shortExcerpt": "Structural groups reflect documented houseplant, climbing support, toxicity, and fruit-crop roles.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "monstera-survival",
+      "field": "survivalVsThriveNotes",
+      "status": "asserted",
+      "value": "Indoor foliage survival is much broader than reliable fruit production; fruiting needs mature outdoor growth in a warm climate and ripe-fruit safety handling.",
+      "sourceIds": [
+        "ncsu-monstera-deliciosa",
+        "uf-ifas-monstera-fruit"
+      ],
+      "shortExcerpt": "Survival/ornamental use is broader than fruiting outcome.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING",
+    "searchQuery": "Monstera deliciosa"
+  },
+  "humanApproval": {
+    "approvedForIngest": false,
+    "approvedAt": null,
+    "note": "PROPOSAL_ONLY — semantic audit repair requires explicit Owner PASS before canonical ingest."
+  }
+}

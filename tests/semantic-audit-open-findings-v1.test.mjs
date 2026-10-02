@@ -25,17 +25,19 @@ test('date-palm approved repair packet is Class A and source-backed',()=>{
  assert.equal(m.item.climateTraits.reproductiveClimate.fruiting.summerHeatBand,'hot');
 });
 
-test('resolved semantic finding leaves full catalog research queue closed',()=>{
+test('resolved findings stay closed while newer open findings re-enter the research queue',()=>{
  const findings=JSON.parse(fs.readFileSync(findingPath,'utf8'));
- const finding=findings.rows.find(r=>r.slug==='date-palm');
- assert.equal(finding.status,'RESOLVED');
+ assert.equal(findings.rows.find(r=>r.slug==='date-palm')?.status,'RESOLVED');
+ const open=findings.rows.filter(r=>r.status==='OPEN').map(r=>r.slug).sort();
+ assert.deepEqual(open,['cycas','monstera']);
  const run=spawnSync(process.execPath,['scripts/full-catalog-revalidation-v1.mjs'],{cwd:ROOT,encoding:'utf8'});
  assert.equal(run.status,0,run.stderr||run.stdout);
  const q=JSON.parse(fs.readFileSync(path.join(ROOT,'data/catalog/revalidation/full-catalog-revalidation-queue-2026-10-01-v1.json'),'utf8'));
- assert.equal(q.total,0);
+ assert.equal(q.rows.some(r=>r.slug==='date-palm'),false);
+ assert.deepEqual(q.rows.map(r=>r.slug).sort(),['cycas','monstera']);
  const report=JSON.parse(fs.readFileSync(path.join(ROOT,'tests/_full-catalog-revalidation-v1-report.json'),'utf8'));
- assert.equal(report.unified.statusCounts.RESEARCH_REQUIRED,0);
- assert.equal(report.unified.statusCounts.UNKNOWN_VALID,10);
+ assert.equal(report.unified.statusCounts.RESEARCH_REQUIRED,2);
+ assert.equal(report.unified.statusCounts.UNKNOWN_VALID,8);
  assert.equal(report.unified.statusCounts.PASS_FULL,130);
  assert.equal(report.unified.statusCounts.CONTRADICTION,0);
 });

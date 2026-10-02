@@ -6650,6 +6650,9 @@ function smartRecEvaluateSuitability(p){
   if(ctx.safeIntent&&meta.warningFlags.some(flag=>flag==='toxic_pets'||flag==='toxic_humans')){
     blockWith('Not suitable for a pet-safe or child-safe recommendation.');
   }
+  if(ctx.edibleIntent&&meta.warningFlags.includes('ripe_fruit_only')){
+    addWarning('Only fully ripe fruit is edible; unripe fruit and other plant parts may be irritating or toxic.',6);
+  }
   if(gateApi){
     const loc=typeof ensureGardenLocation==='function'?ensureGardenLocation():{};
     const verdict=gateApi.evaluateHardClimateSurvival({
