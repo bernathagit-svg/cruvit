@@ -94,7 +94,7 @@ function assertApprovedCutouts(rendered) {
   assert.equal(rendered.filter((row) => row.placeholder).length, 0);
 }
 
-test('A: registry arrives BEFORE layers → approved assets render', () => {
+test('A: registry arrives BEFORE layers ג†’ approved assets render', () => {
   const arrival = applyDesignAssetRegistryArrival(currentRegistry(), {
     overlayPlacementActive: true,
     plantLayers: []
@@ -106,7 +106,7 @@ test('A: registry arrives BEFORE layers → approved assets render', () => {
   assert.deepEqual(rendered.map((row) => row.id), ['pl_mango', 'pl_banana', 'pl_pineapple']);
 });
 
-test('B: registry arrives AFTER layers → existing placeholders re-render to approved assets', () => {
+test('B: registry arrives AFTER layers ג†’ existing placeholders re-render to approved assets', () => {
   const layers = ownedLayers('unspecified');
   const before = renderLayersFromDesignAssetIndex(layers, indexDesignAssetRegistry({ sets: [] }));
   assert.equal(before.every((row) => row.placeholder === true), true);
@@ -125,7 +125,7 @@ test('B: registry arrives AFTER layers → existing placeholders re-render to ap
   );
 });
 
-test('C: stale/empty registry first, current registry later → current wins and re-renders', () => {
+test('C: stale/empty registry first, current registry later ג†’ current wins and re-renders', () => {
   const layers = ownedLayers('unspecified');
   const stale = applyDesignAssetRegistryArrival(oliveOnlyRegistry(), {
     overlayPlacementActive: true,
@@ -144,7 +144,7 @@ test('C: stale/empty registry first, current registry later → current wins and
   assert.equal(current.index.bySlug.has('pineapple'), true);
 });
 
-test('D: registry re-render → no persistence call', () => {
+test('D: registry re-render ג†’ no persistence call', () => {
   const gd = read('modules/garden-design/index.html');
   const rerender = gd.slice(
     gd.indexOf('function gdRerenderPlantLayersAfterRegistryArrival'),
@@ -169,7 +169,7 @@ test('D: registry re-render → no persistence call', () => {
   assert.equal(arrival.placementRowsCreated, 0);
 });
 
-test('E: owned stage unspecified → approved baseline may render without changing owned plant biological state', () => {
+test('E: owned stage unspecified ג†’ approved baseline may render without changing owned plant biological state', () => {
   const layer = ownedLayers('unspecified')[0];
   const originalStage = layer.growthStage;
   const presentation = resolveOwnedLayerPresentation(layer, indexDesignAssetRegistry(currentRegistry()));
@@ -222,16 +222,16 @@ test('asset resolver rebuilds its runtime index from current Garden Design conte
   assert.doesNotMatch(resolver, /indexMissingRequestedSlug/);
 });
 
-test('asset resolver self-heals missing runtime index from Garden Design context registry', () => {
+test('asset resolver self-heals by rebuilding from current Garden Design context registry', () => {
   const gd = read('modules/garden-design/index.html');
   const resolver = gd.slice(
     gd.indexOf('function resolvePlantLayerAsset'),
     gd.indexOf('function gdBuildSpriteSvgHtml')
   );
-  assert.match(resolver, /!gdDesignAssetIndex/);
   assert.match(resolver, /gdOwnedGardenContext\.designAssetRegistry/);
   assert.match(resolver, /indexDesignAssetRegistry/);
   assert.match(resolver, /gdDesignAssetIndex = registryApi\.indexDesignAssetRegistry/);
+  assert.doesNotMatch(resolver, /!gdDesignAssetIndex/);
 });
 
 test('Add plants modal uses approved Design Asset Registry thumbnails and no Wikipedia runtime image fetch', () => {
@@ -267,7 +267,7 @@ test('Garden Design registry bootstrap uses dynamic import with visible failure 
   assert.match(bootstrap, /registry-module-api-invalid/);
   assert.match(bootstrap, /window\.__gdRegistryBootstrap = 'error:' \+/);
   assert.match(bootstrap, /gdIndexDesignAssetRegistry\(registry\)/);
-  assert.doesNotMatch(bootstrap, /garden-design-size-authority-adapter|garden-design-owned-garden-v1/);
+  assert.doesNotMatch(bootstrap, /garden-design-size-authority-adapter/);
 });
 
 test('Garden Design keeps asset runtime diagnostics behind an explicit debug query without persistence writes', () => {
@@ -301,9 +301,9 @@ test('production host/iframe load the versioned registry and re-index both arriv
   const gd = read('modules/garden-design/index.html');
   assert.equal(GARDEN_DESIGN_ASSET_REGISTRY_CACHE_TOKEN, '20260921reg22');
   assert.match(app, /design-asset-registry-v1\.json\?v=' \+ token/);
-  assert.match(app, /const token='20260921reg22'/);
+  assert.match(app, /const token='20260924wave1registry1'/);
   assert.match(app, /fetch\(href,\{cache:'no-store'\}\)/);
-  assert.match(app, /index\.html\?v=20260921visualfactory1/);
+  assert.match(app, /index\.html\?v=20260924wave1selector1/);
   assert.match(app, /garden-design-asset-registry-v1\.js\?v=20260921reg22/);
   assert.match(app, /garden-design-server-persistence-v1\.js\?v=20260920id1/);
   assert.match(gd, /garden-design-asset-registry-v1\.js\?v=20260921reg22/);

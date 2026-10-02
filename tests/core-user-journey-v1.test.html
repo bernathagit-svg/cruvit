@@ -1,0 +1,65 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CRUVIT Core User Journey V1</title>
+<style>
+body{font:14px system-ui;background:#111;color:#eee;margin:20px}
+pre{white-space:pre-wrap;background:#1b1b1b;padding:12px;border-radius:8px}
+iframe{position:absolute;left:-9999px;width:1px;height:1px;border:0}
+.pass{color:#8fe3a1}.fail{color:#ff9c9c}
+</style>
+<h1>CRUVIT Core User Journey V1</h1>
+<p id="status">Running…</p><pre id="out"></pre><div id="host"></div>
+<script>
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function waitFor(fn,ms=30000){const t=Date.now();while(Date.now()-t<ms){try{if(fn())return true}catch{}await sleep(100)}return false}
+(async()=>{
+ const iframe=document.createElement('iframe');
+ iframe.src='../app.html?coreJourneyV1='+Date.now();
+ document.getElementById('host').appendChild(iframe);
+ await new Promise((res,rej)=>{iframe.onload=res;iframe.onerror=rej});
+ const cw=iframe.contentWindow;
+ const ready=await waitFor(()=>cw&&typeof cw.setAppLocation==='function'&&typeof cw.savePlantFromLibrary==='function'&&typeof cw.smartRecEvaluateSuitability==='function'&&typeof cw.buildPlantDoctorContextPayload==='function'&&typeof cw.getDesignCatalogIdentities==='function');
+ if(!ready)throw new Error('CRUVIT runtime APIs not ready');
+ cw.localStorage.removeItem('cruvit_mg_v23_real_plant_profiles');
+ cw.eval('data.plants=[];data.tasks=[];data.events=[];normalizeGardenDataShape()');
+ await cw.setAppLocation({label:'Tel Aviv, Israel',resolvedCity:'Tel Aviv',lat:32.0853,lon:34.7818,source:'manual'},{skipServerPersist:true});
+ await waitFor(()=>cw.getAppClimateProfile()?.structuralClimateStatus==='known',15000);
+ const plant=cw.eval('PLANT_LIBRARY.find(x=>x.slug==="pomegranate")');
+ const fit=cw.smartRecEvaluateSuitability(plant);
+ cw.savePlantFromLibrary('pomegranate','Smart Recommendations',{autoTasks:true,reminders:true});
+ await sleep(80);
+ const garden=cw.getCruvitGardenData();
+ const g=garden.plants[garden.plants.length-1];
+ const doctor=cw.buildPlantDoctorContextPayload({
+   unmatched:false,fromGarden:true,gardenProfileId:'e2e-garden',
+   gardenPlantClientId:g.id,gardenPlantServerId:null,
+   plantDisplayName:g.name,scientific:g.scientific,profileSlug:g.profileSlug||g.slug
+ });
+ const design=cw.getDesignCatalogIdentities();
+ const designPlant=design.catalog.find(x=>x.slug==='pomegranate');
+ const myGardenImage=cw.displayPlantImage(g)||'';
+ const canonicalImage=cw.displayPlantImage(plant)||'';
+ const failures=[];
+ const climateKnown=cw.getAppClimateProfile()?.structuralClimateStatus==='known';
+ if(!climateKnown)failures.push('CLIMATE_NOT_KNOWN');
+ if(fit.positiveRecommendationEligible===false||!['good','excellent'].includes(String(fit.recommendationLevel)))failures.push('SMART_REC_NOT_POSITIVE');
+ if(g.profileSlug!=='pomegranate')failures.push('MY_GARDEN_SLUG_DRIFT');
+ if(g.scientific!=='Punica granatum')failures.push('MY_GARDEN_SCIENTIFIC_DRIFT');
+ if(doctor.profileSlug!=='pomegranate'||doctor.scientific!=='Punica granatum')failures.push('PLANT_DOCTOR_IDENTITY_DRIFT');
+ if(!designPlant||designPlant.slug!=='pomegranate'||designPlant.scientific!=='Punica granatum')failures.push('GARDEN_DESIGN_IDENTITY_DRIFT');
+ if(!myGardenImage||!canonicalImage)failures.push('CANONICAL_IMAGE_MISSING');
+ if((garden.tasks||[]).length<1)failures.push('CARE_TASKS_NOT_CREATED');
+ const summary={
+   contract:'cruvit-core-user-journey-v1',
+   locationKnown:climateKnown,
+   recommendation:{level:fit.recommendationLevel,eligible:fit.positiveRecommendationEligible!==false,score:fit.suitabilityScore},
+   myGarden:{count:garden.plants.length,name:g.name,scientific:g.scientific,profileSlug:g.profileSlug,source:g.source,imageReady:!!myGardenImage,taskCount:(garden.tasks||[]).length},
+   plantDoctor:{scientific:doctor.scientific,profileSlug:doctor.profileSlug,unmatched:doctor.unmatched},
+   gardenDesign:{found:!!designPlant,scientific:designPlant?.scientific||null,slug:designPlant?.slug||null},
+   failureCount:failures.length,failures
+ };
+ window.CruvitCoreUserJourneyV1=summary;
+ document.getElementById('out').textContent=JSON.stringify(summary,null,2);
+ const st=document.getElementById('status');st.textContent=failures.length?'FAIL '+failures.length:'PASS';st.className=failures.length?'fail':'pass';
+})().catch(err=>{document.getElementById('status').textContent='HARNESS ERROR';document.getElementById('status').className='fail';document.getElementById('out').textContent=String(err?.stack||err);console.error(err)});
+</script>

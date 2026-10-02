@@ -123,8 +123,14 @@ test('M: paid AI automated test calls = 0', () => {
   assert.equal(IDENTIFIER_SCAN_PERSISTENCE, 'DEFERRED');
 });
 
-test('species alias table stays aligned with Catalog Images (not a second registry)', () => {
-  assert.deepEqual({ ...IDENTIFIER_SPECIES_ALIAS_ONTO_CANONICAL }, { ...SPECIES_ALIAS_ONTO_CANONICAL });
+test('Identifier aliases may resolve species names while Catalog Media only collapses safe canonical aliases', () => {
+  for (const [alias, canonical] of Object.entries(SPECIES_ALIAS_ONTO_CANONICAL)) {
+    assert.equal(IDENTIFIER_SPECIES_ALIAS_ONTO_CANONICAL[alias], canonical, alias);
+  }
+  for (const alias of ['spearmint','common-jasmine','lesser-bougainvillea']) {
+    assert.ok(alias in IDENTIFIER_SPECIES_ALIAS_ONTO_CANONICAL, alias);
+    assert.equal(alias in SPECIES_ALIAS_ONTO_CANONICAL, false, alias+' must remain a distinct media identity');
+  }
 });
 
 test('A: known catalog identity + confirmation writes owned plant once', () => {
