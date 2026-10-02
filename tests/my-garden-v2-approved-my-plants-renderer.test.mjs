@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   buildApprovedMyPlantsRenderModel,
   renderMyPlantsInteractionLayer,
+  renderMyPlantsPersonalPhotoLayer,
   assertMyPlantsVisualAcceptanceReady,
 } from '../modules/my-garden-v2/approved-my-plants-renderer.js';
 
@@ -77,4 +78,30 @@ test('visual acceptance is tied to approved reference fingerprint',()=>{
   assert.equal(model.visualReference.id,'my-plants');
   assert.equal(model.visualReference.locked,true);
   assert.equal(model.visualReference.sha256,'64ddc9c59a62482c4050159a8a9109d19a71d1a777ebafc888d6d598d8b531d5');
+});
+
+
+test('interaction layer is bound to approved v2 card and camera geometry',()=>{
+  const model=buildApprovedMyPlantsRenderModel(vm);
+  const html=renderMyPlantsInteractionLayer(model);
+  assert.match(html,/left:5\.207226%;top:24\.401914%;width:27\.736451%;height:9\.688995%/);
+  assert.match(html,/left:28\.374070%;top:25\.000000%;width:34px;height:34px/);
+});
+
+test('personal photo layer uses approved slot and never overlays system-only cards',()=>{
+  const model=buildApprovedMyPlantsRenderModel(vm);
+  const urls=new Map([
+    ['p1',{signedUrl:'https://signed.example/lemon'}],
+  ]);
+  const html=renderMyPlantsPersonalPhotoLayer(model,urls);
+  assert.match(html,/data-plant-id="p1"/);
+  assert.match(html,/https:\/\/signed\.example\/lemon/);
+  assert.match(html,/left:5\.207226%;top:24\.401914%;width:27\.736451%;height:9\.688995%/);
+  assert.doesNotMatch(html,/data-plant-id="p2"/);
+});
+
+test('missing signed URL fails closed to approved system artwork',()=>{
+  const model=buildApprovedMyPlantsRenderModel(vm);
+  const html=renderMyPlantsPersonalPhotoLayer(model,new Map());
+  assert.equal(html,'');
 });
