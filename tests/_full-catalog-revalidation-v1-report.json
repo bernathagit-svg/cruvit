@@ -1,6 +1,6 @@
 {
   "contract": "cruvit-full-catalog-revalidation-v1",
-  "generatedAt": "2026-10-02T11:09:25.501Z",
+  "generatedAt": "2026-10-02T11:46:32.409Z",
   "runtime": {
     "total": 123,
     "counts": {
@@ -18,23 +18,23 @@
     "canonicalUnique": 122
   },
   "packets": {
-    "files": 126,
-    "unique": 126,
+    "files": 128,
+    "unique": 128,
     "counts": {
-      "A": 126,
+      "A": 128,
       "B": 0,
       "C": 0,
       "D": 0
     },
     "gates": {
-      "PASS": 126,
+      "PASS": 128,
       "PARTIAL": 0,
       "HOLD": 0,
       "REJECT": 0
     },
-    "canonicalUnique": 126,
+    "canonicalUnique": 128,
     "canonicalCounts": {
-      "A": 126,
+      "A": 128,
       "B": 0,
       "C": 0,
       "D": 0
@@ -43,8 +43,8 @@
   },
   "coverage": {
     "unifiedUnique": 152,
-    "overlap": 96,
-    "runtimeOnlyCount": 26,
+    "overlap": 98,
+    "runtimeOnlyCount": 24,
     "packetOnlyCount": 30,
     "runtimeOnly": [
       "agapanthus",
@@ -55,7 +55,6 @@
       "basil",
       "black-eyed-susan-vine",
       "camellia",
-      "cycas",
       "cyclamen",
       "ficus-benjamina",
       "geranium",
@@ -63,7 +62,6 @@
       "lemon",
       "mango",
       "melaleuca",
-      "monstera",
       "mulberry",
       "oak-tree",
       "olive",
@@ -125,34 +123,33 @@
   },
   "unified": {
     "counts": {
-      "A": 130,
-      "B": 14,
+      "A": 132,
+      "B": 12,
       "C": 0,
       "D": 8
     },
     "gates": {
-      "PASS": 130,
-      "PARTIAL": 11,
+      "PASS": 132,
+      "PARTIAL": 9,
       "HOLD": 3,
       "REJECT": 8
     },
     "statusCounts": {
-      "PASS_FULL": 130,
+      "PASS_FULL": 132,
       "UNKNOWN_VALID": 8,
       "BROAD_IDENTITY_VALID": 12,
-      "RESEARCH_REQUIRED": 2,
+      "RESEARCH_REQUIRED": 0,
       "CONTRADICTION": 0
     },
     "reasonFrequency": {
-      "COMPLETE_FOR_CLASS_A": 130,
+      "COMPLETE_FOR_CLASS_A": 132,
       "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A": 12,
       "MISSING_FROST_SENSITIVITY": 8,
-      "FLOWERING_REQUIREMENTS_MISSING": 16,
-      "FRUITING_REQUIREMENTS_MISSING": 22,
+      "FLOWERING_REQUIREMENTS_MISSING": 14,
+      "FRUITING_REQUIREMENTS_MISSING": 20,
       "MISSING_TRAIT_EVIDENCE": 12,
       "LEGACY_META_ONLY": 8,
       "HUMIDITY_UNKNOWN": 47,
-      "SEMANTIC_AUDIT_OPEN_FINDING": 2,
       "NEEDS_REVIEW": 3
     }
   },
@@ -258,46 +255,13 @@
     ]
   },
   "researchQueue": {
-    "total": 2,
+    "total": 0,
     "priorityCounts": {
       "P0_IDENTITY_OR_CORE_BLOCK": 0,
       "P1_REVIEW_HOLD": 0,
-      "P2_EVIDENCE_ENRICHMENT": 2
+      "P2_EVIDENCE_ENRICHMENT": 0
     },
-    "rows": [
-      {
-        "slug": "cycas",
-        "priority": "P2_EVIDENCE_ENRICHMENT",
-        "readiness": "B",
-        "gate": "PARTIAL",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "SEMANTIC_AUDIT_OPEN_FINDING"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      },
-      {
-        "slug": "monstera",
-        "priority": "P2_EVIDENCE_ENRICHMENT",
-        "readiness": "B",
-        "gate": "PARTIAL",
-        "reasons": [
-          "FLOWERING_REQUIREMENTS_MISSING",
-          "FRUITING_REQUIREMENTS_MISSING",
-          "SEMANTIC_AUDIT_OPEN_FINDING"
-        ],
-        "unknownOutcomes": [
-          "flowering",
-          "fruiting"
-        ],
-        "source": "RUNTIME_ONLY"
-      }
-    ]
+    "rows": []
   },
   "rows": [
     {
@@ -1265,24 +1229,26 @@
     },
     {
       "slug": "cycas",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "PARTIAL",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "SEMANTIC_AUDIT_OPEN_FINDING"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "cycas"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/semantic-audit-owner-approved-v1/packets/cycas.packet.json",
+          "packetId": "cycas-semantic-audit-proposal-v1",
+          "forceReview": false,
+          "nativeSlug": "cycas"
+        }
+      ]
     },
     {
       "slug": "cyclamen",
@@ -2390,24 +2356,26 @@
     },
     {
       "slug": "monstera",
-      "source": "RUNTIME_ONLY",
-      "status": "RESEARCH_REQUIRED",
-      "readiness": "B",
-      "gate": "PARTIAL",
+      "source": "PACKET_OVERLAY_RUNTIME",
+      "status": "PASS_FULL",
+      "readiness": "A",
+      "gate": "PASS",
       "reasons": [
-        "FLOWERING_REQUIREMENTS_MISSING",
-        "FRUITING_REQUIREMENTS_MISSING",
-        "SEMANTIC_AUDIT_OPEN_FINDING"
+        "COMPLETE_FOR_CLASS_A"
       ],
-      "unknownOutcomes": [
-        "flowering",
-        "fruiting"
-      ],
+      "unknownOutcomes": [],
       "realContradiction": false,
       "runtimeAliases": [
         "monstera"
       ],
-      "packet": null
+      "packet": [
+        {
+          "file": "data/catalog-expansion/batches/semantic-audit-owner-approved-v1/packets/monstera.packet.json",
+          "packetId": "monstera-semantic-audit-proposal-v1",
+          "forceReview": false,
+          "nativeSlug": "monstera"
+        }
+      ]
     },
     {
       "slug": "moringa",
