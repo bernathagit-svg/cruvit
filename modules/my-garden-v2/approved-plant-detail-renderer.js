@@ -1,3 +1,5 @@
+import { MY_PLANTS_APPROVED_LAYOUT, percentStyle } from './my-plants-approved-layout.js';
+
 const TAB_REFERENCE_SHA = Object.freeze({
   overview:'eab2a113e2a14d11eef09e8e4bbca31bb373c4034a0ab77b9bd651237def7b5a',
   care:'5881d6f3856b8b7d3b1ea8177c5812e64042ed17f1caf74293a9ee70c4316c7a',
@@ -46,6 +48,46 @@ export function buildPlantDetailRenderContract(baseViewModel) {
       locked:true,
     }),
   });
+}
+
+
+function esc(value) {
+  return String(value ?? '')
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;')
+    .replaceAll("'",'&#39;');
+}
+
+export function renderPlantDetailPersonalPhotoLayer(contract,signedMedia) {
+  if (!contract?.visualReference?.locked) {
+    throw new Error('plant_detail_visual_reference_required');
+  }
+  if (contract.cover?.kind !== 'personal') return '';
+
+  const signedUrl=signedMedia?.signedUrl ?? signedMedia ?? null;
+  if (!signedUrl) return '';
+
+  const d=MY_PLANTS_APPROVED_LAYOUT.detail;
+  return '<img class="detail-hero-user-photo" data-plant-id="'+esc(contract.plantId)+'" src="'+esc(signedUrl)+'" alt="" '+
+    'style="position:absolute;z-index:6;object-fit:cover;border-radius:0 0 0 28px;'+percentStyle(d.heroUserPhoto)+'">'+
+    '<div class="detail-hero-fade" aria-hidden="true" style="position:absolute;z-index:7;pointer-events:none;'+percentStyle(d.heroFade)+';background:linear-gradient(90deg,rgba(7,24,13,.82),rgba(7,24,13,0))"></div>'+
+    '<img class="detail-card-user-photo" data-plant-id="'+esc(contract.plantId)+'" src="'+esc(signedUrl)+'" alt="" '+
+    'style="position:absolute;z-index:6;object-fit:cover;border-radius:18px;'+percentStyle(d.cardUserPhoto)+'">';
+}
+
+export function renderPlantDetailPhotoInteractionLayer(contract) {
+  if (!contract?.visualReference?.locked) {
+    throw new Error('plant_detail_visual_reference_required');
+  }
+  if (contract.readOnly) return '';
+
+  const d=MY_PLANTS_APPROVED_LAYOUT.detail;
+  return '<button type="button" class="plant-camera detail-camera" data-action="replace_plant_photo" data-plant-id="'+esc(contract.plantId)+'" '+
+    'aria-label="Change plant photo" style="position:absolute;left:'+d.detailCamera.left.toFixed(6)+'%;top:'+d.detailCamera.top.toFixed(6)+'%;width:'+d.detailCamera.widthPx+'px;height:'+d.detailCamera.heightPx+'px"></button>'+
+    '<button type="button" class="plant-camera detail-card-camera" data-action="replace_plant_photo" data-plant-id="'+esc(contract.plantId)+'" '+
+    'aria-label="Change plant photo" style="position:absolute;left:'+d.cardCamera.left.toFixed(6)+'%;top:'+d.cardCamera.top.toFixed(6)+'%;width:'+d.cardCamera.widthPx+'px;height:'+d.cardCamera.heightPx+'px"></button>';
 }
 
 export function assertPlantDetailRenderSync(myPlantsRenderModel, detailRenderContract) {
