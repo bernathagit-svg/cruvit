@@ -88,6 +88,35 @@ export function renderMyPlantsInteractionLayer(renderModel) {
   }).join('');
 }
 
+
+function signedUrlForPlant(signedUrlsByPlantId,plantId) {
+  if (!signedUrlsByPlantId) return null;
+  if (typeof signedUrlsByPlantId.get === 'function') {
+    return signedUrlsByPlantId.get(plantId)?.signedUrl ?? signedUrlsByPlantId.get(plantId) ?? null;
+  }
+  const value=signedUrlsByPlantId[plantId];
+  return value?.signedUrl ?? value ?? null;
+}
+
+export function renderMyPlantsPersonalPhotoLayer(renderModel,signedUrlsByPlantId) {
+  if (!renderModel?.visualReference?.locked) {
+    throw new Error('my_plants_visual_reference_required');
+  }
+  if (renderModel.cards.length > 9) {
+    throw new Error('approved_my_plants_layout_capacity_exceeded');
+  }
+
+  return renderModel.cards.map((card,index)=>{
+    if (card.image?.kind !== 'personal') return '';
+    const signedUrl=signedUrlForPlant(signedUrlsByPlantId,card.plantId);
+    if (!signedUrl) return '';
+
+    const slot=slotByIndex(index);
+    return '<img class="card-user-photo" data-plant-id="'+esc(card.plantId)+'" src="'+esc(signedUrl)+'" alt="" '+
+      'style="position:absolute;z-index:6;object-fit:cover;border-radius:17px;left:'+slot.left.toFixed(6)+'%;top:'+slot.top.toFixed(6)+'%;width:'+slot.width.toFixed(6)+'%;height:'+slot.height.toFixed(6)+'%">';
+  }).join('');
+}
+
 export function assertMyPlantsVisualAcceptanceReady(renderModel) {
   if (!renderModel?.visualReference?.locked) throw new Error('visual_reference_not_locked');
   if (renderModel.visualReference.sha256 !== '64ddc9c59a62482c4050159a8a9109d19a71d1a777ebafc888d6d598d8b531d5') {
