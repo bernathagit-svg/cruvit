@@ -1,7 +1,10 @@
 const PROFILE_SELECT = 'id,user_id,name,created_at,updated_at';
 const PLANT_SELECT = [
   'id','garden_profile_id','user_id','client_instance_id','name','status','mark','source',
-  'profile_slug','scientific','archived','prefs','added_at','cover_media_id','created_at','updated_at'
+  'profile_slug','scientific','archived','prefs','added_at','garden_area_id','cover_media_id','created_at','updated_at'
+].join(',');
+const AREA_SELECT = [
+  'id','garden_profile_id','user_id','client_instance_id','name','context','created_at','updated_at'
 ].join(',');
 const TASK_SELECT = [
   'id','garden_profile_id','user_id','client_instance_id','garden_plant_id','icon','title',
@@ -79,6 +82,17 @@ export function createMyGardenReadRepository(supabase) {
     return assertScopedRows(assertSuccess(result, 'garden_plants_read'), id, 'garden_plants_read');
   }
 
+  async function listAreas(gardenProfileId) {
+    const id = requireGardenId(gardenProfileId);
+    const result = await supabase
+      .from('garden_areas')
+      .select(AREA_SELECT)
+      .eq('garden_profile_id', id)
+      .order('created_at', { ascending: true })
+      .order('id', { ascending: true });
+    return assertScopedRows(assertSuccess(result, 'garden_areas_read'), id, 'garden_areas_read');
+  }
+
   async function listTasks(gardenProfileId) {
     const id = requireGardenId(gardenProfileId);
     const result = await supabase
@@ -128,6 +142,7 @@ export function createMyGardenReadRepository(supabase) {
   return Object.freeze({
     getGardenProfile,
     listPlants,
+    listAreas,
     listTasks,
     listEvents,
     listMedia,
@@ -138,6 +153,7 @@ export function createMyGardenReadRepository(supabase) {
 export const MY_GARDEN_SELECTS = Object.freeze({
   profile: PROFILE_SELECT,
   plants: PLANT_SELECT,
+  areas: AREA_SELECT,
   tasks: TASK_SELECT,
   events: EVENT_SELECT,
   media: MEDIA_SELECT,
