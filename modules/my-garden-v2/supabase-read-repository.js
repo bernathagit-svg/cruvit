@@ -33,23 +33,23 @@ function requireGardenId(gardenProfileId) {
 }
 
 function assertSuccess(result, context) {
-  if (!result || typeof result !== 'object') throw new Error(\`\${context}:invalid_response\`);
+  if (!result || typeof result !== 'object') throw new Error(`${context}:invalid_response`);
   if (result.error) {
-    const code = result.error.code ? \`:\${result.error.code}\` : '';
-    throw new Error(\`\${context}\${code}:\${result.error.message || 'query_failed'}\`);
+    const code = result.error.code ? `:${result.error.code}` : '';
+    throw new Error(`${context}${code}:${result.error.message || 'query_failed'}`);
   }
   return result.data;
 }
 
 function assertScopedRows(rows, gardenProfileId, label) {
-  if (!Array.isArray(rows)) throw new Error(\`\${label}:expected_array\`);
+  if (!Array.isArray(rows)) throw new Error(`${label}:expected_array`);
   const seen = new Set();
   for (const row of rows) {
-    if (!row || typeof row.id !== 'string' || !row.id) throw new Error(\`\${label}:row_id_required\`);
-    if (seen.has(row.id)) throw new Error(\`\${label}:duplicate_id:\${row.id}\`);
+    if (!row || typeof row.id !== 'string' || !row.id) throw new Error(`${label}:row_id_required`);
+    if (seen.has(row.id)) throw new Error(`${label}:duplicate_id:${row.id}`);
     seen.add(row.id);
     if (row.garden_profile_id !== gardenProfileId) {
-      throw new Error(\`\${label}:cross_garden_row:\${row.id}\`);
+      throw new Error(`${label}:cross_garden_row:${row.id}`);
     }
   }
   return rows;
@@ -67,7 +67,7 @@ export function createMyGardenReadRepository(supabase) {
       .maybeSingle();
     const data = assertSuccess(result, 'garden_profiles_read');
     if (!data) return null;
-    if (data.id !== id) throw new Error(\`garden_profiles_read:identity_mismatch:\${data.id}\`);
+    if (data.id !== id) throw new Error(`garden_profiles_read:identity_mismatch:${data.id}`);
     return data;
   }
 
@@ -135,7 +135,7 @@ export function createMyGardenReadRepository(supabase) {
       listEvents(id),
       listMedia(id),
     ]);
-    if (!profile) throw new Error(\`garden_snapshot:garden_not_found:\${id}\`);
+    if (!profile) throw new Error(`garden_snapshot:garden_not_found:${id}`);
     return Object.freeze({ profile, plants, tasks, events, media });
   }
 
