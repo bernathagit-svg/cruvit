@@ -73,7 +73,7 @@ export function createCatalogPlantReadRepository(supabase) {
       .from('catalog_plants')
       .select(CATALOG_SELECT)
       .or(
-        'slug.ilike.%' + escaped + '%,scientific_name.ilike.%' + escaped + '%,common_names.cs.{}'
+        'slug.ilike.%' + escaped + '%,scientific_name.ilike.%' + escaped + '%'
       )
       .limit(limit);
 
