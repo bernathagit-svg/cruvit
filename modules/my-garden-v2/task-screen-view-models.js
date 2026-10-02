@@ -147,8 +147,15 @@ export function buildUpcomingCalendarScreenViewModel({
   }
 
   const calendar = buildCalendarProjection({ plants, tasks });
-  let rows = filterRows(calendar.rows, filter);
-  rows = scopePlant(rows, plantId);
+  const allScopedRows = scopePlant(calendar.rows, plantId);
+  const statusCounts = Object.freeze({
+    toDo: allScopedRows.filter((row) => row.state === 'pending').length,
+    completed: allScopedRows.filter((row) => row.state === 'completed').length,
+    cancelled: allScopedRows.filter((row) => row.state === 'cancelled').length,
+    all: allScopedRows.length,
+  });
+
+  let rows = filterRows(allScopedRows, filter);
   rows = rows.filter((row) => row.dueOn?.slice(0, 7) === month);
 
   const byDate = new Map();
@@ -166,6 +173,7 @@ export function buildUpcomingCalendarScreenViewModel({
     rows: Object.freeze(rows),
     byDate,
     selectedDayRows: Object.freeze([...(byDate.get(day) || [])]),
+    counts: statusCounts,
   });
 }
 
@@ -240,5 +248,26 @@ export function assertTaskScreenIdentity({
     }
   }
 
+  return true;
+}
+
+
+export function assertUpcomingListCalendarTotalsMatch({
+  list,
+  calendar,
+} = {}) {
+  if (!list?.counts || !calendar?.counts) {
+    throw new Error('upcoming_counts_required');
+  }
+
+  const keys = ['toDo','completed','cancelled','all'];
+  for (const key of keys) {
+    if (list.counts[key] !== calendar.counts[key]) {
+      throw new Error(
+        'upcoming_list_calendar_count_mismatch:' +
+        key + ':' + list.counts[key] + ':' + calendar.counts[key]
+      );
+    }
+  }
   return true;
 }
