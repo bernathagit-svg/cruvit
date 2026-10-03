@@ -146,21 +146,24 @@ function taskHydrationRow(row){
 export function assertHydrationDoesNotTouchFrozenVisual(plan){
   if(!plan?.screenId) throw new Error('hydration_plan_required');
 
-  const forbidden=[
-    'nav',
-    'bottom',
-    'hero',
-    'bg',
-    'style',
-    'phone',
-  ];
+  const template=
+    plan.screenId===JOURNAL_TEMPLATE.screenId
+      ? JOURNAL_TEMPLATE
+      : plan.screenId===NOTIFICATIONS_TEMPLATE.screenId
+        ? NOTIFICATIONS_TEMPLATE
+        : null;
+
+  if(!template) throw new Error('unknown_hydration_screen:'+plan.screenId);
+
+  const allowed=new Set(Object.values(template.mutableSelectors));
 
   for(const patch of plan.patches || []){
-    const selector=String(patch.selector || '').toLowerCase();
-    if(forbidden.some((token)=>selector===token || selector.startsWith(token+'.') || selector.startsWith('.'+token+' '))){
-      throw new Error('hydration_touches_frozen_visual:'+patch.selector);
+    const selector=String(patch.selector || '').trim();
+    if(!allowed.has(selector)){
+      throw new Error('hydration_selector_not_whitelisted:'+selector);
     }
   }
+
   return true;
 }
 
