@@ -30,9 +30,10 @@
       text-shadow:0 1px 2px rgba(0,0,0,.45)
     }
     .status-icons{display:flex;align-items:center;gap:8px;font-size:15px}
-    .signal{letter-spacing:-2px}.wifi{font-size:18px}.battery{width:29px;height:13px;border:2px solid #fff;border-radius:4px;position:relative}
+    .signal-icon{width:24px;height:16px;fill:#fff}.wifi-icon{width:24px;height:18px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round}.battery{width:29px;height:13px;border:2px solid #fff;border-radius:4px;position:relative}
     .battery:after{content:"";position:absolute;right:-5px;top:3px;width:3px;height:5px;border-radius:1px;background:#fff}
     .battery:before{content:"";position:absolute;inset:2px;background:#fff;border-radius:1px}
+    .home-indicator-shell{position:absolute;z-index:30;left:50%;bottom:9px;transform:translateX(-50%);width:202px;height:6px;border-radius:999px;background:#f5f5ef;pointer-events:none}
     @media(max-width:580px){
       body{padding:0;background:#07150d}
       .phone-shell{width:100vw;max-width:none;border:0;border-radius:0;box-shadow:none}
@@ -44,9 +45,13 @@
   <div class="phone-shell">
     <div class="statusbar" aria-hidden="true">
       <span>9:41</span>
-      <span class="status-icons"><span class="signal">▮▮▮▮</span><span class="wifi">⌁</span><span class="battery"></span></span>
+      <span class="status-icons">
+  <svg class="signal-icon" viewBox="0 0 24 16" aria-hidden="true"><rect x="1" y="10" width="3" height="5" rx="1"/><rect x="7" y="7" width="3" height="8" rx="1"/><rect x="13" y="4" width="3" height="11" rx="1"/><rect x="19" y="1" width="3" height="14" rx="1"/></svg>
+  <svg class="wifi-icon" viewBox="0 0 24 18" aria-hidden="true"><path d="M2 5.5C7.6.5 16.4.5 22 5.5"/><path d="M5.5 9c3.8-3.3 9.2-3.3 13 0"/><path d="M9 12.5c1.7-1.5 4.3-1.5 6 0"/><circle cx="12" cy="15.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+  <span class="battery"></span>
+</span>
     </div>
-    <div id="upcoming-review-root"></div>
+    <div id="upcoming-review-root"></div><div class="home-indicator-shell" aria-hidden="true"></div>
   </div>
   <script type="module" src="./upcoming-review.js"></script>
 </body>
