@@ -221,8 +221,7 @@ export function plantRequiresYearRoundWarmClimate(meta) {
   if (
     groups.includes('tropical-frost-sensitive-fruit') ||
     groups.includes('frost-sensitive-ornamental') ||
-    groups.includes('warm-climate-palm') ||
-    groups.includes('hot-dry-palm')
+    groups.includes('warm-climate-palm')
   ) {
     return true;
   }

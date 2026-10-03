@@ -569,8 +569,7 @@ export function isWarmTropicalFrostSensitiveGroup(meta) {
   return (
     groupIds.includes('tropical-frost-sensitive-fruit') ||
     groupIds.includes('frost-sensitive-ornamental') ||
-    groupIds.includes('warm-climate-palm') ||
-    groupIds.includes('hot-dry-palm')
+    groupIds.includes('warm-climate-palm')
   );
 }
 
@@ -770,9 +769,12 @@ function requirementsText(meta, kind) {
   return String(meta?.fruitingRequirements || '');
 }
 
-function requirementsMentionDroughtOrMoisture(text) {
-  return /drought|soil moisture|year-round (soil )?moisture|humid|high humidity|moisture/i.test(
-    String(text || '')
+function requirementsMentionPositiveMoistureNeed(text) {
+  const raw = String(text || '');
+  return (
+    /\b(?:requires?|needs?|prefers?|benefits from)\b.{0,48}\b(?:high humidity|humid(?:ity)?|soil moisture|moist(?:ure)?|consistently moist)\b/i.test(raw) ||
+    /\b(?:high humidity|humid(?:ity)?|soil moisture|moist(?:ure)?|consistently moist)\b.{0,48}\b(?:required|needed|preferred|important|essential)\b/i.test(raw) ||
+    /\byear-round (?:soil )?moisture\b/i.test(raw)
   );
 }
 
@@ -899,7 +901,7 @@ export function evaluateFloweringFromCatalogEvidence({
   const wantsWarm =
     !reproductiveProseRejectsYearRoundWarmNeed(text) &&
     (requirementsWantTropicalWarmth(text) || plantRequiresYearRoundWarmClimate(meta));
-  const droughtCue = requirementsMentionDroughtOrMoisture(text);
+  const droughtCue = requirementsMentionPositiveMoistureNeed(text);
   const coolSlows = requirementsMentionCoolSlows(text);
 
   if (minTempC != null) {
@@ -1136,7 +1138,7 @@ export function evaluateFruitingFromCatalogEvidence({
   const wantsWarm =
     !reproductiveProseRejectsYearRoundWarmNeed(text) &&
     (requirementsWantTropicalWarmth(text) || plantRequiresYearRoundWarmClimate(meta));
-  const droughtCue = requirementsMentionDroughtOrMoisture(text);
+  const droughtCue = requirementsMentionPositiveMoistureNeed(text);
 
   if (droughtCue && (humiditySignal === 'low' || moistureMismatchForHighHumidityPlant(meta, env))) {
     return {

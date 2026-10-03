@@ -2218,8 +2218,7 @@ function climateSuitabilityV1HighFrostNeedsConservativeClimate(meta,indoorShelte
 function climateSuitabilityV1IsWarmTropicalFrostSensitiveGroup(metaHasGroup){
   return metaHasGroup('tropical-frost-sensitive-fruit')
     ||metaHasGroup('frost-sensitive-ornamental')
-    ||metaHasGroup('warm-climate-palm')
-    ||metaHasGroup('hot-dry-palm');
+    ||metaHasGroup('warm-climate-palm');
 }
 
 function climateSuitabilityV1FromSnapshot(snapshot,options){

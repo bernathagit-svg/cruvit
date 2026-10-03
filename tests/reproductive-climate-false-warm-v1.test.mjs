@@ -42,6 +42,13 @@ const APP = path.join(ROOT, 'app.html');
 const GATE = path.join(ROOT, 'modules', 'suitability', 'hard-climate-survival-gate-v1.js');
 const SEED = path.join(ROOT, 'data', 'plants.seed.json');
 const DATA = path.join(ROOT, 'data', 'coordinate-climate', 'v2');
+const GLOBAL_TILE_DIR = path.join(DATA, 'coverage', 'global-v1', 'tiles');
+const HAS_LOCAL_GLOBAL_TILE_CORPUS = fs.existsSync(GLOBAL_TILE_DIR);
+const MOJSTRANA_LOCAL_TEST_OPTIONS = {
+  skip: HAS_LOCAL_GLOBAL_TILE_CORPUS
+    ? false
+    : 'requires local global-v1 tile corpus (~17GB); remote/deployed climate stress covers the authority path'
+};
 const PILOT = path.join(DATA, 'pilot');
 const QA = path.join(DATA, 'qa');
 const FALSE_WARM_LIMITER = /too cool \/ not frost-free for sourced warm (flowering|fruiting) needs/i;
@@ -302,9 +309,9 @@ function assertNoFalseWarmLimiter(row) {
 }
 
 test('hard-frost survival gate version is unchanged', () => {
-  assert.equal(HARD_CLIMATE_SURVIVAL_GATE_VERSION, '1.1.1');
+  assert.equal(HARD_CLIMATE_SURVIVAL_GATE_VERSION, '1.1.5');
   const src = fs.readFileSync(GATE, 'utf8');
-  assert.match(src, /HARD_CLIMATE_SURVIVAL_GATE_VERSION = '1.1.1'/);
+  assert.match(src, /HARD_CLIMATE_SURVIVAL_GATE_VERSION = '1.1.5'/);
 });
 
 test('negated always-hot prose is not a tropical requirement', () => {
@@ -369,6 +376,55 @@ test('SOURCE_SUPPORTED temperate/chill evidence outranks heuristic always-hot to
   assert.equal(requirementsWantTropicalWarmth(meta.floweringRequirements), false);
 });
 
+test('hot-dry palm is not reclassified as tropical-humid year-round warmth', () => {
+  const meta = {
+    groupIds: ['hot-dry-palm'],
+    heatTolerance: 'high',
+    coldTolerance: 'low',
+    frostSensitivity: 'medium',
+    humidityTolerance: 'medium',
+    floweringRequirements: 'Male and female flowers occur on separate trees; both sexes are needed in the area for fruit production.',
+    fruitingRequirements: 'Edible date production needs male and female trees, hot dry weather, and adequate water; humid climates can sharply limit productive cultivars.'
+  };
+  assert.equal(plantRequiresYearRoundWarmClimate(meta), false);
+  const env = {
+    freezingRisk: 'low',
+    isFrostFreeGrowingClimate: true,
+    coldestMonthMeanMinC: 8,
+    warmestMonthMeanMaxC: 41,
+    humiditySignal: 'low',
+    humidityRegime: 'low',
+    moistureRegime: 'arid',
+    drySeasonSignal: true,
+    thermalRegime: 'hot-arid',
+    broadClimate: 'subtropical'
+  };
+  const flower = evaluateFloweringFromCatalogEvidence({meta,env,survival:'reliable'});
+  const fruit = evaluateFruitingFromCatalogEvidence({meta,plant:{slug:'generic-hot-dry-palm'},env,survival:'reliable',flowering:flower.status});
+  assert.notEqual(flower.status, 'unlikely');
+  assert.notEqual(fruit.status, 'unreliable');
+  assert.doesNotMatch(String(fruit.evidence || ''), /tropical-fruit-frost-or-dry-failure-context|drought-vs-fruiting-moisture/);
+});
+
+test('humid-limitation prose is not inverted into a positive humidity requirement', () => {
+  const meta = {
+    groupIds: ['hot-dry-palm'],
+    fruitingRequirements: 'Hot dry weather supports fruit production; humid climates can sharply limit productive cultivars.'
+  };
+  const fruit = evaluateFruitingFromCatalogEvidence({
+    meta,
+    plant:{slug:'generic-hot-dry-palm'},
+    env:{
+      freezingRisk:'low',isFrostFreeGrowingClimate:true,coldestMonthMeanMinC:10,
+      warmestMonthMeanMaxC:40,humiditySignal:'low',humidityRegime:'low',
+      moistureRegime:'arid',drySeasonSignal:true,thermalRegime:'hot-arid',broadClimate:'subtropical'
+    },
+    survival:'reliable',flowering:'unknown'
+  });
+  assert.notEqual(fruit.status,'unreliable');
+  assert.doesNotMatch(String(fruit.evidence || ''), /drought-vs-fruiting-moisture/);
+});
+
 test('explicit tropical reproductive evidence still authorizes year-round-warm need', () => {
   const coconut = loadSeedPlant('coconut');
   assert.equal(plantRequiresYearRoundWarmClimate(coconut.climateTraits), true);
@@ -378,7 +434,7 @@ test('explicit tropical reproductive evidence still authorizes year-round-warm n
   assert.equal(plantRequiresYearRoundWarmClimate(mango.climateTraits), true);
 });
 
-test('missing reproductive evidence stays UNKNOWN, not a manufactured warm mismatch', () => {
+test('missing reproductive evidence stays UNKNOWN, not a manufactured warm mismatch', MOJSTRANA_LOCAL_TEST_OPTIONS, () => {
   const moj = loadMojstranaClimate();
   const env = structuralEnvironmentFromClimateProfile(moj.climateProfile);
   const flower = evaluateFloweringFromCatalogEvidence({
@@ -391,7 +447,7 @@ test('missing reproductive evidence stays UNKNOWN, not a manufactured warm misma
   assert.equal(FALSE_WARM_LIMITER.test(String(flower.limiting || '')), false);
 });
 
-test('real catalog: walnut / gooseberry / peony × Mojstrana are not false-warm', () => {
+test('real catalog: walnut / gooseberry / peony × Mojstrana are not false-warm', MOJSTRANA_LOCAL_TEST_OPTIONS, () => {
   const moj = loadMojstranaClimate();
   const walnut = loadSeedPlant('english-walnut');
   const gooseberry = loadSeedPlant('gooseberry');
@@ -424,7 +480,7 @@ test('real catalog: walnut / gooseberry / peony × Mojstrana are not false-warm'
   assert.notEqual(walnutRow.overall, 'good');
 });
 
-test('positive tropical controls remain warm-authorized; cold mismatch still blocks', () => {
+test('positive tropical controls remain warm-authorized; cold mismatch still blocks', MOJSTRANA_LOCAL_TEST_OPTIONS, () => {
   const moj = loadMojstranaClimate();
   const kochi = loadPilotClimate('kochi');
   const coconut = loadSeedPlant('coconut');
