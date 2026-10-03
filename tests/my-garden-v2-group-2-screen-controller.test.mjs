@@ -133,3 +133,23 @@ test('active plant count includes plants with no tasks',async()=>{
   const list=await controller.loadUpcomingList('g1');
   assert.match(list.html,/· 3 plants/);
 });
+
+
+test('Garden Journal and Notifications expose safe approved-template hydration plans',async()=>{
+  const controller=createMyGardenGroup2ScreenController(fakeSupabase(fixtures));
+  const journal=await controller.loadGardenJournal('g1');
+  const notifications=await controller.loadNotifications('g1',{today:'2026-10-02'});
+
+  assert.equal(journal.hydrationPlan.screenId,'garden-journal');
+  assert.equal(notifications.hydrationPlan.screenId,'notifications');
+
+  for(const plan of [journal.hydrationPlan,notifications.hydrationPlan]){
+    assert.equal(plan.immutable.includes('bottom-navigation'),true);
+    assert.equal(plan.immutable.includes('css'),true);
+    for(const patch of plan.patches){
+      assert.equal(/^\.bottom\b/.test(patch.selector),false);
+      assert.equal(/^\.hero\b/.test(patch.selector),false);
+      assert.equal(/^\.bg\b/.test(patch.selector),false);
+    }
+  }
+});
