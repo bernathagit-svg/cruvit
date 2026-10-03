@@ -22,10 +22,10 @@ const plants = Object.freeze([
 
 const tasks = Object.freeze([
   { id:'t-water', garden_plant_id:'lemon', title:'Water', task_type:'watering', due_on:'2026-10-02', done:false },
-  { id:'t-pests', garden_plant_id:'hydrangea', title:'Check for pests', task_type:'inspect', due_on:'2026-10-02', done:false },
-  { id:'t-harvest', garden_plant_id:'rosemary', title:'Harvest', task_type:'harvest', due_on:'2026-10-02', done:false },
   { id:'t-prune', garden_plant_id:'lavender', title:'Prune', task_type:'pruning', due_on:'2026-10-03', done:false },
   { id:'t-feed', garden_plant_id:'agave', title:'Fertilize', task_type:'fertilizing', due_on:'2026-10-05', done:false },
+  { id:'t-pests', garden_plant_id:'hydrangea', title:'Check for pests', task_type:'inspect', due_on:'2026-10-07', done:false },
+  { id:'t-harvest', garden_plant_id:'rosemary', title:'Harvest', task_type:'harvest', due_on:'2026-10-08', done:false },
   { id:'t-done-1', garden_plant_id:'olive', title:'Water', task_type:'watering', due_on:'2026-10-01', done:true },
   { id:'t-done-2', garden_plant_id:'rose', title:'Deadhead', task_type:'pruning', due_on:'2026-09-30', done:true },
 ]);
