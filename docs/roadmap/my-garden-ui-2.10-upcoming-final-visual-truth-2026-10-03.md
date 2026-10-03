@@ -55,11 +55,11 @@ They may be used only for historical/data-contract context, never as the visual 
 
 ## Implementation status
 - Review route: /my-garden-ui-2.10/upcoming-review.html
-- Visual implementation: in calibration
 - Canonical Task projection remains separate from visual-review fixtures
-- Status: PENDING OWNER PASS
-- Do not mark LOCKED_IMPLEMENTED until explicit owner approval.
-- Do not merge this work to main/production yet.
+- Calendar: OWNER APPROVED / LOCKED VISUAL on 2026-10-03
+- Calendar exact visual is rendered from the approved owner reference itself; do not visually alter it without explicit owner instruction.
+- List: still in calibration / PENDING OWNER PASS
+- Do not merge the full Upcoming work to main/production until List is also explicitly approved.
 
 ## Remaining known visual gap
 The original clean botanical background used in the approved mockup is not available as a standalone repository asset. Do not silently substitute a newly generated background and call it approved.
