@@ -47,6 +47,8 @@ function icon(name) {
     shop: '<path d="M3 5h3l2 10h10l2-7H7M10 20h.01M18 20h.01"/>',
     chevron: '<path d="m9 5 7 7-7 7"/>',
     back: '<path d="m15 5-7 7 7 7"/>',
+    camera: '<rect x="3" y="6" width="18" height="15" rx="3"/><path d="m8 6 1.5-3h5L16 6"/><circle cx="12" cy="13" r="4"/>',
+    bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/>',
   };
   return `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.leaf}</svg>`;
 }
@@ -94,12 +96,13 @@ function statusFilters(vm) {
 }
 
 function viewSwitch(active) {
-  return `<div class="upcoming-view-row">
+  const calendar = active === 'calendar';
+  return `<div class="upcoming-view-row ${calendar ? 'is-calendar-row' : 'is-list-row'}">
     <div class="upcoming-view-switch" role="tablist" aria-label="Upcoming view">
       <button type="button" data-upcoming-view="list" role="tab" aria-selected="${active === 'list'}" class="${active === 'list' ? 'is-active' : ''}">${icon('list')}<span>List</span></button>
       <button type="button" data-upcoming-view="calendar" role="tab" aria-selected="${active === 'calendar'}" class="${active === 'calendar' ? 'is-active' : ''}">${icon('calendar')}<span>Calendar</span></button>
     </div>
-    <button type="button" class="upcoming-add-task" data-upcoming-action="add-task">${icon('plus')}<span>Add task</span></button>
+    <button type="button" class="upcoming-add-task ${calendar ? 'is-pill' : 'is-orb'}" data-upcoming-action="add-task">${icon('plus')}<span>Add task</span></button>
   </div>`;
 }
 
@@ -114,15 +117,21 @@ function bottomNav() {
 }
 
 function shell(content, activeView) {
+  const calendar = activeView === 'calendar';
   return `<section class="upcoming-screen" data-upcoming-screen="${activeView}">
     <div class="upcoming-hero-bg" aria-hidden="true"></div>
     <header class="upcoming-topbar">
-      <span></span><strong>My Garden</strong><div class="upcoming-top-icons"><span>⌑</span><span>♧</span></div>
+      <div class="upcoming-top-left">${calendar ? `<button type="button" class="upcoming-back" data-upcoming-action="back" aria-label="Back">${icon('back')}</button>` : ''}</div>
+      <strong>My Garden</strong>
+      <div class="upcoming-top-icons">
+        <button type="button" aria-label="Garden camera">${icon('camera')}</button>
+        <button type="button" class="upcoming-bell" aria-label="Notifications">${icon('bell')}<i aria-hidden="true"></i></button>
+      </div>
     </header>
     <div class="upcoming-copy">
       <h1>Upcoming</h1>
       <p class="upcoming-kicker">Small steps for a thriving garden.</p>
-      <p class="upcoming-dek">Tasks across all your active plants.</p>
+      ${calendar ? '' : '<p class="upcoming-dek">Tasks across all your active plants.</p>'}
     </div>
     ${content}
     ${bottomNav()}
@@ -138,18 +147,13 @@ export function renderUpcomingListScreen(viewModel, {
     throw new Error('upcoming_list_view_model_required');
   }
 
-  const plantCount = Number.isInteger(activePlantCount)
-    ? activePlantCount
-    : new Set(viewModel.rows.map((row) => row.plantId).filter(Boolean)).size;
-
   const rows = viewModel.rows.map((row) => taskRow(row, { plantVisuals, selectedDate })).join('');
   const content = `
     <main class="upcoming-main">
       ${viewSwitch('list')}
-      ${statusFilters(viewModel)}
-      <div class="upcoming-filter-line">
-        <button type="button" class="upcoming-plant-filter"><strong>All active plants</strong><span>· ${plantCount} plants</span><b>⌄</b></button>
-        <button type="button" class="upcoming-review-filter" aria-label="More filters">${icon('sliders')}</button>
+      <div class="upcoming-list-controls">
+        ${statusFilters(viewModel)}
+        <button type="button" class="upcoming-review-filter" data-upcoming-action="filters" aria-label="More filters">${icon('sliders')}</button>
       </div>
       <section class="upcoming-list-section">
         <h2>This week</h2>
@@ -212,9 +216,6 @@ export function renderUpcomingCalendarScreen(viewModel, {
     throw new Error('upcoming_calendar_view_model_required');
   }
 
-  const plantCount = Number.isInteger(activePlantCount)
-    ? activePlantCount
-    : new Set(viewModel.rows.map((row) => row.plantId).filter(Boolean)).size;
   const [year, monthNumber] = viewModel.selectedMonth.split('-').map(Number);
   const monthLabel = new Date(Date.UTC(year, monthNumber - 1, 1))
     .toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
@@ -228,10 +229,6 @@ export function renderUpcomingCalendarScreen(viewModel, {
   const content = `
     <main class="upcoming-main is-calendar">
       ${viewSwitch('calendar')}
-      ${statusFilters(viewModel)}
-      <div class="upcoming-filter-line calendar-filter">
-        <button type="button" class="upcoming-plant-filter"><strong>All active plants</strong><span>· ${plantCount} plants</span><b>⌄</b></button>
-      </div>
       <section class="upcoming-calendar-card">
         <header class="upcoming-month-head"><button type="button" data-upcoming-month="prev">${icon('back')}</button><h2>${esc(monthLabel)}</h2><button type="button" data-upcoming-month="next">${icon('chevron')}</button></header>
         ${calendarGrid(viewModel)}
