@@ -106,6 +106,79 @@ test('cool-or-dry induction is supported by either climate signal',()=>{
   assert.equal(dry.fruiting.status,'supported');
 });
 
+test('heuristic cool-season-only proxy is necessary-not-sufficient and cannot positively support fruiting',()=>{
+  const m={reproductiveClimate:{fruiting:{
+    requiresCoolSeason:true,
+    evidenceClass:'HEURISTIC_ASSERTION',
+    sourceIds:['authority-1']
+  }}};
+  const g=evaluateReproductiveClimateGate({
+    meta:m,climateProfile:{coolSeasonSignal:true}
+  });
+  assert.equal(g.fruiting.status,'unknown');
+  assert.equal(g.fruiting.evidence,'incomplete:heuristic-cool-season-only');
+});
+
+test('explicit reproductive dry-season requirement constrains a humid non-dry site',()=>{
+  const m={reproductiveClimate:{fruiting:{
+    requiresDrySeason:true,
+    summerHeatBand:'hot',
+    evidenceClass:'HEURISTIC_ASSERTION'
+  }}};
+  const g=evaluateReproductiveClimateGate({
+    meta:m,climateProfile:{drySeasonSignal:false,warmestMonthMeanMaxC:31}
+  });
+  assert.equal(g.fruiting.status,'constrained');
+  assert.equal(g.fruiting.evidence,'negative:requires-dry-season');
+});
+
+test('heat plus reproductive dry-season requirement supports matching hot dry site',()=>{
+  const m={reproductiveClimate:{fruiting:{
+    requiresDrySeason:true,
+    summerHeatBand:'hot',
+    evidenceClass:'HEURISTIC_ASSERTION'
+  }}};
+  const g=evaluateReproductiveClimateGate({
+    meta:m,climateProfile:{drySeasonSignal:true,warmestMonthMeanMaxC:31}
+  });
+  assert.equal(g.fruiting.status,'supported');
+});
+
+test('explicit humidity-sensitive fruiting is constrained in borderline humid atmosphere',()=>{
+  const m={reproductiveClimate:{fruiting:{
+    humidClimateLimitsFruiting:true,
+    summerHeatBand:'hot',
+    evidenceClass:'HEURISTIC_ASSERTION'
+  }}};
+  const g=evaluateReproductiveClimateGate({
+    meta:m,climateProfile:{humiditySignal:'borderline',warmestMonthMeanMaxC:31}
+  });
+  assert.equal(g.fruiting.status,'constrained');
+  assert.equal(g.fruiting.evidence,'negative:humid-climate-fruiting-constraint');
+});
+
+test('humidity-sensitive fruiting may pass when atmosphere is low humidity and heat matches',()=>{
+  const m={reproductiveClimate:{fruiting:{
+    humidClimateLimitsFruiting:true,
+    summerHeatBand:'hot',
+    evidenceClass:'HEURISTIC_ASSERTION'
+  }}};
+  const g=evaluateReproductiveClimateGate({
+    meta:m,climateProfile:{humiditySignal:'low',warmestMonthMeanMaxC:31}
+  });
+  assert.equal(g.fruiting.status,'supported');
+});
+
+test('heuristic dry-season-only proxy is necessary-not-sufficient',()=>{
+  const m={reproductiveClimate:{fruiting:{
+    requiresDrySeason:true,
+    evidenceClass:'HEURISTIC_ASSERTION'
+  }}};
+  const g=evaluateReproductiveClimateGate({meta:m,climateProfile:{drySeasonSignal:true}});
+  assert.equal(g.fruiting.status,'unknown');
+  assert.equal(g.fruiting.evidence,'incomplete:heuristic-dry-season-only');
+});
+
 test('cool-or-dry induction stays UNKNOWN when dry-season signal is missing',()=>{
   const m={reproductiveClimate:{fruiting:{
     seasonalInductionCue:'cool_or_dry',

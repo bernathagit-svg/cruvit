@@ -45,6 +45,13 @@ const APP = path.join(ROOT, 'app.html');
 const GATE = path.join(ROOT, 'modules', 'suitability', 'hard-climate-survival-gate-v1.js');
 const SEED = path.join(ROOT, 'data', 'plants.seed.json');
 const DATA = path.join(ROOT, 'data', 'coordinate-climate', 'v2');
+const GLOBAL_TILE_DIR = path.join(DATA, 'coverage', 'global-v1', 'tiles');
+const HAS_LOCAL_GLOBAL_TILE_CORPUS = fs.existsSync(GLOBAL_TILE_DIR);
+const MOJSTRANA_LOCAL_TEST_OPTIONS = {
+  skip: HAS_LOCAL_GLOBAL_TILE_CORPUS
+    ? false
+    : 'requires local global-v1 tile corpus (~17GB); remote/deployed climate stress covers the authority path'
+};
 
 let paidNetwork = 0;
 const origFetch = globalThis.fetch;
@@ -350,7 +357,7 @@ test('catalog ordinals: very_high frost / very_low cold are hard, not ignored', 
   assert.notEqual(unnamed.bands.survival, 'strong');
 });
 
-test('Mojstrana structural climate is hard freeze; lemon-class and mango-class both cap', () => {
+test('Mojstrana structural climate is hard freeze; lemon-class and mango-class both cap', MOJSTRANA_LOCAL_TEST_OPTIONS, () => {
   clearGlobalRuntimeCaches();
   resetCoordinateClimateRuntimeCounters();
   const loc = { lat: 46.42383, lon: 13.8752, label: 'Mojstrana, Slovenia' };
@@ -436,7 +443,7 @@ test('Mojstrana structural climate is hard freeze; lemon-class and mango-class b
   assert.equal(liveMangoStyleContradiction.ok, false);
 });
 
-test('real catalog lemon × Mojstrana outdoor cannot display Survival Reliable', () => {
+test('real catalog lemon × Mojstrana outdoor cannot display Survival Reliable', MOJSTRANA_LOCAL_TEST_OPTIONS, () => {
   const lemonTraits = BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1.plants.lemon.climateTraits;
   assert.equal(lemonTraits.frostSensitivity, 'very_high');
   assert.equal(lemonTraits.coldTolerance, 'very_low');

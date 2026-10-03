@@ -4,6 +4,8 @@ import {
   warmSeasonFruitingTransform,
   explicitCoolSeasonFruitingTransform,
   explicitFrostFreeFruitingTransform,
+  explicitDrySeasonFruitingTransform,
+  explicitHumidClimateFruitingConstraintTransform,
   qualitativeSummerHeatFruitingTransform
 } from '../modules/suitability/reproductive-climate-transform-v1.js';
 
@@ -66,6 +68,57 @@ test('high summer temperatures for fruit development map to hot summer band',()=
   });
   assert.equal(r.eligible,true);
   assert.equal(r.value,'hot');
+});
+
+test('explicit hot dry fruit production wording maps to dry-season requirement',()=>{
+  const r=explicitDrySeasonFruitingTransform({
+    sourceText:'Edible date production needs male and female trees, hot dry weather, and adequate water.',
+    fruitProductionRelevant:true,
+    sourceIds:['authority-1']
+  });
+  assert.equal(r.eligible,true);
+  assert.equal(r.field,'reproductiveClimate.fruiting.requiresDrySeason');
+  assert.equal(r.value,true);
+  assert.equal(r.evidenceClass,'HEURISTIC_ASSERTION');
+});
+
+test('generic dry-site preference does not create a reproductive dry-season requirement',()=>{
+  const r=explicitDrySeasonFruitingTransform({
+    sourceText:'Prefers a dry site with good drainage.',
+    fruitProductionRelevant:true,
+    sourceIds:['authority-1']
+  });
+  assert.equal(r.eligible,false);
+});
+
+test('explicit humid-climate fruit limitation maps to reproductive humidity constraint',()=>{
+  const r=explicitHumidClimateFruitingConstraintTransform({
+    sourceText:'Humid climates can sharply limit productive cultivars and reliable fruit production.',
+    fruitProductionRelevant:true,
+    sourceIds:['authority-1']
+  });
+  assert.equal(r.eligible,true);
+  assert.equal(r.field,'reproductiveClimate.fruiting.humidClimateLimitsFruiting');
+  assert.equal(r.value,true);
+});
+
+test('generic humidity preference does not create reproductive fruiting constraint',()=>{
+  const r=explicitHumidClimateFruitingConstraintTransform({
+    sourceText:'Tolerates moderate humidity.',
+    fruitProductionRelevant:true,
+    sourceIds:['authority-1']
+  });
+  assert.equal(r.eligible,false);
+});
+
+test('warm dry summer ripening language maps to warm summer heat band',()=>{
+  const r=qualitativeSummerHeatFruitingTransform({
+    sourceText:'Nut production needs winter chill, pollination, and warm dry summer ripening conditions.',
+    fruitProductionRelevant:true,
+    sourceIds:['authority-1']
+  });
+  assert.equal(r.eligible,true);
+  assert.equal(r.value,'warm');
 });
 
 test('generic tropical label alone cannot authorize summer heat band',()=>{

@@ -28,6 +28,8 @@ import {
 import {
   explicitCoolSeasonFruitingTransform,
   explicitFrostFreeFruitingTransform,
+  explicitDrySeasonFruitingTransform,
+  explicitHumidClimateFruitingConstraintTransform,
   qualitativeSummerHeatFruitingTransform
 } from '../suitability/reproductive-climate-transform-v1.js';
 
@@ -131,6 +133,8 @@ export const CLAIM_FIELDS = Object.freeze([
   ...REPRODUCTIVE_BIOLOGY_CLAIM_FIELDS,
   'reproductiveClimate.flowering.requiresFrostFree',
   'reproductiveClimate.flowering.requiresCoolSeason',
+  'reproductiveClimate.flowering.requiresDrySeason',
+  'reproductiveClimate.flowering.humidClimateLimitsFruiting',
   'reproductiveClimate.flowering.summerHeatBand',
   'reproductiveClimate.flowering.minWarmestMonthMeanMaxC',
   'reproductiveClimate.flowering.minReproductiveEventC',
@@ -139,6 +143,8 @@ export const CLAIM_FIELDS = Object.freeze([
   'reproductiveClimate.flowering.contextKeys',
   'reproductiveClimate.fruiting.requiresFrostFree',
   'reproductiveClimate.fruiting.requiresCoolSeason',
+  'reproductiveClimate.fruiting.requiresDrySeason',
+  'reproductiveClimate.fruiting.humidClimateLimitsFruiting',
   'reproductiveClimate.fruiting.summerHeatBand',
   'reproductiveClimate.fruiting.minWarmestMonthMeanMaxC',
   'reproductiveClimate.fruiting.minReproductiveEventC',
@@ -240,8 +246,19 @@ function addDerivedReproductiveClaim(reproductiveClimate, derived, sourceExcerpt
     delete reproductiveClimate[phase].transformRef;
     reproductiveClimate[phase].transformRefs = [...new Set(refs)];
   }
-  if (sourceExcerpt && !reproductiveClimate[phase].sourceExcerpt) {
-    reproductiveClimate[phase].sourceExcerpt = sourceExcerpt;
+  if (sourceExcerpt) {
+    const excerpts = [
+      ...(Array.isArray(reproductiveClimate[phase].sourceExcerpts)
+        ? reproductiveClimate[phase].sourceExcerpts
+        : reproductiveClimate[phase].sourceExcerpt
+          ? [reproductiveClimate[phase].sourceExcerpt]
+          : []),
+      sourceExcerpt
+    ].filter(Boolean);
+    reproductiveClimate[phase].sourceExcerpts = [...new Set(excerpts)];
+    if (!reproductiveClimate[phase].sourceExcerpt) {
+      reproductiveClimate[phase].sourceExcerpt = sourceExcerpt;
+    }
   }
 }
 
@@ -373,6 +390,8 @@ export function validateCatalogExpansionPacket(packet) {
     const allowedRcFields = new Set([
       'reproductiveClimate.flowering.requiresFrostFree',
       'reproductiveClimate.flowering.requiresCoolSeason',
+      'reproductiveClimate.flowering.requiresDrySeason',
+      'reproductiveClimate.flowering.humidClimateLimitsFruiting',
       'reproductiveClimate.flowering.summerHeatBand',
       'reproductiveClimate.flowering.minWarmestMonthMeanMaxC',
       'reproductiveClimate.flowering.minReproductiveEventC',
@@ -381,6 +400,8 @@ export function validateCatalogExpansionPacket(packet) {
       'reproductiveClimate.flowering.contextKeys',
       'reproductiveClimate.fruiting.requiresFrostFree',
       'reproductiveClimate.fruiting.requiresCoolSeason',
+      'reproductiveClimate.fruiting.requiresDrySeason',
+      'reproductiveClimate.fruiting.humidClimateLimitsFruiting',
       'reproductiveClimate.fruiting.summerHeatBand',
       'reproductiveClimate.fruiting.minWarmestMonthMeanMaxC',
       'reproductiveClimate.fruiting.minReproductiveEventC',
@@ -396,7 +417,7 @@ export function validateCatalogExpansionPacket(packet) {
         continue;
       }
       if (claim.status !== 'asserted') continue;
-      if (field.endsWith('.requiresFrostFree') || field.endsWith('.requiresCoolSeason')) {
+      if (field.endsWith('.requiresFrostFree') || field.endsWith('.requiresCoolSeason') || field.endsWith('.requiresDrySeason') || field.endsWith('.humidClimateLimitsFruiting')) {
         if (typeof claim.value !== 'boolean') {
           fail(errors, `claim ${claim.claimId}: ${field} must be boolean`);
         }
@@ -720,6 +741,20 @@ export function materializePlantCatalogItemFromPacket(packet, options = {}) {
       sourceIds: fruitClimateClaim.sourceIds
     });
     addDerivedReproductiveClaim(reproductiveClimate, heat, sourceText);
+
+    const dry = explicitDrySeasonFruitingTransform({
+      sourceText,
+      fruitProductionRelevant,
+      sourceIds: fruitClimateClaim.sourceIds
+    });
+    addDerivedReproductiveClaim(reproductiveClimate, dry, sourceText);
+
+    const humidConstraint = explicitHumidClimateFruitingConstraintTransform({
+      sourceText,
+      fruitProductionRelevant,
+      sourceIds: fruitClimateClaim.sourceIds
+    });
+    addDerivedReproductiveClaim(reproductiveClimate, humidConstraint, sourceText);
   }
 
   if (reproductiveClimate.flowering || reproductiveClimate.fruiting) {
