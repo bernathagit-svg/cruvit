@@ -31,11 +31,11 @@ const tasks = Object.freeze([
 ]);
 
 const plantVisuals = Object.freeze({
-  lemon:'https://upload.wikimedia.org/wikipedia/commons/7/78/Citrus_%C3%97_limon_-_Eureka_-_Fruits.jpg',
-  lavender:'https://upload.wikimedia.org/wikipedia/commons/c/c4/Vanessa_cardui_on_Lavandula_angustifolia-2459.jpg',
-  agave:'/modules/garden-design/images/succulents.png',
-  hydrangea:'https://upload.wikimedia.org/wikipedia/commons/f/f4/Hortensia-1.jpg',
-  rosemary:'https://upload.wikimedia.org/wikipedia/commons/c/c8/Starr_070402-6273_Rosmarinus_officinalis.jpg',
+  lemon:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Lemon_tree_with_fruit_and_flowers.jpg',
+  lavender:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Lavender_plant.jpg',
+  agave:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Agave_plant.jpg',
+  hydrangea:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Blue_Hydrangea_%28common_names_hydrangea_or_hortensia%29.jpg',
+  rosemary:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Rosmarinus_officinalis_%28Lamiaceae%29_01.jpg',
 });
 
 const root = document.querySelector('#upcoming-review-root');
