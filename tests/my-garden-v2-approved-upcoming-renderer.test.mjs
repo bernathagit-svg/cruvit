@@ -63,6 +63,8 @@ test('Upcoming List renderer uses derived task rows and derived counts', () => {
   assert.match(html, /To do <b>5<\/b>/);
   assert.match(html, /Completed <b>2<\/b>/);
   assert.match(html, /All <b>7<\/b>/);
+  assert.match(html, /data-upcoming-action="filters"/);
+  assert.doesNotMatch(html, /All active plants/);
   assert.match(html, /data-task-id="t-water"/);
   assert.match(html, /data-task-id="t-harvest"/);
   assert.doesNotMatch(html, /data-task-id="t-done-1"/);
@@ -91,9 +93,9 @@ test('Upcoming Calendar renderer uses the same totals and exact selected-day tas
   });
 
   assert.match(html, /October 2026/);
-  assert.match(html, /To do <b>5<\/b>/);
-  assert.match(html, /Completed <b>2<\/b>/);
-  assert.match(html, /All <b>7<\/b>/);
+  assert.doesNotMatch(html, /upcoming-status-filters/);
+  assert.doesNotMatch(html, /All active plants/);
+  assert.match(html, /data-upcoming-action="back"/);
   assert.match(html, /data-upcoming-date="2026-10-02"/);
   assert.match(html, /data-task-id="t-water"/);
 });
