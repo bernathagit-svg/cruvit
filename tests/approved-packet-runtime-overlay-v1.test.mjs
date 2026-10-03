@@ -138,7 +138,16 @@ test('approved packet authority exposes partial field coverage instead of implyi
   const plants=[{slug:'artichoke',climateTraits:{humidityTolerance:'legacy-medium'}}];
   const out=applyApprovedPacketRuntimeClimateOverlay(plants,payload);
   assert.deepEqual(out.applied,['artichoke']);
-  assert.equal(plants[0].climateTraits.humidityTolerance,'legacy-medium');
+  assert.equal(plants[0].climateTraits.humidityTolerance,undefined);
   assert.equal(plants[0].approvedPacketClimateAuthority.coverageState,'partial');
   assert.ok(plants[0].approvedPacketClimateAuthority.missingFields.includes('humidityTolerance'));
+});
+
+test('partial overlay preserves an existing missing-field value only when legacy evidence is already SOURCE_SUPPORTED',()=>{
+  const plants=[{slug:'artichoke',climateTraits:{
+    humidityTolerance:'medium',traitEvidenceClasses:{humidityTolerance:'SOURCE_SUPPORTED'}
+  }}];
+  const out=applyApprovedPacketRuntimeClimateOverlay(plants,payload);
+  assert.deepEqual(out.applied,['artichoke']);
+  assert.equal(plants[0].climateTraits.humidityTolerance,'medium');
 });

@@ -1,0 +1,211 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "olive-legacy-authority-closure-wave1-v1",
+  "identity": {
+    "canonicalSlug": "olive",
+    "commonNameEn": "Olive Tree",
+    "acceptedScientificName": "Olea europaea",
+    "aliases": [
+      "olive",
+      "olive tree",
+      "Olea europaea"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-10-03",
+    "notes": "Legacy runtime authority closure Wave 1; unknown fields remain explicit and are not inferred."
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-olea-europaea",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Olea europaea (Olive)",
+      "url": "https://plants.ces.ncsu.edu/plants/olea-europaea/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-03"
+    },
+    {
+      "sourceId": "ufifas-olive-ipm-in1251",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida IFAS Extension",
+      "title": "Develop Your Own Florida Olive IPM Plan",
+      "url": "https://edis.ifas.ufl.edu/publication/IN1251/pdf",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-03"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Olea europaea",
+      "sourceIds": [
+        "ncsu-olea-europaea"
+      ],
+      "shortExcerpt": "NCSU identifies the canonical plant as Olea europaea.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "olive",
+        "olive tree",
+        "Olea europaea"
+      ],
+      "sourceIds": [
+        "ncsu-olea-europaea"
+      ],
+      "shortExcerpt": "Common and scientific aliases retained for canonical identity.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "frost",
+      "field": "frostSensitivity",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Direct freeze thresholds are documented, but no approved ordinal transform safely maps olive tolerance to frostSensitivity."
+    },
+    {
+      "claimId": "cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-olea-europaea"
+      ],
+      "shortExcerpt": "NCSU lists olive in USDA zones 8a–10b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-olea-europaea"
+      ],
+      "shortExcerpt": "NCSU describes olive as best adapted to hot, dry summers.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "humidity",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Florida sources discuss humid-climate challenges without a canonical ordinal tolerance."
+    },
+    {
+      "claimId": "water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-olea-europaea"
+      ],
+      "shortExcerpt": "NCSU describes average moisture with drought tolerance after establishment.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-olea-europaea"
+      ],
+      "shortExcerpt": "NCSU lists full sun for olive.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-olea-europaea"
+      ],
+      "shortExcerpt": "NCSU lists well-drained soil for olive.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "chill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-olea-europaea",
+        "ufifas-olive-ipm-in1251"
+      ],
+      "shortExcerpt": "Olive requires a cool winter period / sufficient chill hours to form floral buds.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "fruit",
+        "edible",
+        "mediterranean",
+        "tree"
+      ],
+      "sourceIds": [
+        "ncsu-olea-europaea"
+      ],
+      "shortExcerpt": "Catalog tags reflect edible olive fruit and Mediterranean tree habit.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "flowering",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "A sustained cool winter period is required for floral-bud formation and flowering.",
+      "sourceIds": [
+        "ncsu-olea-europaea",
+        "ufifas-olive-ipm-in1251"
+      ],
+      "shortExcerpt": "NCSU and UF/IFAS both describe winter chilling as necessary for olive flowering.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruiting",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Fruit production benefits from compatible pollinizers; harvest occurs after successful flowering and set.",
+      "sourceIds": [
+        "ncsu-olea-europaea",
+        "ufifas-olive-ipm-in1251"
+      ],
+      "shortExcerpt": "NCSU recommends different varieties for improved cross-pollination and crop yield.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "repro-pollinator",
+      "field": "reproductive.requires_pollinator",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-olea-europaea"
+      ],
+      "shortExcerpt": "NCSU recommends pollinizer varieties to increase olive crop yield.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-03",
+    "approvedBy": "Owner continuation authorization in current CRUVIT work session",
+    "notes": "Owner instructed continuation of the authority-closure work; no paid APIs."
+  }
+}

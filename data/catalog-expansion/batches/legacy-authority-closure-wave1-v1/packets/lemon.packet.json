@@ -1,0 +1,199 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "lemon-legacy-authority-closure-wave1-v1",
+  "identity": {
+    "canonicalSlug": "lemon",
+    "commonNameEn": "Lemon Tree",
+    "acceptedScientificName": "Citrus × limon",
+    "aliases": [
+      "lemon",
+      "lemon tree",
+      "citrus limon",
+      "Citrus × limon"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-10-03",
+    "notes": "Legacy runtime authority closure Wave 1; unknown fields remain explicit and are not inferred."
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-citrus-x-limon",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Citrus x limon (Lemon)",
+      "url": "https://plants.ces.ncsu.edu/plants/citrus-x-limon/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-03"
+    },
+    {
+      "sourceId": "uarizona-citrus-frost-sensitivity",
+      "institution": "University of Arizona Cooperative Extension",
+      "publisher": "University of Arizona Cooperative Extension",
+      "title": "Citrus Care for the Homeowner",
+      "url": "https://extension.arizona.edu/sites/extension.arizona.edu/files/programs/Glenn%20Wright%20-%20Small%20Scale%20Citrus%20Farming%20-%202022.pdf",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-03"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Citrus × limon",
+      "sourceIds": [
+        "ncsu-citrus-x-limon"
+      ],
+      "shortExcerpt": "NCSU identifies the canonical plant as Citrus × limon.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "lemon",
+        "lemon tree",
+        "citrus limon",
+        "Citrus × limon"
+      ],
+      "sourceIds": [
+        "ncsu-citrus-x-limon"
+      ],
+      "shortExcerpt": "Common and scientific aliases retained for canonical identity.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uarizona-citrus-frost-sensitivity"
+      ],
+      "shortExcerpt": "University of Arizona rates lemon as highly frost-sensitive.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "ncsu-citrus-x-limon"
+      ],
+      "shortExcerpt": "NCSU lists lemon in USDA zones 9a–11b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "heat",
+      "field": "heatTolerance",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "humidity",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-citrus-x-limon"
+      ],
+      "shortExcerpt": "NCSU states lemon needs plenty of water during active growth.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-citrus-x-limon"
+      ],
+      "shortExcerpt": "NCSU lists full sun for lemon.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-citrus-x-limon"
+      ],
+      "shortExcerpt": "NCSU lists good drainage for lemon.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "chill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-citrus-x-limon"
+      ],
+      "shortExcerpt": "Lemon can bloom year-round within its suitable hardiness range.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "fruit",
+        "edible",
+        "citrus",
+        "tree"
+      ],
+      "sourceIds": [
+        "ncsu-citrus-x-limon"
+      ],
+      "shortExcerpt": "Catalog tags reflect the NCSU lemon identity and edible fruit use.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "flowering",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Can flower throughout the year where climate stays suitable.",
+      "sourceIds": [
+        "ncsu-citrus-x-limon"
+      ],
+      "shortExcerpt": "NCSU reports year-round bloom within suitable hardiness zones.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruiting",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Full sun and regular water during active growth support fruit production and fruit size.",
+      "sourceIds": [
+        "ncsu-citrus-x-limon"
+      ],
+      "shortExcerpt": "NCSU links active-season water and full sun with lemon growth and fruit size.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-03",
+    "approvedBy": "Owner continuation authorization in current CRUVIT work session",
+    "notes": "Owner instructed continuation of the authority-closure work; no paid APIs."
+  }
+}

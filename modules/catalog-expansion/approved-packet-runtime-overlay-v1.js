@@ -34,11 +34,25 @@ export function applyApprovedPacketRuntimeClimateOverlay(plants,payload,{
       continue;
     }
     const existing=plant.climateTraits&&typeof plant.climateTraits==='object'?plant.climateTraits:{};
-    plant.climateTraits={
+    const mergedTraits={
       ...existing,
       ...clone(row.climateTraits),
       groupIds:unionStrings(existing.groupIds,row.climateTraits.groupIds)
     };
+    // A field explicitly absent from the approved packet must not silently fall back
+    // to an unproven legacy ordinal. Preserve an existing value only when its own
+    // field-level evidence is already SOURCE_SUPPORTED.
+    const existingEvidence=existing.traitEvidenceClasses&&typeof existing.traitEvidenceClasses==='object'
+      ?existing.traitEvidenceClasses:{};
+    const authorityUnknownFields=[];
+    for(const field of Array.isArray(row.missingFields)?row.missingFields:[]){
+      if(String(existingEvidence[field]||'').toUpperCase()!=='SOURCE_SUPPORTED'){
+        delete mergedTraits[field];
+        authorityUnknownFields.push(field);
+      }
+    }
+    mergedTraits.authorityUnknownFields=authorityUnknownFields;
+    plant.climateTraits=mergedTraits;
     if(row.scientific) plant.scientific=row.scientific;
     plant.approvedPacketClimateAuthority={
       source:'approved-catalog-expansion-packet',

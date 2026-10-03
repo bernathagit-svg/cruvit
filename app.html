@@ -2138,6 +2138,17 @@ function climateMetaFromCatalogTraits(traits,scientific){
   }
   // Synthetic merge "medium" defaults are not plant knowledge on the canonical path.
   merged=smartRecStripSyntheticCoreDefaults(merged);
+  // Fields explicitly unresolved by the approved packet remain UNKNOWN even if a
+  // broad climate group carries a default. Group templates are context, not plant evidence.
+  const authorityUnknownFields=Array.isArray(traits.authorityUnknownFields)
+    ?traits.authorityUnknownFields:[];
+  for(const field of authorityUnknownFields){
+    delete merged[field];
+    if(merged.traitEvidenceClasses&&typeof merged.traitEvidenceClasses==='object'){
+      merged.traitEvidenceClasses[field]='UNKNOWN';
+    }
+  }
+  merged.authorityUnknownFields=[...authorityUnknownFields];
   merged._metaAuthority='canonical-climateTraits';
   return merged;
 }

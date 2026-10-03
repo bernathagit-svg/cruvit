@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "overlayVersion": "1.0.0",
   "authority": "OWNER_APPROVED_CATALOG_EXPANSION_PACKETS",
-  "plantCount": 128,
+  "plantCount": 132,
   "plants": {
     "acerola": {
       "packetId": "acerola-bulk-batch-1-v1",
@@ -17634,6 +17634,741 @@
               "ncsu-cucurbita-pepo"
             ],
             "shortExcerpt": "C. pepo is monoecious; insect pollination needed for fruit set.",
+            "status": "asserted"
+          }
+        }
+      }
+    },
+    "avocado": {
+      "packetId": "avocado-legacy-authority-closure-wave1-v1",
+      "scientific": "Persea americana",
+      "packetVerificationState": "verified",
+      "verificationScope": "packet-acceptance-only",
+      "needsReview": false,
+      "coverageState": "partial",
+      "trackedFields": [
+        "frostSensitivity",
+        "coldTolerance",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill"
+      ],
+      "missingFields": [
+        "humidityTolerance",
+        "needsWinterChill"
+      ],
+      "fieldCoverage": {
+        "frostSensitivity": {
+          "present": true,
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        "coldTolerance": {
+          "present": true,
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        "heatTolerance": {
+          "present": true,
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        "humidityTolerance": {
+          "present": false,
+          "evidenceClass": "UNKNOWN"
+        },
+        "waterNeeds": {
+          "present": true,
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        "sunNeeds": {
+          "present": true,
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        "drainageNeeds": {
+          "present": true,
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        "needsWinterChill": {
+          "present": false,
+          "evidenceClass": "UNKNOWN"
+        }
+      },
+      "climateTraits": {
+        "frostSensitivity": "very_high",
+        "coldTolerance": "very_low",
+        "heatTolerance": "high",
+        "waterNeeds": "medium",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "high",
+        "floweringRequirements": "Flowering is best under warm, sunny conditions; flowers are produced in winter to early spring.",
+        "fruitingRequirements": "Fruit production is best in warm, sunny conditions; harvest timing varies by variety.",
+        "needsReview": false,
+        "floweringEvidenceClass": "SOURCE_SUPPORTED",
+        "reproductiveClimate": {
+          "contractVersion": "reproductive-climate-v1",
+          "flowering": {
+            "evidenceState": "RESEARCHED_UNQUANTIFIED",
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-persea-americana"
+            ],
+            "sourceExcerpt": "Flowering is best under warm, sunny conditions; flowers are produced in winter to early spring. NCSU describes winter bloom and better flowering in warm sunny conditions."
+          },
+          "fruiting": {
+            "evidenceState": "RESEARCHED_UNQUANTIFIED",
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-persea-americana"
+            ],
+            "sourceExcerpt": "Fruit production is best in warm, sunny conditions; harvest timing varies by variety. NCSU describes warm sunny fruit production and variety-dependent harvest timing."
+          }
+        },
+        "traitEvidenceClasses": {
+          "frostSensitivity": "SOURCE_SUPPORTED",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "HEURISTIC_ASSERTION",
+          "humidityTolerance": "UNKNOWN",
+          "waterNeeds": "HEURISTIC_ASSERTION",
+          "sunNeeds": "SOURCE_SUPPORTED",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "needsWinterChill": "UNKNOWN",
+          "floweringRequirements": "SOURCE_SUPPORTED",
+          "fruitingRequirements": "SOURCE_SUPPORTED"
+        },
+        "traitProvenance": {
+          "frostSensitivity": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-persea-americana"
+            ],
+            "shortExcerpt": "NCSU states avocado does not tolerate frost.",
+            "status": "asserted"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-persea-americana"
+            ],
+            "shortExcerpt": "NCSU lists avocado in USDA zones 9a–12b.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-persea-americana"
+            ],
+            "shortExcerpt": "NCSU lists heat resistance and best flowering/fruit production in warm sunny conditions.",
+            "status": "asserted"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "UNKNOWN",
+            "sourceIds": [],
+            "shortExcerpt": "Not yet source-supported for the canonical species.",
+            "status": "unknown"
+          },
+          "waterNeeds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-persea-americana"
+            ],
+            "shortExcerpt": "NCSU describes evenly moist growing conditions.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-persea-americana"
+            ],
+            "shortExcerpt": "NCSU lists full sun for avocado.",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-persea-americana"
+            ],
+            "shortExcerpt": "NCSU lists good drainage for avocado.",
+            "status": "asserted"
+          },
+          "needsWinterChill": {
+            "evidenceClass": "UNKNOWN",
+            "sourceIds": [],
+            "shortExcerpt": "No species-wide winter-chill requirement is asserted from the consulted source.",
+            "status": "unknown"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-persea-americana"
+            ],
+            "shortExcerpt": "NCSU describes winter bloom and better flowering in warm sunny conditions.",
+            "status": "asserted"
+          },
+          "fruitingRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-persea-americana"
+            ],
+            "shortExcerpt": "NCSU describes warm sunny fruit production and variety-dependent harvest timing.",
+            "status": "asserted"
+          }
+        }
+      }
+    },
+    "lemon": {
+      "packetId": "lemon-legacy-authority-closure-wave1-v1",
+      "scientific": "Citrus × limon",
+      "packetVerificationState": "verified",
+      "verificationScope": "packet-acceptance-only",
+      "needsReview": false,
+      "coverageState": "partial",
+      "trackedFields": [
+        "frostSensitivity",
+        "coldTolerance",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill"
+      ],
+      "missingFields": [
+        "heatTolerance",
+        "humidityTolerance"
+      ],
+      "fieldCoverage": {
+        "frostSensitivity": {
+          "present": true,
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        "coldTolerance": {
+          "present": true,
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        "heatTolerance": {
+          "present": false,
+          "evidenceClass": "UNKNOWN"
+        },
+        "humidityTolerance": {
+          "present": false,
+          "evidenceClass": "UNKNOWN"
+        },
+        "waterNeeds": {
+          "present": true,
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        "sunNeeds": {
+          "present": true,
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        "drainageNeeds": {
+          "present": true,
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        "needsWinterChill": {
+          "present": true,
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        }
+      },
+      "climateTraits": {
+        "frostSensitivity": "high",
+        "coldTolerance": "very_low",
+        "waterNeeds": "high",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "high",
+        "needsWinterChill": false,
+        "floweringRequirements": "Can flower throughout the year where climate stays suitable.",
+        "fruitingRequirements": "Full sun and regular water during active growth support fruit production and fruit size.",
+        "needsReview": false,
+        "floweringEvidenceClass": "SOURCE_SUPPORTED",
+        "reproductiveClimate": {
+          "contractVersion": "reproductive-climate-v1",
+          "flowering": {
+            "evidenceState": "RESEARCHED_UNQUANTIFIED",
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-citrus-x-limon"
+            ],
+            "sourceExcerpt": "Can flower throughout the year where climate stays suitable. NCSU reports year-round bloom within suitable hardiness zones."
+          },
+          "fruiting": {
+            "evidenceState": "RESEARCHED_UNQUANTIFIED",
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-citrus-x-limon"
+            ],
+            "sourceExcerpt": "Full sun and regular water during active growth support fruit production and fruit size. NCSU links active-season water and full sun with lemon growth and fruit size."
+          }
+        },
+        "traitEvidenceClasses": {
+          "frostSensitivity": "SOURCE_SUPPORTED",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "UNKNOWN",
+          "humidityTolerance": "UNKNOWN",
+          "waterNeeds": "HEURISTIC_ASSERTION",
+          "sunNeeds": "SOURCE_SUPPORTED",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "needsWinterChill": "HEURISTIC_ASSERTION",
+          "floweringRequirements": "SOURCE_SUPPORTED",
+          "fruitingRequirements": "SOURCE_SUPPORTED"
+        },
+        "traitProvenance": {
+          "frostSensitivity": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "uarizona-citrus-frost-sensitivity"
+            ],
+            "shortExcerpt": "University of Arizona rates lemon as highly frost-sensitive.",
+            "status": "asserted"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-citrus-x-limon"
+            ],
+            "shortExcerpt": "NCSU lists lemon in USDA zones 9a–11b.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "UNKNOWN",
+            "sourceIds": [],
+            "shortExcerpt": "Not yet source-supported for the canonical species.",
+            "status": "unknown"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "UNKNOWN",
+            "sourceIds": [],
+            "shortExcerpt": "Not yet source-supported for the canonical species.",
+            "status": "unknown"
+          },
+          "waterNeeds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-citrus-x-limon"
+            ],
+            "shortExcerpt": "NCSU states lemon needs plenty of water during active growth.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-citrus-x-limon"
+            ],
+            "shortExcerpt": "NCSU lists full sun for lemon.",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-citrus-x-limon"
+            ],
+            "shortExcerpt": "NCSU lists good drainage for lemon.",
+            "status": "asserted"
+          },
+          "needsWinterChill": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-citrus-x-limon"
+            ],
+            "shortExcerpt": "Lemon can bloom year-round within its suitable hardiness range.",
+            "status": "asserted"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-citrus-x-limon"
+            ],
+            "shortExcerpt": "NCSU reports year-round bloom within suitable hardiness zones.",
+            "status": "asserted"
+          },
+          "fruitingRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-citrus-x-limon"
+            ],
+            "shortExcerpt": "NCSU links active-season water and full sun with lemon growth and fruit size.",
+            "status": "asserted"
+          }
+        }
+      }
+    },
+    "olive": {
+      "packetId": "olive-legacy-authority-closure-wave1-v1",
+      "scientific": "Olea europaea",
+      "packetVerificationState": "verified",
+      "verificationScope": "packet-acceptance-only",
+      "needsReview": false,
+      "coverageState": "partial",
+      "trackedFields": [
+        "frostSensitivity",
+        "coldTolerance",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill"
+      ],
+      "missingFields": [
+        "frostSensitivity",
+        "humidityTolerance"
+      ],
+      "fieldCoverage": {
+        "frostSensitivity": {
+          "present": false,
+          "evidenceClass": "UNKNOWN"
+        },
+        "coldTolerance": {
+          "present": true,
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        "heatTolerance": {
+          "present": true,
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        "humidityTolerance": {
+          "present": false,
+          "evidenceClass": "UNKNOWN"
+        },
+        "waterNeeds": {
+          "present": true,
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        "sunNeeds": {
+          "present": true,
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        "drainageNeeds": {
+          "present": true,
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        "needsWinterChill": {
+          "present": true,
+          "evidenceClass": "SOURCE_SUPPORTED"
+        }
+      },
+      "climateTraits": {
+        "coldTolerance": "low",
+        "heatTolerance": "high",
+        "waterNeeds": "medium",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "high",
+        "needsWinterChill": true,
+        "floweringRequirements": "A sustained cool winter period is required for floral-bud formation and flowering.",
+        "fruitingRequirements": "Fruit production benefits from compatible pollinizers; harvest occurs after successful flowering and set.",
+        "needsReview": false,
+        "floweringEvidenceClass": "SOURCE_SUPPORTED",
+        "reproductiveBiology": {
+          "requires_pollinator": true
+        },
+        "reproductiveClimate": {
+          "contractVersion": "reproductive-climate-v1",
+          "flowering": {
+            "requiresCoolSeason": true,
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM",
+            "sourceIds": [
+              "ncsu-olea-europaea",
+              "ufifas-olive-ipm-in1251"
+            ],
+            "transformRef": "winter-chill-to-cool-season-v1@1.0.0",
+            "sourceExcerpts": [
+              "true Olive requires a cool winter period / sufficient chill hours to form floral buds."
+            ],
+            "sourceExcerpt": "true Olive requires a cool winter period / sufficient chill hours to form floral buds."
+          },
+          "fruiting": {
+            "requiresCoolSeason": true,
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM",
+            "sourceIds": [
+              "ncsu-olea-europaea",
+              "ufifas-olive-ipm-in1251"
+            ],
+            "transformRef": "winter-chill-to-cool-season-v1@1.0.0",
+            "sourceExcerpts": [
+              "true Olive requires a cool winter period / sufficient chill hours to form floral buds."
+            ],
+            "sourceExcerpt": "true Olive requires a cool winter period / sufficient chill hours to form floral buds."
+          }
+        },
+        "traitEvidenceClasses": {
+          "frostSensitivity": "UNKNOWN",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "HEURISTIC_ASSERTION",
+          "humidityTolerance": "UNKNOWN",
+          "waterNeeds": "HEURISTIC_ASSERTION",
+          "sunNeeds": "SOURCE_SUPPORTED",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "needsWinterChill": "SOURCE_SUPPORTED",
+          "floweringRequirements": "SOURCE_SUPPORTED",
+          "fruitingRequirements": "SOURCE_SUPPORTED",
+          "reproductive.requires_pollinator": "HEURISTIC_ASSERTION"
+        },
+        "traitProvenance": {
+          "frostSensitivity": {
+            "evidenceClass": "UNKNOWN",
+            "sourceIds": [],
+            "shortExcerpt": "Direct freeze thresholds are documented, but no approved ordinal transform safely maps olive tolerance to frostSensitivity.",
+            "status": "unknown"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-olea-europaea"
+            ],
+            "shortExcerpt": "NCSU lists olive in USDA zones 8a–10b.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-olea-europaea"
+            ],
+            "shortExcerpt": "NCSU describes olive as best adapted to hot, dry summers.",
+            "status": "asserted"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "UNKNOWN",
+            "sourceIds": [],
+            "shortExcerpt": "Florida sources discuss humid-climate challenges without a canonical ordinal tolerance.",
+            "status": "unknown"
+          },
+          "waterNeeds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-olea-europaea"
+            ],
+            "shortExcerpt": "NCSU describes average moisture with drought tolerance after establishment.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-olea-europaea"
+            ],
+            "shortExcerpt": "NCSU lists full sun for olive.",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-olea-europaea"
+            ],
+            "shortExcerpt": "NCSU lists well-drained soil for olive.",
+            "status": "asserted"
+          },
+          "needsWinterChill": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-olea-europaea",
+              "ufifas-olive-ipm-in1251"
+            ],
+            "shortExcerpt": "Olive requires a cool winter period / sufficient chill hours to form floral buds.",
+            "status": "asserted"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-olea-europaea",
+              "ufifas-olive-ipm-in1251"
+            ],
+            "shortExcerpt": "NCSU and UF/IFAS both describe winter chilling as necessary for olive flowering.",
+            "status": "asserted"
+          },
+          "fruitingRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-olea-europaea",
+              "ufifas-olive-ipm-in1251"
+            ],
+            "shortExcerpt": "NCSU recommends different varieties for improved cross-pollination and crop yield.",
+            "status": "asserted"
+          },
+          "reproductive.requires_pollinator": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-olea-europaea"
+            ],
+            "shortExcerpt": "NCSU recommends pollinizer varieties to increase olive crop yield.",
+            "status": "asserted"
+          }
+        }
+      }
+    },
+    "rosemary": {
+      "packetId": "rosemary-legacy-authority-closure-wave1-v1",
+      "scientific": "Salvia rosmarinus",
+      "packetVerificationState": "verified",
+      "verificationScope": "packet-acceptance-only",
+      "needsReview": false,
+      "coverageState": "partial",
+      "trackedFields": [
+        "frostSensitivity",
+        "coldTolerance",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill"
+      ],
+      "missingFields": [
+        "frostSensitivity",
+        "needsWinterChill"
+      ],
+      "fieldCoverage": {
+        "frostSensitivity": {
+          "present": false,
+          "evidenceClass": "UNKNOWN"
+        },
+        "coldTolerance": {
+          "present": true,
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        "heatTolerance": {
+          "present": true,
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        "humidityTolerance": {
+          "present": true,
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        "waterNeeds": {
+          "present": true,
+          "evidenceClass": "HEURISTIC_ASSERTION"
+        },
+        "sunNeeds": {
+          "present": true,
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        "drainageNeeds": {
+          "present": true,
+          "evidenceClass": "SOURCE_SUPPORTED"
+        },
+        "needsWinterChill": {
+          "present": false,
+          "evidenceClass": "UNKNOWN"
+        }
+      },
+      "climateTraits": {
+        "coldTolerance": "low",
+        "heatTolerance": "high",
+        "humidityTolerance": "low",
+        "waterNeeds": "low",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "high",
+        "floweringRequirements": "Flowering generally occurs from spring into summer under suitable growing conditions.",
+        "fruitingRequirements": "Produces small brown nutlets after flowering; the plant is primarily grown for aromatic foliage.",
+        "needsReview": false,
+        "floweringEvidenceClass": "SOURCE_SUPPORTED",
+        "reproductiveClimate": {
+          "contractVersion": "reproductive-climate-v1",
+          "flowering": {
+            "evidenceState": "RESEARCHED_UNQUANTIFIED",
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-salvia-rosmarinus"
+            ],
+            "sourceExcerpt": "Flowering generally occurs from spring into summer under suitable growing conditions. NCSU describes rosemary bloom from spring into summer."
+          },
+          "fruiting": {
+            "evidenceState": "RESEARCHED_UNQUANTIFIED",
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-salvia-rosmarinus"
+            ],
+            "sourceExcerpt": "Produces small brown nutlets after flowering; the plant is primarily grown for aromatic foliage. NCSU describes the rosemary fruit as a small brown nutlet."
+          }
+        },
+        "traitEvidenceClasses": {
+          "frostSensitivity": "UNKNOWN",
+          "coldTolerance": "SOURCE_SUPPORTED",
+          "heatTolerance": "HEURISTIC_ASSERTION",
+          "humidityTolerance": "SOURCE_SUPPORTED",
+          "waterNeeds": "HEURISTIC_ASSERTION",
+          "sunNeeds": "SOURCE_SUPPORTED",
+          "drainageNeeds": "SOURCE_SUPPORTED",
+          "needsWinterChill": "UNKNOWN",
+          "floweringRequirements": "SOURCE_SUPPORTED",
+          "fruitingRequirements": "SOURCE_SUPPORTED"
+        },
+        "traitProvenance": {
+          "frostSensitivity": {
+            "evidenceClass": "UNKNOWN",
+            "sourceIds": [],
+            "shortExcerpt": "The source indicates frost tolerance but does not provide an approved ordinal whole-plant sensitivity mapping.",
+            "status": "unknown"
+          },
+          "coldTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-salvia-rosmarinus"
+            ],
+            "shortExcerpt": "NCSU lists rosemary in USDA zones 8a–10b.",
+            "status": "asserted"
+          },
+          "heatTolerance": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-salvia-rosmarinus"
+            ],
+            "shortExcerpt": "NCSU lists rosemary as resistant to heat and drought.",
+            "status": "asserted"
+          },
+          "humidityTolerance": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-salvia-rosmarinus"
+            ],
+            "shortExcerpt": "NCSU states rosemary has low tolerance for wet, humid environments.",
+            "status": "asserted"
+          },
+          "waterNeeds": {
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "ncsu-salvia-rosmarinus"
+            ],
+            "shortExcerpt": "NCSU describes dry-to-medium conditions and strong drought tolerance.",
+            "status": "asserted"
+          },
+          "sunNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-salvia-rosmarinus"
+            ],
+            "shortExcerpt": "NCSU lists full sun as the primary light condition.",
+            "status": "asserted"
+          },
+          "drainageNeeds": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-salvia-rosmarinus"
+            ],
+            "shortExcerpt": "NCSU describes well-drained soil as important for rosemary.",
+            "status": "asserted"
+          },
+          "needsWinterChill": {
+            "evidenceClass": "UNKNOWN",
+            "sourceIds": [],
+            "shortExcerpt": "No winter-chill requirement is asserted from the consulted species source.",
+            "status": "unknown"
+          },
+          "floweringRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-salvia-rosmarinus"
+            ],
+            "shortExcerpt": "NCSU describes rosemary bloom from spring into summer.",
+            "status": "asserted"
+          },
+          "fruitingRequirements": {
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "sourceIds": [
+              "ncsu-salvia-rosmarinus"
+            ],
+            "shortExcerpt": "NCSU describes the rosemary fruit as a small brown nutlet.",
             "status": "asserted"
           }
         }

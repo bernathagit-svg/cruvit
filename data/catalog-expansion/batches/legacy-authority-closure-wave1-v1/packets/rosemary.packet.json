@@ -1,0 +1,188 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "rosemary-legacy-authority-closure-wave1-v1",
+  "identity": {
+    "canonicalSlug": "rosemary",
+    "commonNameEn": "Rosemary",
+    "acceptedScientificName": "Salvia rosmarinus",
+    "aliases": [
+      "rosemary",
+      "Salvia rosmarinus",
+      "Rosmarinus officinalis"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-10-03",
+    "notes": "Legacy runtime authority closure Wave 1; unknown fields remain explicit and are not inferred."
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-salvia-rosmarinus",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Salvia rosmarinus (Rosemary)",
+      "url": "https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-03"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Salvia rosmarinus",
+      "sourceIds": [
+        "ncsu-salvia-rosmarinus"
+      ],
+      "shortExcerpt": "NCSU identifies the canonical plant as Salvia rosmarinus.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "rosemary",
+        "Salvia rosmarinus",
+        "Rosmarinus officinalis"
+      ],
+      "sourceIds": [
+        "ncsu-salvia-rosmarinus"
+      ],
+      "shortExcerpt": "Common and accepted historical aliases retained for canonical identity.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "frost",
+      "field": "frostSensitivity",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "The source indicates frost tolerance but does not provide an approved ordinal whole-plant sensitivity mapping."
+    },
+    {
+      "claimId": "cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-salvia-rosmarinus"
+      ],
+      "shortExcerpt": "NCSU lists rosemary in USDA zones 8a–10b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-salvia-rosmarinus"
+      ],
+      "shortExcerpt": "NCSU lists rosemary as resistant to heat and drought.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-salvia-rosmarinus"
+      ],
+      "shortExcerpt": "NCSU states rosemary has low tolerance for wet, humid environments.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-salvia-rosmarinus"
+      ],
+      "shortExcerpt": "NCSU describes dry-to-medium conditions and strong drought tolerance.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-salvia-rosmarinus"
+      ],
+      "shortExcerpt": "NCSU lists full sun as the primary light condition.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-salvia-rosmarinus"
+      ],
+      "shortExcerpt": "NCSU describes well-drained soil as important for rosemary.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "chill",
+      "field": "needsWinterChill",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "No winter-chill requirement is asserted from the consulted species source."
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "edible",
+        "herb",
+        "perennial",
+        "shrub"
+      ],
+      "sourceIds": [
+        "ncsu-salvia-rosmarinus"
+      ],
+      "shortExcerpt": "Catalog tags reflect rosemary use and growth habit.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "flowering",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Flowering generally occurs from spring into summer under suitable growing conditions.",
+      "sourceIds": [
+        "ncsu-salvia-rosmarinus"
+      ],
+      "shortExcerpt": "NCSU describes rosemary bloom from spring into summer.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruiting",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Produces small brown nutlets after flowering; the plant is primarily grown for aromatic foliage.",
+      "sourceIds": [
+        "ncsu-salvia-rosmarinus"
+      ],
+      "shortExcerpt": "NCSU describes the rosemary fruit as a small brown nutlet.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-03",
+    "approvedBy": "Owner continuation authorization in current CRUVIT work session",
+    "notes": "Owner instructed continuation of the authority-closure work; no paid APIs."
+  }
+}

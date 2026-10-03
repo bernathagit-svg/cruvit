@@ -1,0 +1,191 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "avocado-legacy-authority-closure-wave1-v1",
+  "identity": {
+    "canonicalSlug": "avocado",
+    "commonNameEn": "Avocado Tree",
+    "acceptedScientificName": "Persea americana",
+    "aliases": [
+      "avocado",
+      "avocado tree",
+      "alligator pear",
+      "Persea americana"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-10-03",
+    "notes": "Legacy runtime authority closure Wave 1; unknown fields remain explicit and are not inferred."
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-persea-americana",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Persea americana (Avocado)",
+      "url": "https://plants.ces.ncsu.edu/plants/persea-americana/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-03"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Persea americana",
+      "sourceIds": [
+        "ncsu-persea-americana"
+      ],
+      "shortExcerpt": "NCSU identifies the canonical plant as Persea americana.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "avocado",
+        "avocado tree",
+        "alligator pear",
+        "Persea americana"
+      ],
+      "sourceIds": [
+        "ncsu-persea-americana"
+      ],
+      "shortExcerpt": "Common and scientific aliases retained for canonical identity.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "very_high",
+      "sourceIds": [
+        "ncsu-persea-americana"
+      ],
+      "shortExcerpt": "NCSU states avocado does not tolerate frost.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "frost-injury-to-frost-sensitivity-v1@1.1.0"
+    },
+    {
+      "claimId": "cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "ncsu-persea-americana"
+      ],
+      "shortExcerpt": "NCSU lists avocado in USDA zones 9a–12b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-persea-americana"
+      ],
+      "shortExcerpt": "NCSU lists heat resistance and best flowering/fruit production in warm sunny conditions.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "humidity",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-persea-americana"
+      ],
+      "shortExcerpt": "NCSU describes evenly moist growing conditions.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-persea-americana"
+      ],
+      "shortExcerpt": "NCSU lists full sun for avocado.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-persea-americana"
+      ],
+      "shortExcerpt": "NCSU lists good drainage for avocado.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "chill",
+      "field": "needsWinterChill",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "No species-wide winter-chill requirement is asserted from the consulted source."
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "fruit",
+        "edible",
+        "tropical",
+        "tree"
+      ],
+      "sourceIds": [
+        "ncsu-persea-americana"
+      ],
+      "shortExcerpt": "Catalog tags reflect tropical edible fruit-tree use.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "flowering",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Flowering is best under warm, sunny conditions; flowers are produced in winter to early spring.",
+      "sourceIds": [
+        "ncsu-persea-americana"
+      ],
+      "shortExcerpt": "NCSU describes winter bloom and better flowering in warm sunny conditions.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruiting",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Fruit production is best in warm, sunny conditions; harvest timing varies by variety.",
+      "sourceIds": [
+        "ncsu-persea-americana"
+      ],
+      "shortExcerpt": "NCSU describes warm sunny fruit production and variety-dependent harvest timing.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-03",
+    "approvedBy": "Owner continuation authorization in current CRUVIT work session",
+    "notes": "Owner instructed continuation of the authority-closure work; no paid APIs."
+  }
+}
