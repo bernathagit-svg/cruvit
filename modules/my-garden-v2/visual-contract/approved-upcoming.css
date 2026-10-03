@@ -358,3 +358,34 @@ button{font:inherit;color:inherit}
   -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 45%,rgba(0,0,0,.60) 72%,transparent 100%);
   mask-image:linear-gradient(to bottom,#000 0%,#000 45%,rgba(0,0,0,.60) 72%,transparent 100%);
 }
+
+
+/* FINAL OWNER-CALENDAR OVERRIDE 2026-10-03 */
+.upcoming-screen[data-upcoming-screen="calendar"]::after{
+  display:none !important;
+  content:none !important;
+}
+.upcoming-screen[data-upcoming-screen="calendar"]{
+  background:
+    radial-gradient(ellipse at 9% 2%,rgba(164,190,91,.18),transparent 24%),
+    radial-gradient(ellipse at 87% 5%,rgba(107,146,72,.12),transparent 26%),
+    linear-gradient(180deg,rgba(5,31,15,.30) 0%,rgba(3,29,14,.62) 32%,rgba(2,20,10,.93) 100%),
+    url('/assets/garden-bg.jpg') center top/cover no-repeat,
+    #04180d !important;
+}
+.upcoming-screen[data-upcoming-screen="calendar"] .upcoming-task[data-plant-id="hydrangea"] .upcoming-thumb{
+  position:relative !important;
+  overflow:hidden !important;
+  background:#173a21 !important;
+}
+.upcoming-screen[data-upcoming-screen="calendar"] .upcoming-task[data-plant-id="hydrangea"] .upcoming-thumb img{
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  object-fit:cover !important;
+  z-index:5 !important;
+}
