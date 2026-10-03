@@ -18,7 +18,7 @@ const events=Object.freeze([
 ]);
 
 const frame=document.querySelector('#review-frame');
-frame.addEventListener('load',()=>{
+function hydrate(){
  const vm=buildGardenJournalScreenViewModel({plants,events,query:'',plantId:null,eventType:'all',scope:'all'});
  const model=buildApprovedGardenJournalRenderModel(vm);
  assertGardenJournalVisualAcceptanceReady(model);
@@ -33,4 +33,6 @@ frame.addEventListener('load',()=>{
  frame.dataset.contract='hydrated';
  frame.dataset.resultCount=String(model.resultCount);
  document.documentElement.dataset.reviewReady='true';
-});
+}
+if(frame.contentDocument?.readyState==='complete') hydrate();
+else frame.addEventListener('load',hydrate,{once:true});
