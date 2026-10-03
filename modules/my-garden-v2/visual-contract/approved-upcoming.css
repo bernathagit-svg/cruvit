@@ -243,3 +243,36 @@ button{font:inherit;color:inherit}
   .upcoming-task{min-height:111px}
   .upcoming-thumb{width:104px;height:99px}
 }
+
+
+/* Owner-reference calibration pass 3: Calendar geometry only. */
+@media (min-width:480px){
+  .upcoming-main.is-calendar .upcoming-view-row{margin-bottom:21px}
+  .upcoming-view-row.is-calendar-row{grid-template-columns:minmax(0,1fr) auto}
+  .upcoming-view-row.is-calendar-row .upcoming-view-switch{height:64px}
+  .upcoming-add-task.is-pill{height:64px;border-radius:30px;padding:0 20px;gap:9px}
+  .upcoming-add-task.is-pill span{font-size:18px}
+  .upcoming-main.is-calendar .upcoming-copy{margin-bottom:18px}
+  .upcoming-month-head{grid-template-columns:58px 1fr 58px;margin:4px 7px 16px}
+  .upcoming-month-head h2{font-size:29px}
+  .upcoming-month-head button{width:50px;height:50px}
+  .upcoming-calendar-grid{gap:6px}
+  .upcoming-weekday{font-size:15px;padding:5px 0 7px}
+  .upcoming-day{aspect-ratio:.95;border-radius:17px;padding-top:12px;font-size:19px}
+  .upcoming-dots{bottom:8px;gap:5px}
+  .upcoming-dot{width:9px;height:9px}
+  .upcoming-selected-day{margin-top:18px;border-radius:29px}
+  .upcoming-selected-day>header{min-height:65px;padding:10px 18px}
+  .upcoming-selected-day>header strong{font-size:18px}
+  .upcoming-selected-day>header small{font-size:14px}
+  .upcoming-selected-day>header b{font-size:17px}
+  .upcoming-selected-list{padding:3px 12px 8px}
+  .upcoming-task.is-compact{
+    min-height:70px;
+    grid-template-columns:64px 32px 1fr 22px;
+    padding:5px 6px;
+  }
+  .upcoming-task.is-compact .upcoming-thumb{width:58px;height:58px;border-radius:15px}
+  .upcoming-task.is-compact .upcoming-task-copy strong{font-size:16px}
+  .upcoming-task.is-compact .upcoming-task-copy span{font-size:14px}
+}
