@@ -50,6 +50,7 @@ const plantVisuals = Object.freeze({
 
 const root = document.querySelector('#upcoming-review-root');
 let exactCalendarDataPromise = null;
+let exactListDataPromise = null;
 
 function getExactCalendarDataUrl(){
   if(!exactCalendarDataPromise){
@@ -63,7 +64,20 @@ function getExactCalendarDataUrl(){
   return exactCalendarDataPromise;
 }
 
+function getExactListDataUrl(){
+  if(!exactListDataPromise){
+    exactListDataPromise = Promise.all(
+      [0,1,2,3,4,5].map((i)=>fetch(`./assets/upcoming-list-exact/part${i}.txt?v=20261003-exact`).then((r)=>{
+        if(!r.ok) throw new Error('list_exact_asset_missing_'+i);
+        return r.text();
+      }))
+    ).then((parts)=>'data:image/webp;base64,'+parts.join(''));
+  }
+  return exactListDataPromise;
+}
+
 async function renderExactCalendar(){
+  document.body.classList.remove('is-exact-list');
   document.body.classList.add('is-exact-calendar');
   const src=await getExactCalendarDataUrl();
   root.innerHTML=`
@@ -72,6 +86,18 @@ async function renderExactCalendar(){
       <button type="button" class="exact-hotspot exact-back" data-upcoming-action="back" aria-label="Back to List"></button>
       <button type="button" class="exact-hotspot exact-list" data-upcoming-view="list" aria-label="List view"></button>
       <button type="button" class="exact-hotspot exact-add-task" data-upcoming-action="add-task" aria-label="Add task"></button>
+    </div>`;
+}
+
+async function renderExactList(){
+  document.body.classList.remove('is-exact-calendar');
+  document.body.classList.add('is-exact-list');
+  const src=await getExactListDataUrl();
+  root.innerHTML=`
+    <div class="upcoming-exact-list" aria-label="Upcoming List approved visual">
+      <img src="${src}" alt="Upcoming List" draggable="false">
+      <button type="button" class="exact-hotspot exact-calendar" data-upcoming-view="calendar" aria-label="Calendar view"></button>
+      <button type="button" class="exact-hotspot exact-list-add-task" data-upcoming-action="add-task" aria-label="Add task"></button>
     </div>`;
 }
 
@@ -86,17 +112,7 @@ async function render(){
   if(state.view === 'calendar'){
     await renderExactCalendar();
   } else {
-    document.body.classList.remove('is-exact-calendar');
-    const vm = buildUpcomingListScreenViewModel({
-      plants,
-      tasks,
-      filter:state.filter,
-    });
-    root.innerHTML = renderUpcomingListScreen(vm,{
-      plantVisuals,
-      activePlantCount:plants.length,
-      selectedDate:'2026-10-02',
-    });
+    await renderExactList();
   }
 }
 
