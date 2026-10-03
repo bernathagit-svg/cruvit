@@ -316,3 +316,18 @@ button{font:inherit;color:inherit}
   }
   .upcoming-screen[data-upcoming-screen="calendar"] .upcoming-task[data-plant-id="hydrangea"] .upcoming-thumb img{display:none}
 }
+
+
+/* Owner-reference calendar foliage pass 6 */
+.upcoming-screen[data-upcoming-screen="calendar"]{
+  background:
+    linear-gradient(180deg,rgba(1,18,8,.08) 0%,rgba(1,20,9,.24) 28%,rgba(0,15,7,.54) 58%,rgba(0,10,5,.84) 100%),
+    url('/assets/garden-bg.jpg') 52% top/cover no-repeat,
+    #04180d;
+}
+.upcoming-screen[data-upcoming-screen="calendar"]:before{
+  background:
+    radial-gradient(ellipse at 9% 1%,rgba(210,225,145,.20),transparent 23%),
+    radial-gradient(ellipse at 88% 5%,rgba(173,205,118,.13),transparent 28%),
+    linear-gradient(180deg,rgba(0,0,0,0),rgba(0,10,4,.04) 25%,rgba(0,10,5,.28) 62%,rgba(0,8,4,.52));
+}
