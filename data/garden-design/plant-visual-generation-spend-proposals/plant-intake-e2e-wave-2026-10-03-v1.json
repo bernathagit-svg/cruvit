@@ -1,0 +1,54 @@
+{
+  "contract": "plant-visual-generation-spend-proposal-v1",
+  "runId": "plant-intake-e2e-wave-2026-10-03-v1-generation",
+  "createdAt": "2026-10-03",
+  "provider": "openai-images-api",
+  "model": "gpt-image-2",
+  "quality": "medium",
+  "size": "1024x1536",
+  "jobCount": 15,
+  "maxCalls": 15,
+  "maxRetries": 0,
+  "jobIds": [
+    "basil__mature__default__vegetative__v1",
+    "black-eyed-susan-vine__mature__default__flowering__v1",
+    "black-eyed-susan-vine__mature__default__vegetative__v1",
+    "black-eyed-susan-vine__young__default__vegetative__v1",
+    "cyclamen__mature__default__flowering__v1",
+    "cyclamen__mature__default__vegetative__v1",
+    "ficus-benjamina__mature__tree__vegetative__v1",
+    "ficus-benjamina__young__tree__vegetative__v1",
+    "hibiscus__mature__shrub__flowering__v1",
+    "hibiscus__mature__shrub__vegetative__v1",
+    "lemon__mature__tree__fruiting__v1",
+    "lemon__mature__tree__vegetative__v1",
+    "lemon__young__tree__vegetative__v1",
+    "strelitzia__mature__default__flowering__v1",
+    "strelitzia__mature__default__vegetative__v1"
+  ],
+  "pricingBasis": {
+    "label": "PUBLISHED_RATES_NOT_A_LIVE_QUOTE",
+    "asOf": "2026-05",
+    "imageOutputUsdEach": 0.041,
+    "conservativeTotalUsdPerCall": 0.091,
+    "imageOutputOnlyUsd": 0.615,
+    "conservativeExpectedTotalUsd": 1.365
+  },
+  "maxSpendUsd": 1.52,
+  "defaultDeny": true,
+  "carryForward": false,
+  "authorized": false,
+  "approved": false,
+  "allowedActions": [
+    "generate exactly one candidate image per approved job",
+    "write candidate bytes to candidate R2",
+    "write generation evidence/checksum metadata"
+  ],
+  "forbiddenActions": [
+    "retries",
+    "production promotion",
+    "production registry writes",
+    "silent replacement",
+    "generation of any job outside jobIds"
+  ]
+}

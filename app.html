@@ -1152,6 +1152,29 @@ const plantCatalogSeedStatus={
 let plantCatalogSeedLoadPromise=null;
 const approvedPacketRuntimeOverlayStatus={status:'idle',applied:[],skipped:[],error:null};
 const broadIdentityRuntimeAuthorityStatus={status:'idle',applied:[],skipped:[],error:null};
+const morphologyRuntimeAuthorityStatus={status:'idle',applied:[],skipped:[],error:null};
+async function applyPlantMorphologyAuthorityFallback(){
+  try{
+    const [mod,res]=await Promise.all([
+      import('./modules/garden-design/asset-factory-v1/plant-morphology-authority-v1.js'),
+      (typeof fetchWithTimeout==='function'
+        ?fetchWithTimeout('data/garden-design/plant-morphology-authority-v1.json',{},9000)
+        :fetch('data/garden-design/plant-morphology-authority-v1.json'))
+    ]);
+    if(!res.ok) throw new Error('Morphology authority fetch failed: HTTP '+res.status);
+    const payload=await res.json();
+    const result=mod.applyPlantMorphologyAuthority(PLANT_LIBRARY,payload);
+    morphologyRuntimeAuthorityStatus.status='ready';
+    morphologyRuntimeAuthorityStatus.applied=result.applied.slice();
+    morphologyRuntimeAuthorityStatus.skipped=result.skipped.slice();
+    morphologyRuntimeAuthorityStatus.error=null;
+    return {ok:true,...result};
+  }catch(err){
+    morphologyRuntimeAuthorityStatus.status='error';
+    morphologyRuntimeAuthorityStatus.error=String(err&&(err.message||err)||'Morphology authority failed');
+    return {ok:false,applied:[],skipped:[],error:morphologyRuntimeAuthorityStatus.error};
+  }
+}
 async function applyBroadRuntimeIdentityAuthorityFallback(){
   try{
     const [mod,res]=await Promise.all([
@@ -1243,6 +1266,9 @@ async function loadPlantCatalogSeed(url){
       // species-level authorities have had first refusal. Broad authority never upgrades
       // them to a precise positive recommendation.
       await applyBroadRuntimeIdentityAuthorityFallback();
+      // Design morphology authority is independent of climate authority and is used
+      // by the visual-demand classifier. It never fills climate fields.
+      await applyPlantMorphologyAuthorityFallback();
       if(json.catalogMediaByCanonicalSlug&&typeof json.catalogMediaByCanonicalSlug==='object'){
         Object.keys(json.catalogMediaByCanonicalSlug).forEach(slug=>{
           const plant=PLANT_INDEX[slug];

@@ -6,6 +6,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { slugify } from './variant-demand-v1.js';
+import { applyPlantMorphologyAuthority } from './plant-morphology-authority-v1.js';
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8').replace(/^\uFEFF/, ''));
@@ -136,6 +137,11 @@ export function loadCanonicalCatalog(root) {
       aliases: seed?.aliases || entry.aliasSlugs || [],
       descriptiveSource: seed ? seed.source : lib ? lib.source : 'identity-registry-only'
     });
+  }
+  const morphologyPath=path.join(root,'data','garden-design','plant-morphology-authority-v1.json');
+  if(fs.existsSync(morphologyPath)){
+    const morphology=readJson(morphologyPath);
+    applyPlantMorphologyAuthority(plants,morphology);
   }
   return {
     identityRegistryVersion: identity.registryVersion || null,

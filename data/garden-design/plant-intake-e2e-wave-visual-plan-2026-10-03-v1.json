@@ -1,0 +1,2445 @@
+{
+  "version": "plant-visual-production-wave-v1",
+  "generatedAt": "2026-10-03",
+  "policy": {
+    "maxJobsPerWave": 24,
+    "maxPlantsPerWave": 12,
+    "ownerReviewCapacityPerWave": 8,
+    "preferOwnedPlants": true,
+    "preferGardenDesignSurfaced": true
+  },
+  "planningOnly": true,
+  "networkCalls": 0,
+  "paidCalls": 0,
+  "registryWrites": 0,
+  "requiredGapCount": 15,
+  "blockedCount": 0,
+  "totalJobs": 15,
+  "totalPlants": 7,
+  "waveCount": 1,
+  "waves": [
+    {
+      "waveId": "visual-wave-001",
+      "jobs": [
+        {
+          "canonicalSlug": "basil",
+          "visualForm": "herbaceous-upright",
+          "architectureMode": "default",
+          "growthStage": "mature",
+          "phenology": "vegetative",
+          "season": "season-neutral",
+          "formView": null,
+          "variantKey": "mature__default__vegetative",
+          "jobId": "basil__mature__default__vegetative__v1",
+          "required": true,
+          "reason": "BASELINE_MATURE_VEGETATIVE",
+          "priority": 40,
+          "priorityBand": "portfolio-launch-gaps",
+          "morphologyAuthority": "source_supported_habit",
+          "scientific": "Ocimum basilicum",
+          "identityPrecision": "SPECIES_SUPPORTED",
+          "identityScope": "species",
+          "pipelineVersion": "plant-visual-production-pipeline-v1",
+          "state": "NEEDED",
+          "qualityPlan": {
+            "detailClass": "UNKNOWN",
+            "detailClassSource": "unknown-default-medium",
+            "quality": "medium",
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2"
+          },
+          "promptRecord": {
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+            "nextProductionPrompt": true,
+            "appliedToPaidExecute": false,
+            "generateNow": false,
+            "round1LearningInherited": [
+              "natural garden-grown architecture",
+              "ground-level planted-bed three-quarter perspective",
+              "avoid catalog-isolate composition",
+              "avoid perfect stock-photo symmetry",
+              "natural irregular silhouette",
+              "realistic botanical architecture",
+              "natural photographic sharpness",
+              "sufficient transparent margin",
+              "full visible specimen",
+              "no baked scene shadow",
+              "no runtime blend baked into PNG"
+            ],
+            "runtimeNotInPng": [
+              "scene tonal adaptation",
+              "contact shadow",
+              "mild sharpness normalization",
+              "edge integration",
+              "physical scale"
+            ],
+            "require": [
+              "individually legible natural foliage",
+              "clear leaf/leaflet boundaries",
+              "realistic fine botanical texture",
+              "natural branch/leaf separation",
+              "photographic foliage at 100% pixel inspection"
+            ],
+            "forbidSoft": [
+              "painterly foliage masses",
+              "green glow",
+              "specimen-wide soft focus",
+              "artificial depth-of-field blur",
+              "fused leafy blobs"
+            ],
+            "stillForbid": [
+              "crunchy HDR sharpening",
+              "CGI microtexture",
+              "synthetic leaf patterns",
+              "oversharpened edges",
+              "studio-isolate aesthetic",
+              "baked scene shadow",
+              "baked runtime blend"
+            ],
+            "provider": "openai-images-api",
+            "model": "unspecified",
+            "settings": {
+              "size": "1024x1536",
+              "quality": "medium",
+              "background": "transparent",
+              "outputFormat": "png",
+              "n": 1
+            },
+            "prompt": "FAMILY LOCK for Ocimum basilicum (canonical identity basil). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: herbaceous-upright. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. FRAMING SAFE ZONE: the complete visible specimen must sit comfortably inside the canvas and must not touch any image boundary. Center the specimen horizontally. Keep the visible plant width to no more than about 90% of the canvas and the visible plant height to no more than about 92% of the canvas unless the natural form is much smaller. Leave clearly visible transparent breathing room on every side, with especially generous space above the highest leaf/branch and at both lateral extremes. Target at least ~4% transparent top margin, ~4% on each side, and ~1% at the bottom so the production framing gate has safety buffer. Do not crop leaves, branches, fruit, flowers, stems, or roots at the canvas edge. PLANT ONLY: no people, animals, insects, birds, fish, toys, mascots, tools, signs, decorative props, ornaments, or unrelated objects. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=default, phenologyState=vegetative. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. VEGETATIVE: foliage/architecture only. No conspicuous flowers. No conspicuous fruit.",
+            "familyLockFields": [
+              "canonicalSlug",
+              "scientific",
+              "visualForm",
+              "cameraTreatment",
+              "gardenGrownNaturalArchitecture",
+              "naturalPhotographicDetail",
+              "transparentCutout"
+            ],
+            "stateDeltaFields": [
+              "growthStage",
+              "phenologyState",
+              "architectureMode"
+            ],
+            "canonicalSlug": "basil",
+            "jobId": "basil__mature__default__vegetative__v1",
+            "growthStage": "mature",
+            "architectureMode": "default",
+            "phenologyState": "vegetative",
+            "visualForm": "herbaceous-upright",
+            "encodesPhysicalMeters": false
+          },
+          "imageGenerationRequired": true,
+          "technicalQaRequired": true,
+          "framingQaRequired": true,
+          "botanicalIdentityQaRequired": true,
+          "inGardenQaRequired": true,
+          "sizeAuthorityPlan": {
+            "version": "plant-size-authority-readiness-v1",
+            "canonicalSlug": "basil",
+            "growthStage": "mature",
+            "visualForm": "herbaceous-upright",
+            "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+            "authoritativeMetersAvailable": false,
+            "explicitEstimateOnly": true,
+            "morphologyFallbackIsAuthority": false,
+            "ownerReviewRequired": true,
+            "reasonCodes": [
+              "CANONICAL_SIZE_RECORD_NOT_FOUND"
+            ]
+          },
+          "inGardenQaScalePlan": {
+            "policyVersion": "in-garden-qa-scale-policy-v1.1",
+            "recommendedBand": "large",
+            "reviewBands": [
+              "medium",
+              "large",
+              "xl"
+            ],
+            "source": "FORM_STAGE_POLICY",
+            "visualForm": "herbaceous-upright",
+            "growthStage": "mature",
+            "phenology": "vegetative",
+            "phenologyAffectsScale": false,
+            "ownerReviewRequired": true,
+            "meterAccuracyClaimed": false,
+            "clippingAllowed": false,
+            "supportContextRequired": false,
+            "reasonCodes": [
+              "VISUAL_FORM_BASELINE",
+              "GROWTH_STAGE_REFINEMENT"
+            ]
+          },
+          "presentationSizingRequired": true,
+          "productionApprovedRequired": true,
+          "autoApprovalEnabled": false,
+          "productionPriorityScore": 250,
+          "originalOrder": 0
+        },
+        {
+          "canonicalSlug": "black-eyed-susan-vine",
+          "visualForm": "climber",
+          "architectureMode": "default",
+          "growthStage": "mature",
+          "phenology": "flowering",
+          "season": "season-neutral",
+          "formView": null,
+          "variantKey": "mature__default__flowering",
+          "jobId": "black-eyed-susan-vine__mature__default__flowering__v1",
+          "required": true,
+          "reason": "FLOWERING_VISUALLY_SIGNIFICANT",
+          "priority": 40,
+          "priorityBand": "portfolio-launch-gaps",
+          "morphologyAuthority": "canonical_growth_metadata",
+          "scientific": "Thunbergia alata",
+          "identityPrecision": "SPECIES_SUPPORTED",
+          "identityScope": "species",
+          "pipelineVersion": "plant-visual-production-pipeline-v1",
+          "state": "NEEDED",
+          "qualityPlan": {
+            "detailClass": "UNKNOWN",
+            "detailClassSource": "unknown-default-medium",
+            "quality": "medium",
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2"
+          },
+          "promptRecord": {
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+            "nextProductionPrompt": true,
+            "appliedToPaidExecute": false,
+            "generateNow": false,
+            "round1LearningInherited": [
+              "natural garden-grown architecture",
+              "ground-level planted-bed three-quarter perspective",
+              "avoid catalog-isolate composition",
+              "avoid perfect stock-photo symmetry",
+              "natural irregular silhouette",
+              "realistic botanical architecture",
+              "natural photographic sharpness",
+              "sufficient transparent margin",
+              "full visible specimen",
+              "no baked scene shadow",
+              "no runtime blend baked into PNG"
+            ],
+            "runtimeNotInPng": [
+              "scene tonal adaptation",
+              "contact shadow",
+              "mild sharpness normalization",
+              "edge integration",
+              "physical scale"
+            ],
+            "require": [
+              "individually legible natural foliage",
+              "clear leaf/leaflet boundaries",
+              "realistic fine botanical texture",
+              "natural branch/leaf separation",
+              "photographic foliage at 100% pixel inspection"
+            ],
+            "forbidSoft": [
+              "painterly foliage masses",
+              "green glow",
+              "specimen-wide soft focus",
+              "artificial depth-of-field blur",
+              "fused leafy blobs"
+            ],
+            "stillForbid": [
+              "crunchy HDR sharpening",
+              "CGI microtexture",
+              "synthetic leaf patterns",
+              "oversharpened edges",
+              "studio-isolate aesthetic",
+              "baked scene shadow",
+              "baked runtime blend"
+            ],
+            "provider": "openai-images-api",
+            "model": "unspecified",
+            "settings": {
+              "size": "1024x1536",
+              "quality": "medium",
+              "background": "transparent",
+              "outputFormat": "png",
+              "n": 1
+            },
+            "prompt": "FAMILY LOCK for Thunbergia alata (canonical identity black-eyed-susan-vine). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: climber. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. FRAMING SAFE ZONE: the complete visible specimen must sit comfortably inside the canvas and must not touch any image boundary. Center the specimen horizontally. Keep the visible plant width to no more than about 90% of the canvas and the visible plant height to no more than about 92% of the canvas unless the natural form is much smaller. Leave clearly visible transparent breathing room on every side, with especially generous space above the highest leaf/branch and at both lateral extremes. Target at least ~4% transparent top margin, ~4% on each side, and ~1% at the bottom so the production framing gate has safety buffer. Do not crop leaves, branches, fruit, flowers, stems, or roots at the canvas edge. PLANT ONLY: no people, animals, insects, birds, fish, toys, mascots, tools, signs, decorative props, ornaments, or unrelated objects. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=default, phenologyState=flowering. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. FLOWERING: keep the same underlying vegetative plant habit and architecture. Add plausible flowers that are materially visible. No impossible flower density. No replacing the plant with a bouquet.",
+            "familyLockFields": [
+              "canonicalSlug",
+              "scientific",
+              "visualForm",
+              "cameraTreatment",
+              "gardenGrownNaturalArchitecture",
+              "naturalPhotographicDetail",
+              "transparentCutout"
+            ],
+            "stateDeltaFields": [
+              "growthStage",
+              "phenologyState",
+              "architectureMode"
+            ],
+            "canonicalSlug": "black-eyed-susan-vine",
+            "jobId": "black-eyed-susan-vine__mature__default__flowering__v1",
+            "growthStage": "mature",
+            "architectureMode": "default",
+            "phenologyState": "flowering",
+            "visualForm": "climber",
+            "encodesPhysicalMeters": false
+          },
+          "imageGenerationRequired": true,
+          "technicalQaRequired": true,
+          "framingQaRequired": true,
+          "botanicalIdentityQaRequired": true,
+          "inGardenQaRequired": true,
+          "sizeAuthorityPlan": {
+            "version": "plant-size-authority-readiness-v1",
+            "canonicalSlug": "black-eyed-susan-vine",
+            "growthStage": "mature",
+            "visualForm": "climber",
+            "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+            "authoritativeMetersAvailable": false,
+            "explicitEstimateOnly": true,
+            "morphologyFallbackIsAuthority": false,
+            "ownerReviewRequired": true,
+            "reasonCodes": [
+              "CANONICAL_SIZE_RECORD_NOT_FOUND"
+            ]
+          },
+          "inGardenQaScalePlan": {
+            "policyVersion": "in-garden-qa-scale-policy-v1.1",
+            "recommendedBand": "large",
+            "reviewBands": [
+              "medium",
+              "large",
+              "xl"
+            ],
+            "source": "FORM_STAGE_POLICY",
+            "visualForm": "climber",
+            "growthStage": "mature",
+            "phenology": "flowering",
+            "phenologyAffectsScale": false,
+            "ownerReviewRequired": true,
+            "meterAccuracyClaimed": false,
+            "clippingAllowed": false,
+            "supportContextRequired": true,
+            "reasonCodes": [
+              "VISUAL_FORM_BASELINE",
+              "GROWTH_STAGE_REFINEMENT"
+            ]
+          },
+          "presentationSizingRequired": true,
+          "productionApprovedRequired": true,
+          "autoApprovalEnabled": false,
+          "productionPriorityScore": 250,
+          "originalOrder": 1
+        },
+        {
+          "canonicalSlug": "black-eyed-susan-vine",
+          "visualForm": "climber",
+          "architectureMode": "default",
+          "growthStage": "mature",
+          "phenology": "vegetative",
+          "season": "season-neutral",
+          "formView": null,
+          "variantKey": "mature__default__vegetative",
+          "jobId": "black-eyed-susan-vine__mature__default__vegetative__v1",
+          "required": true,
+          "reason": "BASELINE_MATURE_VEGETATIVE",
+          "priority": 40,
+          "priorityBand": "portfolio-launch-gaps",
+          "morphologyAuthority": "canonical_growth_metadata",
+          "scientific": "Thunbergia alata",
+          "identityPrecision": "SPECIES_SUPPORTED",
+          "identityScope": "species",
+          "pipelineVersion": "plant-visual-production-pipeline-v1",
+          "state": "NEEDED",
+          "qualityPlan": {
+            "detailClass": "UNKNOWN",
+            "detailClassSource": "unknown-default-medium",
+            "quality": "medium",
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2"
+          },
+          "promptRecord": {
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+            "nextProductionPrompt": true,
+            "appliedToPaidExecute": false,
+            "generateNow": false,
+            "round1LearningInherited": [
+              "natural garden-grown architecture",
+              "ground-level planted-bed three-quarter perspective",
+              "avoid catalog-isolate composition",
+              "avoid perfect stock-photo symmetry",
+              "natural irregular silhouette",
+              "realistic botanical architecture",
+              "natural photographic sharpness",
+              "sufficient transparent margin",
+              "full visible specimen",
+              "no baked scene shadow",
+              "no runtime blend baked into PNG"
+            ],
+            "runtimeNotInPng": [
+              "scene tonal adaptation",
+              "contact shadow",
+              "mild sharpness normalization",
+              "edge integration",
+              "physical scale"
+            ],
+            "require": [
+              "individually legible natural foliage",
+              "clear leaf/leaflet boundaries",
+              "realistic fine botanical texture",
+              "natural branch/leaf separation",
+              "photographic foliage at 100% pixel inspection"
+            ],
+            "forbidSoft": [
+              "painterly foliage masses",
+              "green glow",
+              "specimen-wide soft focus",
+              "artificial depth-of-field blur",
+              "fused leafy blobs"
+            ],
+            "stillForbid": [
+              "crunchy HDR sharpening",
+              "CGI microtexture",
+              "synthetic leaf patterns",
+              "oversharpened edges",
+              "studio-isolate aesthetic",
+              "baked scene shadow",
+              "baked runtime blend"
+            ],
+            "provider": "openai-images-api",
+            "model": "unspecified",
+            "settings": {
+              "size": "1024x1536",
+              "quality": "medium",
+              "background": "transparent",
+              "outputFormat": "png",
+              "n": 1
+            },
+            "prompt": "FAMILY LOCK for Thunbergia alata (canonical identity black-eyed-susan-vine). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: climber. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. FRAMING SAFE ZONE: the complete visible specimen must sit comfortably inside the canvas and must not touch any image boundary. Center the specimen horizontally. Keep the visible plant width to no more than about 90% of the canvas and the visible plant height to no more than about 92% of the canvas unless the natural form is much smaller. Leave clearly visible transparent breathing room on every side, with especially generous space above the highest leaf/branch and at both lateral extremes. Target at least ~4% transparent top margin, ~4% on each side, and ~1% at the bottom so the production framing gate has safety buffer. Do not crop leaves, branches, fruit, flowers, stems, or roots at the canvas edge. PLANT ONLY: no people, animals, insects, birds, fish, toys, mascots, tools, signs, decorative props, ornaments, or unrelated objects. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=default, phenologyState=vegetative. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. VEGETATIVE: foliage/architecture only. No conspicuous flowers. No conspicuous fruit.",
+            "familyLockFields": [
+              "canonicalSlug",
+              "scientific",
+              "visualForm",
+              "cameraTreatment",
+              "gardenGrownNaturalArchitecture",
+              "naturalPhotographicDetail",
+              "transparentCutout"
+            ],
+            "stateDeltaFields": [
+              "growthStage",
+              "phenologyState",
+              "architectureMode"
+            ],
+            "canonicalSlug": "black-eyed-susan-vine",
+            "jobId": "black-eyed-susan-vine__mature__default__vegetative__v1",
+            "growthStage": "mature",
+            "architectureMode": "default",
+            "phenologyState": "vegetative",
+            "visualForm": "climber",
+            "encodesPhysicalMeters": false
+          },
+          "imageGenerationRequired": true,
+          "technicalQaRequired": true,
+          "framingQaRequired": true,
+          "botanicalIdentityQaRequired": true,
+          "inGardenQaRequired": true,
+          "sizeAuthorityPlan": {
+            "version": "plant-size-authority-readiness-v1",
+            "canonicalSlug": "black-eyed-susan-vine",
+            "growthStage": "mature",
+            "visualForm": "climber",
+            "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+            "authoritativeMetersAvailable": false,
+            "explicitEstimateOnly": true,
+            "morphologyFallbackIsAuthority": false,
+            "ownerReviewRequired": true,
+            "reasonCodes": [
+              "CANONICAL_SIZE_RECORD_NOT_FOUND"
+            ]
+          },
+          "inGardenQaScalePlan": {
+            "policyVersion": "in-garden-qa-scale-policy-v1.1",
+            "recommendedBand": "large",
+            "reviewBands": [
+              "medium",
+              "large",
+              "xl"
+            ],
+            "source": "FORM_STAGE_POLICY",
+            "visualForm": "climber",
+            "growthStage": "mature",
+            "phenology": "vegetative",
+            "phenologyAffectsScale": false,
+            "ownerReviewRequired": true,
+            "meterAccuracyClaimed": false,
+            "clippingAllowed": false,
+            "supportContextRequired": true,
+            "reasonCodes": [
+              "VISUAL_FORM_BASELINE",
+              "GROWTH_STAGE_REFINEMENT"
+            ]
+          },
+          "presentationSizingRequired": true,
+          "productionApprovedRequired": true,
+          "autoApprovalEnabled": false,
+          "productionPriorityScore": 250,
+          "originalOrder": 2
+        },
+        {
+          "canonicalSlug": "black-eyed-susan-vine",
+          "visualForm": "climber",
+          "architectureMode": "default",
+          "growthStage": "young",
+          "phenology": "vegetative",
+          "season": "season-neutral",
+          "formView": null,
+          "variantKey": "young__default__vegetative",
+          "jobId": "black-eyed-susan-vine__young__default__vegetative__v1",
+          "required": true,
+          "reason": "GROWTH_ARCHITECTURE_CHANGE",
+          "priority": 40,
+          "priorityBand": "portfolio-launch-gaps",
+          "morphologyAuthority": "canonical_growth_metadata",
+          "scientific": "Thunbergia alata",
+          "identityPrecision": "SPECIES_SUPPORTED",
+          "identityScope": "species",
+          "pipelineVersion": "plant-visual-production-pipeline-v1",
+          "state": "NEEDED",
+          "qualityPlan": {
+            "detailClass": "UNKNOWN",
+            "detailClassSource": "unknown-default-medium",
+            "quality": "medium",
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2"
+          },
+          "promptRecord": {
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+            "nextProductionPrompt": true,
+            "appliedToPaidExecute": false,
+            "generateNow": false,
+            "round1LearningInherited": [
+              "natural garden-grown architecture",
+              "ground-level planted-bed three-quarter perspective",
+              "avoid catalog-isolate composition",
+              "avoid perfect stock-photo symmetry",
+              "natural irregular silhouette",
+              "realistic botanical architecture",
+              "natural photographic sharpness",
+              "sufficient transparent margin",
+              "full visible specimen",
+              "no baked scene shadow",
+              "no runtime blend baked into PNG"
+            ],
+            "runtimeNotInPng": [
+              "scene tonal adaptation",
+              "contact shadow",
+              "mild sharpness normalization",
+              "edge integration",
+              "physical scale"
+            ],
+            "require": [
+              "individually legible natural foliage",
+              "clear leaf/leaflet boundaries",
+              "realistic fine botanical texture",
+              "natural branch/leaf separation",
+              "photographic foliage at 100% pixel inspection"
+            ],
+            "forbidSoft": [
+              "painterly foliage masses",
+              "green glow",
+              "specimen-wide soft focus",
+              "artificial depth-of-field blur",
+              "fused leafy blobs"
+            ],
+            "stillForbid": [
+              "crunchy HDR sharpening",
+              "CGI microtexture",
+              "synthetic leaf patterns",
+              "oversharpened edges",
+              "studio-isolate aesthetic",
+              "baked scene shadow",
+              "baked runtime blend"
+            ],
+            "provider": "openai-images-api",
+            "model": "unspecified",
+            "settings": {
+              "size": "1024x1536",
+              "quality": "medium",
+              "background": "transparent",
+              "outputFormat": "png",
+              "n": 1
+            },
+            "prompt": "FAMILY LOCK for Thunbergia alata (canonical identity black-eyed-susan-vine). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: climber. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. FRAMING SAFE ZONE: the complete visible specimen must sit comfortably inside the canvas and must not touch any image boundary. Center the specimen horizontally. Keep the visible plant width to no more than about 90% of the canvas and the visible plant height to no more than about 92% of the canvas unless the natural form is much smaller. Leave clearly visible transparent breathing room on every side, with especially generous space above the highest leaf/branch and at both lateral extremes. Target at least ~4% transparent top margin, ~4% on each side, and ~1% at the bottom so the production framing gate has safety buffer. Do not crop leaves, branches, fruit, flowers, stems, or roots at the canvas edge. PLANT ONLY: no people, animals, insects, birds, fish, toys, mascots, tools, signs, decorative props, ornaments, or unrelated objects. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=young, architectureMode=default, phenologyState=vegetative. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. YOUNG: represent a genuinely younger architectural stage — smaller trunk/stem caliper, simpler branching or fewer leaves/pups as botanically appropriate. Not the mature asset scaled smaller. Do not use mature canopy architecture. VEGETATIVE: foliage/architecture only. No conspicuous flowers. No conspicuous fruit.",
+            "familyLockFields": [
+              "canonicalSlug",
+              "scientific",
+              "visualForm",
+              "cameraTreatment",
+              "gardenGrownNaturalArchitecture",
+              "naturalPhotographicDetail",
+              "transparentCutout"
+            ],
+            "stateDeltaFields": [
+              "growthStage",
+              "phenologyState",
+              "architectureMode"
+            ],
+            "canonicalSlug": "black-eyed-susan-vine",
+            "jobId": "black-eyed-susan-vine__young__default__vegetative__v1",
+            "growthStage": "young",
+            "architectureMode": "default",
+            "phenologyState": "vegetative",
+            "visualForm": "climber",
+            "encodesPhysicalMeters": false
+          },
+          "imageGenerationRequired": true,
+          "technicalQaRequired": true,
+          "framingQaRequired": true,
+          "botanicalIdentityQaRequired": true,
+          "inGardenQaRequired": true,
+          "sizeAuthorityPlan": {
+            "version": "plant-size-authority-readiness-v1",
+            "canonicalSlug": "black-eyed-susan-vine",
+            "growthStage": "young",
+            "visualForm": "climber",
+            "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+            "authoritativeMetersAvailable": false,
+            "explicitEstimateOnly": true,
+            "morphologyFallbackIsAuthority": false,
+            "ownerReviewRequired": true,
+            "reasonCodes": [
+              "CANONICAL_SIZE_RECORD_NOT_FOUND"
+            ]
+          },
+          "inGardenQaScalePlan": {
+            "policyVersion": "in-garden-qa-scale-policy-v1.1",
+            "recommendedBand": "medium",
+            "reviewBands": [
+              "small",
+              "medium",
+              "large"
+            ],
+            "source": "FORM_STAGE_POLICY",
+            "visualForm": "climber",
+            "growthStage": "young",
+            "phenology": "vegetative",
+            "phenologyAffectsScale": false,
+            "ownerReviewRequired": true,
+            "meterAccuracyClaimed": false,
+            "clippingAllowed": false,
+            "supportContextRequired": true,
+            "reasonCodes": [
+              "VISUAL_FORM_BASELINE",
+              "GROWTH_STAGE_REFINEMENT"
+            ]
+          },
+          "presentationSizingRequired": true,
+          "productionApprovedRequired": true,
+          "autoApprovalEnabled": false,
+          "productionPriorityScore": 250,
+          "originalOrder": 3
+        },
+        {
+          "canonicalSlug": "cyclamen",
+          "visualForm": "herbaceous-clump",
+          "architectureMode": "default",
+          "growthStage": "mature",
+          "phenology": "flowering",
+          "season": "season-neutral",
+          "formView": null,
+          "variantKey": "mature__default__flowering",
+          "jobId": "cyclamen__mature__default__flowering__v1",
+          "required": true,
+          "reason": "FLOWERING_VISUALLY_SIGNIFICANT",
+          "priority": 40,
+          "priorityBand": "portfolio-launch-gaps",
+          "morphologyAuthority": "source_supported_habit",
+          "scientific": "Cyclamen persicum",
+          "identityPrecision": "SPECIES_SUPPORTED",
+          "identityScope": "species",
+          "pipelineVersion": "plant-visual-production-pipeline-v1",
+          "state": "NEEDED",
+          "qualityPlan": {
+            "detailClass": "UNKNOWN",
+            "detailClassSource": "unknown-default-medium",
+            "quality": "medium",
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2"
+          },
+          "promptRecord": {
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+            "nextProductionPrompt": true,
+            "appliedToPaidExecute": false,
+            "generateNow": false,
+            "round1LearningInherited": [
+              "natural garden-grown architecture",
+              "ground-level planted-bed three-quarter perspective",
+              "avoid catalog-isolate composition",
+              "avoid perfect stock-photo symmetry",
+              "natural irregular silhouette",
+              "realistic botanical architecture",
+              "natural photographic sharpness",
+              "sufficient transparent margin",
+              "full visible specimen",
+              "no baked scene shadow",
+              "no runtime blend baked into PNG"
+            ],
+            "runtimeNotInPng": [
+              "scene tonal adaptation",
+              "contact shadow",
+              "mild sharpness normalization",
+              "edge integration",
+              "physical scale"
+            ],
+            "require": [
+              "individually legible natural foliage",
+              "clear leaf/leaflet boundaries",
+              "realistic fine botanical texture",
+              "natural branch/leaf separation",
+              "photographic foliage at 100% pixel inspection"
+            ],
+            "forbidSoft": [
+              "painterly foliage masses",
+              "green glow",
+              "specimen-wide soft focus",
+              "artificial depth-of-field blur",
+              "fused leafy blobs"
+            ],
+            "stillForbid": [
+              "crunchy HDR sharpening",
+              "CGI microtexture",
+              "synthetic leaf patterns",
+              "oversharpened edges",
+              "studio-isolate aesthetic",
+              "baked scene shadow",
+              "baked runtime blend"
+            ],
+            "provider": "openai-images-api",
+            "model": "unspecified",
+            "settings": {
+              "size": "1024x1536",
+              "quality": "medium",
+              "background": "transparent",
+              "outputFormat": "png",
+              "n": 1
+            },
+            "prompt": "FAMILY LOCK for Cyclamen persicum (canonical identity cyclamen). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: herbaceous-clump. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. FRAMING SAFE ZONE: the complete visible specimen must sit comfortably inside the canvas and must not touch any image boundary. Center the specimen horizontally. Keep the visible plant width to no more than about 90% of the canvas and the visible plant height to no more than about 92% of the canvas unless the natural form is much smaller. Leave clearly visible transparent breathing room on every side, with especially generous space above the highest leaf/branch and at both lateral extremes. Target at least ~4% transparent top margin, ~4% on each side, and ~1% at the bottom so the production framing gate has safety buffer. Do not crop leaves, branches, fruit, flowers, stems, or roots at the canvas edge. PLANT ONLY: no people, animals, insects, birds, fish, toys, mascots, tools, signs, decorative props, ornaments, or unrelated objects. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=default, phenologyState=flowering. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. FLOWERING: keep the same underlying vegetative plant habit and architecture. Add plausible flowers that are materially visible. No impossible flower density. No replacing the plant with a bouquet.",
+            "familyLockFields": [
+              "canonicalSlug",
+              "scientific",
+              "visualForm",
+              "cameraTreatment",
+              "gardenGrownNaturalArchitecture",
+              "naturalPhotographicDetail",
+              "transparentCutout"
+            ],
+            "stateDeltaFields": [
+              "growthStage",
+              "phenologyState",
+              "architectureMode"
+            ],
+            "canonicalSlug": "cyclamen",
+            "jobId": "cyclamen__mature__default__flowering__v1",
+            "growthStage": "mature",
+            "architectureMode": "default",
+            "phenologyState": "flowering",
+            "visualForm": "herbaceous-clump",
+            "encodesPhysicalMeters": false
+          },
+          "imageGenerationRequired": true,
+          "technicalQaRequired": true,
+          "framingQaRequired": true,
+          "botanicalIdentityQaRequired": true,
+          "inGardenQaRequired": true,
+          "sizeAuthorityPlan": {
+            "version": "plant-size-authority-readiness-v1",
+            "canonicalSlug": "cyclamen",
+            "growthStage": "mature",
+            "visualForm": "herbaceous-clump",
+            "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+            "authoritativeMetersAvailable": false,
+            "explicitEstimateOnly": true,
+            "morphologyFallbackIsAuthority": false,
+            "ownerReviewRequired": true,
+            "reasonCodes": [
+              "CANONICAL_SIZE_RECORD_NOT_FOUND"
+            ]
+          },
+          "inGardenQaScalePlan": {
+            "policyVersion": "in-garden-qa-scale-policy-v1.1",
+            "recommendedBand": "large",
+            "reviewBands": [
+              "medium",
+              "large",
+              "xl"
+            ],
+            "source": "FORM_STAGE_POLICY",
+            "visualForm": "herbaceous-clump",
+            "growthStage": "mature",
+            "phenology": "flowering",
+            "phenologyAffectsScale": false,
+            "ownerReviewRequired": true,
+            "meterAccuracyClaimed": false,
+            "clippingAllowed": false,
+            "supportContextRequired": false,
+            "reasonCodes": [
+              "VISUAL_FORM_BASELINE",
+              "GROWTH_STAGE_REFINEMENT"
+            ]
+          },
+          "presentationSizingRequired": true,
+          "productionApprovedRequired": true,
+          "autoApprovalEnabled": false,
+          "productionPriorityScore": 250,
+          "originalOrder": 4
+        },
+        {
+          "canonicalSlug": "cyclamen",
+          "visualForm": "herbaceous-clump",
+          "architectureMode": "default",
+          "growthStage": "mature",
+          "phenology": "vegetative",
+          "season": "season-neutral",
+          "formView": null,
+          "variantKey": "mature__default__vegetative",
+          "jobId": "cyclamen__mature__default__vegetative__v1",
+          "required": true,
+          "reason": "BASELINE_MATURE_VEGETATIVE",
+          "priority": 40,
+          "priorityBand": "portfolio-launch-gaps",
+          "morphologyAuthority": "source_supported_habit",
+          "scientific": "Cyclamen persicum",
+          "identityPrecision": "SPECIES_SUPPORTED",
+          "identityScope": "species",
+          "pipelineVersion": "plant-visual-production-pipeline-v1",
+          "state": "NEEDED",
+          "qualityPlan": {
+            "detailClass": "UNKNOWN",
+            "detailClassSource": "unknown-default-medium",
+            "quality": "medium",
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2"
+          },
+          "promptRecord": {
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+            "nextProductionPrompt": true,
+            "appliedToPaidExecute": false,
+            "generateNow": false,
+            "round1LearningInherited": [
+              "natural garden-grown architecture",
+              "ground-level planted-bed three-quarter perspective",
+              "avoid catalog-isolate composition",
+              "avoid perfect stock-photo symmetry",
+              "natural irregular silhouette",
+              "realistic botanical architecture",
+              "natural photographic sharpness",
+              "sufficient transparent margin",
+              "full visible specimen",
+              "no baked scene shadow",
+              "no runtime blend baked into PNG"
+            ],
+            "runtimeNotInPng": [
+              "scene tonal adaptation",
+              "contact shadow",
+              "mild sharpness normalization",
+              "edge integration",
+              "physical scale"
+            ],
+            "require": [
+              "individually legible natural foliage",
+              "clear leaf/leaflet boundaries",
+              "realistic fine botanical texture",
+              "natural branch/leaf separation",
+              "photographic foliage at 100% pixel inspection"
+            ],
+            "forbidSoft": [
+              "painterly foliage masses",
+              "green glow",
+              "specimen-wide soft focus",
+              "artificial depth-of-field blur",
+              "fused leafy blobs"
+            ],
+            "stillForbid": [
+              "crunchy HDR sharpening",
+              "CGI microtexture",
+              "synthetic leaf patterns",
+              "oversharpened edges",
+              "studio-isolate aesthetic",
+              "baked scene shadow",
+              "baked runtime blend"
+            ],
+            "provider": "openai-images-api",
+            "model": "unspecified",
+            "settings": {
+              "size": "1024x1536",
+              "quality": "medium",
+              "background": "transparent",
+              "outputFormat": "png",
+              "n": 1
+            },
+            "prompt": "FAMILY LOCK for Cyclamen persicum (canonical identity cyclamen). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: herbaceous-clump. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. FRAMING SAFE ZONE: the complete visible specimen must sit comfortably inside the canvas and must not touch any image boundary. Center the specimen horizontally. Keep the visible plant width to no more than about 90% of the canvas and the visible plant height to no more than about 92% of the canvas unless the natural form is much smaller. Leave clearly visible transparent breathing room on every side, with especially generous space above the highest leaf/branch and at both lateral extremes. Target at least ~4% transparent top margin, ~4% on each side, and ~1% at the bottom so the production framing gate has safety buffer. Do not crop leaves, branches, fruit, flowers, stems, or roots at the canvas edge. PLANT ONLY: no people, animals, insects, birds, fish, toys, mascots, tools, signs, decorative props, ornaments, or unrelated objects. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=default, phenologyState=vegetative. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. VEGETATIVE: foliage/architecture only. No conspicuous flowers. No conspicuous fruit.",
+            "familyLockFields": [
+              "canonicalSlug",
+              "scientific",
+              "visualForm",
+              "cameraTreatment",
+              "gardenGrownNaturalArchitecture",
+              "naturalPhotographicDetail",
+              "transparentCutout"
+            ],
+            "stateDeltaFields": [
+              "growthStage",
+              "phenologyState",
+              "architectureMode"
+            ],
+            "canonicalSlug": "cyclamen",
+            "jobId": "cyclamen__mature__default__vegetative__v1",
+            "growthStage": "mature",
+            "architectureMode": "default",
+            "phenologyState": "vegetative",
+            "visualForm": "herbaceous-clump",
+            "encodesPhysicalMeters": false
+          },
+          "imageGenerationRequired": true,
+          "technicalQaRequired": true,
+          "framingQaRequired": true,
+          "botanicalIdentityQaRequired": true,
+          "inGardenQaRequired": true,
+          "sizeAuthorityPlan": {
+            "version": "plant-size-authority-readiness-v1",
+            "canonicalSlug": "cyclamen",
+            "growthStage": "mature",
+            "visualForm": "herbaceous-clump",
+            "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+            "authoritativeMetersAvailable": false,
+            "explicitEstimateOnly": true,
+            "morphologyFallbackIsAuthority": false,
+            "ownerReviewRequired": true,
+            "reasonCodes": [
+              "CANONICAL_SIZE_RECORD_NOT_FOUND"
+            ]
+          },
+          "inGardenQaScalePlan": {
+            "policyVersion": "in-garden-qa-scale-policy-v1.1",
+            "recommendedBand": "large",
+            "reviewBands": [
+              "medium",
+              "large",
+              "xl"
+            ],
+            "source": "FORM_STAGE_POLICY",
+            "visualForm": "herbaceous-clump",
+            "growthStage": "mature",
+            "phenology": "vegetative",
+            "phenologyAffectsScale": false,
+            "ownerReviewRequired": true,
+            "meterAccuracyClaimed": false,
+            "clippingAllowed": false,
+            "supportContextRequired": false,
+            "reasonCodes": [
+              "VISUAL_FORM_BASELINE",
+              "GROWTH_STAGE_REFINEMENT"
+            ]
+          },
+          "presentationSizingRequired": true,
+          "productionApprovedRequired": true,
+          "autoApprovalEnabled": false,
+          "productionPriorityScore": 250,
+          "originalOrder": 5
+        },
+        {
+          "canonicalSlug": "ficus-benjamina",
+          "visualForm": "tree",
+          "architectureMode": "tree",
+          "growthStage": "mature",
+          "phenology": "vegetative",
+          "season": "season-neutral",
+          "formView": null,
+          "variantKey": "mature__tree__vegetative",
+          "jobId": "ficus-benjamina__mature__tree__vegetative__v1",
+          "required": true,
+          "reason": "BASELINE_MATURE_VEGETATIVE",
+          "priority": 40,
+          "priorityBand": "portfolio-launch-gaps",
+          "morphologyAuthority": "canonical_growth_metadata",
+          "scientific": "Ficus benjamina",
+          "identityPrecision": "SPECIES_SUPPORTED",
+          "identityScope": "species",
+          "pipelineVersion": "plant-visual-production-pipeline-v1",
+          "state": "NEEDED",
+          "qualityPlan": {
+            "detailClass": "UNKNOWN",
+            "detailClassSource": "unknown-default-medium",
+            "quality": "medium",
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2"
+          },
+          "promptRecord": {
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+            "nextProductionPrompt": true,
+            "appliedToPaidExecute": false,
+            "generateNow": false,
+            "round1LearningInherited": [
+              "natural garden-grown architecture",
+              "ground-level planted-bed three-quarter perspective",
+              "avoid catalog-isolate composition",
+              "avoid perfect stock-photo symmetry",
+              "natural irregular silhouette",
+              "realistic botanical architecture",
+              "natural photographic sharpness",
+              "sufficient transparent margin",
+              "full visible specimen",
+              "no baked scene shadow",
+              "no runtime blend baked into PNG"
+            ],
+            "runtimeNotInPng": [
+              "scene tonal adaptation",
+              "contact shadow",
+              "mild sharpness normalization",
+              "edge integration",
+              "physical scale"
+            ],
+            "require": [
+              "individually legible natural foliage",
+              "clear leaf/leaflet boundaries",
+              "realistic fine botanical texture",
+              "natural branch/leaf separation",
+              "photographic foliage at 100% pixel inspection"
+            ],
+            "forbidSoft": [
+              "painterly foliage masses",
+              "green glow",
+              "specimen-wide soft focus",
+              "artificial depth-of-field blur",
+              "fused leafy blobs"
+            ],
+            "stillForbid": [
+              "crunchy HDR sharpening",
+              "CGI microtexture",
+              "synthetic leaf patterns",
+              "oversharpened edges",
+              "studio-isolate aesthetic",
+              "baked scene shadow",
+              "baked runtime blend"
+            ],
+            "provider": "openai-images-api",
+            "model": "unspecified",
+            "settings": {
+              "size": "1024x1536",
+              "quality": "medium",
+              "background": "transparent",
+              "outputFormat": "png",
+              "n": 1
+            },
+            "prompt": "FAMILY LOCK for Ficus benjamina (canonical identity ficus-benjamina). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: tree. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. Tree form: naturally grown garden specimen, not a nursery catalog isolate. Irregular asymmetrical branching. Realistic trunk taper. Crown width appropriate to mature form. Avoid perfect stock-photo symmetry and isolated catalog specimen aesthetic. Planted-bed eye-level camera. Natural three-quarter garden perspective. Realistic crown-to-trunk ratio. Full specimen with useful transparent margin. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. FRAMING SAFE ZONE: the complete visible specimen must sit comfortably inside the canvas and must not touch any image boundary. Center the specimen horizontally. Keep the visible plant width to no more than about 90% of the canvas and the visible plant height to no more than about 92% of the canvas unless the natural form is much smaller. Leave clearly visible transparent breathing room on every side, with especially generous space above the highest leaf/branch and at both lateral extremes. Target at least ~4% transparent top margin, ~4% on each side, and ~1% at the bottom so the production framing gate has safety buffer. Do not crop leaves, branches, fruit, flowers, stems, or roots at the canvas edge. PLANT ONLY: no people, animals, insects, birds, fish, toys, mascots, tools, signs, decorative props, ornaments, or unrelated objects. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=tree, phenologyState=vegetative. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. VEGETATIVE: foliage/architecture only. No conspicuous flowers. No conspicuous fruit. TREE architectureMode: single dominant woody trunk and canopy tree structure, not a multi-stem shrub scaled up.",
+            "familyLockFields": [
+              "canonicalSlug",
+              "scientific",
+              "visualForm",
+              "cameraTreatment",
+              "gardenGrownNaturalArchitecture",
+              "naturalPhotographicDetail",
+              "transparentCutout"
+            ],
+            "stateDeltaFields": [
+              "growthStage",
+              "phenologyState",
+              "architectureMode"
+            ],
+            "canonicalSlug": "ficus-benjamina",
+            "jobId": "ficus-benjamina__mature__tree__vegetative__v1",
+            "growthStage": "mature",
+            "architectureMode": "tree",
+            "phenologyState": "vegetative",
+            "visualForm": "tree",
+            "encodesPhysicalMeters": false
+          },
+          "imageGenerationRequired": true,
+          "technicalQaRequired": true,
+          "framingQaRequired": true,
+          "botanicalIdentityQaRequired": true,
+          "inGardenQaRequired": true,
+          "sizeAuthorityPlan": {
+            "version": "plant-size-authority-readiness-v1",
+            "canonicalSlug": "ficus-benjamina",
+            "botanicalTaxonId": "taxon:ficus-benjamina",
+            "scientificName": "Ficus benjamina",
+            "growthStage": "mature",
+            "visualForm": "tree",
+            "state": "SIZE_AUTHORITY_READY",
+            "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+            "authoritativeMetersAvailable": true,
+            "heightScaleReady": true,
+            "spreadScaleReady": true,
+            "normalizedRange": {
+              "heightM": {
+                "min": 12.192,
+                "max": 15.24
+              },
+              "spreadM": {
+                "min": 7.62,
+                "max": 9.144
+              }
+            },
+            "sensitivity": {
+              "cultivarSensitive": false,
+              "rootstockSensitive": false,
+              "cultivarVariable": false,
+              "maintainedForm": false,
+              "notFinalPersonalGardenSize": false,
+              "reasons": []
+            },
+            "explicitEstimateOnly": false,
+            "morphologyFallbackIsAuthority": false,
+            "ownerReviewRequired": false,
+            "gardenDesignMayUseExplicitEstimate": false,
+            "meterAccuracyClaimAllowed": true,
+            "reasonCodes": []
+          },
+          "inGardenQaScalePlan": {
+            "policyVersion": "in-garden-qa-scale-policy-v1.1",
+            "recommendedBand": "xxl",
+            "reviewBands": [
+              "xl",
+              "xxl"
+            ],
+            "source": "FORM_STAGE_POLICY",
+            "visualForm": "tree",
+            "growthStage": "mature",
+            "phenology": "vegetative",
+            "phenologyAffectsScale": false,
+            "ownerReviewRequired": true,
+            "meterAccuracyClaimed": false,
+            "clippingAllowed": false,
+            "supportContextRequired": false,
+            "reasonCodes": [
+              "VISUAL_FORM_BASELINE",
+              "GROWTH_STAGE_REFINEMENT"
+            ]
+          },
+          "presentationSizingRequired": true,
+          "productionApprovedRequired": true,
+          "autoApprovalEnabled": false,
+          "productionPriorityScore": 250,
+          "originalOrder": 6
+        },
+        {
+          "canonicalSlug": "ficus-benjamina",
+          "visualForm": "tree",
+          "architectureMode": "tree",
+          "growthStage": "young",
+          "phenology": "vegetative",
+          "season": "season-neutral",
+          "formView": null,
+          "variantKey": "young__tree__vegetative",
+          "jobId": "ficus-benjamina__young__tree__vegetative__v1",
+          "required": true,
+          "reason": "GROWTH_ARCHITECTURE_CHANGE",
+          "priority": 40,
+          "priorityBand": "portfolio-launch-gaps",
+          "morphologyAuthority": "canonical_growth_metadata",
+          "scientific": "Ficus benjamina",
+          "identityPrecision": "SPECIES_SUPPORTED",
+          "identityScope": "species",
+          "pipelineVersion": "plant-visual-production-pipeline-v1",
+          "state": "NEEDED",
+          "qualityPlan": {
+            "detailClass": "UNKNOWN",
+            "detailClassSource": "unknown-default-medium",
+            "quality": "medium",
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2"
+          },
+          "promptRecord": {
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+            "nextProductionPrompt": true,
+            "appliedToPaidExecute": false,
+            "generateNow": false,
+            "round1LearningInherited": [
+              "natural garden-grown architecture",
+              "ground-level planted-bed three-quarter perspective",
+              "avoid catalog-isolate composition",
+              "avoid perfect stock-photo symmetry",
+              "natural irregular silhouette",
+              "realistic botanical architecture",
+              "natural photographic sharpness",
+              "sufficient transparent margin",
+              "full visible specimen",
+              "no baked scene shadow",
+              "no runtime blend baked into PNG"
+            ],
+            "runtimeNotInPng": [
+              "scene tonal adaptation",
+              "contact shadow",
+              "mild sharpness normalization",
+              "edge integration",
+              "physical scale"
+            ],
+            "require": [
+              "individually legible natural foliage",
+              "clear leaf/leaflet boundaries",
+              "realistic fine botanical texture",
+              "natural branch/leaf separation",
+              "photographic foliage at 100% pixel inspection"
+            ],
+            "forbidSoft": [
+              "painterly foliage masses",
+              "green glow",
+              "specimen-wide soft focus",
+              "artificial depth-of-field blur",
+              "fused leafy blobs"
+            ],
+            "stillForbid": [
+              "crunchy HDR sharpening",
+              "CGI microtexture",
+              "synthetic leaf patterns",
+              "oversharpened edges",
+              "studio-isolate aesthetic",
+              "baked scene shadow",
+              "baked runtime blend"
+            ],
+            "provider": "openai-images-api",
+            "model": "unspecified",
+            "settings": {
+              "size": "1024x1536",
+              "quality": "medium",
+              "background": "transparent",
+              "outputFormat": "png",
+              "n": 1
+            },
+            "prompt": "FAMILY LOCK for Ficus benjamina (canonical identity ficus-benjamina). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: tree. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. Tree form: naturally grown garden specimen, not a nursery catalog isolate. Irregular asymmetrical branching. Realistic trunk taper. Crown width appropriate to mature form. Avoid perfect stock-photo symmetry and isolated catalog specimen aesthetic. Planted-bed eye-level camera. Natural three-quarter garden perspective. Realistic crown-to-trunk ratio. Full specimen with useful transparent margin. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. FRAMING SAFE ZONE: the complete visible specimen must sit comfortably inside the canvas and must not touch any image boundary. Center the specimen horizontally. Keep the visible plant width to no more than about 90% of the canvas and the visible plant height to no more than about 92% of the canvas unless the natural form is much smaller. Leave clearly visible transparent breathing room on every side, with especially generous space above the highest leaf/branch and at both lateral extremes. Target at least ~4% transparent top margin, ~4% on each side, and ~1% at the bottom so the production framing gate has safety buffer. Do not crop leaves, branches, fruit, flowers, stems, or roots at the canvas edge. PLANT ONLY: no people, animals, insects, birds, fish, toys, mascots, tools, signs, decorative props, ornaments, or unrelated objects. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=young, architectureMode=tree, phenologyState=vegetative. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. YOUNG: represent a genuinely younger architectural stage — smaller trunk/stem caliper, simpler branching or fewer leaves/pups as botanically appropriate. Not the mature asset scaled smaller. Do not use mature canopy architecture. VEGETATIVE: foliage/architecture only. No conspicuous flowers. No conspicuous fruit. TREE architectureMode: single dominant woody trunk and canopy tree structure, not a multi-stem shrub scaled up.",
+            "familyLockFields": [
+              "canonicalSlug",
+              "scientific",
+              "visualForm",
+              "cameraTreatment",
+              "gardenGrownNaturalArchitecture",
+              "naturalPhotographicDetail",
+              "transparentCutout"
+            ],
+            "stateDeltaFields": [
+              "growthStage",
+              "phenologyState",
+              "architectureMode"
+            ],
+            "canonicalSlug": "ficus-benjamina",
+            "jobId": "ficus-benjamina__young__tree__vegetative__v1",
+            "growthStage": "young",
+            "architectureMode": "tree",
+            "phenologyState": "vegetative",
+            "visualForm": "tree",
+            "encodesPhysicalMeters": false
+          },
+          "imageGenerationRequired": true,
+          "technicalQaRequired": true,
+          "framingQaRequired": true,
+          "botanicalIdentityQaRequired": true,
+          "inGardenQaRequired": true,
+          "sizeAuthorityPlan": {
+            "version": "plant-size-authority-readiness-v1",
+            "canonicalSlug": "ficus-benjamina",
+            "botanicalTaxonId": "taxon:ficus-benjamina",
+            "scientificName": "Ficus benjamina",
+            "growthStage": "young",
+            "visualForm": "tree",
+            "state": "SIZE_AUTHORITY_PARTIAL",
+            "runtimeAuthority": "RUNTIME_AUTHORITY_READY",
+            "authoritativeMetersAvailable": false,
+            "heightScaleReady": true,
+            "spreadScaleReady": true,
+            "normalizedRange": {
+              "heightM": {
+                "min": 12.192,
+                "max": 15.24
+              },
+              "spreadM": {
+                "min": 7.62,
+                "max": 9.144
+              }
+            },
+            "sensitivity": {
+              "cultivarSensitive": false,
+              "rootstockSensitive": false,
+              "cultivarVariable": false,
+              "maintainedForm": false,
+              "notFinalPersonalGardenSize": false,
+              "reasons": []
+            },
+            "explicitEstimateOnly": true,
+            "morphologyFallbackIsAuthority": false,
+            "ownerReviewRequired": false,
+            "gardenDesignMayUseExplicitEstimate": true,
+            "meterAccuracyClaimAllowed": false,
+            "reasonCodes": [
+              "GROWTH_STAGE_AUTHORITY_NOT_SUPPORTED"
+            ]
+          },
+          "inGardenQaScalePlan": {
+            "policyVersion": "in-garden-qa-scale-policy-v1.1",
+            "recommendedBand": "large",
+            "reviewBands": [
+              "medium",
+              "large",
+              "xl"
+            ],
+            "source": "FORM_STAGE_POLICY",
+            "visualForm": "tree",
+            "growthStage": "young",
+            "phenology": "vegetative",
+            "phenologyAffectsScale": false,
+            "ownerReviewRequired": true,
+            "meterAccuracyClaimed": false,
+            "clippingAllowed": false,
+            "supportContextRequired": false,
+            "reasonCodes": [
+              "VISUAL_FORM_BASELINE",
+              "GROWTH_STAGE_REFINEMENT"
+            ]
+          },
+          "presentationSizingRequired": true,
+          "productionApprovedRequired": true,
+          "autoApprovalEnabled": false,
+          "productionPriorityScore": 250,
+          "originalOrder": 7
+        },
+        {
+          "canonicalSlug": "hibiscus",
+          "visualForm": "shrub",
+          "architectureMode": "shrub",
+          "growthStage": "mature",
+          "phenology": "flowering",
+          "season": "season-neutral",
+          "formView": null,
+          "variantKey": "mature__shrub__flowering",
+          "jobId": "hibiscus__mature__shrub__flowering__v1",
+          "required": true,
+          "reason": "FLOWERING_VISUALLY_SIGNIFICANT",
+          "priority": 40,
+          "priorityBand": "portfolio-launch-gaps",
+          "morphologyAuthority": "canonical_growth_metadata",
+          "scientific": "Hibiscus rosa-sinensis",
+          "identityPrecision": "SPECIES_SUPPORTED",
+          "identityScope": "species",
+          "pipelineVersion": "plant-visual-production-pipeline-v1",
+          "state": "NEEDED",
+          "qualityPlan": {
+            "detailClass": "UNKNOWN",
+            "detailClassSource": "unknown-default-medium",
+            "quality": "medium",
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2"
+          },
+          "promptRecord": {
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+            "nextProductionPrompt": true,
+            "appliedToPaidExecute": false,
+            "generateNow": false,
+            "round1LearningInherited": [
+              "natural garden-grown architecture",
+              "ground-level planted-bed three-quarter perspective",
+              "avoid catalog-isolate composition",
+              "avoid perfect stock-photo symmetry",
+              "natural irregular silhouette",
+              "realistic botanical architecture",
+              "natural photographic sharpness",
+              "sufficient transparent margin",
+              "full visible specimen",
+              "no baked scene shadow",
+              "no runtime blend baked into PNG"
+            ],
+            "runtimeNotInPng": [
+              "scene tonal adaptation",
+              "contact shadow",
+              "mild sharpness normalization",
+              "edge integration",
+              "physical scale"
+            ],
+            "require": [
+              "individually legible natural foliage",
+              "clear leaf/leaflet boundaries",
+              "realistic fine botanical texture",
+              "natural branch/leaf separation",
+              "photographic foliage at 100% pixel inspection"
+            ],
+            "forbidSoft": [
+              "painterly foliage masses",
+              "green glow",
+              "specimen-wide soft focus",
+              "artificial depth-of-field blur",
+              "fused leafy blobs"
+            ],
+            "stillForbid": [
+              "crunchy HDR sharpening",
+              "CGI microtexture",
+              "synthetic leaf patterns",
+              "oversharpened edges",
+              "studio-isolate aesthetic",
+              "baked scene shadow",
+              "baked runtime blend"
+            ],
+            "provider": "openai-images-api",
+            "model": "unspecified",
+            "settings": {
+              "size": "1024x1536",
+              "quality": "medium",
+              "background": "transparent",
+              "outputFormat": "png",
+              "n": 1
+            },
+            "prompt": "FAMILY LOCK for Hibiscus rosa-sinensis (canonical identity hibiscus). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: shrub. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. FRAMING SAFE ZONE: the complete visible specimen must sit comfortably inside the canvas and must not touch any image boundary. Center the specimen horizontally. Keep the visible plant width to no more than about 90% of the canvas and the visible plant height to no more than about 92% of the canvas unless the natural form is much smaller. Leave clearly visible transparent breathing room on every side, with especially generous space above the highest leaf/branch and at both lateral extremes. Target at least ~4% transparent top margin, ~4% on each side, and ~1% at the bottom so the production framing gate has safety buffer. Do not crop leaves, branches, fruit, flowers, stems, or roots at the canvas edge. PLANT ONLY: no people, animals, insects, birds, fish, toys, mascots, tools, signs, decorative props, ornaments, or unrelated objects. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=shrub, phenologyState=flowering. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. FLOWERING: keep the same underlying vegetative plant habit and architecture. Add plausible flowers that are materially visible. No impossible flower density. No replacing the plant with a bouquet. SHRUB architectureMode: multi-stem shrub structure from the base. Structural change, not merely resizing a tree cutout.",
+            "familyLockFields": [
+              "canonicalSlug",
+              "scientific",
+              "visualForm",
+              "cameraTreatment",
+              "gardenGrownNaturalArchitecture",
+              "naturalPhotographicDetail",
+              "transparentCutout"
+            ],
+            "stateDeltaFields": [
+              "growthStage",
+              "phenologyState",
+              "architectureMode"
+            ],
+            "canonicalSlug": "hibiscus",
+            "jobId": "hibiscus__mature__shrub__flowering__v1",
+            "growthStage": "mature",
+            "architectureMode": "shrub",
+            "phenologyState": "flowering",
+            "visualForm": "shrub",
+            "encodesPhysicalMeters": false
+          },
+          "imageGenerationRequired": true,
+          "technicalQaRequired": true,
+          "framingQaRequired": true,
+          "botanicalIdentityQaRequired": true,
+          "inGardenQaRequired": true,
+          "sizeAuthorityPlan": {
+            "version": "plant-size-authority-readiness-v1",
+            "canonicalSlug": "hibiscus",
+            "growthStage": "mature",
+            "visualForm": "shrub",
+            "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+            "authoritativeMetersAvailable": false,
+            "explicitEstimateOnly": true,
+            "morphologyFallbackIsAuthority": false,
+            "ownerReviewRequired": true,
+            "reasonCodes": [
+              "CANONICAL_SIZE_RECORD_NOT_FOUND"
+            ]
+          },
+          "inGardenQaScalePlan": {
+            "policyVersion": "in-garden-qa-scale-policy-v1.1",
+            "recommendedBand": "large",
+            "reviewBands": [
+              "medium",
+              "large",
+              "xl"
+            ],
+            "source": "FORM_STAGE_POLICY",
+            "visualForm": "shrub",
+            "growthStage": "mature",
+            "phenology": "flowering",
+            "phenologyAffectsScale": false,
+            "ownerReviewRequired": true,
+            "meterAccuracyClaimed": false,
+            "clippingAllowed": false,
+            "supportContextRequired": false,
+            "reasonCodes": [
+              "VISUAL_FORM_BASELINE",
+              "GROWTH_STAGE_REFINEMENT"
+            ]
+          },
+          "presentationSizingRequired": true,
+          "productionApprovedRequired": true,
+          "autoApprovalEnabled": false,
+          "productionPriorityScore": 250,
+          "originalOrder": 8
+        },
+        {
+          "canonicalSlug": "hibiscus",
+          "visualForm": "shrub",
+          "architectureMode": "shrub",
+          "growthStage": "mature",
+          "phenology": "vegetative",
+          "season": "season-neutral",
+          "formView": null,
+          "variantKey": "mature__shrub__vegetative",
+          "jobId": "hibiscus__mature__shrub__vegetative__v1",
+          "required": true,
+          "reason": "BASELINE_MATURE_VEGETATIVE",
+          "priority": 40,
+          "priorityBand": "portfolio-launch-gaps",
+          "morphologyAuthority": "canonical_growth_metadata",
+          "scientific": "Hibiscus rosa-sinensis",
+          "identityPrecision": "SPECIES_SUPPORTED",
+          "identityScope": "species",
+          "pipelineVersion": "plant-visual-production-pipeline-v1",
+          "state": "NEEDED",
+          "qualityPlan": {
+            "detailClass": "UNKNOWN",
+            "detailClassSource": "unknown-default-medium",
+            "quality": "medium",
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2"
+          },
+          "promptRecord": {
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+            "nextProductionPrompt": true,
+            "appliedToPaidExecute": false,
+            "generateNow": false,
+            "round1LearningInherited": [
+              "natural garden-grown architecture",
+              "ground-level planted-bed three-quarter perspective",
+              "avoid catalog-isolate composition",
+              "avoid perfect stock-photo symmetry",
+              "natural irregular silhouette",
+              "realistic botanical architecture",
+              "natural photographic sharpness",
+              "sufficient transparent margin",
+              "full visible specimen",
+              "no baked scene shadow",
+              "no runtime blend baked into PNG"
+            ],
+            "runtimeNotInPng": [
+              "scene tonal adaptation",
+              "contact shadow",
+              "mild sharpness normalization",
+              "edge integration",
+              "physical scale"
+            ],
+            "require": [
+              "individually legible natural foliage",
+              "clear leaf/leaflet boundaries",
+              "realistic fine botanical texture",
+              "natural branch/leaf separation",
+              "photographic foliage at 100% pixel inspection"
+            ],
+            "forbidSoft": [
+              "painterly foliage masses",
+              "green glow",
+              "specimen-wide soft focus",
+              "artificial depth-of-field blur",
+              "fused leafy blobs"
+            ],
+            "stillForbid": [
+              "crunchy HDR sharpening",
+              "CGI microtexture",
+              "synthetic leaf patterns",
+              "oversharpened edges",
+              "studio-isolate aesthetic",
+              "baked scene shadow",
+              "baked runtime blend"
+            ],
+            "provider": "openai-images-api",
+            "model": "unspecified",
+            "settings": {
+              "size": "1024x1536",
+              "quality": "medium",
+              "background": "transparent",
+              "outputFormat": "png",
+              "n": 1
+            },
+            "prompt": "FAMILY LOCK for Hibiscus rosa-sinensis (canonical identity hibiscus). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: shrub. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. FRAMING SAFE ZONE: the complete visible specimen must sit comfortably inside the canvas and must not touch any image boundary. Center the specimen horizontally. Keep the visible plant width to no more than about 90% of the canvas and the visible plant height to no more than about 92% of the canvas unless the natural form is much smaller. Leave clearly visible transparent breathing room on every side, with especially generous space above the highest leaf/branch and at both lateral extremes. Target at least ~4% transparent top margin, ~4% on each side, and ~1% at the bottom so the production framing gate has safety buffer. Do not crop leaves, branches, fruit, flowers, stems, or roots at the canvas edge. PLANT ONLY: no people, animals, insects, birds, fish, toys, mascots, tools, signs, decorative props, ornaments, or unrelated objects. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=shrub, phenologyState=vegetative. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. VEGETATIVE: foliage/architecture only. No conspicuous flowers. No conspicuous fruit. SHRUB architectureMode: multi-stem shrub structure from the base. Structural change, not merely resizing a tree cutout.",
+            "familyLockFields": [
+              "canonicalSlug",
+              "scientific",
+              "visualForm",
+              "cameraTreatment",
+              "gardenGrownNaturalArchitecture",
+              "naturalPhotographicDetail",
+              "transparentCutout"
+            ],
+            "stateDeltaFields": [
+              "growthStage",
+              "phenologyState",
+              "architectureMode"
+            ],
+            "canonicalSlug": "hibiscus",
+            "jobId": "hibiscus__mature__shrub__vegetative__v1",
+            "growthStage": "mature",
+            "architectureMode": "shrub",
+            "phenologyState": "vegetative",
+            "visualForm": "shrub",
+            "encodesPhysicalMeters": false
+          },
+          "imageGenerationRequired": true,
+          "technicalQaRequired": true,
+          "framingQaRequired": true,
+          "botanicalIdentityQaRequired": true,
+          "inGardenQaRequired": true,
+          "sizeAuthorityPlan": {
+            "version": "plant-size-authority-readiness-v1",
+            "canonicalSlug": "hibiscus",
+            "growthStage": "mature",
+            "visualForm": "shrub",
+            "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+            "authoritativeMetersAvailable": false,
+            "explicitEstimateOnly": true,
+            "morphologyFallbackIsAuthority": false,
+            "ownerReviewRequired": true,
+            "reasonCodes": [
+              "CANONICAL_SIZE_RECORD_NOT_FOUND"
+            ]
+          },
+          "inGardenQaScalePlan": {
+            "policyVersion": "in-garden-qa-scale-policy-v1.1",
+            "recommendedBand": "large",
+            "reviewBands": [
+              "medium",
+              "large",
+              "xl"
+            ],
+            "source": "FORM_STAGE_POLICY",
+            "visualForm": "shrub",
+            "growthStage": "mature",
+            "phenology": "vegetative",
+            "phenologyAffectsScale": false,
+            "ownerReviewRequired": true,
+            "meterAccuracyClaimed": false,
+            "clippingAllowed": false,
+            "supportContextRequired": false,
+            "reasonCodes": [
+              "VISUAL_FORM_BASELINE",
+              "GROWTH_STAGE_REFINEMENT"
+            ]
+          },
+          "presentationSizingRequired": true,
+          "productionApprovedRequired": true,
+          "autoApprovalEnabled": false,
+          "productionPriorityScore": 250,
+          "originalOrder": 9
+        },
+        {
+          "canonicalSlug": "lemon",
+          "visualForm": "tree",
+          "architectureMode": "tree",
+          "growthStage": "mature",
+          "phenology": "fruiting",
+          "season": "season-neutral",
+          "formView": null,
+          "variantKey": "mature__tree__fruiting",
+          "jobId": "lemon__mature__tree__fruiting__v1",
+          "required": true,
+          "reason": "FRUITING_VISUALLY_SIGNIFICANT",
+          "priority": 40,
+          "priorityBand": "portfolio-launch-gaps",
+          "morphologyAuthority": "canonical_growth_metadata",
+          "scientific": "Citrus × limon",
+          "identityPrecision": "SPECIES_SUPPORTED",
+          "identityScope": "species",
+          "pipelineVersion": "plant-visual-production-pipeline-v1",
+          "state": "NEEDED",
+          "qualityPlan": {
+            "detailClass": "UNKNOWN",
+            "detailClassSource": "unknown-default-medium",
+            "quality": "medium",
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2"
+          },
+          "promptRecord": {
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+            "nextProductionPrompt": true,
+            "appliedToPaidExecute": false,
+            "generateNow": false,
+            "round1LearningInherited": [
+              "natural garden-grown architecture",
+              "ground-level planted-bed three-quarter perspective",
+              "avoid catalog-isolate composition",
+              "avoid perfect stock-photo symmetry",
+              "natural irregular silhouette",
+              "realistic botanical architecture",
+              "natural photographic sharpness",
+              "sufficient transparent margin",
+              "full visible specimen",
+              "no baked scene shadow",
+              "no runtime blend baked into PNG"
+            ],
+            "runtimeNotInPng": [
+              "scene tonal adaptation",
+              "contact shadow",
+              "mild sharpness normalization",
+              "edge integration",
+              "physical scale"
+            ],
+            "require": [
+              "individually legible natural foliage",
+              "clear leaf/leaflet boundaries",
+              "realistic fine botanical texture",
+              "natural branch/leaf separation",
+              "photographic foliage at 100% pixel inspection"
+            ],
+            "forbidSoft": [
+              "painterly foliage masses",
+              "green glow",
+              "specimen-wide soft focus",
+              "artificial depth-of-field blur",
+              "fused leafy blobs"
+            ],
+            "stillForbid": [
+              "crunchy HDR sharpening",
+              "CGI microtexture",
+              "synthetic leaf patterns",
+              "oversharpened edges",
+              "studio-isolate aesthetic",
+              "baked scene shadow",
+              "baked runtime blend"
+            ],
+            "provider": "openai-images-api",
+            "model": "unspecified",
+            "settings": {
+              "size": "1024x1536",
+              "quality": "medium",
+              "background": "transparent",
+              "outputFormat": "png",
+              "n": 1
+            },
+            "prompt": "FAMILY LOCK for Citrus × limon (canonical identity lemon). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: tree. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. Tree form: naturally grown garden specimen, not a nursery catalog isolate. Irregular asymmetrical branching. Realistic trunk taper. Crown width appropriate to mature form. Avoid perfect stock-photo symmetry and isolated catalog specimen aesthetic. Planted-bed eye-level camera. Natural three-quarter garden perspective. Realistic crown-to-trunk ratio. Full specimen with useful transparent margin. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. FRAMING SAFE ZONE: the complete visible specimen must sit comfortably inside the canvas and must not touch any image boundary. Center the specimen horizontally. Keep the visible plant width to no more than about 90% of the canvas and the visible plant height to no more than about 92% of the canvas unless the natural form is much smaller. Leave clearly visible transparent breathing room on every side, with especially generous space above the highest leaf/branch and at both lateral extremes. Target at least ~4% transparent top margin, ~4% on each side, and ~1% at the bottom so the production framing gate has safety buffer. Do not crop leaves, branches, fruit, flowers, stems, or roots at the canvas edge. PLANT ONLY: no people, animals, insects, birds, fish, toys, mascots, tools, signs, decorative props, ornaments, or unrelated objects. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=tree, phenologyState=fruiting. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. FRUITING: keep the same underlying architecture. Fruit must be materially visible with plausible distribution/load. No decorative overloading. No fruit hovering in empty space. TREE architectureMode: single dominant woody trunk and canopy tree structure, not a multi-stem shrub scaled up.",
+            "familyLockFields": [
+              "canonicalSlug",
+              "scientific",
+              "visualForm",
+              "cameraTreatment",
+              "gardenGrownNaturalArchitecture",
+              "naturalPhotographicDetail",
+              "transparentCutout"
+            ],
+            "stateDeltaFields": [
+              "growthStage",
+              "phenologyState",
+              "architectureMode"
+            ],
+            "canonicalSlug": "lemon",
+            "jobId": "lemon__mature__tree__fruiting__v1",
+            "growthStage": "mature",
+            "architectureMode": "tree",
+            "phenologyState": "fruiting",
+            "visualForm": "tree",
+            "encodesPhysicalMeters": false
+          },
+          "imageGenerationRequired": true,
+          "technicalQaRequired": true,
+          "framingQaRequired": true,
+          "botanicalIdentityQaRequired": true,
+          "inGardenQaRequired": true,
+          "sizeAuthorityPlan": {
+            "version": "plant-size-authority-readiness-v1",
+            "canonicalSlug": "lemon",
+            "botanicalTaxonId": "taxon:citrus-limon",
+            "scientificName": "Citrus × limon",
+            "growthStage": "mature",
+            "visualForm": "tree",
+            "state": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+            "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+            "authoritativeMetersAvailable": false,
+            "heightScaleReady": true,
+            "spreadScaleReady": true,
+            "normalizedRange": null,
+            "sensitivity": {
+              "cultivarSensitive": true,
+              "rootstockSensitive": true,
+              "cultivarVariable": false,
+              "maintainedForm": true,
+              "notFinalPersonalGardenSize": true,
+              "reasons": [
+                "cultivar sensitive",
+                "rootstock sensitive",
+                "maintained form",
+                "not final personal garden size"
+              ]
+            },
+            "explicitEstimateOnly": true,
+            "morphologyFallbackIsAuthority": false,
+            "ownerReviewRequired": true,
+            "gardenDesignMayUseExplicitEstimate": true,
+            "meterAccuracyClaimAllowed": false,
+            "reasonCodes": [
+              "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+            ]
+          },
+          "inGardenQaScalePlan": {
+            "policyVersion": "in-garden-qa-scale-policy-v1.1",
+            "recommendedBand": "xxl",
+            "reviewBands": [
+              "xl",
+              "xxl"
+            ],
+            "source": "FORM_STAGE_POLICY",
+            "visualForm": "tree",
+            "growthStage": "mature",
+            "phenology": "fruiting",
+            "phenologyAffectsScale": false,
+            "ownerReviewRequired": true,
+            "meterAccuracyClaimed": false,
+            "clippingAllowed": false,
+            "supportContextRequired": false,
+            "reasonCodes": [
+              "VISUAL_FORM_BASELINE",
+              "GROWTH_STAGE_REFINEMENT"
+            ]
+          },
+          "presentationSizingRequired": true,
+          "productionApprovedRequired": true,
+          "autoApprovalEnabled": false,
+          "productionPriorityScore": 250,
+          "originalOrder": 10
+        },
+        {
+          "canonicalSlug": "lemon",
+          "visualForm": "tree",
+          "architectureMode": "tree",
+          "growthStage": "mature",
+          "phenology": "vegetative",
+          "season": "season-neutral",
+          "formView": null,
+          "variantKey": "mature__tree__vegetative",
+          "jobId": "lemon__mature__tree__vegetative__v1",
+          "required": true,
+          "reason": "BASELINE_MATURE_VEGETATIVE",
+          "priority": 40,
+          "priorityBand": "portfolio-launch-gaps",
+          "morphologyAuthority": "canonical_growth_metadata",
+          "scientific": "Citrus × limon",
+          "identityPrecision": "SPECIES_SUPPORTED",
+          "identityScope": "species",
+          "pipelineVersion": "plant-visual-production-pipeline-v1",
+          "state": "NEEDED",
+          "qualityPlan": {
+            "detailClass": "UNKNOWN",
+            "detailClassSource": "unknown-default-medium",
+            "quality": "medium",
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2"
+          },
+          "promptRecord": {
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+            "nextProductionPrompt": true,
+            "appliedToPaidExecute": false,
+            "generateNow": false,
+            "round1LearningInherited": [
+              "natural garden-grown architecture",
+              "ground-level planted-bed three-quarter perspective",
+              "avoid catalog-isolate composition",
+              "avoid perfect stock-photo symmetry",
+              "natural irregular silhouette",
+              "realistic botanical architecture",
+              "natural photographic sharpness",
+              "sufficient transparent margin",
+              "full visible specimen",
+              "no baked scene shadow",
+              "no runtime blend baked into PNG"
+            ],
+            "runtimeNotInPng": [
+              "scene tonal adaptation",
+              "contact shadow",
+              "mild sharpness normalization",
+              "edge integration",
+              "physical scale"
+            ],
+            "require": [
+              "individually legible natural foliage",
+              "clear leaf/leaflet boundaries",
+              "realistic fine botanical texture",
+              "natural branch/leaf separation",
+              "photographic foliage at 100% pixel inspection"
+            ],
+            "forbidSoft": [
+              "painterly foliage masses",
+              "green glow",
+              "specimen-wide soft focus",
+              "artificial depth-of-field blur",
+              "fused leafy blobs"
+            ],
+            "stillForbid": [
+              "crunchy HDR sharpening",
+              "CGI microtexture",
+              "synthetic leaf patterns",
+              "oversharpened edges",
+              "studio-isolate aesthetic",
+              "baked scene shadow",
+              "baked runtime blend"
+            ],
+            "provider": "openai-images-api",
+            "model": "unspecified",
+            "settings": {
+              "size": "1024x1536",
+              "quality": "medium",
+              "background": "transparent",
+              "outputFormat": "png",
+              "n": 1
+            },
+            "prompt": "FAMILY LOCK for Citrus × limon (canonical identity lemon). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: tree. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. Tree form: naturally grown garden specimen, not a nursery catalog isolate. Irregular asymmetrical branching. Realistic trunk taper. Crown width appropriate to mature form. Avoid perfect stock-photo symmetry and isolated catalog specimen aesthetic. Planted-bed eye-level camera. Natural three-quarter garden perspective. Realistic crown-to-trunk ratio. Full specimen with useful transparent margin. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. FRAMING SAFE ZONE: the complete visible specimen must sit comfortably inside the canvas and must not touch any image boundary. Center the specimen horizontally. Keep the visible plant width to no more than about 90% of the canvas and the visible plant height to no more than about 92% of the canvas unless the natural form is much smaller. Leave clearly visible transparent breathing room on every side, with especially generous space above the highest leaf/branch and at both lateral extremes. Target at least ~4% transparent top margin, ~4% on each side, and ~1% at the bottom so the production framing gate has safety buffer. Do not crop leaves, branches, fruit, flowers, stems, or roots at the canvas edge. PLANT ONLY: no people, animals, insects, birds, fish, toys, mascots, tools, signs, decorative props, ornaments, or unrelated objects. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=tree, phenologyState=vegetative. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. VEGETATIVE: foliage/architecture only. No conspicuous flowers. No conspicuous fruit. TREE architectureMode: single dominant woody trunk and canopy tree structure, not a multi-stem shrub scaled up.",
+            "familyLockFields": [
+              "canonicalSlug",
+              "scientific",
+              "visualForm",
+              "cameraTreatment",
+              "gardenGrownNaturalArchitecture",
+              "naturalPhotographicDetail",
+              "transparentCutout"
+            ],
+            "stateDeltaFields": [
+              "growthStage",
+              "phenologyState",
+              "architectureMode"
+            ],
+            "canonicalSlug": "lemon",
+            "jobId": "lemon__mature__tree__vegetative__v1",
+            "growthStage": "mature",
+            "architectureMode": "tree",
+            "phenologyState": "vegetative",
+            "visualForm": "tree",
+            "encodesPhysicalMeters": false
+          },
+          "imageGenerationRequired": true,
+          "technicalQaRequired": true,
+          "framingQaRequired": true,
+          "botanicalIdentityQaRequired": true,
+          "inGardenQaRequired": true,
+          "sizeAuthorityPlan": {
+            "version": "plant-size-authority-readiness-v1",
+            "canonicalSlug": "lemon",
+            "botanicalTaxonId": "taxon:citrus-limon",
+            "scientificName": "Citrus × limon",
+            "growthStage": "mature",
+            "visualForm": "tree",
+            "state": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+            "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+            "authoritativeMetersAvailable": false,
+            "heightScaleReady": true,
+            "spreadScaleReady": true,
+            "normalizedRange": null,
+            "sensitivity": {
+              "cultivarSensitive": true,
+              "rootstockSensitive": true,
+              "cultivarVariable": false,
+              "maintainedForm": true,
+              "notFinalPersonalGardenSize": true,
+              "reasons": [
+                "cultivar sensitive",
+                "rootstock sensitive",
+                "maintained form",
+                "not final personal garden size"
+              ]
+            },
+            "explicitEstimateOnly": true,
+            "morphologyFallbackIsAuthority": false,
+            "ownerReviewRequired": true,
+            "gardenDesignMayUseExplicitEstimate": true,
+            "meterAccuracyClaimAllowed": false,
+            "reasonCodes": [
+              "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+            ]
+          },
+          "inGardenQaScalePlan": {
+            "policyVersion": "in-garden-qa-scale-policy-v1.1",
+            "recommendedBand": "xxl",
+            "reviewBands": [
+              "xl",
+              "xxl"
+            ],
+            "source": "FORM_STAGE_POLICY",
+            "visualForm": "tree",
+            "growthStage": "mature",
+            "phenology": "vegetative",
+            "phenologyAffectsScale": false,
+            "ownerReviewRequired": true,
+            "meterAccuracyClaimed": false,
+            "clippingAllowed": false,
+            "supportContextRequired": false,
+            "reasonCodes": [
+              "VISUAL_FORM_BASELINE",
+              "GROWTH_STAGE_REFINEMENT"
+            ]
+          },
+          "presentationSizingRequired": true,
+          "productionApprovedRequired": true,
+          "autoApprovalEnabled": false,
+          "productionPriorityScore": 250,
+          "originalOrder": 11
+        },
+        {
+          "canonicalSlug": "lemon",
+          "visualForm": "tree",
+          "architectureMode": "tree",
+          "growthStage": "young",
+          "phenology": "vegetative",
+          "season": "season-neutral",
+          "formView": null,
+          "variantKey": "young__tree__vegetative",
+          "jobId": "lemon__young__tree__vegetative__v1",
+          "required": true,
+          "reason": "GROWTH_ARCHITECTURE_CHANGE",
+          "priority": 40,
+          "priorityBand": "portfolio-launch-gaps",
+          "morphologyAuthority": "canonical_growth_metadata",
+          "scientific": "Citrus × limon",
+          "identityPrecision": "SPECIES_SUPPORTED",
+          "identityScope": "species",
+          "pipelineVersion": "plant-visual-production-pipeline-v1",
+          "state": "NEEDED",
+          "qualityPlan": {
+            "detailClass": "UNKNOWN",
+            "detailClassSource": "unknown-default-medium",
+            "quality": "medium",
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2"
+          },
+          "promptRecord": {
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+            "nextProductionPrompt": true,
+            "appliedToPaidExecute": false,
+            "generateNow": false,
+            "round1LearningInherited": [
+              "natural garden-grown architecture",
+              "ground-level planted-bed three-quarter perspective",
+              "avoid catalog-isolate composition",
+              "avoid perfect stock-photo symmetry",
+              "natural irregular silhouette",
+              "realistic botanical architecture",
+              "natural photographic sharpness",
+              "sufficient transparent margin",
+              "full visible specimen",
+              "no baked scene shadow",
+              "no runtime blend baked into PNG"
+            ],
+            "runtimeNotInPng": [
+              "scene tonal adaptation",
+              "contact shadow",
+              "mild sharpness normalization",
+              "edge integration",
+              "physical scale"
+            ],
+            "require": [
+              "individually legible natural foliage",
+              "clear leaf/leaflet boundaries",
+              "realistic fine botanical texture",
+              "natural branch/leaf separation",
+              "photographic foliage at 100% pixel inspection"
+            ],
+            "forbidSoft": [
+              "painterly foliage masses",
+              "green glow",
+              "specimen-wide soft focus",
+              "artificial depth-of-field blur",
+              "fused leafy blobs"
+            ],
+            "stillForbid": [
+              "crunchy HDR sharpening",
+              "CGI microtexture",
+              "synthetic leaf patterns",
+              "oversharpened edges",
+              "studio-isolate aesthetic",
+              "baked scene shadow",
+              "baked runtime blend"
+            ],
+            "provider": "openai-images-api",
+            "model": "unspecified",
+            "settings": {
+              "size": "1024x1536",
+              "quality": "medium",
+              "background": "transparent",
+              "outputFormat": "png",
+              "n": 1
+            },
+            "prompt": "FAMILY LOCK for Citrus × limon (canonical identity lemon). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: tree. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. Tree form: naturally grown garden specimen, not a nursery catalog isolate. Irregular asymmetrical branching. Realistic trunk taper. Crown width appropriate to mature form. Avoid perfect stock-photo symmetry and isolated catalog specimen aesthetic. Planted-bed eye-level camera. Natural three-quarter garden perspective. Realistic crown-to-trunk ratio. Full specimen with useful transparent margin. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. FRAMING SAFE ZONE: the complete visible specimen must sit comfortably inside the canvas and must not touch any image boundary. Center the specimen horizontally. Keep the visible plant width to no more than about 90% of the canvas and the visible plant height to no more than about 92% of the canvas unless the natural form is much smaller. Leave clearly visible transparent breathing room on every side, with especially generous space above the highest leaf/branch and at both lateral extremes. Target at least ~4% transparent top margin, ~4% on each side, and ~1% at the bottom so the production framing gate has safety buffer. Do not crop leaves, branches, fruit, flowers, stems, or roots at the canvas edge. PLANT ONLY: no people, animals, insects, birds, fish, toys, mascots, tools, signs, decorative props, ornaments, or unrelated objects. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=young, architectureMode=tree, phenologyState=vegetative. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. YOUNG: represent a genuinely younger architectural stage — smaller trunk/stem caliper, simpler branching or fewer leaves/pups as botanically appropriate. Not the mature asset scaled smaller. Do not use mature canopy architecture. VEGETATIVE: foliage/architecture only. No conspicuous flowers. No conspicuous fruit. TREE architectureMode: single dominant woody trunk and canopy tree structure, not a multi-stem shrub scaled up.",
+            "familyLockFields": [
+              "canonicalSlug",
+              "scientific",
+              "visualForm",
+              "cameraTreatment",
+              "gardenGrownNaturalArchitecture",
+              "naturalPhotographicDetail",
+              "transparentCutout"
+            ],
+            "stateDeltaFields": [
+              "growthStage",
+              "phenologyState",
+              "architectureMode"
+            ],
+            "canonicalSlug": "lemon",
+            "jobId": "lemon__young__tree__vegetative__v1",
+            "growthStage": "young",
+            "architectureMode": "tree",
+            "phenologyState": "vegetative",
+            "visualForm": "tree",
+            "encodesPhysicalMeters": false
+          },
+          "imageGenerationRequired": true,
+          "technicalQaRequired": true,
+          "framingQaRequired": true,
+          "botanicalIdentityQaRequired": true,
+          "inGardenQaRequired": true,
+          "sizeAuthorityPlan": {
+            "version": "plant-size-authority-readiness-v1",
+            "canonicalSlug": "lemon",
+            "botanicalTaxonId": "taxon:citrus-limon",
+            "scientificName": "Citrus × limon",
+            "growthStage": "young",
+            "visualForm": "tree",
+            "state": "SIZE_AUTHORITY_PARTIAL",
+            "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+            "authoritativeMetersAvailable": false,
+            "heightScaleReady": true,
+            "spreadScaleReady": true,
+            "normalizedRange": null,
+            "sensitivity": {
+              "cultivarSensitive": true,
+              "rootstockSensitive": true,
+              "cultivarVariable": false,
+              "maintainedForm": true,
+              "notFinalPersonalGardenSize": true,
+              "reasons": [
+                "cultivar sensitive",
+                "rootstock sensitive",
+                "maintained form",
+                "not final personal garden size"
+              ]
+            },
+            "explicitEstimateOnly": true,
+            "morphologyFallbackIsAuthority": false,
+            "ownerReviewRequired": false,
+            "gardenDesignMayUseExplicitEstimate": true,
+            "meterAccuracyClaimAllowed": false,
+            "reasonCodes": [
+              "GROWTH_STAGE_AUTHORITY_NOT_SUPPORTED"
+            ]
+          },
+          "inGardenQaScalePlan": {
+            "policyVersion": "in-garden-qa-scale-policy-v1.1",
+            "recommendedBand": "large",
+            "reviewBands": [
+              "medium",
+              "large",
+              "xl"
+            ],
+            "source": "FORM_STAGE_POLICY",
+            "visualForm": "tree",
+            "growthStage": "young",
+            "phenology": "vegetative",
+            "phenologyAffectsScale": false,
+            "ownerReviewRequired": true,
+            "meterAccuracyClaimed": false,
+            "clippingAllowed": false,
+            "supportContextRequired": false,
+            "reasonCodes": [
+              "VISUAL_FORM_BASELINE",
+              "GROWTH_STAGE_REFINEMENT"
+            ]
+          },
+          "presentationSizingRequired": true,
+          "productionApprovedRequired": true,
+          "autoApprovalEnabled": false,
+          "productionPriorityScore": 250,
+          "originalOrder": 12
+        },
+        {
+          "canonicalSlug": "strelitzia",
+          "visualForm": "herbaceous-clump",
+          "architectureMode": "default",
+          "growthStage": "mature",
+          "phenology": "flowering",
+          "season": "season-neutral",
+          "formView": null,
+          "variantKey": "mature__default__flowering",
+          "jobId": "strelitzia__mature__default__flowering__v1",
+          "required": true,
+          "reason": "FLOWERING_VISUALLY_SIGNIFICANT",
+          "priority": 40,
+          "priorityBand": "portfolio-launch-gaps",
+          "morphologyAuthority": "source_supported_habit",
+          "scientific": "Strelitzia reginae",
+          "identityPrecision": "SPECIES_SUPPORTED",
+          "identityScope": "species",
+          "pipelineVersion": "plant-visual-production-pipeline-v1",
+          "state": "NEEDED",
+          "qualityPlan": {
+            "detailClass": "UNKNOWN",
+            "detailClassSource": "unknown-default-medium",
+            "quality": "medium",
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2"
+          },
+          "promptRecord": {
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+            "nextProductionPrompt": true,
+            "appliedToPaidExecute": false,
+            "generateNow": false,
+            "round1LearningInherited": [
+              "natural garden-grown architecture",
+              "ground-level planted-bed three-quarter perspective",
+              "avoid catalog-isolate composition",
+              "avoid perfect stock-photo symmetry",
+              "natural irregular silhouette",
+              "realistic botanical architecture",
+              "natural photographic sharpness",
+              "sufficient transparent margin",
+              "full visible specimen",
+              "no baked scene shadow",
+              "no runtime blend baked into PNG"
+            ],
+            "runtimeNotInPng": [
+              "scene tonal adaptation",
+              "contact shadow",
+              "mild sharpness normalization",
+              "edge integration",
+              "physical scale"
+            ],
+            "require": [
+              "individually legible natural foliage",
+              "clear leaf/leaflet boundaries",
+              "realistic fine botanical texture",
+              "natural branch/leaf separation",
+              "photographic foliage at 100% pixel inspection"
+            ],
+            "forbidSoft": [
+              "painterly foliage masses",
+              "green glow",
+              "specimen-wide soft focus",
+              "artificial depth-of-field blur",
+              "fused leafy blobs"
+            ],
+            "stillForbid": [
+              "crunchy HDR sharpening",
+              "CGI microtexture",
+              "synthetic leaf patterns",
+              "oversharpened edges",
+              "studio-isolate aesthetic",
+              "baked scene shadow",
+              "baked runtime blend"
+            ],
+            "provider": "openai-images-api",
+            "model": "unspecified",
+            "settings": {
+              "size": "1024x1536",
+              "quality": "medium",
+              "background": "transparent",
+              "outputFormat": "png",
+              "n": 1
+            },
+            "prompt": "FAMILY LOCK for Strelitzia reginae (canonical identity strelitzia). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: herbaceous-clump. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. FRAMING SAFE ZONE: the complete visible specimen must sit comfortably inside the canvas and must not touch any image boundary. Center the specimen horizontally. Keep the visible plant width to no more than about 90% of the canvas and the visible plant height to no more than about 92% of the canvas unless the natural form is much smaller. Leave clearly visible transparent breathing room on every side, with especially generous space above the highest leaf/branch and at both lateral extremes. Target at least ~4% transparent top margin, ~4% on each side, and ~1% at the bottom so the production framing gate has safety buffer. Do not crop leaves, branches, fruit, flowers, stems, or roots at the canvas edge. PLANT ONLY: no people, animals, insects, birds, fish, toys, mascots, tools, signs, decorative props, ornaments, or unrelated objects. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=default, phenologyState=flowering. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. FLOWERING: keep the same underlying vegetative plant habit and architecture. Add plausible flowers that are materially visible. No impossible flower density. No replacing the plant with a bouquet.",
+            "familyLockFields": [
+              "canonicalSlug",
+              "scientific",
+              "visualForm",
+              "cameraTreatment",
+              "gardenGrownNaturalArchitecture",
+              "naturalPhotographicDetail",
+              "transparentCutout"
+            ],
+            "stateDeltaFields": [
+              "growthStage",
+              "phenologyState",
+              "architectureMode"
+            ],
+            "canonicalSlug": "strelitzia",
+            "jobId": "strelitzia__mature__default__flowering__v1",
+            "growthStage": "mature",
+            "architectureMode": "default",
+            "phenologyState": "flowering",
+            "visualForm": "herbaceous-clump",
+            "encodesPhysicalMeters": false
+          },
+          "imageGenerationRequired": true,
+          "technicalQaRequired": true,
+          "framingQaRequired": true,
+          "botanicalIdentityQaRequired": true,
+          "inGardenQaRequired": true,
+          "sizeAuthorityPlan": {
+            "version": "plant-size-authority-readiness-v1",
+            "canonicalSlug": "strelitzia",
+            "growthStage": "mature",
+            "visualForm": "herbaceous-clump",
+            "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+            "authoritativeMetersAvailable": false,
+            "explicitEstimateOnly": true,
+            "morphologyFallbackIsAuthority": false,
+            "ownerReviewRequired": true,
+            "reasonCodes": [
+              "CANONICAL_SIZE_RECORD_NOT_FOUND"
+            ]
+          },
+          "inGardenQaScalePlan": {
+            "policyVersion": "in-garden-qa-scale-policy-v1.1",
+            "recommendedBand": "large",
+            "reviewBands": [
+              "medium",
+              "large",
+              "xl"
+            ],
+            "source": "FORM_STAGE_POLICY",
+            "visualForm": "herbaceous-clump",
+            "growthStage": "mature",
+            "phenology": "flowering",
+            "phenologyAffectsScale": false,
+            "ownerReviewRequired": true,
+            "meterAccuracyClaimed": false,
+            "clippingAllowed": false,
+            "supportContextRequired": false,
+            "reasonCodes": [
+              "VISUAL_FORM_BASELINE",
+              "GROWTH_STAGE_REFINEMENT"
+            ]
+          },
+          "presentationSizingRequired": true,
+          "productionApprovedRequired": true,
+          "autoApprovalEnabled": false,
+          "productionPriorityScore": 250,
+          "originalOrder": 13
+        },
+        {
+          "canonicalSlug": "strelitzia",
+          "visualForm": "herbaceous-clump",
+          "architectureMode": "default",
+          "growthStage": "mature",
+          "phenology": "vegetative",
+          "season": "season-neutral",
+          "formView": null,
+          "variantKey": "mature__default__vegetative",
+          "jobId": "strelitzia__mature__default__vegetative__v1",
+          "required": true,
+          "reason": "BASELINE_MATURE_VEGETATIVE",
+          "priority": 40,
+          "priorityBand": "portfolio-launch-gaps",
+          "morphologyAuthority": "source_supported_habit",
+          "scientific": "Strelitzia reginae",
+          "identityPrecision": "SPECIES_SUPPORTED",
+          "identityScope": "species",
+          "pipelineVersion": "plant-visual-production-pipeline-v1",
+          "state": "NEEDED",
+          "qualityPlan": {
+            "detailClass": "UNKNOWN",
+            "detailClassSource": "unknown-default-medium",
+            "quality": "medium",
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2"
+          },
+          "promptRecord": {
+            "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+            "nextProductionPrompt": true,
+            "appliedToPaidExecute": false,
+            "generateNow": false,
+            "round1LearningInherited": [
+              "natural garden-grown architecture",
+              "ground-level planted-bed three-quarter perspective",
+              "avoid catalog-isolate composition",
+              "avoid perfect stock-photo symmetry",
+              "natural irregular silhouette",
+              "realistic botanical architecture",
+              "natural photographic sharpness",
+              "sufficient transparent margin",
+              "full visible specimen",
+              "no baked scene shadow",
+              "no runtime blend baked into PNG"
+            ],
+            "runtimeNotInPng": [
+              "scene tonal adaptation",
+              "contact shadow",
+              "mild sharpness normalization",
+              "edge integration",
+              "physical scale"
+            ],
+            "require": [
+              "individually legible natural foliage",
+              "clear leaf/leaflet boundaries",
+              "realistic fine botanical texture",
+              "natural branch/leaf separation",
+              "photographic foliage at 100% pixel inspection"
+            ],
+            "forbidSoft": [
+              "painterly foliage masses",
+              "green glow",
+              "specimen-wide soft focus",
+              "artificial depth-of-field blur",
+              "fused leafy blobs"
+            ],
+            "stillForbid": [
+              "crunchy HDR sharpening",
+              "CGI microtexture",
+              "synthetic leaf patterns",
+              "oversharpened edges",
+              "studio-isolate aesthetic",
+              "baked scene shadow",
+              "baked runtime blend"
+            ],
+            "provider": "openai-images-api",
+            "model": "unspecified",
+            "settings": {
+              "size": "1024x1536",
+              "quality": "medium",
+              "background": "transparent",
+              "outputFormat": "png",
+              "n": 1
+            },
+            "prompt": "FAMILY LOCK for Strelitzia reginae (canonical identity strelitzia). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: herbaceous-clump. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. FRAMING SAFE ZONE: the complete visible specimen must sit comfortably inside the canvas and must not touch any image boundary. Center the specimen horizontally. Keep the visible plant width to no more than about 90% of the canvas and the visible plant height to no more than about 92% of the canvas unless the natural form is much smaller. Leave clearly visible transparent breathing room on every side, with especially generous space above the highest leaf/branch and at both lateral extremes. Target at least ~4% transparent top margin, ~4% on each side, and ~1% at the bottom so the production framing gate has safety buffer. Do not crop leaves, branches, fruit, flowers, stems, or roots at the canvas edge. PLANT ONLY: no people, animals, insects, birds, fish, toys, mascots, tools, signs, decorative props, ornaments, or unrelated objects. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=default, phenologyState=vegetative. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. VEGETATIVE: foliage/architecture only. No conspicuous flowers. No conspicuous fruit.",
+            "familyLockFields": [
+              "canonicalSlug",
+              "scientific",
+              "visualForm",
+              "cameraTreatment",
+              "gardenGrownNaturalArchitecture",
+              "naturalPhotographicDetail",
+              "transparentCutout"
+            ],
+            "stateDeltaFields": [
+              "growthStage",
+              "phenologyState",
+              "architectureMode"
+            ],
+            "canonicalSlug": "strelitzia",
+            "jobId": "strelitzia__mature__default__vegetative__v1",
+            "growthStage": "mature",
+            "architectureMode": "default",
+            "phenologyState": "vegetative",
+            "visualForm": "herbaceous-clump",
+            "encodesPhysicalMeters": false
+          },
+          "imageGenerationRequired": true,
+          "technicalQaRequired": true,
+          "framingQaRequired": true,
+          "botanicalIdentityQaRequired": true,
+          "inGardenQaRequired": true,
+          "sizeAuthorityPlan": {
+            "version": "plant-size-authority-readiness-v1",
+            "canonicalSlug": "strelitzia",
+            "growthStage": "mature",
+            "visualForm": "herbaceous-clump",
+            "state": "SIZE_AUTHORITY_EVIDENCE_GAP",
+            "authoritativeMetersAvailable": false,
+            "explicitEstimateOnly": true,
+            "morphologyFallbackIsAuthority": false,
+            "ownerReviewRequired": true,
+            "reasonCodes": [
+              "CANONICAL_SIZE_RECORD_NOT_FOUND"
+            ]
+          },
+          "inGardenQaScalePlan": {
+            "policyVersion": "in-garden-qa-scale-policy-v1.1",
+            "recommendedBand": "large",
+            "reviewBands": [
+              "medium",
+              "large",
+              "xl"
+            ],
+            "source": "FORM_STAGE_POLICY",
+            "visualForm": "herbaceous-clump",
+            "growthStage": "mature",
+            "phenology": "vegetative",
+            "phenologyAffectsScale": false,
+            "ownerReviewRequired": true,
+            "meterAccuracyClaimed": false,
+            "clippingAllowed": false,
+            "supportContextRequired": false,
+            "reasonCodes": [
+              "VISUAL_FORM_BASELINE",
+              "GROWTH_STAGE_REFINEMENT"
+            ]
+          },
+          "presentationSizingRequired": true,
+          "productionApprovedRequired": true,
+          "autoApprovalEnabled": false,
+          "productionPriorityScore": 250,
+          "originalOrder": 14
+        }
+      ],
+      "jobCount": 15,
+      "plantCount": 7,
+      "canonicalSlugs": [
+        "basil",
+        "black-eyed-susan-vine",
+        "cyclamen",
+        "ficus-benjamina",
+        "hibiscus",
+        "lemon",
+        "strelitzia"
+      ],
+      "ownerReviewCapacity": 8,
+      "paidExecutionApproved": false,
+      "productionRegistryWritten": false
+    }
+  ],
+  "blocked": []
+}
