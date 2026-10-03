@@ -15,7 +15,7 @@ const tasks=Object.freeze([
 ]);
 
 const frame=document.querySelector('#review-frame');
-frame.addEventListener('load',()=>{
+function hydrate(){
  const vm=buildNotificationsScreenViewModel({plants,tasks,today:'2026-10-02',plantId:null,filter:'attention'});
  const model=buildApprovedNotificationsRenderModel(vm);
  assertNotificationsVisualAcceptanceReady(model);
@@ -30,4 +30,6 @@ frame.addEventListener('load',()=>{
  frame.dataset.contract='hydrated';
  frame.dataset.attentionCount=String(model.counts.attention);
  document.documentElement.dataset.reviewReady='true';
-});
+}
+if(frame.contentDocument?.readyState==='complete') hydrate();
+else frame.addEventListener('load',hydrate,{once:true});
