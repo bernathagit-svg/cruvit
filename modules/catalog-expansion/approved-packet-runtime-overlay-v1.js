@@ -46,9 +46,19 @@ export function applyApprovedPacketRuntimeClimateOverlay(plants,payload,{
       ?existing.traitEvidenceClasses:{};
     const authorityUnknownFields=[];
     for(const field of Array.isArray(row.missingFields)?row.missingFields:[]){
-      if(String(existingEvidence[field]||'').toUpperCase()!=='SOURCE_SUPPORTED'){
+      const existingClass=String(existingEvidence[field]||'').toUpperCase();
+      if(existingClass!=='SOURCE_SUPPORTED'){
         delete mergedTraits[field];
         authorityUnknownFields.push(field);
+      }else{
+        if(!mergedTraits.traitEvidenceClasses||typeof mergedTraits.traitEvidenceClasses!=='object'){
+          mergedTraits.traitEvidenceClasses={};
+        }
+        mergedTraits.traitEvidenceClasses[field]='SOURCE_SUPPORTED';
+        if(existing.traitProvenance?.[field]){
+          if(!mergedTraits.traitProvenance||typeof mergedTraits.traitProvenance!=='object') mergedTraits.traitProvenance={};
+          mergedTraits.traitProvenance[field]=clone(existing.traitProvenance[field]);
+        }
       }
     }
     mergedTraits.authorityUnknownFields=authorityUnknownFields;

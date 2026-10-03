@@ -1,0 +1,180 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "black-eyed-susan-vine-legacy-authority-closure-wave2-v1",
+  "identity": {
+    "canonicalSlug": "black-eyed-susan-vine",
+    "commonNameEn": "Black-eyed Susan Vine",
+    "acceptedScientificName": "Thunbergia alata",
+    "aliases": [
+      "black-eyed susan vine",
+      "thunbergia",
+      "Thunbergia alata"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-10-03",
+    "notes": "Legacy runtime authority closure Wave 2; unsupported fields remain explicit UNKNOWN."
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-thunbergia-alata",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Thunbergia alata (Black-eyed Susan Vine)",
+      "url": "https://plants.ces.ncsu.edu/plants/thunbergia-alata/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-03"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Thunbergia alata",
+      "sourceIds": [
+        "ncsu-thunbergia-alata"
+      ],
+      "shortExcerpt": "NCSU identifies Black-eyed Susan vine as Thunbergia alata.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "black-eyed susan vine",
+        "thunbergia",
+        "Thunbergia alata"
+      ],
+      "sourceIds": [
+        "ncsu-thunbergia-alata"
+      ],
+      "shortExcerpt": "Canonical aliases.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "frost",
+      "field": "frostSensitivity",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "NCSU calls the plant tropical tender and notes frost-free persistence, but no approved whole-plant frost ordinal is asserted."
+    },
+    {
+      "claimId": "cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "ncsu-thunbergia-alata"
+      ],
+      "shortExcerpt": "NCSU lists USDA zones 10a–11b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "heat",
+      "field": "heatTolerance",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "humidity",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-thunbergia-alata"
+      ],
+      "shortExcerpt": "NCSU recommends medium-moisture soil.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-thunbergia-alata"
+      ],
+      "shortExcerpt": "NCSU recommends full sun with some afternoon shade.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-thunbergia-alata"
+      ],
+      "shortExcerpt": "NCSU specifies well-drained soil.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "chill",
+      "field": "needsWinterChill",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "vine",
+        "flowering",
+        "tropical",
+        "annual"
+      ],
+      "sourceIds": [
+        "ncsu-thunbergia-alata"
+      ],
+      "shortExcerpt": "Showy tropical flowering vine often grown as an annual.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Flowers from summer into fall, with best bloom after the hottest part of summer.",
+      "sourceIds": [
+        "ncsu-thunbergia-alata"
+      ],
+      "shortExcerpt": "NCSU documents the summer-to-fall bloom period.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Produces capsules with several seeds; grown primarily for ornamental flowers.",
+      "sourceIds": [
+        "ncsu-thunbergia-alata"
+      ],
+      "shortExcerpt": "NCSU documents capsule fruit and ornamental flowering use.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-03",
+    "approvedBy": "Owner continuation authorization in current CRUVIT work session",
+    "notes": "Owner instructed continuation of authority closure; no paid APIs."
+  }
+}

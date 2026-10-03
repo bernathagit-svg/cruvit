@@ -1,0 +1,179 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "aloe-vera-legacy-authority-closure-wave2-v1",
+  "identity": {
+    "canonicalSlug": "aloe-vera",
+    "commonNameEn": "Aloe Vera",
+    "acceptedScientificName": "Aloe vera",
+    "aliases": [
+      "aloe",
+      "aloe vera",
+      "Aloe vera"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-10-03",
+    "notes": "Legacy runtime authority closure Wave 2; unsupported fields remain explicit UNKNOWN."
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-aloe-vera",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Aloe vera",
+      "url": "https://plants.ces.ncsu.edu/plants/aloe-vera/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-03"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Aloe vera",
+      "sourceIds": [
+        "ncsu-aloe-vera"
+      ],
+      "shortExcerpt": "NCSU identifies Aloe vera as Aloe vera.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "aloe",
+        "aloe vera",
+        "Aloe vera"
+      ],
+      "sourceIds": [
+        "ncsu-aloe-vera"
+      ],
+      "shortExcerpt": "Canonical aliases.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "frost",
+      "field": "frostSensitivity",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "ncsu-aloe-vera"
+      ],
+      "shortExcerpt": "NCSU lists USDA zones 10a–12b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "heat",
+      "field": "heatTolerance",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "humidity",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-aloe-vera"
+      ],
+      "shortExcerpt": "NCSU lists occasionally dry soil conditions.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-aloe-vera"
+      ],
+      "shortExcerpt": "NCSU lists full sun and partial shade.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-aloe-vera"
+      ],
+      "shortExcerpt": "NCSU lists good drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "chill",
+      "field": "needsWinterChill",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "succulent",
+        "houseplant",
+        "perennial"
+      ],
+      "sourceIds": [
+        "ncsu-aloe-vera"
+      ],
+      "shortExcerpt": "Aloe vera is a succulent perennial and common houseplant.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Mature plants produce tubular flower spikes, often in winter or spring.",
+      "sourceIds": [
+        "ncsu-aloe-vera"
+      ],
+      "shortExcerpt": "NCSU documents tubular flower spikes on mature plants.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Primarily grown for succulent foliage; fruit production is not the primary garden use.",
+      "sourceIds": [
+        "ncsu-aloe-vera"
+      ],
+      "shortExcerpt": "NCSU presents Aloe vera primarily as a succulent foliage plant.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-03",
+    "approvedBy": "Owner continuation authorization in current CRUVIT work session",
+    "notes": "Owner instructed continuation of authority closure; no paid APIs."
+  }
+}

@@ -1,0 +1,181 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "ficus-benjamina-legacy-authority-closure-wave2-v1",
+  "identity": {
+    "canonicalSlug": "ficus-benjamina",
+    "commonNameEn": "Weeping Fig",
+    "acceptedScientificName": "Ficus benjamina",
+    "aliases": [
+      "ficus benjamina",
+      "weeping fig",
+      "Ficus benjamina"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-10-03",
+    "notes": "Legacy runtime authority closure Wave 2; unsupported fields remain explicit UNKNOWN."
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-ficus-benjamina",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Ficus benjamina (Weeping Fig)",
+      "url": "https://plants.ces.ncsu.edu/plants/ficus-benjamina/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-03"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Ficus benjamina",
+      "sourceIds": [
+        "ncsu-ficus-benjamina"
+      ],
+      "shortExcerpt": "NCSU identifies weeping fig as Ficus benjamina.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "ficus benjamina",
+        "weeping fig",
+        "Ficus benjamina"
+      ],
+      "sourceIds": [
+        "ncsu-ficus-benjamina"
+      ],
+      "shortExcerpt": "Canonical aliases.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-ficus-benjamina"
+      ],
+      "shortExcerpt": "NCSU describes Ficus benjamina as very frost sensitive.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "frost-injury-to-frost-sensitivity-v1@1.1.0"
+    },
+    {
+      "claimId": "cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "ncsu-ficus-benjamina"
+      ],
+      "shortExcerpt": "NCSU lists USDA zones 10a–12b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "heat",
+      "field": "heatTolerance",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "humidity",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-ficus-benjamina"
+      ],
+      "shortExcerpt": "NCSU recommends watering often enough to prevent complete drying.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "partial_shade",
+      "sourceIds": [
+        "ncsu-ficus-benjamina"
+      ],
+      "shortExcerpt": "NCSU says bright indirect light performs best while multiple light exposures are tolerated.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "drainage",
+      "field": "drainageNeeds",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "The consulted NCSU record does not express a canonical drainage requirement ordinal."
+    },
+    {
+      "claimId": "chill",
+      "field": "needsWinterChill",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "tree",
+        "houseplant",
+        "tropical",
+        "evergreen"
+      ],
+      "sourceIds": [
+        "ncsu-ficus-benjamina"
+      ],
+      "shortExcerpt": "Tropical evergreen tree commonly grown as a houseplant.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Minute flowers are enclosed within the fig syconium.",
+      "sourceIds": [
+        "ncsu-ficus-benjamina"
+      ],
+      "shortExcerpt": "NCSU documents flowers enclosed in the fleshy fig receptacle.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Produces small figs following specialized pollination biology.",
+      "sourceIds": [
+        "ncsu-ficus-benjamina"
+      ],
+      "shortExcerpt": "NCSU documents fig fruit and fig-wasp pollination biology.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-03",
+    "approvedBy": "Owner continuation authorization in current CRUVIT work session",
+    "notes": "Owner instructed continuation of authority closure; no paid APIs."
+  }
+}

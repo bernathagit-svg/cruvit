@@ -1,0 +1,193 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "cyclamen-legacy-authority-closure-wave2-v1",
+  "identity": {
+    "canonicalSlug": "cyclamen",
+    "commonNameEn": "Cyclamen",
+    "acceptedScientificName": "Cyclamen persicum",
+    "aliases": [
+      "cyclamen",
+      "florist cyclamen",
+      "Cyclamen persicum"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-10-03",
+    "notes": "Legacy runtime authority closure Wave 2; unsupported fields remain explicit UNKNOWN."
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-cyclamen-persicum",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Cyclamen persicum (Florist Cyclamen)",
+      "url": "https://plants.ces.ncsu.edu/plants/cyclamen-persicum/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-03"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Cyclamen persicum",
+      "sourceIds": [
+        "ncsu-cyclamen-persicum"
+      ],
+      "shortExcerpt": "NCSU identifies florist cyclamen as Cyclamen persicum.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "cyclamen",
+        "florist cyclamen",
+        "Cyclamen persicum"
+      ],
+      "sourceIds": [
+        "ncsu-cyclamen-persicum"
+      ],
+      "shortExcerpt": "Canonical aliases.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "very_high",
+      "sourceIds": [
+        "ncsu-cyclamen-persicum"
+      ],
+      "shortExcerpt": "NCSU describes florist cyclamen as frost tender.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "frost-injury-to-frost-sensitivity-v1@1.1.0"
+    },
+    {
+      "claimId": "cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "ncsu-cyclamen-persicum"
+      ],
+      "shortExcerpt": "NCSU lists USDA zones 9a–11b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-cyclamen-persicum"
+      ],
+      "shortExcerpt": "NCSU recommends cool temperatures around 65°F.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-cyclamen-persicum"
+      ],
+      "shortExcerpt": "NCSU recommends moderate humidity.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-cyclamen-persicum"
+      ],
+      "shortExcerpt": "NCSU recommends watering when soil dries and reducing water during dormancy.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "partial_shade",
+      "sourceIds": [
+        "ncsu-cyclamen-persicum"
+      ],
+      "shortExcerpt": "NCSU recommends bright indirect light / partial shade.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-cyclamen-persicum"
+      ],
+      "shortExcerpt": "NCSU recommends well-drained soil.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "chill",
+      "field": "needsWinterChill",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "flowering",
+        "perennial",
+        "bulb",
+        "houseplant"
+      ],
+      "sourceIds": [
+        "ncsu-cyclamen-persicum"
+      ],
+      "shortExcerpt": "Flowering tuberous perennial commonly grown as a houseplant.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Flowers are produced mainly in winter and spring under cool growing conditions.",
+      "sourceIds": [
+        "ncsu-cyclamen-persicum"
+      ],
+      "shortExcerpt": "NCSU documents winter/spring flowering and cool-temperature preference.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Produces a capsule containing seeds after flowering.",
+      "sourceIds": [
+        "ncsu-cyclamen-persicum"
+      ],
+      "shortExcerpt": "NCSU documents capsule fruit and seeds.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-03",
+    "approvedBy": "Owner continuation authorization in current CRUVIT work session",
+    "notes": "Owner instructed continuation of authority closure; no paid APIs."
+  }
+}

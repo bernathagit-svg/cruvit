@@ -1,0 +1,179 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "basil-legacy-authority-closure-wave2-v1",
+  "identity": {
+    "canonicalSlug": "basil",
+    "commonNameEn": "Basil",
+    "acceptedScientificName": "Ocimum basilicum",
+    "aliases": [
+      "basil",
+      "sweet basil",
+      "Ocimum basilicum"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-10-03",
+    "notes": "Legacy runtime authority closure Wave 2; unsupported fields remain explicit UNKNOWN."
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-ocimum-basilicum",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Ocimum basilicum (Basil)",
+      "url": "https://plants.ces.ncsu.edu/plants/ocimum-basilicum/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-03"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Ocimum basilicum",
+      "sourceIds": [
+        "ncsu-ocimum-basilicum"
+      ],
+      "shortExcerpt": "NCSU identifies sweet basil as Ocimum basilicum.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "basil",
+        "sweet basil",
+        "Ocimum basilicum"
+      ],
+      "sourceIds": [
+        "ncsu-ocimum-basilicum"
+      ],
+      "shortExcerpt": "Canonical common/scientific aliases.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "frost",
+      "field": "frostSensitivity",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "NCSU advises planting after last frost but does not provide whole-plant frost ordinal evidence."
+    },
+    {
+      "claimId": "cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "ncsu-ocimum-basilicum"
+      ],
+      "shortExcerpt": "NCSU lists USDA zones 10a–10b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "heat",
+      "field": "heatTolerance",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "humidity",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-ocimum-basilicum"
+      ],
+      "shortExcerpt": "NCSU recommends moist soil.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-ocimum-basilicum"
+      ],
+      "shortExcerpt": "NCSU lists full sun and partial shade; full sun retained as primary preference.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-ocimum-basilicum"
+      ],
+      "shortExcerpt": "NCSU lists good drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "chill",
+      "field": "needsWinterChill",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "edible",
+        "herb",
+        "annual"
+      ],
+      "sourceIds": [
+        "ncsu-ocimum-basilicum"
+      ],
+      "shortExcerpt": "Basil is an edible herb commonly grown as an annual.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Small flowers are produced in summer to late summer.",
+      "sourceIds": [
+        "ncsu-ocimum-basilicum"
+      ],
+      "shortExcerpt": "NCSU documents summer flowering.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Primarily grown for edible leaves and flowers rather than fruit.",
+      "sourceIds": [
+        "ncsu-ocimum-basilicum"
+      ],
+      "shortExcerpt": "NCSU documents edible leaves and flowers.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-03",
+    "approvedBy": "Owner continuation authorization in current CRUVIT work session",
+    "notes": "Owner instructed continuation of authority closure; no paid APIs."
+  }
+}

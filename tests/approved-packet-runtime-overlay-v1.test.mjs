@@ -150,4 +150,5 @@ test('partial overlay preserves an existing missing-field value only when legacy
   const out=applyApprovedPacketRuntimeClimateOverlay(plants,payload);
   assert.deepEqual(out.applied,['artichoke']);
   assert.equal(plants[0].climateTraits.humidityTolerance,'medium');
+  assert.equal(plants[0].climateTraits.traitEvidenceClasses.humidityTolerance,'SOURCE_SUPPORTED');
 });

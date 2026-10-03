@@ -1,0 +1,180 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "strelitzia-legacy-authority-closure-wave2-v1",
+  "identity": {
+    "canonicalSlug": "strelitzia",
+    "commonNameEn": "Bird of Paradise",
+    "acceptedScientificName": "Strelitzia reginae",
+    "aliases": [
+      "strelitzia",
+      "bird of paradise",
+      "Strelitzia reginae"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-10-03",
+    "notes": "Legacy runtime authority closure Wave 2; unsupported fields remain explicit UNKNOWN."
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-strelitzia-reginae",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Strelitzia reginae (Bird of Paradise)",
+      "url": "https://plants.ces.ncsu.edu/plants/strelitzia-reginae/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-03"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Strelitzia reginae",
+      "sourceIds": [
+        "ncsu-strelitzia-reginae"
+      ],
+      "shortExcerpt": "NCSU identifies Bird of Paradise as Strelitzia reginae.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "strelitzia",
+        "bird of paradise",
+        "Strelitzia reginae"
+      ],
+      "sourceIds": [
+        "ncsu-strelitzia-reginae"
+      ],
+      "shortExcerpt": "Canonical aliases.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "frost",
+      "field": "frostSensitivity",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "ncsu-strelitzia-reginae"
+      ],
+      "shortExcerpt": "NCSU lists USDA zones 10a–12b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "heat",
+      "field": "heatTolerance",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "humidity",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-strelitzia-reginae"
+      ],
+      "shortExcerpt": "NCSU advises free watering in spring/summer and drier winter conditions.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-strelitzia-reginae"
+      ],
+      "shortExcerpt": "NCSU lists full sun and partial shade.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-strelitzia-reginae"
+      ],
+      "shortExcerpt": "NCSU specifies well-drained soil.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "chill",
+      "field": "needsWinterChill",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "ornamental",
+        "flowering",
+        "tropical",
+        "perennial"
+      ],
+      "sourceIds": [
+        "ncsu-strelitzia-reginae"
+      ],
+      "shortExcerpt": "Tropical flowering perennial.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Flowers intermittently through the year under suitable warm, bright conditions.",
+      "sourceIds": [
+        "ncsu-strelitzia-reginae"
+      ],
+      "shortExcerpt": "NCSU reports intermittent flowering through the year.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Produces a leathery capsule with seeds; grown primarily for flowers.",
+      "sourceIds": [
+        "ncsu-strelitzia-reginae"
+      ],
+      "shortExcerpt": "NCSU documents the capsule fruit and ornamental flower value.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-03",
+    "approvedBy": "Owner continuation authorization in current CRUVIT work session",
+    "notes": "Owner instructed continuation of authority closure; no paid APIs."
+  }
+}

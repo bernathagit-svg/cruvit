@@ -1,0 +1,189 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "hibiscus-legacy-authority-closure-wave2-v1",
+  "identity": {
+    "canonicalSlug": "hibiscus",
+    "commonNameEn": "Chinese Hibiscus",
+    "acceptedScientificName": "Hibiscus rosa-sinensis",
+    "aliases": [
+      "hibiscus",
+      "Chinese hibiscus",
+      "Hibiscus rosa-sinensis"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-10-03",
+    "notes": "Legacy runtime authority closure Wave 2; unsupported fields remain explicit UNKNOWN."
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-hibiscus-rosa-sinensis",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Hibiscus rosa-sinensis (Chinese Hibiscus)",
+      "url": "https://plants.ces.ncsu.edu/plants/hibiscus-rosa-sinensis/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-03"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Hibiscus rosa-sinensis",
+      "sourceIds": [
+        "ncsu-hibiscus-rosa-sinensis"
+      ],
+      "shortExcerpt": "NCSU identifies Chinese hibiscus as Hibiscus rosa-sinensis.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "hibiscus",
+        "Chinese hibiscus",
+        "Hibiscus rosa-sinensis"
+      ],
+      "sourceIds": [
+        "ncsu-hibiscus-rosa-sinensis"
+      ],
+      "shortExcerpt": "Canonical aliases.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "frost",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-hibiscus-rosa-sinensis"
+      ],
+      "shortExcerpt": "NCSU states Chinese hibiscus needs protection from frost.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "frost-injury-to-frost-sensitivity-v1@1.1.0"
+    },
+    {
+      "claimId": "cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "ncsu-hibiscus-rosa-sinensis"
+      ],
+      "shortExcerpt": "NCSU lists USDA zones 9a–11b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "heat",
+      "field": "heatTolerance",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "humidity",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-hibiscus-rosa-sinensis"
+      ],
+      "shortExcerpt": "NCSU states Chinese hibiscus appreciates high humidity.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-hibiscus-rosa-sinensis"
+      ],
+      "shortExcerpt": "NCSU says roots should be kept moist.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-hibiscus-rosa-sinensis"
+      ],
+      "shortExcerpt": "NCSU lists full sun to partial shade; full sun retained as primary.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-hibiscus-rosa-sinensis"
+      ],
+      "shortExcerpt": "NCSU lists good drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "chill",
+      "field": "needsWinterChill",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "ornamental",
+        "flowering",
+        "tropical",
+        "shrub"
+      ],
+      "sourceIds": [
+        "ncsu-hibiscus-rosa-sinensis"
+      ],
+      "shortExcerpt": "Tropical evergreen flowering shrub.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Large showy flowers are produced under warm, well-lit growing conditions.",
+      "sourceIds": [
+        "ncsu-hibiscus-rosa-sinensis"
+      ],
+      "shortExcerpt": "NCSU documents the large showy flowers and tropical growth conditions.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Primarily grown for ornamental flowers rather than fruit.",
+      "sourceIds": [
+        "ncsu-hibiscus-rosa-sinensis"
+      ],
+      "shortExcerpt": "NCSU presents Chinese hibiscus as an ornamental flowering shrub.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-03",
+    "approvedBy": "Owner continuation authorization in current CRUVIT work session",
+    "notes": "Owner instructed continuation of authority closure; no paid APIs."
+  }
+}

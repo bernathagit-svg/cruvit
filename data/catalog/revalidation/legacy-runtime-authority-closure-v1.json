@@ -3,8 +3,8 @@
   "generatedAt": "2026-10-03",
   "scope": {
     "runtimePlantCount": 122,
-    "approvedPacketOverlayCount": 102,
-    "legacyAuthorityCount": 20
+    "approvedPacketOverlayCount": 110,
+    "legacyAuthorityCount": 12
   },
   "policy": {
     "speciesIdentityComplete": "May proceed to evidence assembly / approved Catalog Expansion packet.",
@@ -12,53 +12,6 @@
     "registryMissing": "Identity registry entry is required before packetization."
   },
   "rows": [
-    {
-      "slug": "basil",
-      "state": "SPECIES_IDENTITY_COMPLETE",
-      "nextAction": "AUTO_ENRICH_TO_PACKET",
-      "queuePriority": "P2"
-    },
-    {
-      "slug": "mango",
-      "state": "SPECIES_IDENTITY_COMPLETE",
-      "nextAction": "EVIDENCE_ASSEMBLY_REQUIRED"
-    },
-    {
-      "slug": "hibiscus",
-      "state": "SPECIES_IDENTITY_COMPLETE",
-      "nextAction": "AUTO_ENRICH_TO_PACKET",
-      "queuePriority": "P2"
-    },
-    {
-      "slug": "strelitzia",
-      "state": "SPECIES_IDENTITY_COMPLETE",
-      "nextAction": "AUTO_ENRICH_TO_PACKET",
-      "queuePriority": "P2"
-    },
-    {
-      "slug": "ficus-benjamina",
-      "state": "SPECIES_IDENTITY_COMPLETE",
-      "nextAction": "AUTO_ENRICH_TO_PACKET",
-      "queuePriority": "P2"
-    },
-    {
-      "slug": "aloe-vera",
-      "state": "SPECIES_IDENTITY_COMPLETE",
-      "nextAction": "AUTO_ENRICH_TO_PACKET",
-      "queuePriority": "P2"
-    },
-    {
-      "slug": "cyclamen",
-      "state": "SPECIES_IDENTITY_COMPLETE",
-      "nextAction": "AUTO_ENRICH_TO_PACKET",
-      "queuePriority": "P2"
-    },
-    {
-      "slug": "black-eyed-susan-vine",
-      "state": "SPECIES_IDENTITY_COMPLETE",
-      "nextAction": "AUTO_ENRICH_TO_PACKET",
-      "queuePriority": "P2"
-    },
     {
       "slug": "succulent",
       "state": "IDENTITY_REVIEW_REQUIRED",
@@ -135,6 +88,21 @@
         "olive",
         "avocado",
         "rosemary"
+      ],
+      "result": "APPROVED_PACKET_OVERLAY_PARTIAL_OR_COMPLETE"
+    },
+    {
+      "waveId": "legacy-authority-closure-wave2-v1",
+      "closedAt": "2026-10-03",
+      "slugs": [
+        "basil",
+        "mango",
+        "hibiscus",
+        "strelitzia",
+        "ficus-benjamina",
+        "aloe-vera",
+        "cyclamen",
+        "black-eyed-susan-vine"
       ],
       "result": "APPROVED_PACKET_OVERLAY_PARTIAL_OR_COMPLETE"
     }

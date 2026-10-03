@@ -1,0 +1,197 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "mango-legacy-authority-closure-wave2-v1",
+  "identity": {
+    "canonicalSlug": "mango",
+    "commonNameEn": "Mango Tree",
+    "acceptedScientificName": "Mangifera indica",
+    "aliases": [
+      "mango",
+      "mango tree",
+      "Mangifera indica"
+    ]
+  },
+  "flags": {
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-10-03",
+    "notes": "Legacy runtime authority closure Wave 2; unsupported fields remain explicit UNKNOWN."
+  },
+  "sources": [
+    {
+      "sourceId": "ufifas-mango-mg216",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida IFAS Extension",
+      "title": "Mango Growing in the Florida Home Landscape",
+      "url": "https://edis.ifas.ufl.edu/publication/mg216",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-03"
+    },
+    {
+      "sourceId": "ufifas-tropical-fruit-environment-hs1499",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida IFAS Extension",
+      "title": "Quick Guide to Environmental Factors for Tropical Fruit Crops",
+      "url": "https://edis.ifas.ufl.edu/publication/HS1499/pdf",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-10-03"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Mangifera indica",
+      "sourceIds": [
+        "ufifas-mango-mg216"
+      ],
+      "shortExcerpt": "UF/IFAS identifies mango as Mangifera indica.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "mango",
+        "mango tree",
+        "Mangifera indica"
+      ],
+      "sourceIds": [
+        "ufifas-mango-mg216"
+      ],
+      "shortExcerpt": "Canonical aliases.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "frost",
+      "field": "frostSensitivity",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "UF/IFAS gives mature-tree and young-tree freeze injury thresholds, but the approved whole-plant ordinal transform is not applied to stage-specific injury."
+    },
+    {
+      "claimId": "cold",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "very_low",
+      "sourceIds": [
+        "ufifas-mango-mg216"
+      ],
+      "shortExcerpt": "UF/IFAS lists mango for USDA 10B–11.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "hardiness-zone-to-cold-traits-v1@1.1.0"
+    },
+    {
+      "claimId": "heat",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ufifas-tropical-fruit-environment-hs1499"
+      ],
+      "shortExcerpt": "UF/IFAS gives optimum mango growth at 75–86°F and heat damage above 104°F.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "humidity",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "evidenceClass": "UNKNOWN",
+      "shortExcerpt": "Not yet source-supported for the canonical species."
+    },
+    {
+      "claimId": "water",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ufifas-mango-mg216"
+      ],
+      "shortExcerpt": "UF/IFAS home-landscape guidance warns against overwatering and uses moderate irrigation by growth stage.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "sun",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ufifas-mango-mg216"
+      ],
+      "shortExcerpt": "Mango is a warm-climate fruit tree grown in open sunny landscape conditions.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "drainage",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ufifas-mango-mg216"
+      ],
+      "shortExcerpt": "UF/IFAS warns that excessive water can cause root rot.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "chill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ufifas-mango-mg216"
+      ],
+      "shortExcerpt": "Mango is adapted to tropical/subtropical climates without a temperate chill-hour requirement.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "fruit",
+        "edible",
+        "tropical",
+        "tree"
+      ],
+      "sourceIds": [
+        "ufifas-mango-mg216"
+      ],
+      "shortExcerpt": "Mango is a tropical edible fruit tree.",
+      "evidenceClass": "HEURISTIC_ASSERTION"
+    },
+    {
+      "claimId": "flower",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Flower panicles are produced in the warm-climate growth cycle; cold can damage flowers and small fruit.",
+      "sourceIds": [
+        "ufifas-mango-mg216"
+      ],
+      "shortExcerpt": "UF/IFAS documents mango flowering and cold injury to flowers.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruit",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Fruit development requires warm conditions; harvest season and timing vary by cultivar.",
+      "sourceIds": [
+        "ufifas-mango-mg216"
+      ],
+      "shortExcerpt": "UF/IFAS documents mango fruiting and cultivar-dependent harvest timing.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-10-03",
+    "approvedBy": "Owner continuation authorization in current CRUVIT work session",
+    "notes": "Owner instructed continuation of authority closure; no paid APIs."
+  }
+}
