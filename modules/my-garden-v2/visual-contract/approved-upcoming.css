@@ -343,3 +343,18 @@ button{font:inherit;color:inherit}
   height:100% !important;
   object-fit:cover !important;
 }
+
+
+/* Owner-reference leafy photographic top overlay */
+.upcoming-screen[data-upcoming-screen="calendar"]::after{
+  content:"";
+  position:absolute;
+  z-index:1;
+  left:0;right:0;top:0;height:360px;
+  pointer-events:none;
+  background:url('/assets/garden-bg.jpg') 52% top/cover no-repeat;
+  filter:brightness(1.55) saturate(1.18);
+  opacity:.48;
+  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 45%,rgba(0,0,0,.60) 72%,transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 0%,#000 45%,rgba(0,0,0,.60) 72%,transparent 100%);
+}
