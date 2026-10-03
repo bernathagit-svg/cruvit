@@ -276,3 +276,16 @@ button{font:inherit;color:inherit}
   .upcoming-task.is-compact .upcoming-task-copy strong{font-size:16px}
   .upcoming-task.is-compact .upcoming-task-copy span{font-size:14px}
 }
+
+
+/* Owner-reference calibration pass 4: Calendar approved micro-details. */
+.upcoming-add-task.is-pill svg{
+  width:34px;height:34px;
+  padding:7px;
+  border-radius:50%;
+  background:#f5f1df;
+  color:#173f18;
+  stroke-width:2;
+}
+[data-upcoming-date="2026-10-05"] .upcoming-dot{background:var(--up-lime)}
+[data-upcoming-date="2026-10-07"] .upcoming-dot{background:var(--up-orange)}
