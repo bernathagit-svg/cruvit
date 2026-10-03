@@ -1,0 +1,146 @@
+{
+  "contract": "cruvit-plant-intake-e2e-next-wave-v1",
+  "createdAt": "2026-10-03",
+  "purpose": "Resume continuous END-TO-END plant intake after climate/authority hardening",
+  "invariants": [
+    "No duplicate paid generation when an approved/reusable asset exists",
+    "Canonical identity and climate authority precede visual promotion",
+    "Size authority is evaluated before in-garden QA",
+    "UNKNOWN/BLOCKED is valid; no silent guesses",
+    "No candidate reaches production without technical, framing, botanical/state and in-garden QA"
+  ],
+  "pipeline": [
+    "CANONICAL_IDENTITY",
+    "BOTANICAL_DATA",
+    "CLIMATE_AUTHORITY",
+    "SIZE_AUTHORITY",
+    "VISUAL_DEMAND",
+    "ASSET_REUSE_OR_GENERATION",
+    "TECHNICAL_QA",
+    "FRAMING_QA",
+    "BOTANICAL_IDENTITY_QA",
+    "STATE_QA",
+    "IN_GARDEN_QA",
+    "PROMOTION",
+    "PRODUCTION_REGISTRY",
+    "APP_RUNTIME"
+  ],
+  "wave": {
+    "id": "plant-intake-e2e-wave-2026-10-03-v1",
+    "plants": [
+      {
+        "slug": "olive",
+        "dataState": "AUTHORITY_READY",
+        "visualAction": "REUSE_AND_VERIFY_PROMOTION",
+        "paidGeneration": false,
+        "knownAssets": [
+          "olive__young__tree__vegetative__v1",
+          "olive-mature-summer-vegetative-v1"
+        ]
+      },
+      {
+        "slug": "avocado",
+        "dataState": "AUTHORITY_READY",
+        "visualAction": "REUSE_AND_VERIFY_PROMOTION",
+        "paidGeneration": false,
+        "knownAssets": [
+          "avocado__young__tree__vegetative__v1",
+          "avocado__mature__tree__vegetative__detail-v2__medium"
+        ]
+      },
+      {
+        "slug": "mango",
+        "dataState": "AUTHORITY_READY",
+        "visualAction": "REUSE_AND_VERIFY_PROMOTION",
+        "paidGeneration": false,
+        "knownAssets": [
+          "mango__young__tree__vegetative__v1",
+          "mango__mature__tree__vegetative__v1",
+          "mango__mature__tree__fruiting__v1"
+        ]
+      },
+      {
+        "slug": "aloe-vera",
+        "dataState": "AUTHORITY_READY",
+        "visualAction": "REUSE_AND_VERIFY_PROMOTION",
+        "paidGeneration": false,
+        "knownAssets": [
+          "aloe-vera__mature__default__vegetative__v1"
+        ]
+      },
+      {
+        "slug": "rosemary",
+        "dataState": "AUTHORITY_READY",
+        "visualAction": "REUSE_CANDIDATE_COMPLETE_QA",
+        "paidGeneration": false,
+        "knownAssets": [
+          "rosemary__mature__shrub__vegetative__v1"
+        ]
+      },
+      {
+        "slug": "ficus-benjamina",
+        "dataState": "AUTHORITY_READY",
+        "visualAction": "REUSE_IF_VALID_ELSE_GENERATE",
+        "paidGeneration": "CONDITIONAL_AFTER_REUSE_CHECK"
+      },
+      {
+        "slug": "lemon",
+        "dataState": "AUTHORITY_READY",
+        "visualAction": "NEW_PRIMARY_VISUAL_REQUIRED",
+        "paidGeneration": "REQUIRES_OWNER_BUDGET_APPROVAL"
+      },
+      {
+        "slug": "hibiscus",
+        "dataState": "AUTHORITY_READY",
+        "visualAction": "NEW_PRIMARY_VISUAL_REQUIRED",
+        "paidGeneration": "REQUIRES_OWNER_BUDGET_APPROVAL"
+      },
+      {
+        "slug": "strelitzia",
+        "dataState": "AUTHORITY_READY",
+        "visualAction": "NEW_PRIMARY_VISUAL_REQUIRED",
+        "paidGeneration": "REQUIRES_OWNER_BUDGET_APPROVAL"
+      },
+      {
+        "slug": "cyclamen",
+        "dataState": "AUTHORITY_READY",
+        "visualAction": "NEW_PRIMARY_VISUAL_REQUIRED",
+        "paidGeneration": "REQUIRES_OWNER_BUDGET_APPROVAL"
+      },
+      {
+        "slug": "basil",
+        "dataState": "AUTHORITY_READY",
+        "visualAction": "NEW_PRIMARY_VISUAL_REQUIRED",
+        "paidGeneration": "REQUIRES_OWNER_BUDGET_APPROVAL"
+      },
+      {
+        "slug": "black-eyed-susan-vine",
+        "dataState": "AUTHORITY_READY",
+        "visualAction": "NEW_PRIMARY_VISUAL_REQUIRED",
+        "paidGeneration": "REQUIRES_OWNER_BUDGET_APPROVAL"
+      }
+    ]
+  },
+  "visualVariantPolicy": {
+    "primary": "One production-ready canonical state per plant first",
+    "extraVariants": "Add only when maturity, fruiting, flowering, dormancy or season materially changes appearance/use",
+    "fruitTrees": [
+      "young vegetative",
+      "mature vegetative",
+      "mature fruiting when botanically meaningful"
+    ],
+    "floweringOrnamentals": [
+      "mature vegetative",
+      "mature flowering when visually meaningful"
+    ],
+    "herbsAndSmallPerennials": [
+      "mature vegetative first; flowering only if materially useful"
+    ],
+    "seasonalDormancy": "Only for taxa where winter/dormant state is materially different and useful in Garden Design"
+  },
+  "nextScaleGate": {
+    "afterThisWave": "Start next 12-20 new species-level plants through the same pipeline",
+    "ownerReview": "Exception-only",
+    "target": "Continuous batches; data and visual readiness advance together rather than as separate backlogs"
+  }
+}
