@@ -1750,9 +1750,19 @@ export function deriveSpecificPlantOutcomes({
   });
   if (meta?.reproductiveClimate?.flowering) {
     const rf = reproductiveClimateGate.flowering;
+    const floweringAlreadyNegative = [
+      SPECIFIC_OUTCOME_STATUS.UNLIKELY,
+      SPECIFIC_OUTCOME_STATUS.UNRELIABLE,
+      SPECIFIC_OUTCOME_STATUS.POOR,
+      SPECIFIC_OUTCOME_STATUS.CONSTRAINED
+    ].includes(flowering);
     if (rf.status === 'unreliable') flowering = SPECIFIC_OUTCOME_STATUS.UNLIKELY;
-    else if (rf.status === 'constrained') flowering = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
-    else if (rf.status === 'unknown') flowering = SPECIFIC_OUTCOME_STATUS.UNKNOWN;
+    else if (rf.status === 'constrained' && !floweringAlreadyNegative) {
+      flowering = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    }
+    else if (rf.status === 'unknown' && !floweringAlreadyNegative) {
+      flowering = SPECIFIC_OUTCOME_STATUS.UNKNOWN;
+    }
     else if (rf.status === 'supported' && flowering === SPECIFIC_OUTCOME_STATUS.UNKNOWN) {
       flowering = SPECIFIC_OUTCOME_STATUS.SUPPORTED;
     }
@@ -1763,9 +1773,19 @@ export function deriveSpecificPlantOutcomes({
   }
   if (meta?.reproductiveClimate?.fruiting) {
     const rr = reproductiveClimateGate.fruiting;
+    const fruitingAlreadyNegative = [
+      SPECIFIC_OUTCOME_STATUS.UNLIKELY,
+      SPECIFIC_OUTCOME_STATUS.UNRELIABLE,
+      SPECIFIC_OUTCOME_STATUS.POOR,
+      SPECIFIC_OUTCOME_STATUS.CONSTRAINED
+    ].includes(fruiting);
     if (rr.status === 'unreliable') fruiting = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
-    else if (rr.status === 'constrained') fruiting = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
-    else if (rr.status === 'unknown') fruiting = SPECIFIC_OUTCOME_STATUS.UNKNOWN;
+    else if (rr.status === 'constrained' && !fruitingAlreadyNegative) {
+      fruiting = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    }
+    else if (rr.status === 'unknown' && !fruitingAlreadyNegative) {
+      fruiting = SPECIFIC_OUTCOME_STATUS.UNKNOWN;
+    }
     else if (rr.status === 'supported' && fruiting === SPECIFIC_OUTCOME_STATUS.UNKNOWN) {
       fruiting = SPECIFIC_OUTCOME_STATUS.SUPPORTED;
     }

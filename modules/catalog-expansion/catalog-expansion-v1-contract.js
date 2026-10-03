@@ -757,6 +757,25 @@ export function materializePlantCatalogItemFromPacket(packet, options = {}) {
     addDerivedReproductiveClaim(reproductiveClimate, humidConstraint, sourceText);
   }
 
+  // Source-backed reproductive research without a defensible structured transform is
+  // explicitly UNKNOWN rather than silently positive. This preserves evidence honesty:
+  // researched prose is not the same thing as a climate threshold we can compare.
+  const floweringClimateClaim = packet.claims.find((x) => x?.field === 'floweringRequirements');
+  for (const [phase, claim] of [
+    ['flowering', floweringClimateClaim],
+    ['fruiting', fruitClimateClaim]
+  ]) {
+    const evidenceClass = String(claim?.evidenceClass || '').toUpperCase();
+    if (!reproductiveClimate[phase] && usableSourceClaim(claim) && evidenceClass === 'SOURCE_SUPPORTED') {
+      reproductiveClimate[phase] = {
+        evidenceState: 'RESEARCHED_UNQUANTIFIED',
+        evidenceClass: 'SOURCE_SUPPORTED',
+        sourceIds: [...claim.sourceIds],
+        sourceExcerpt: claimEvidenceText(claim)
+      };
+    }
+  }
+
   if (reproductiveClimate.flowering || reproductiveClimate.fruiting) {
     climateTraits.reproductiveClimate = reproductiveClimate;
   }

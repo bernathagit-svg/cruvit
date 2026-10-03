@@ -144,7 +144,6 @@ test('merge refuses duplicate slug unless replaceExisting', () => {
   assert.equal(ok.action, 'replaced');
 });
 
-
 test('systemic reproductive climate transforms materialize only from explicit source-backed evidence', () => {
   const cases = [
     {
@@ -199,4 +198,19 @@ test('materializer preserves source-backed unquantified fruiting climate without
   assert.ok(Array.isArray(rc?.fruiting?.sourceIds) && rc.fruiting.sourceIds.length > 0);
   assert.equal(rc?.fruiting?.optimumTemperatureC, undefined);
   assert.equal(rc?.fruiting?.summerHeatBand, undefined);
+});
+
+
+test('source-supported flowering prose without a safe structured transform becomes RESEARCHED_UNQUANTIFIED', () => {
+  const packet = JSON.parse(fs.readFileSync(path.join(
+    ROOT,'data','catalog-expansion','batches','p1-review-closure-wave-b-v1','packets','papaya.packet.json'
+  ), 'utf8'));
+  const m = materializePlantCatalogItemFromPacket(packet);
+  assert.equal(m.ok, true);
+  const flowering = m.item.climateTraits.reproductiveClimate?.flowering;
+  assert.equal(flowering?.evidenceState, 'RESEARCHED_UNQUANTIFIED');
+  assert.equal(flowering?.evidenceClass, 'SOURCE_SUPPORTED');
+  assert.ok(Array.isArray(flowering?.sourceIds) && flowering.sourceIds.length > 0);
+  assert.equal(flowering?.minWarmestMonthMeanMaxC, undefined);
+  assert.equal(flowering?.summerHeatBand, undefined);
 });

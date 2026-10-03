@@ -1150,6 +1150,32 @@ const plantCatalogSeedStatus={
   source:'data/plants.seed.json'
 };
 let plantCatalogSeedLoadPromise=null;
+const approvedPacketRuntimeOverlayStatus={status:'idle',applied:[],skipped:[],error:null};
+async function applyApprovedPacketRuntimeClimateFallback(){
+  try{
+    const [mod,res]=await Promise.all([
+      import('./modules/catalog-expansion/approved-packet-runtime-overlay-v1.js'),
+      (typeof fetchWithTimeout==='function'
+        ?fetchWithTimeout('data/catalog-expansion/approved-runtime-climate-overlay-v1.json',{},9000)
+        :fetch('data/catalog-expansion/approved-runtime-climate-overlay-v1.json'))
+    ]);
+    if(!res.ok) throw new Error('Approved packet runtime overlay fetch failed: HTTP '+res.status);
+    const payload=await res.json();
+    const result=mod.applyApprovedPacketRuntimeClimateOverlay(PLANT_LIBRARY,payload,{
+      aliasToCanonical:SPECIES_PACKET_ALIAS_TO_CANONICAL,
+      preserveVerifiedCanonical:true
+    });
+    approvedPacketRuntimeOverlayStatus.status='ready';
+    approvedPacketRuntimeOverlayStatus.applied=result.applied.slice();
+    approvedPacketRuntimeOverlayStatus.skipped=result.skipped.slice();
+    approvedPacketRuntimeOverlayStatus.error=null;
+    return {ok:true,...result};
+  }catch(err){
+    approvedPacketRuntimeOverlayStatus.status='error';
+    approvedPacketRuntimeOverlayStatus.error=String(err&&(err.message||err)||'Approved packet overlay failed');
+    return {ok:false,applied:[],skipped:[],error:approvedPacketRuntimeOverlayStatus.error};
+  }
+}
 
 function getPlantCatalogSeedStatus(){
   return {
@@ -1187,6 +1213,9 @@ async function loadPlantCatalogSeed(url){
       // Seed items are loaded after the initial canonical DB overlay. Re-apply the same
       // authoritative overlay so late-added plants receive catalog_plants climate_traits too.
       applyCanonicalRuntimeClimateOverlay();
+      // Canonical DB remains first authority. Approved packets are an offline/static fallback
+      // only for plants that do not already have a verified canonical runtime climate authority.
+      await applyApprovedPacketRuntimeClimateFallback();
       if(json.catalogMediaByCanonicalSlug&&typeof json.catalogMediaByCanonicalSlug==='object'){
         Object.keys(json.catalogMediaByCanonicalSlug).forEach(slug=>{
           const plant=PLANT_INDEX[slug];
