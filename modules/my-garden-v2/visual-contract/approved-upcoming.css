@@ -172,3 +172,61 @@ button{font:inherit;color:inherit}
   .upcoming-task{grid-template-columns:64px 31px 1fr 18px}
   .upcoming-thumb{width:58px;height:58px}
 }
+
+
+/* 2026-10-03 owner-reference calibration — Upcoming NEW DESIGN List/Calendar.
+   Geometry only. Canonical Task projection and interactions remain unchanged. */
+@media (min-width: 480px){
+  .upcoming-screen{
+    width:547px;
+    min-height:1248px;
+    padding:54px 28px 154px;
+  }
+  .upcoming-topbar{height:58px}
+  .upcoming-topbar strong{font-size:21px;font-weight:500}
+  .upcoming-top-icons{gap:20px}
+  .upcoming-top-icons button{width:38px;height:38px}
+  .upcoming-top-icons svg{width:32px;height:32px}
+  .upcoming-copy{margin:21px 10px 24px}
+  .upcoming-copy h1{font-size:70px;line-height:.94;letter-spacing:-.038em}
+  .upcoming-kicker{font-size:27px;line-height:1.16;margin-top:9px}
+  .upcoming-dek{font-size:19px;line-height:1.35;margin-top:20px}
+  .upcoming-view-row{gap:14px}
+  .upcoming-view-row.is-list-row{grid-template-columns:minmax(0,1fr) 78px}
+  .upcoming-view-switch{height:64px;padding:5px;border-radius:33px}
+  .upcoming-view-switch button{font-size:18px;gap:11px;border-radius:28px}
+  .upcoming-view-switch svg{width:26px;height:26px}
+  .upcoming-add-task.is-orb{width:78px;height:78px}
+  .upcoming-add-task svg{width:31px;height:31px}
+  .upcoming-add-task span{font-size:15px}
+  .upcoming-list-controls{margin:26px 0 23px;gap:12px}
+  .upcoming-status-filters{gap:9px}
+  .upcoming-status-filters button{min-height:54px;padding:0 23px;font-size:17px;border-radius:29px}
+  .upcoming-review-filter{width:50px;height:50px}
+  .upcoming-review-filter svg{width:28px;height:28px}
+  .upcoming-list-section h2{font-size:22px;margin:6px 8px 15px}
+  .upcoming-task-list{gap:8px}
+  .upcoming-task{
+    min-height:108px;
+    border-radius:29px;
+    grid-template-columns:102px 42px 1fr 28px;
+    gap:10px;
+    padding:6px 15px 6px 6px;
+  }
+  .upcoming-thumb{width:102px;height:96px;border-radius:22px}
+  .upcoming-task-icon{width:40px;height:40px}
+  .upcoming-task-icon svg{width:30px;height:30px}
+  .upcoming-task-copy{gap:3px}
+  .upcoming-task-copy strong{font-size:19px}
+  .upcoming-task-copy span,.upcoming-task-copy small{font-size:16px}
+  .upcoming-row-chevron svg{width:21px;height:21px}
+  .upcoming-bottom-nav{
+    height:150px;
+    padding:18px 23px 31px;
+    border-radius:38px 38px 0 0;
+  }
+  .upcoming-bottom-nav small{font-size:15px}
+  .upcoming-bottom-nav svg{width:34px;height:34px}
+  .upcoming-bottom-nav .upcoming-nav-add{width:76px;height:76px}
+  .upcoming-bottom-nav .upcoming-nav-add svg{width:39px;height:39px}
+}
