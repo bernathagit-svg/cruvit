@@ -335,3 +335,22 @@ test('hardening migration pins normalizer search_path without rewriting Location
   const v1 = fs.readFileSync(MIGRATION, 'utf8');
   assert.doesNotMatch(v1, /set search_path\s*=\s*pg_catalog/i);
 });
+
+
+test('server hydration explicitly marks missing Structural Climate Authority', () => {
+  const base = buildServerLocationPayload({
+    label: 'Test Garden', climate: 'Mediterranean', lat: 32.1, lon: 34.8,
+    country: 'Israel', source: 'manual', confirmedAt: '2026-10-03T00:00:00.000Z'
+  });
+  const missing = serverLocationToAppPartial(base);
+  assert.equal(missing.structuralClimateHydrationMissing, true);
+  assert.equal(missing.structuralClimateStatus, 'unknown');
+
+  const known = serverLocationToAppPartial({
+    ...base,
+    location_structural_climate: { status: 'known', freezingRisk: 'low' },
+    location_structural_climate_status: 'known'
+  });
+  assert.equal(known.structuralClimateHydrationMissing, false);
+  assert.equal(known.structuralClimateStatus, 'known');
+});

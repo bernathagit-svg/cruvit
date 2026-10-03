@@ -178,6 +178,18 @@ export function boundOutcomeByEvidenceStrength(status, meta, materialFields, { d
     };
   }
   const summary = summarizeMaterialEvidence(meta, materialFields);
+  // An explicit empty material-field trace means this outcome was authorized by
+  // climate/context logic without relying on a plant trait. Do not manufacture
+  // an evidence-strength requirement for fields that were not part of the decision.
+  if (summary.fields.length === 0) {
+    return {
+      status: s,
+      demoted: false,
+      reason: null,
+      materialEvidence: summary,
+      dimension
+    };
+  }
   if (summary.allSource) {
     return {
       status: s,
@@ -237,7 +249,7 @@ export function inferSurvivalMaterialFields({
   env = {},
   evidenceHints = {}
 } = {}) {
-  if (evidenceHints.survivalFields?.length) return evidenceHints.survivalFields;
+  if (Array.isArray(evidenceHints.survivalFields)) return evidenceHints.survivalFields;
   const frost = String(meta?.frostSensitivity || '').toLowerCase();
   const fields = [];
   if (frost) fields.push('frostSensitivity');
@@ -260,7 +272,7 @@ export function inferSurvivalMaterialFields({
 }
 
 export function inferGrowthMaterialFields({ meta, growth, evidenceHints = {} } = {}) {
-  if (evidenceHints.growthFields?.length) return evidenceHints.growthFields;
+  if (Array.isArray(evidenceHints.growthFields)) return evidenceHints.growthFields;
   const fields = [];
   if (evidenceHints.usedHumidityGrowth || String(meta?.humidityTolerance || '').toLowerCase() === 'low') {
     if (meta?.humidityTolerance != null) fields.push('humidityTolerance');
@@ -433,16 +445,26 @@ export function tracePlantEvidenceForDimension(meta, fields, sourcesByField = {}
  */
 export function auditConfidentDependsOnWeakEvidence(row, meta) {
   const hits = [];
-  const fieldsFromTrace = (dimension) => {
+  const traceFields = (dimension) => {
     const tr = row?.evidenceStrength?.traces?.[dimension];
     const list = tr?.materialEvidence?.fields;
-    if (Array.isArray(list) && list.length) return list.map((f) => f.field);
-    return null;
+    return Array.isArray(list)
+      ? { present: true, fields: list.map((f) => f.field) }
+      : { present: false, fields: null };
   };
-  const check = (dimension, status, fields) => {
+  const selectFields = (dimension, fallback) => {
+    const traced = traceFields(dimension);
+    return {
+      fields: traced.present ? traced.fields : fallback,
+      explicitTrace: traced.present
+    };
+  };
+  const check = (dimension, status, selection) => {
     // Only flag confident POSITIVE outcomes that lack SOURCE_SUPPORTED.
     if (!isConfidentPositiveOutcomeStatus(status)) return;
-    const summary = summarizeMaterialEvidence(meta, fields);
+    // Explicit empty trace = no plant-side trait materially authorized this outcome.
+    if (selection.explicitTrace && selection.fields.length === 0) return;
+    const summary = summarizeMaterialEvidence(meta, selection.fields);
     if (!summary.allSource) {
       hits.push({
         dimension,
@@ -453,40 +475,36 @@ export function auditConfidentDependsOnWeakEvidence(row, meta) {
       });
     }
   };
-  check(
+  const survivalSelection = selectFields(
     'Survival',
-    row.survival,
-    fieldsFromTrace('Survival') ||
-      inferSurvivalMaterialFields({ meta, survival: row.survival, env: row.env || {} })
+    inferSurvivalMaterialFields({ meta, survival: row.survival, env: row.env || {} })
   );
-  check(
+  const growthSelection = selectFields(
     'Growth',
-    row.growth,
-    fieldsFromTrace('Growth') || inferGrowthMaterialFields({ meta, growth: row.growth })
+    inferGrowthMaterialFields({ meta, growth: row.growth })
   );
-  check(
-    'Flowering',
-    row.flowering,
-    fieldsFromTrace('Flowering') || inferFloweringMaterialFields(meta)
-  );
-  check(
-    'Fruiting',
-    row.fruiting,
-    fieldsFromTrace('Fruiting') || inferFruitingMaterialFields(meta)
-  );
+  const floweringSelection = selectFields('Flowering', inferFloweringMaterialFields(meta));
+  const fruitingSelection = selectFields('Fruiting', inferFruitingMaterialFields(meta));
+
+  check('Survival', row.survival, survivalSelection);
+  check('Growth', row.growth, growthSelection);
+  check('Flowering', row.flowering, floweringSelection);
+  check('Fruiting', row.fruiting, fruitingSelection);
+
   if (isConfidentPositiveOverall(row.overall)) {
-    const survFields =
-      fieldsFromTrace('Survival') ||
-      inferSurvivalMaterialFields({ meta, survival: row.survival, env: row.env || {} });
-    const growFields =
-      fieldsFromTrace('Growth') || inferGrowthMaterialFields({ meta, growth: row.growth });
-    const survWeak = !materialFieldsAuthorizeConfidence(meta, survFields);
-    const growWeak = !materialFieldsAuthorizeConfidence(meta, growFields);
-    if (survWeak || growWeak) {
+    const survivalAuthorized =
+      survivalSelection.explicitTrace && survivalSelection.fields.length === 0
+        ? true
+        : materialFieldsAuthorizeConfidence(meta, survivalSelection.fields);
+    const growthAuthorized =
+      growthSelection.explicitTrace && growthSelection.fields.length === 0
+        ? true
+        : materialFieldsAuthorizeConfidence(meta, growthSelection.fields);
+    if (!survivalAuthorized || !growthAuthorized) {
       hits.push({
         dimension: 'Overall',
         status: row.overall,
-        dependsOnHeuristic: survWeak || growWeak,
+        dependsOnHeuristic: true,
         fields: []
       });
     }

@@ -153,6 +153,11 @@ export function serverLocationToAppPartial(row) {
   const sc = row.location_structural_climate;
   if (sc && typeof sc === 'object') {
     partial.structuralClimate = sc;
+    partial.structuralClimateStatus = String(sc.status || row.location_structural_climate_status || '').toLowerCase() || 'known';
+    partial.structuralClimateHydrationMissing = false;
+  } else {
+    partial.structuralClimateStatus = 'unknown';
+    partial.structuralClimateHydrationMissing = true;
   }
   return partial;
 }

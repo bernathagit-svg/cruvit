@@ -1310,3 +1310,35 @@ test('winter-chill-required fruiting stays Constrained without proven chill-hour
   assert.equal(out.fruiting, SPECIFIC_OUTCOME_STATUS.CONSTRAINED);
   assert.ok(out.limitingFactors.some((x) => /chill-hour sufficiency|fruiting stays bounded/i.test(x)));
 });
+
+test('neutral warm climate does not invent cold-trait evidence dependencies', () => {
+  const meta = {
+    frostSensitivity: 'medium', coldTolerance: 'medium', heatTolerance: 'medium', humidityTolerance: 'medium',
+    traitEvidenceClasses: { frostSensitivity: 'HEURISTIC_ASSERTION', coldTolerance: 'HEURISTIC_ASSERTION' }
+  };
+  const out = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile: { freezingRisk: 'low', coldestMonthMeanMinC: 10, warmestMonthMeanMaxC: 29, structuralClimateStatus: 'known' },
+    plant: { slug: 'neutral-warm-probe' },
+    suitability: { survivalFit: 82, thriveFit: 82, floweringFit: null, fruitingFit: null, recommendationLevel: 'good', warnings: [] }
+  });
+  assert.equal(out.survival, SPECIFIC_OUTCOME_STATUS.RELIABLE);
+  assert.equal(out.growth, SPECIFIC_OUTCOME_STATUS.SUPPORTED);
+  assert.equal(out.evidenceStrength.traces.Survival.materialEvidence.fields.length, 0);
+  assert.equal(out.evidenceStrength.traces.Growth.materialEvidence.fields.length, 0);
+});
+
+test('cold-risk decision still traces material frost evidence when it is actually used', () => {
+  const meta = {
+    frostSensitivity: 'medium', coldTolerance: 'medium',
+    traitEvidenceClasses: { frostSensitivity: 'HEURISTIC_ASSERTION', coldTolerance: 'SOURCE_SUPPORTED' }
+  };
+  const out = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile: { freezingRisk: 'high', coldestMonthMeanMinC: -7, thermalRegime: 'frost-prone', structuralClimateStatus: 'known' },
+    plant: { slug: 'cold-risk-probe' },
+    suitability: { survivalFit: 55, thriveFit: 55, floweringFit: null, fruitingFit: null, recommendationLevel: 'borderline', warnings: [] }
+  });
+  assert.equal(out.survival, SPECIFIC_OUTCOME_STATUS.CONSTRAINED);
+  assert.ok(out.evidenceStrength.traces.Survival.materialEvidence.fields.some((x) => x.field === 'frostSensitivity'));
+});

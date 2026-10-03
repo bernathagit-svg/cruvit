@@ -366,7 +366,10 @@ export function climateSignalsFromHydratedAppPartial(partial) {
     isFrostFreeGrowingClimate: isFrostFreeGrowingClimate({
       broadClimate,
       freezingRisk: structuralFreezingRiskFromBroadClimate(broadClimate)
-    })
+    }),
+    structuralClimateHydrationMissing: partial.structuralClimateHydrationMissing === true,
+    structuralClimateStatus: partial.structuralClimateStatus || null,
+    structuralClimate: partial.structuralClimate || null
   };
 }
 
@@ -554,6 +557,9 @@ export function structuralEnvironmentFromClimateProfile(climateProfile = {}) {
     aridityIndex: merged.aridityIndex ?? climateProfile.aridityIndex ?? null,
     structuralClimateStatus:
       merged.structuralClimateStatus || climateProfile.structuralClimateStatus || 'unknown',
+    structuralClimateHydrationMissing:
+      climateProfile.structuralClimateHydrationMissing === true ||
+      merged.structuralClimateHydrationMissing === true,
     structuralClimate: merged.structuralClimate || climateProfile.structuralClimate || null,
     coordinateClimateV2: climateProfile.coordinateClimateV2 || merged.coordinateClimateV2 || null
   };
@@ -1463,8 +1469,25 @@ export function deriveSpecificPlantOutcomes({
     }
   } else {
     const coldAssess = assessPlantClimateColdSurvival(meta, env);
-    evidenceHints.survivalFields.push('frostSensitivity');
-    if (meta?.coldTolerance) evidenceHints.survivalFields.push('coldTolerance');
+    // Trace only the plant-side fields actually used by the cold decision.
+    // A neutral baseline in a warm/low-freeze climate must not manufacture
+    // evidence dependencies on frostSensitivity/coldTolerance.
+    const coldAuthority = String(coldAssess?.authority || '');
+    if (coldAuthority === 'quantitative-hardiness') {
+      evidenceHints.survivalFields.push('quantitative.minimum_survival_temperature_c');
+    } else if (
+      coldAuthority === 'tropical-damaging-cold' ||
+      coldAuthority === 'cold-tolerant-discrimination' ||
+      coldAuthority === 'mixed-cold-traits'
+    ) {
+      if (meta?.frostSensitivity) evidenceHints.survivalFields.push('frostSensitivity');
+      if (meta?.coldTolerance) evidenceHints.survivalFields.push('coldTolerance');
+    } else if (
+      coldAuthority === 'frostSensitivity-high' ||
+      coldAuthority === 'frostSensitivity-medium-bounded'
+    ) {
+      if (meta?.frostSensitivity) evidenceHints.survivalFields.push('frostSensitivity');
+    }
     if (coldAssess.survivalHint === 'unreliable') {
       survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
       if (coldAssess.reason) limiting.push(coldAssess.reason);
@@ -1505,6 +1528,17 @@ export function deriveSpecificPlantOutcomes({
       (Array.isArray(s.warnings) && s.warnings.find((w) => isHardFrostLimiter(w))) ||
       (isHardFrostLimiter(s.explanationText) ? s.explanationText : 'Frost risk is too high for this plant.');
     if (!limiting.some((m) => isHardFrostLimiter(m))) limiting.unshift(frostMsg);
+  }
+
+  if (
+    !sheltered &&
+    survival === SPECIFIC_OUTCOME_STATUS.RELIABLE &&
+    env?.structuralClimateHydrationMissing === true
+  ) {
+    survival = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    limiting.push(
+      'Structural climate authority is missing for this hydrated Garden; reliable outdoor survival is withheld until long-term climate evidence is resolved.'
+    );
   }
 
   const lowHumMismatch = lowHumMismatchEarly;
@@ -1595,7 +1629,6 @@ export function deriveSpecificPlantOutcomes({
       evidenceHints.growthFields.push('frostSensitivity');
     } else {
       growth = review ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED : SPECIFIC_OUTCOME_STATUS.SUPPORTED;
-      if (meta?.frostSensitivity) evidenceHints.growthFields.push('frostSensitivity');
     }
   } else if (Number.isFinite(thriveFit) && thriveFit < 60) {
     if (plantRequiresYearRoundWarmClimate(meta)) {
@@ -1606,11 +1639,9 @@ export function deriveSpecificPlantOutcomes({
       // Cool-seasonal / arid / highland alone must NOT force Constrained for non-tropical plants.
       // Neutral/unknown humidity is not material evidence unless a mismatch branch above used it.
       growth = review ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED : SPECIFIC_OUTCOME_STATUS.SUPPORTED;
-      if (meta?.frostSensitivity) evidenceHints.growthFields.push('frostSensitivity');
     }
   } else if (Number.isFinite(thriveFit)) {
     growth = review ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED : SPECIFIC_OUTCOME_STATUS.SUPPORTED;
-    if (meta?.frostSensitivity) evidenceHints.growthFields.push('frostSensitivity');
     // Neutral/unknown humidity is not material evidence unless a mismatch branch above used it.
   } else {
     growth = SPECIFIC_OUTCOME_STATUS.UNKNOWN;

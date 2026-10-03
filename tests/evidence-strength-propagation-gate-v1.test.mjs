@@ -415,3 +415,51 @@ test('PART E — 30-plant audit CONFIDENT_RESULTS_DEPENDING_ON_HEURISTIC_EVIDENC
   };
   fs.writeFileSync(OUT, `${JSON.stringify(report, null, 2)}\n`);
 });
+
+
+test('contextual materiality: explicit empty survival/growth traces do not invent frost dependencies', () => {
+  const meta = {
+    frostSensitivity: 'medium',
+    coldTolerance: 'medium',
+    heatTolerance: 'medium',
+    humidityTolerance: 'medium',
+    traitEvidenceClasses: {
+      frostSensitivity: 'HEURISTIC_ASSERTION',
+      coldTolerance: 'HEURISTIC_ASSERTION',
+      heatTolerance: 'HEURISTIC_ASSERTION',
+      humidityTolerance: 'HEURISTIC_ASSERTION'
+    }
+  };
+  const out = applyEvidenceStrengthPropagation({
+    meta,
+    env: { freezingRisk: 'low' },
+    survival: 'reliable',
+    growth: 'supported',
+    flowering: 'unknown',
+    fruiting: 'unknown',
+    evidenceHints: { survivalFields: [], growthFields: [] }
+  });
+  assert.equal(out.survival, 'reliable');
+  assert.equal(out.growth, 'supported');
+  assert.equal(out.traces.Survival.materialEvidence.fields.length, 0);
+  assert.equal(out.traces.Growth.materialEvidence.fields.length, 0);
+  assert.equal(auditConfidentDependsOnWeakEvidence({ ...out, overall: 'good', evidenceStrength: out }, meta).length, 0);
+});
+
+test('contextual materiality: explicit frost use still requires strong frost evidence for positive survival', () => {
+  const meta = {
+    frostSensitivity: 'medium',
+    traitEvidenceClasses: { frostSensitivity: 'HEURISTIC_ASSERTION' }
+  };
+  const out = applyEvidenceStrengthPropagation({
+    meta,
+    env: { freezingRisk: 'medium' },
+    survival: 'reliable',
+    growth: 'constrained',
+    flowering: 'unknown',
+    fruiting: 'unknown',
+    evidenceHints: { survivalFields: ['frostSensitivity'], growthFields: [] }
+  });
+  assert.equal(out.survival, 'constrained');
+  assert.equal(out.traces.Survival.demoted, true);
+});
