@@ -49,6 +49,32 @@ const plantVisuals = Object.freeze({
 });
 
 const root = document.querySelector('#upcoming-review-root');
+let exactCalendarDataPromise = null;
+
+function getExactCalendarDataUrl(){
+  if(!exactCalendarDataPromise){
+    exactCalendarDataPromise = Promise.all(
+      [0,1,2,3,4].map((i)=>fetch(`./assets/upcoming-calendar-exact/part${i}.txt?v=20261003-exact`).then((r)=>{
+        if(!r.ok) throw new Error('calendar_exact_asset_missing_'+i);
+        return r.text();
+      }))
+    ).then((parts)=>'data:image/webp;base64,'+parts.join(''));
+  }
+  return exactCalendarDataPromise;
+}
+
+async function renderExactCalendar(){
+  document.body.classList.add('is-exact-calendar');
+  const src=await getExactCalendarDataUrl();
+  root.innerHTML=`
+    <div class="upcoming-exact-calendar" aria-label="Upcoming Calendar approved visual">
+      <img src="${src}" alt="Upcoming Calendar" draggable="false">
+      <button type="button" class="exact-hotspot exact-back" data-upcoming-action="back" aria-label="Back to List"></button>
+      <button type="button" class="exact-hotspot exact-list" data-upcoming-view="list" aria-label="List view"></button>
+      <button type="button" class="exact-hotspot exact-add-task" data-upcoming-action="add-task" aria-label="Add task"></button>
+    </div>`;
+}
+
 const state = {
   view: location.hash === '#calendar' ? 'calendar' : 'list',
   filter:'to_do',
@@ -56,17 +82,11 @@ const state = {
   selectedDate:'2026-10-02',
 };
 
-function render(){
+async function render(){
   if(state.view === 'calendar'){
-    const vm = buildUpcomingCalendarScreenViewModel({
-      plants,
-      tasks:calendarVisualTasks,
-      filter:state.filter,
-      selectedMonth:state.selectedMonth,
-      selectedDate:state.selectedDate,
-    });
-    root.innerHTML = renderUpcomingCalendarScreen(vm,{ plantVisuals, activePlantCount:plants.length });
+    await renderExactCalendar();
   } else {
+    document.body.classList.remove('is-exact-calendar');
     const vm = buildUpcomingListScreenViewModel({
       plants,
       tasks,
