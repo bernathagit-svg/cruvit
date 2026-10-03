@@ -75,7 +75,7 @@ export function qualitativeSummerHeatFruitingTransform({
     || /\b(?:heat|hot)\b.*\b(?:best|better|improved)\b.*\b(?:fruit|fruiting|quality|ripen|ripening|sweetness)\b/.test(text)
   ) band='hot';
   else if(
-    /\b(?:long warm season|warm summers?|warm season)\b/.test(text)
+    /\b(?:long warm season|warm(?:[, ]+dry)? summers?|warm season)\b/.test(text)
     || /\bwarm conditions?\b.*\b(?:fruit|ripen|ripening)\b/.test(text)
     || /\b(?:fruit|ripen|ripening)\b.*\bwarm conditions?\b/.test(text)
     || /\b(?:fruit|fruits|fruiting|berries|production|produced|flushes)\b.*\bwarm climates?\b/.test(text)
@@ -90,6 +90,57 @@ export function qualitativeSummerHeatFruitingTransform({
     evidenceClass:'HEURISTIC_ASSERTION',
     sourceIds:ids,
     transformRef:'qualitative-summer-heat-band-v1@1.0.0',
+    evidenceLineage:'DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM'
+  };
+}
+
+export function explicitDrySeasonFruitingTransform({
+  sourceText='',
+  fruitProductionRelevant=false,
+  sourceIds=[]
+}={}){
+  const text=norm(sourceText);
+  const ids=Array.isArray(sourceIds)?sourceIds.map(x=>String(x||'').trim()).filter(Boolean):[];
+  if(!fruitProductionRelevant || !ids.length) return {eligible:false,reason:'PRECONDITION_NOT_MET'};
+  const explicit=(
+    /\bhot[ ,/-]+dry\b/.test(text)
+    || /\bdry[ ,/-]+(?:summer|weather|season|ripen(?:ing)?|conditions?)\b/.test(text)
+    || /\b(?:summer|weather|season|ripen(?:ing)?|conditions?)\b.{0,24}\bdry\b/.test(text)
+    || /\barid weather\b/.test(text)
+  );
+  if(!explicit) return {eligible:false,reason:'DRY_SEASON_NOT_EXPLICIT'};
+  return {
+    eligible:true,
+    field:'reproductiveClimate.fruiting.requiresDrySeason',
+    value:true,
+    evidenceClass:'HEURISTIC_ASSERTION',
+    sourceIds:ids,
+    transformRef:'explicit-dry-season-fruiting-requirement-v1@1.0.0',
+    evidenceLineage:'DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM'
+  };
+}
+
+export function explicitHumidClimateFruitingConstraintTransform({
+  sourceText='',
+  fruitProductionRelevant=false,
+  sourceIds=[]
+}={}){
+  const text=norm(sourceText);
+  const ids=Array.isArray(sourceIds)?sourceIds.map(x=>String(x||'').trim()).filter(Boolean):[];
+  if(!fruitProductionRelevant || !ids.length) return {eligible:false,reason:'PRECONDITION_NOT_MET'};
+  const explicit=(
+    /\bhumid climates?\b.{0,48}\b(?:limit|reduce|restrict|poor|problem|disease)\b/.test(text)
+    || /\b(?:limit|reduce|restrict)\b.{0,48}\b(?:fruit|fruiting|production|cultivars?)\b.{0,48}\bhumid\b/.test(text)
+    || /\bhumid\b.{0,48}\b(?:fruit|fruiting|production|cultivars?)\b.{0,48}\b(?:limit|reduce|restrict)\b/.test(text)
+  );
+  if(!explicit) return {eligible:false,reason:'HUMID_FRUITING_CONSTRAINT_NOT_EXPLICIT'};
+  return {
+    eligible:true,
+    field:'reproductiveClimate.fruiting.humidClimateLimitsFruiting',
+    value:true,
+    evidenceClass:'HEURISTIC_ASSERTION',
+    sourceIds:ids,
+    transformRef:'explicit-humid-fruiting-constraint-v1@1.0.0',
     evidenceLineage:'DERIVED_FROM_SOURCE_EVIDENCE_VIA_EXPLICIT_HEURISTIC_TRANSFORM'
   };
 }
@@ -118,6 +169,8 @@ const api={
   REPRODUCTIVE_CLIMATE_TRANSFORM_VERSION,
   explicitCoolSeasonFruitingTransform,
   explicitFrostFreeFruitingTransform,
+  explicitDrySeasonFruitingTransform,
+  explicitHumidClimateFruitingConstraintTransform,
   qualitativeSummerHeatFruitingTransform,
   warmSeasonFruitingTransform
 };

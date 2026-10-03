@@ -58,6 +58,21 @@ function drySeasonSignal(env={}){
   for(const v of vals) if(v===true||v===false) return v;
   return null;
 }
+function humiditySignal(env={}){
+  const vals=[
+    env.humiditySignal,
+    env.humidityRegime,
+    env.structuralClimate?.humiditySignal,
+    env.structuralClimate?.humidityRegime,
+    env.coordinateClimateV2?.humiditySignal,
+    env.coordinateClimateV2?.humidityRegime
+  ];
+  for(const v of vals){
+    const n=norm(v);
+    if(n) return n;
+  }
+  return null;
+}
 function absoluteMinimumTemperatureC(env={}){
   const vals=[
     env.absoluteMinimumTemperatureC,
@@ -111,6 +126,50 @@ export function evaluateReproductiveClimatePhase({
       'negative:requires-cool-season',
       {evidenceClass}
     );
+  }
+
+  if(req.requiresDrySeason===true){
+    const dry=drySeasonSignal(climateProfile);
+    if(dry===false){
+      return result(
+        evidenceClass==='SOURCE_SUPPORTED'
+          ? REPRODUCTIVE_CLIMATE_STATUS.UNRELIABLE
+          : REPRODUCTIVE_CLIMATE_STATUS.CONSTRAINED,
+        'Reliable '+phase+' requires a dry production / ripening season.',
+        'negative:requires-dry-season',
+        {evidenceClass}
+      );
+    }
+    if(dry!==true){
+      return result(
+        REPRODUCTIVE_CLIMATE_STATUS.UNKNOWN,
+        'A dry production / ripening season is required, but the site dry-season signal is unavailable.',
+        'incomplete:requires-dry-season',
+        {evidenceClass,missing:['drySeasonSignal']}
+      );
+    }
+  }
+
+  if(req.humidClimateLimitsFruiting===true){
+    const humidity=humiditySignal(climateProfile);
+    if(['borderline','high','very_high','humid'].includes(humidity)){
+      return result(
+        evidenceClass==='SOURCE_SUPPORTED'
+          ? REPRODUCTIVE_CLIMATE_STATUS.UNRELIABLE
+          : REPRODUCTIVE_CLIMATE_STATUS.CONSTRAINED,
+        'Atmospheric humidity can limit reliable '+phase+' for this plant.',
+        'negative:humid-climate-fruiting-constraint',
+        {evidenceClass,humiditySignal:humidity}
+      );
+    }
+    if(!humidity){
+      return result(
+        REPRODUCTIVE_CLIMATE_STATUS.UNKNOWN,
+        'Humidity-sensitive '+phase+' is documented, but the site humidity signal is unavailable.',
+        'incomplete:humidity-signal',
+        {evidenceClass,missing:['humiditySignal']}
+      );
+    }
   }
 
   if(norm(req.seasonalInductionCue)==='cool_or_dry'){
@@ -204,6 +263,8 @@ export function evaluateReproductiveClimatePhase({
   const hasEvaluableRequirement=Boolean(
     req.requiresFrostFree===true
     || req.requiresCoolSeason===true
+    || req.requiresDrySeason===true
+    || req.humidClimateLimitsFruiting===true
     || norm(req.seasonalInductionCue)==='cool_or_dry'
     || minEvent!=null
     || minSummer!=null
@@ -212,6 +273,8 @@ export function evaluateReproductiveClimatePhase({
   const heuristicCoolSeasonOnly =
     evidenceClass === 'HEURISTIC_ASSERTION'
     && req.requiresCoolSeason === true
+    && req.requiresDrySeason !== true
+    && req.humidClimateLimitsFruiting !== true
     && req.requiresFrostFree !== true
     && norm(req.seasonalInductionCue) !== 'cool_or_dry'
     && minEvent == null
@@ -223,6 +286,44 @@ export function evaluateReproductiveClimatePhase({
       'A cool-season requirement is satisfied, but this heuristic proxy is necessary-not-sufficient evidence and cannot by itself prove reliable '+phase+'.',
       'incomplete:heuristic-cool-season-only',
       { evidenceClass, requiresCoolSeason: true }
+    );
+  }
+
+  const heuristicDrySeasonOnly =
+    evidenceClass === 'HEURISTIC_ASSERTION'
+    && req.requiresDrySeason === true
+    && req.requiresCoolSeason !== true
+    && req.humidClimateLimitsFruiting !== true
+    && req.requiresFrostFree !== true
+    && norm(req.seasonalInductionCue) !== 'cool_or_dry'
+    && minEvent == null
+    && minSummer == null;
+
+  if (heuristicDrySeasonOnly) {
+    return result(
+      REPRODUCTIVE_CLIMATE_STATUS.UNKNOWN,
+      'A dry-season requirement is satisfied, but this heuristic proxy is necessary-not-sufficient evidence and cannot by itself prove reliable '+phase+'.',
+      'incomplete:heuristic-dry-season-only',
+      { evidenceClass, requiresDrySeason: true }
+    );
+  }
+
+  const heuristicHumidityOnly =
+    evidenceClass === 'HEURISTIC_ASSERTION'
+    && req.humidClimateLimitsFruiting === true
+    && req.requiresDrySeason !== true
+    && req.requiresCoolSeason !== true
+    && req.requiresFrostFree !== true
+    && norm(req.seasonalInductionCue) !== 'cool_or_dry'
+    && minEvent == null
+    && minSummer == null;
+
+  if (heuristicHumidityOnly) {
+    return result(
+      REPRODUCTIVE_CLIMATE_STATUS.UNKNOWN,
+      'A humidity limitation is documented, but this heuristic proxy cannot by itself prove reliable '+phase+'.',
+      'incomplete:heuristic-humidity-only',
+      { evidenceClass, humidClimateLimitsFruiting: true }
     );
   }
 

@@ -23,6 +23,23 @@ test('date-palm approved repair packet is Class A and source-backed',()=>{
  assert.equal(m.item.climateTraits.reproductiveBiology.dioecious,true);
  assert.equal(m.item.climateTraits.reproductiveBiology.requires_pollinator,true);
  assert.equal(m.item.climateTraits.reproductiveClimate.fruiting.summerHeatBand,'hot');
+ assert.equal(m.item.climateTraits.reproductiveClimate.fruiting.requiresDrySeason,true);
+ assert.equal(m.item.climateTraits.reproductiveClimate.fruiting.humidClimateLimitsFruiting,true);
+ assert.ok(m.item.climateTraits.reproductiveClimate.fruiting.transformRefs.includes('explicit-dry-season-fruiting-requirement-v1@1.0.0'));
+ assert.ok(m.item.climateTraits.reproductiveClimate.fruiting.transformRefs.includes('explicit-humid-fruiting-constraint-v1@1.0.0'));
+});
+
+test('pistachio approved packet preserves cool-season + warm dry ripening requirements',()=>{
+ const approvedPath=path.join(ROOT,'data/catalog-expansion/batches/p2-owner-approved-v1/packets/pistachio.packet.json');
+ const p=JSON.parse(fs.readFileSync(approvedPath,'utf8'));
+ const v=validateCatalogExpansionPacket(p);assert.equal(v.ok,true,v.errors.join('; '));
+ const m=materializePlantCatalogItemFromPacket(p);assert.equal(m.ok,true);
+ const fruit=m.item.climateTraits.reproductiveClimate.fruiting;
+ assert.equal(fruit.requiresCoolSeason,true);
+ assert.equal(fruit.summerHeatBand,'warm');
+ assert.equal(fruit.requiresDrySeason,true);
+ assert.ok(Array.isArray(fruit.sourceExcerpts));
+ assert.ok(fruit.sourceExcerpts.some(x=>/warm dry summer ripening/i.test(x)));
 });
 
 test('all resolved semantic findings stay closed and research queue is empty',()=>{
