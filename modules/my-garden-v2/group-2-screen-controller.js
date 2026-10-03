@@ -27,6 +27,11 @@ import {
   assertNotificationsVisualAcceptanceReady,
   NOTIFICATIONS_APPROVED_VISUAL,
 } from './approved-notifications-renderer.js';
+import {
+  buildGardenJournalHydrationPlan,
+  buildNotificationsHydrationPlan,
+  assertHydrationDoesNotTouchFrozenVisual,
+} from './group-2-approved-template-hydration.js';
 
 async function resolvePlantVisuals(snapshot,mediaResolver,systemPlantVisualResolver) {
   const vm=buildMyPlantsViewModel({
@@ -192,10 +197,14 @@ export function createMyGardenGroup2ScreenController(
     const renderModel=buildApprovedGardenJournalRenderModel(vm);
     assertGardenJournalVisualAcceptanceReady(renderModel);
 
+    const hydrationPlan=buildGardenJournalHydrationPlan(renderModel);
+    assertHydrationDoesNotTouchFrozenVisual(hydrationPlan);
+
     return Object.freeze({
       garden:snapshot.profile,
       viewModel:vm,
       renderModel,
+      hydrationPlan,
       interactionLayerHtml:renderGardenJournalInteractionLayer(renderModel),
       reference:GARDEN_JOURNAL_APPROVED_VISUAL,
       visualAcceptance:'APPROVED_VISUAL_PENDING_COMPARISON',
@@ -218,10 +227,14 @@ export function createMyGardenGroup2ScreenController(
     const renderModel=buildApprovedNotificationsRenderModel(vm);
     assertNotificationsVisualAcceptanceReady(renderModel);
 
+    const hydrationPlan=buildNotificationsHydrationPlan(renderModel);
+    assertHydrationDoesNotTouchFrozenVisual(hydrationPlan);
+
     return Object.freeze({
       garden:snapshot.profile,
       viewModel:vm,
       renderModel,
+      hydrationPlan,
       interactionLayerHtml:renderNotificationsInteractionLayer(renderModel),
       reference:NOTIFICATIONS_APPROVED_VISUAL,
       visualAcceptance:'APPROVED_VISUAL_PENDING_COMPARISON',
