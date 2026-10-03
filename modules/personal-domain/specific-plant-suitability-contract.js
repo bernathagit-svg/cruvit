@@ -21,7 +21,10 @@ import {
   quantitativeHeatUnsupported,
   quantitativeVpdUnsupported
 } from '../catalog-expansion/plant-climate-quantitative-evidence-v1-contract.js';
-import { applyPreScaleSystemicDemotions } from './pre-scale-suitability-systemic-hardening-v1-contract.js';
+import {
+  applyPreScaleSystemicDemotions,
+  chillConfidenceFromEvidence
+} from './pre-scale-suitability-systemic-hardening-v1-contract.js';
 import {
   assessPlantClimateColdSurvival,
   plantRequiresYearRoundWarmClimate,
@@ -1741,6 +1744,21 @@ export function deriveSpecificPlantOutcomes({
     }
   }
 
+  // Winter-chill authority is necessary for confident Fruiting when the plant requires chill.
+  // A generic cool-season signal is not equivalent to proven chill-hour sufficiency.
+  const chillConfidence = chillConfidenceFromEvidence(meta, env);
+  if (
+    chillConfidence.required === true &&
+    chillConfidence.enoughForReliableFruit !== true &&
+    (fruiting === SPECIFIC_OUTCOME_STATUS.SUPPORTED || fruiting === SPECIFIC_OUTCOME_STATUS.RELIABLE)
+  ) {
+    fruiting = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    const chillEvidenceMsg =
+      chillConfidence.note ||
+      'Winter chill is required, but current climate authority does not prove sufficient chill hours; Fruiting confidence is constrained.';
+    if (!limiting.includes(chillEvidenceMsg)) limiting.push(chillEvidenceMsg);
+  }
+
   // Evidence-strength propagation: heuristic/unknown traits cannot authorize confident truth.
   const strength = applyEvidenceStrengthPropagation({
     meta,
@@ -1774,7 +1792,8 @@ export function deriveSpecificPlantOutcomes({
     reproductiveEvidence: {
       flowering: flowerEval.evidence,
       fruiting: fruitEval.evidence,
-      structuredClimateGate: reproductiveClimateGate
+      structuredClimateGate: reproductiveClimateGate,
+      chillConfidence
     },
     climateConfidence: confidenceBundle,
     moistureOrPrecipDependent:

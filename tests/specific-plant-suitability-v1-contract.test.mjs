@@ -1278,3 +1278,35 @@ test('frost-free greenhouse protects survival but does not imply tropical warmth
   assert.equal(indoor.survival, 'reliable');
   assert.equal(indoor.growth, 'supported');
 });
+
+
+test('winter-chill-required fruiting stays Constrained without proven chill-hour sufficiency', () => {
+  const meta = {
+    needsWinterChill: true,
+    groupIds: ['temperate-chill-fruit-tree'],
+    frostSensitivity: 'medium',
+    coldTolerance: 'high',
+    floweringRequirements: 'High winter chilling is required.',
+    fruitingRequirements: 'Nut production needs winter chill and warm dry summer ripening conditions.',
+    traitEvidenceClasses: {
+      needsWinterChill: 'SOURCE_SUPPORTED', coldTolerance: 'SOURCE_SUPPORTED',
+      floweringRequirements: 'SOURCE_SUPPORTED', fruitingRequirements: 'SOURCE_SUPPORTED'
+    },
+    reproductiveClimate: {
+      flowering: { requiresCoolSeason: true, evidenceClass: 'HEURISTIC_ASSERTION' },
+      fruiting: { requiresCoolSeason: true, requiresDrySeason: true, summerHeatBand: 'warm', evidenceClass: 'HEURISTIC_ASSERTION' }
+    }
+  };
+  const climateProfile = {
+    freezingRisk: 'low', isFrostFreeGrowingClimate: true, coolSeasonSignal: true, alwaysHot: false,
+    drySeasonSignal: true, warmestMonthMeanMaxC: 41, coldestMonthMeanMinC: 6,
+    humiditySignal: 'low', humidityRegime: 'low', moistureRegime: 'arid', structuralClimateStatus: 'known'
+  };
+  const out = deriveSpecificPlantOutcomes({ meta, climateProfile, plant: { slug: 'chill-probe' }, suitability: {
+    survivalFit: 85, thriveFit: 80, floweringFit: 70, fruitingFit: 70, recommendationLevel: 'good', warnings: []
+  }});
+  assert.equal(out.reproductiveEvidence.structuredClimateGate.fruiting.status, 'supported');
+  assert.equal(out.reproductiveEvidence.chillConfidence.enoughForReliableFruit, false);
+  assert.equal(out.fruiting, SPECIFIC_OUTCOME_STATUS.CONSTRAINED);
+  assert.ok(out.limitingFactors.some((x) => /chill-hour sufficiency|fruiting stays bounded/i.test(x)));
+});
