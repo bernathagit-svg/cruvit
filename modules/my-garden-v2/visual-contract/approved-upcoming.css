@@ -389,3 +389,25 @@ button{font:inherit;color:inherit}
   object-fit:cover !important;
   z-index:5 !important;
 }
+
+
+/* FINAL botanical background pass — no garden-path photo */
+.upcoming-screen[data-upcoming-screen="calendar"]{
+  background:
+    radial-gradient(ellipse at 12% 2%,rgba(115,145,58,.20),transparent 25%),
+    radial-gradient(ellipse at 88% 5%,rgba(85,126,56,.14),transparent 28%),
+    linear-gradient(180deg,#102718 0%,#092214 24%,#04190d 52%,#021107 100%) !important;
+}
+.upcoming-screen[data-upcoming-screen="calendar"]::after{
+  display:block !important;
+  content:"" !important;
+  position:absolute;
+  z-index:1;
+  left:0;right:0;top:0;height:320px;
+  pointer-events:none;
+  background:url('/assets/intro-leaves.png') center top/cover no-repeat;
+  filter:brightness(.82) saturate(1.04);
+  opacity:.68;
+  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 52%,rgba(0,0,0,.58) 76%,transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 0%,#000 52%,rgba(0,0,0,.58) 76%,transparent 100%);
+}
