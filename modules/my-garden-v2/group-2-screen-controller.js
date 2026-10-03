@@ -103,6 +103,7 @@ export function createMyGardenGroup2ScreenController(
       viewModel:vm,
       plantVisuals:plantVisualState.visuals,
       plantVisualErrors:plantVisualState.errors,
+      activePlantCount:plantVisualState.activePlantCount,
       html:renderUpcomingListScreen(vm,{
         activePlantCount:plantVisualState.activePlantCount,
         selectedDate,
@@ -134,6 +135,7 @@ export function createMyGardenGroup2ScreenController(
       viewModel:vm,
       plantVisuals:plantVisualState.visuals,
       plantVisualErrors:plantVisualState.errors,
+      activePlantCount:plantVisualState.activePlantCount,
       html:renderUpcomingCalendarScreen(vm,{
         activePlantCount:plantVisualState.activePlantCount,
         plantVisuals:plantVisualState.visuals,
