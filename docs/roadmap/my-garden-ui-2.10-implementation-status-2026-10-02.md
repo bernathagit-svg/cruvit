@@ -24,11 +24,11 @@ Current verified branch head:
 - Plant Detail → Schedule
 - Plant Detail → History
 
-### APPROVED_VISUAL · implementation comparison still required
-- Upcoming → List
-- Upcoming → Calendar
-- Garden Journal
-- Notifications
+### APPROVED_VISUAL · implementation comparison completed · owner implementation PASS still required
+- Upcoming → List — live preview verified 2026-10-03
+- Upcoming → Calendar — live preview verified 2026-10-03
+- Garden Journal — live preview verified 2026-10-03
+- Notifications — live preview verified 2026-10-03
 
 Bottom navigation / center +:
 - explicitly deferred
@@ -91,7 +91,7 @@ Canonical controller:
 - active plant count includes plants with no tasks
 - private personal plant thumbnails use signed URLs
 - optional system thumbnail resolver does not change task identity
-- visual state remains APPROVED_VISUAL_PENDING_COMPARISON
+- visual comparison completed on live Preview 140; owner implementation PASS still required
 
 ### Garden Journal
 - canonical garden_events only
@@ -139,11 +139,28 @@ No production migration has been applied.
 - no merge to main
 - no production deploy
 
-## Next implementation target
-Complete implementation-level visual comparison for APPROVED_VISUAL screens:
+## Latest implementation-level visual verification — 2026-10-03
+Live Preview 140 verification completed for:
 1. Upcoming List
 2. Upcoming Calendar
 3. Garden Journal
 4. Notifications
 
-Only after screenshot comparison + explicit owner implementation PASS may any of these become LOCKED_IMPLEMENTED.
+Observed result:
+- approved visual structure intact
+- required lower-screen content present
+- no clipping/overlap/corruption found
+- Group 2 hydration remained visually stable
+
+These screens remain pending explicit owner implementation PASS before LOCKED_IMPLEMENTED.
+
+## Next implementation target
+Move from visual comparison to the real production blockers already documented:
+1. neutral/unassessed Add Plant health state
+2. full Task lifecycle timestamps/cancellation
+3. approved Garden Event mutation vocabulary
+4. explicit current Garden Photo pointer
+5. exact sub-area position
+6. catalog coverage alignment
+
+No production migration/write is authorized by this status update.
