@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07150f">
+  <title>CRUVIT UX Lab — Live Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="prototype-shell">
+    <div class="ambient ambient-a"></div>
+    <div class="ambient ambient-b"></div>
+
+    <main class="phone" id="phone" aria-label="CRUVIT interactive prototype">
+      <section class="screen active" data-screen="home" id="screen-home">
+        <div class="photo-stage">
+          <img src="/homepage-v1/assets/hero-garden.jpg" alt="" class="hero-photo">
+          <div class="photo-vignette"></div>
+          <header class="topbar">
+            <button class="avatar" data-action="open-profile" aria-label="Open profile">H</button>
+            <div class="brand">cruvit</div>
+            <button class="glass-icon" data-action="notifications" aria-label="Notifications">◌</button>
+          </header>
+
+          <div class="home-copy">
+            <p class="eyebrow">YOUR LIVING GARDEN</p>
+            <h1>Good morning, Hagit.</h1>
+            <p>Your garden is calm. Two things need your attention.</p>
+          </div>
+
+          <div class="weather-pill">
+            <span class="weather-icon">☀</span>
+            <span><b>24°</b><small>Clear · ideal for morning care</small></span>
+            <span class="weather-arrow">›</span>
+          </div>
+
+          <div class="living-points" aria-hidden="true">
+            <span class="garden-pulse pulse-one"></span>
+            <span class="garden-pulse pulse-two"></span>
+            <span class="garden-pulse pulse-three"></span>
+          </div>
+        </div>
+
+        <section class="intelligence-sheet">
+          <button class="today-card" data-action="open-today">
+            <div>
+              <span class="mini-label">TODAY IN YOUR GARDEN</span>
+              <strong>2 things matter now</strong>
+              <small>Water the herbs · Check lemon leaves</small>
+            </div>
+            <span class="orb-count">2</span>
+          </button>
+
+          <div class="area-head">
+            <div>
+              <span class="mini-label">GARDEN AREAS</span>
+              <h2>Your garden, understood by place.</h2>
+            </div>
+            <button class="text-button" data-action="open-garden">View all</button>
+          </div>
+
+          <div class="area-strip">
+            <button class="area-card" data-area="Front Garden">
+              <img src="/homepage-v1/assets/my-garden-mobile.png" alt="">
+              <span><b>Front Garden</b><small>4 plants · calm</small></span>
+            </button>
+            <button class="area-card" data-area="Backyard">
+              <img src="/homepage-v1/assets/privacy-botanical.jpg" alt="">
+              <span><b>Backyard</b><small>7 plants · thriving</small></span>
+            </button>
+            <button class="area-card" data-area="Herb Corner">
+              <img src="/homepage-v1/assets/store-plant-care.jpg" alt="">
+              <span><b>Herb Corner</b><small>3 plants · dry soon</small></span>
+            </button>
+          </div>
+
+          <button class="ask-bar" data-action="ask">
+            <span class="ask-mark">✦</span>
+            <span>Ask CRUVIT anything about your garden</span>
+            <span>↑</span>
+          </button>
+        </section>
+
+        <nav class="bottom-nav" aria-label="Main navigation">
+          <button class="nav-item active" data-nav="home"><span>⌂</span><small>Home</small></button>
+          <button class="nav-item" data-nav="garden"><span>❀</span><small>Garden</small></button>
+          <button class="cruvit-trigger" data-action="open-hub" aria-label="Open CRUVIT intelligence">
+            <span class="core-glow"></span><span class="leaf-mark">✦</span>
+          </button>
+          <button class="nav-item" data-nav="shop"><span>◇</span><small>Shop</small></button>
+          <button class="nav-item" data-nav="profile"><span>○</span><small>You</small></button>
+        </nav>
+      </section>
+
+      <section class="screen hub-screen" data-screen="hub" id="screen-hub">
+        <div class="hub-bg"></div>
+        <header class="module-header transparent">
+          <button class="back" data-action="close-hub">←</button>
+          <div class="brand small">cruvit</div>
+          <span class="header-spacer"></span>
+        </header>
+        <div class="hub-copy">
+          <span class="mini-label">CRUVIT INTELLIGENCE</span>
+          <h1>What would you like to do?</h1>
+          <p>Everything uses the same understanding of your garden.</p>
+        </div>
+        <div class="orbit" id="orbit">
+          <button class="orbit-core" data-module="garden">
+            <span class="orbit-core-glow"></span>
+            <span class="leaf-mark big">✦</span>
+            <small>Your Garden</small>
+          </button>
+          <button class="module-node n1" data-module="recommendations"><span>✧</span><b>Smart<br>Recommendations</b></button>
+          <button class="module-node n2" data-module="design"><span>◫</span><b>Garden<br>Design</b></button>
+          <button class="module-node n3" data-module="identifier"><span>⌗</span><b>Plant<br>Identifier</b></button>
+          <button class="module-node n4" data-module="doctor"><span>♡</span><b>Plant<br>Doctor</b></button>
+          <button class="module-node n5" data-module="shop"><span>◇</span><b>Shop</b></button>
+          <button class="module-node n6" data-module="garden"><span>❀</span><b>My<br>Garden</b></button>
+        </div>
+        <p class="hub-foot">One garden. One intelligence.</p>
+      </section>
+
+      <section class="screen module-screen" data-screen="garden" id="screen-garden">
+        <header class="module-header">
+          <button class="back" data-action="back-home">←</button>
+          <h2>My Garden</h2>
+          <button class="glass-icon" data-action="open-hub">✦</button>
+        </header>
+        <div class="garden-hero">
+          <img src="/homepage-v1/assets/my-garden-desktop.png" alt="">
+          <div class="garden-hero-overlay">
+            <span class="mini-label">YOUR GARDEN</span>
+            <h1>Everything growing here.</h1>
+            <p>3 areas · 14 plants · 2 tasks today</p>
+          </div>
+        </div>
+        <div class="segmented">
+          <button class="active">Areas</button><button>Plants</button><button>Tasks</button><button>History</button>
+        </div>
+        <div class="garden-content">
+          <button class="living-row"><span class="row-orb ok"></span><span><b>Backyard</b><small>7 plants · thriving</small></span><em>›</em></button>
+          <button class="living-row"><span class="row-orb attention"></span><span><b>Herb Corner</b><small>3 plants · water soon</small></span><em>›</em></button>
+          <button class="living-row"><span class="row-orb ok"></span><span><b>Front Garden</b><small>4 plants · calm</small></span><em>›</em></button>
+          <button class="primary-fab" data-action="open-hub">✦ Ask CRUVIT about this garden</button>
+        </div>
+      </section>
+
+      <section class="screen module-screen" data-screen="identifier" id="screen-identifier">
+        <header class="module-header overlay">
+          <button class="back" data-action="back-hub">←</button><h2>Plant Identifier</h2><span></span>
+        </header>
+        <div class="camera-stage">
+          <img src="/homepage-v1/assets/store-plant-care.jpg" alt="">
+          <div class="scan-corners"><i></i><i></i><i></i><i></i></div>
+          <div class="scan-line"></div>
+          <div class="camera-copy"><strong>Point at a plant</strong><small>CRUVIT will connect the ID to your climate and garden.</small></div>
+          <button class="shutter" data-action="identify-demo"><span></span></button>
+        </div>
+      </section>
+
+      <section class="screen module-screen" data-screen="doctor" id="screen-doctor">
+        <header class="module-header">
+          <button class="back" data-action="back-hub">←</button><h2>Plant Doctor</h2><span></span>
+        </header>
+        <div class="doctor-stage">
+          <div class="leaf-scan">
+            <img src="/homepage-v1/assets/privacy-botanical.jpg" alt="">
+            <div class="diagnostic-grid"></div>
+            <span class="symptom-dot s1"></span><span class="symptom-dot s2"></span><span class="symptom-dot s3"></span>
+          </div>
+          <div class="analysis-card">
+            <span class="mini-label">LIVE ANALYSIS</span>
+            <h3>CRUVIT is checking the whole context.</h3>
+            <div class="analysis-step"><span class="done">✓</span>Visual symptoms</div>
+            <div class="analysis-step"><span class="done">✓</span>Plant identity</div>
+            <div class="analysis-step"><span class="spin"></span>Climate + recent care</div>
+            <div class="analysis-step muted"><span>○</span>Best next action</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen module-screen" data-screen="recommendations" id="screen-recommendations">
+        <header class="module-header">
+          <button class="back" data-action="back-hub">←</button><h2>Recommendations</h2><span></span>
+        </header>
+        <div class="rec-copy">
+          <span class="mini-label">FOR YOUR BACKYARD</span>
+          <h1>Plants that make sense here.</h1>
+          <p>Based on your climate, sun, area conditions and what you want from the space.</p>
+        </div>
+        <div class="filter-chips"><button>Purpose</button><button>Style</button><button>Conditions</button></div>
+        <div class="rec-list">
+          <button class="rec-card">
+            <img src="/homepage-v1/assets/store-plant-care.jpg" alt="">
+            <span><small>EXCELLENT FIT</small><b>Lavender</b><em>Low water · Pollinators</em></span><strong>94</strong>
+          </button>
+          <button class="rec-card">
+            <img src="/homepage-v1/assets/store-watering.jpg" alt="">
+            <span><small>VERY GOOD FIT</small><b>Olive Tree</b><em>Heat tolerant · Long-lived</em></span><strong>89</strong>
+          </button>
+          <button class="rec-card">
+            <img src="/homepage-v1/assets/store-kits.jpg" alt="">
+            <span><small>GOOD FIT</small><b>Rosemary</b><em>Edible · Drought tolerant</em></span><strong>86</strong>
+          </button>
+        </div>
+      </section>
+
+      <section class="screen module-screen" data-screen="design" id="screen-design">
+        <header class="module-header overlay">
+          <button class="back" data-action="back-hub">←</button><h2>Garden Design</h2><span></span>
+        </header>
+        <div class="design-stage">
+          <img src="/homepage-v1/assets/sanctuary-cta.jpg" alt="">
+          <span class="placed plant-a">✿</span><span class="placed plant-b">♧</span><span class="placed plant-c">❀</span>
+          <div class="design-toolbar">
+            <button class="active">Plants</button><button>Furniture</button><button>Surface</button><button>Style</button>
+          </div>
+          <div class="design-tray">
+            <button><img src="/homepage-v1/assets/store-plant-care.jpg" alt=""><small>Lavender</small></button>
+            <button><img src="/homepage-v1/assets/store-watering.jpg" alt=""><small>Olive</small></button>
+            <button><img src="/homepage-v1/assets/store-kits.jpg" alt=""><small>Rosemary</small></button>
+            <button class="add">+</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen module-screen shop-screen" data-screen="shop" id="screen-shop">
+        <header class="module-header">
+          <button class="back" data-action="back-home">←</button><h2>Shop</h2><button class="glass-icon">◇</button>
+        </header>
+        <div class="shop-copy"><span class="mini-label">CURATED FOR YOUR GARDEN</span><h1>Only what may actually help.</h1></div>
+        <div class="shop-search">⌕ Search tools, irrigation, pots…</div>
+        <div class="shop-cats"><span>Plants</span><span>Pots</span><span>Water</span><span>Tools</span><span>Soil</span></div>
+        <h3 class="section-title">Recommended for your garden</h3>
+        <div class="product-grid">
+          <article><img src="/homepage-v1/assets/store-watering.jpg" alt=""><b>Drip irrigation kit</b><small>Why it fits ›</small><strong>$24.99</strong></article>
+          <article><img src="/homepage-v1/assets/store-kits.jpg" alt=""><b>Organic compost</b><small>Why it fits ›</small><strong>$18.90</strong></article>
+        </div>
+      </section>
+
+      <section class="screen module-screen" data-screen="profile" id="screen-profile">
+        <header class="module-header"><button class="back" data-action="back-home">←</button><h2>You</h2><span></span></header>
+        <div class="profile-card"><div class="avatar big">H</div><h1>Hagit</h1><p>Your CRUVIT garden world</p></div>
+        <div class="settings-list">
+          <button><span>❀</span><b>My gardens</b><em>›</em></button>
+          <button><span>⌖</span><b>Location & climate</b><em>›</em></button>
+          <button><span>◌</span><b>Notifications</b><em>›</em></button>
+          <button><span>文</span><b>Language</b><em>English ›</em></button>
+          <button><span>◈</span><b>Privacy & data</b><em>›</em></button>
+        </div>
+      </section>
+
+      <div class="toast" id="toast">CRUVIT understood the plant.</div>
+    </main>
+
+    <aside class="prototype-note">
+      <span>LIVE UX LAB</span>
+      <strong>Click the glowing CRUVIT button.</strong>
+      <p>This prototype is isolated from the production app.</p>
+    </aside>
+  </div>
+  <script src="./app.js"></script>
+</body>
+</html>
