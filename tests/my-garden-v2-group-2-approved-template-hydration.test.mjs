@@ -66,6 +66,6 @@ test('hydration guard rejects direct frozen visual selectors',()=>{
       screenId:'notifications',
       patches:[{selector:'.bottom .nav',value:'x'}],
     }),
-    /hydration_touches_frozen_visual/
+    /hydration_selector_not_whitelisted/
   );
 });
