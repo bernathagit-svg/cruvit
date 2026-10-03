@@ -67,10 +67,10 @@ function getExactCalendarDataUrl(){
 function getExactListDataUrl(){
   if(!exactListDataPromise){
     exactListDataPromise = Promise.all(
-      [0,1,2,3,4,5].map((i)=>fetch(`./assets/upcoming-list-exact/part${i}.txt?v=20261003-exact`).then((r)=>{
+      Array.from({length:12},(_,i)=>i).map((i)=>fetch(`./assets/upcoming-list-exact-v2/part${String(i).padStart(2,'0')}.txt?v=20261003-exact-v2`).then((r)=>{
         if(!r.ok) throw new Error('list_exact_asset_missing_'+i);
         return r.text();
-      }))
+      }).then((t)=>t.trim()))
     ).then((parts)=>'data:image/webp;base64,'+parts.join(''));
   }
   return exactListDataPromise;
