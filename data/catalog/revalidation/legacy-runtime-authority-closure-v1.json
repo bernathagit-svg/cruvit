@@ -4,79 +4,94 @@
   "scope": {
     "runtimePlantCount": 122,
     "approvedPacketOverlayCount": 110,
-    "legacyAuthorityCount": 12
+    "legacyAuthorityCount": 0,
+    "broadIdentityAuthorityCount": 12,
+    "precisionResolutionPendingCount": 12
   },
   "policy": {
     "speciesIdentityComplete": "May proceed to evidence assembly / approved Catalog Expansion packet.",
     "identityReviewRequired": "Must not receive species-authoritative climate packet until canonical species identity is resolved.",
-    "registryMissing": "Identity registry entry is required before packetization."
+    "registryMissing": "Identity registry entry is required before packetization.",
+    "broadIdentityValid": "Genus/group identity is canonical at broad scope. Positive suitability remains blocked until species/cultivar is resolved."
   },
   "rows": [
     {
       "slug": "succulent",
-      "state": "IDENTITY_REVIEW_REQUIRED",
-      "nextAction": "RESOLVE_SPECIES_OR_RETAIN_GROUP_ONLY"
+      "state": "BROAD_IDENTITY_VALID",
+      "nextAction": "SELECT_EXACT_SPECIES_OR_CULTIVAR_FOR_PRECISE_SUITABILITY",
+      "broadAuthority": true
     },
     {
       "slug": "agapanthus",
-      "state": "IDENTITY_REVIEW_REQUIRED",
-      "nextAction": "RESOLVE_SPECIES_OR_RETAIN_GENUS_ONLY"
+      "state": "BROAD_IDENTITY_VALID",
+      "nextAction": "SELECT_EXACT_SPECIES_OR_CULTIVAR_FOR_PRECISE_SUITABILITY",
+      "broadAuthority": true
     },
     {
       "slug": "geranium",
-      "state": "IDENTITY_REVIEW_REQUIRED",
-      "nextAction": "RESOLVE_PELARGONIUM_SPECIES_OR_GROUP"
+      "state": "BROAD_IDENTITY_VALID",
+      "nextAction": "SELECT_EXACT_SPECIES_OR_CULTIVAR_FOR_PRECISE_SUITABILITY",
+      "broadAuthority": true
     },
     {
       "slug": "camellia",
-      "state": "IDENTITY_REVIEW_REQUIRED",
-      "nextAction": "RESOLVE_SPECIES_OR_RETAIN_GENUS_ONLY",
-      "queuePriority": "P0"
+      "state": "BROAD_IDENTITY_VALID",
+      "nextAction": "SELECT_EXACT_SPECIES_OR_CULTIVAR_FOR_PRECISE_SUITABILITY",
+      "queuePriority": "P0",
+      "broadAuthority": true
     },
     {
       "slug": "azalea",
-      "state": "IDENTITY_REVIEW_REQUIRED",
-      "nextAction": "RESOLVE_RHODODENDRON_SPECIES_OR_GROUP",
-      "queuePriority": "P0"
+      "state": "BROAD_IDENTITY_VALID",
+      "nextAction": "SELECT_EXACT_SPECIES_OR_CULTIVAR_FOR_PRECISE_SUITABILITY",
+      "queuePriority": "P0",
+      "broadAuthority": true
     },
     {
       "slug": "melaleuca",
-      "state": "IDENTITY_REVIEW_REQUIRED",
-      "nextAction": "RESOLVE_SPECIES_OR_RETAIN_GENUS_ONLY"
+      "state": "BROAD_IDENTITY_VALID",
+      "nextAction": "SELECT_EXACT_SPECIES_OR_CULTIVAR_FOR_PRECISE_SUITABILITY",
+      "broadAuthority": true
     },
     {
       "slug": "banana",
-      "state": "IDENTITY_REVIEW_REQUIRED",
-      "nextAction": "RESOLVE_MUSA_SPECIES_CULTIVAR_OR_GROUP"
+      "state": "BROAD_IDENTITY_VALID",
+      "nextAction": "SELECT_EXACT_SPECIES_OR_CULTIVAR_FOR_PRECISE_SUITABILITY",
+      "broadAuthority": true
     },
     {
       "slug": "rose",
-      "state": "IDENTITY_REVIEW_REQUIRED",
-      "nextAction": "RESOLVE_ROSA_SPECIES_CULTIVAR_OR_GROUP",
-      "queuePriority": "P0"
+      "state": "BROAD_IDENTITY_VALID",
+      "nextAction": "SELECT_EXACT_SPECIES_OR_CULTIVAR_FOR_PRECISE_SUITABILITY",
+      "queuePriority": "P0",
+      "broadAuthority": true
     },
     {
       "slug": "oak-tree",
-      "state": "IDENTITY_REVIEW_REQUIRED",
-      "nextAction": "RESOLVE_QUERCUS_SPECIES_OR_GROUP",
-      "queuePriority": "P0"
+      "state": "BROAD_IDENTITY_VALID",
+      "nextAction": "SELECT_EXACT_SPECIES_OR_CULTIVAR_FOR_PRECISE_SUITABILITY",
+      "queuePriority": "P0",
+      "broadAuthority": true
     },
     {
       "slug": "pine-tree",
-      "state": "IDENTITY_REVIEW_REQUIRED",
-      "nextAction": "RESOLVE_PINUS_SPECIES_OR_GROUP",
-      "queuePriority": "P0"
+      "state": "BROAD_IDENTITY_VALID",
+      "nextAction": "SELECT_EXACT_SPECIES_OR_CULTIVAR_FOR_PRECISE_SUITABILITY",
+      "queuePriority": "P0",
+      "broadAuthority": true
     },
     {
       "slug": "orchid",
-      "state": "IDENTITY_REVIEW_REQUIRED",
-      "nextAction": "RESOLVE_PHALAENOPSIS_SPECIES_HYBRID_OR_GROUP",
-      "queuePriority": "P0"
+      "state": "BROAD_IDENTITY_VALID",
+      "nextAction": "SELECT_EXACT_SPECIES_OR_CULTIVAR_FOR_PRECISE_SUITABILITY",
+      "queuePriority": "P0",
+      "broadAuthority": true
     },
     {
       "slug": "mulberry",
-      "state": "REGISTRY_MISSING",
-      "nextAction": "CREATE_CANONICAL_IDENTITY_BEFORE_PACKET"
+      "state": "BROAD_IDENTITY_VALID",
+      "nextAction": "SELECT_EXACT_SPECIES_OR_CULTIVAR_FOR_PRECISE_SUITABILITY",
+      "broadAuthority": true
     }
   ],
   "closedWaves": [
@@ -105,6 +120,26 @@
         "black-eyed-susan-vine"
       ],
       "result": "APPROVED_PACKET_OVERLAY_PARTIAL_OR_COMPLETE"
+    },
+    {
+      "waveId": "broad-runtime-identity-authority-v1",
+      "closedAt": "2026-10-03",
+      "slugs": [
+        "succulent",
+        "agapanthus",
+        "geranium",
+        "camellia",
+        "azalea",
+        "melaleuca",
+        "banana",
+        "rose",
+        "oak-tree",
+        "pine-tree",
+        "orchid",
+        "mulberry"
+      ],
+      "result": "BROAD_IDENTITY_AUTHORITY_ACTIVE_PRECISION_PENDING"
     }
-  ]
+  ],
+  "authorityClosureState": "CLOSED_WITH_BROAD_IDENTITIES"
 }

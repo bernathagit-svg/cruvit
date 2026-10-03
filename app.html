@@ -1151,6 +1151,29 @@ const plantCatalogSeedStatus={
 };
 let plantCatalogSeedLoadPromise=null;
 const approvedPacketRuntimeOverlayStatus={status:'idle',applied:[],skipped:[],error:null};
+const broadIdentityRuntimeAuthorityStatus={status:'idle',applied:[],skipped:[],error:null};
+async function applyBroadRuntimeIdentityAuthorityFallback(){
+  try{
+    const [mod,res]=await Promise.all([
+      import('./modules/personal-domain/broad-runtime-identity-authority-v1.js'),
+      (typeof fetchWithTimeout==='function'
+        ?fetchWithTimeout('data/catalog/revalidation/broad-runtime-identity-authority-v1.json',{},9000)
+        :fetch('data/catalog/revalidation/broad-runtime-identity-authority-v1.json'))
+    ]);
+    if(!res.ok) throw new Error('Broad identity authority fetch failed: HTTP '+res.status);
+    const payload=await res.json();
+    const result=mod.applyBroadRuntimeIdentityAuthority(PLANT_LIBRARY,payload);
+    broadIdentityRuntimeAuthorityStatus.status='ready';
+    broadIdentityRuntimeAuthorityStatus.applied=result.applied.slice();
+    broadIdentityRuntimeAuthorityStatus.skipped=result.skipped.slice();
+    broadIdentityRuntimeAuthorityStatus.error=null;
+    return {ok:true,...result};
+  }catch(err){
+    broadIdentityRuntimeAuthorityStatus.status='error';
+    broadIdentityRuntimeAuthorityStatus.error=String(err&&(err.message||err)||'Broad identity authority failed');
+    return {ok:false,applied:[],skipped:[],error:broadIdentityRuntimeAuthorityStatus.error};
+  }
+}
 async function applyApprovedPacketRuntimeClimateFallback(){
   try{
     const [mod,res]=await Promise.all([
@@ -1216,6 +1239,10 @@ async function loadPlantCatalogSeed(url){
       // Canonical DB remains first authority. Approved packets are an offline/static fallback
       // only for plants that do not already have a verified canonical runtime climate authority.
       await applyApprovedPacketRuntimeClimateFallback();
+      // Remaining genus/group identities receive explicit broad authority only after
+      // species-level authorities have had first refusal. Broad authority never upgrades
+      // them to a precise positive recommendation.
+      await applyBroadRuntimeIdentityAuthorityFallback();
       if(json.catalogMediaByCanonicalSlug&&typeof json.catalogMediaByCanonicalSlug==='object'){
         Object.keys(json.catalogMediaByCanonicalSlug).forEach(slug=>{
           const plant=PLANT_INDEX[slug];
