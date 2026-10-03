@@ -106,6 +106,19 @@ test('cool-or-dry induction is supported by either climate signal',()=>{
   assert.equal(dry.fruiting.status,'supported');
 });
 
+test('heuristic cool-season-only proxy is necessary-not-sufficient and cannot positively support fruiting',()=>{
+  const m={reproductiveClimate:{fruiting:{
+    requiresCoolSeason:true,
+    evidenceClass:'HEURISTIC_ASSERTION',
+    sourceIds:['authority-1']
+  }}};
+  const g=evaluateReproductiveClimateGate({
+    meta:m,climateProfile:{coolSeasonSignal:true}
+  });
+  assert.equal(g.fruiting.status,'unknown');
+  assert.equal(g.fruiting.evidence,'incomplete:heuristic-cool-season-only');
+});
+
 test('cool-or-dry induction stays UNKNOWN when dry-season signal is missing',()=>{
   const m={reproductiveClimate:{fruiting:{
     seasonalInductionCue:'cool_or_dry',

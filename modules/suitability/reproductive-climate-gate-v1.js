@@ -209,6 +209,23 @@ export function evaluateReproductiveClimatePhase({
     || minSummer!=null
   );
 
+  const heuristicCoolSeasonOnly =
+    evidenceClass === 'HEURISTIC_ASSERTION'
+    && req.requiresCoolSeason === true
+    && req.requiresFrostFree !== true
+    && norm(req.seasonalInductionCue) !== 'cool_or_dry'
+    && minEvent == null
+    && minSummer == null;
+
+  if (heuristicCoolSeasonOnly) {
+    return result(
+      REPRODUCTIVE_CLIMATE_STATUS.UNKNOWN,
+      'A cool-season requirement is satisfied, but this heuristic proxy is necessary-not-sufficient evidence and cannot by itself prove reliable '+phase+'.',
+      'incomplete:heuristic-cool-season-only',
+      { evidenceClass, requiresCoolSeason: true }
+    );
+  }
+
   if(!hasEvaluableRequirement){
     if(evidenceState===REPRODUCTIVE_CLIMATE_EVIDENCE_STATE.CONTEXT_DEPENDENT){
       return result(
