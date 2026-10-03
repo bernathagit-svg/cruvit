@@ -411,3 +411,10 @@ button{font:inherit;color:inherit}
   -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 52%,rgba(0,0,0,.58) 76%,transparent 100%);
   mask-image:linear-gradient(to bottom,#000 0%,#000 52%,rgba(0,0,0,.58) 76%,transparent 100%);
 }
+
+/* Owner-reference exact pass 5: Calendar vertical alignment only. */
+@media (min-width:480px){
+  .upcoming-main.is-calendar .upcoming-view-row{margin-bottom:30px}
+  .upcoming-selected-day{margin-top:12px}
+  .upcoming-bottom-nav{height:142px;padding-bottom:28px}
+}
