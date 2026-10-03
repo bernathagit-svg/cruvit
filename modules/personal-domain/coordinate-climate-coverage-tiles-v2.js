@@ -402,6 +402,7 @@ export function encodeBinaryCoverageTile({
   cells,
   bakeVersion,
   regionId,
+  variablePeriods = null,
   tileCells = COVERAGE_TILE_CELLS
 }) {
   const header = {
@@ -416,6 +417,7 @@ export function encodeBinaryCoverageTile({
     cellStride: BINARY_CELL_STRIDE,
     bakeVersion: bakeVersion || null,
     regionId: regionId || null,
+    variablePeriods: variablePeriods || null,
     climateNativeResolutionArcSec: 30
   };
   const headerJson = Buffer.from(JSON.stringify(header), 'utf8');
@@ -457,6 +459,7 @@ export function buildCoverageManifest({
   bounds,
   tiles,
   sourceVersions,
+  variablePeriods = null,
   checksums
 } = {}) {
   return {
@@ -473,6 +476,7 @@ export function buildCoverageManifest({
       pet: 'pet_penman raw/100',
       terrain: 'aws-elevation-tiles-terrarium'
     },
+    variablePeriods: variablePeriods || null,
     tileCount: Array.isArray(tiles) ? tiles.length : 0,
     tiles: tiles || [],
     checksums: checksums || {},

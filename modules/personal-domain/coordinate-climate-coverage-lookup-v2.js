@@ -173,6 +173,9 @@ export function lookupCoordinateClimateFromCoverage(lat, lon, options = {}) {
   profile.provenance.bakeVersion = manifest.bakeVersion;
   profile.provenance.regionId = regionId;
   profile.provenance.format = manifest.format || COVERAGE_FORMAT_BINARY;
+  const variablePeriods = manifest.variablePeriods || decoded.header?.variablePeriods || null;
+  profile.variablePeriods = variablePeriods;
+  profile.provenance.variablePeriods = variablePeriods;
 
   return {
     ok: true,

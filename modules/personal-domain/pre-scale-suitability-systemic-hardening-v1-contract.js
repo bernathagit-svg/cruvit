@@ -51,6 +51,31 @@ export const CLIMATE_PERIOD_CLAIM = Object.freeze({
   priority: 'P1'
 });
 
+export function resolveClimatePeriodClaim(climateProfile = {}) {
+  const periods =
+    climateProfile?.variablePeriods ||
+    climateProfile?.provenance?.variablePeriods ||
+    climateProfile?.structuralClimate?.coordinateClimateV2?.variablePeriods ||
+    null;
+  const thermal = periods?.thermal;
+  const hydrology = periods?.hydrology;
+  if (thermal?.period === '1991-2020' && thermal?.status === 'era5-land-delta-adjusted') {
+    return {
+      baselineId: 'mixed-variable-periods-current-normal-thermal-v1',
+      period: 'thermal 1991-2020; hydrology 1981-2010',
+      thermalPeriod: thermal.period,
+      hydrologyPeriod: hydrology?.period || CHELSA_V21_BASELINE.period,
+      isCurrentMeasuredClimate: false,
+      productClaimAllowed:
+        'thermal climatology adjusted to the 1991–2020 standard-normal period; hydrology remains historical CHELSA-era climatology',
+      productClaimForbidden: 'live weather / current measured climate / uniform 1991–2020 claim for all variables',
+      futureLayerNeeded: 'CURRENT_NORMAL hydrology + EXTREME_EVENT authority (central bake only)',
+      priority: 'P1'
+    };
+  }
+  return CLIMATE_PERIOD_CLAIM;
+}
+
 export const TERRAIN_PRECISION_CLAIM = Object.freeze({
   climateNative: CHELSA_V21_BASELINE.nativeResolutionLabel,
   terrainNative: TERRAIN_LAYER_POLICY_V2.nativeResolutionLabel,
@@ -634,7 +659,7 @@ export function applyPreScaleSystemicDemotions({
     warnings,
     dimensions: dims,
     survivalConfidenceMeaning: SURVIVAL_CONFIDENCE_MEANING,
-    climatePeriod: CLIMATE_PERIOD_CLAIM,
+    climatePeriod: resolveClimatePeriodClaim(climateProfile),
     terrainPrecision: TERRAIN_PRECISION_CLAIM,
     waterBalance: deriveMonthlyWaterBalance(climateProfile),
     chill,
