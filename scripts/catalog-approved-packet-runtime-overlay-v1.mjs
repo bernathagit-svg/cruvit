@@ -19,11 +19,31 @@ function walk(dir,out=[]){
   }
   return out;
 }
+const COVERAGE_FIELDS=[
+  'frostSensitivity','coldTolerance','heatTolerance','humidityTolerance',
+  'waterNeeds','sunNeeds','drainageNeeds','needsWinterChill'
+];
 function compactClimateTraits(traits={}){
   const out={...traits};
   delete out.plantKnowledge;
   delete out.designMetadata;
   return out;
+}
+function climateCoverage(traits={}){
+  const evidence=traits.traitEvidenceClasses&&typeof traits.traitEvidenceClasses==='object'
+    ?traits.traitEvidenceClasses:{};
+  const fieldCoverage={};
+  for(const field of COVERAGE_FIELDS){
+    const present=traits[field]!==undefined&&traits[field]!==null&&traits[field]!=='';
+    fieldCoverage[field]={present,evidenceClass:evidence[field]||'UNKNOWN'};
+  }
+  const missingFields=COVERAGE_FIELDS.filter(field=>!fieldCoverage[field].present);
+  return {
+    coverageState:missingFields.length?'partial':'complete',
+    trackedFields:[...COVERAGE_FIELDS],
+    missingFields,
+    fieldCoverage
+  };
 }
 const packetFiles=[
   ...walk(path.join(ROOT,'data','catalog-expansion','batches')),
@@ -41,12 +61,16 @@ for(const file of packetFiles){
   seen.add(slug);
   const material=materializePlantCatalogItemFromPacket(packet,{updatedAt:'1970-01-01T00:00:00.000Z'});
   if(!material.ok) throw new Error('Materialize failed: '+slug);
+  const climateTraits=compactClimateTraits(material.item.climateTraits||{});
+  const coverage=climateCoverage(climateTraits);
   plants[slug]={
     packetId:packet.packetId,
     scientific:material.item.scientific||null,
-    verificationState:'verified',
+    packetVerificationState:'verified',
+    verificationScope:'packet-acceptance-only',
     needsReview:false,
-    climateTraits:compactClimateTraits(material.item.climateTraits||{})
+    ...coverage,
+    climateTraits
   };
 }
 const payload={

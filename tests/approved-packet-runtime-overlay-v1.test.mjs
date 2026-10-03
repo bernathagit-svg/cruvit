@@ -23,7 +23,9 @@ test('generated approved packet overlay contains verified source-backed Papaya a
   assert.equal(payload.overlayVersion,APPROVED_PACKET_RUNTIME_OVERLAY_VERSION);
   assert.ok(payload.plantCount>=100);
   const p=payload.plants.papaya;
-  assert.equal(p.verificationState,'verified');
+  assert.equal(p.packetVerificationState,'verified');
+  assert.equal(p.verificationScope,'packet-acceptance-only');
+  assert.equal(p.coverageState,'complete');
   assert.equal(p.needsReview,false);
   assert.equal(p.climateTraits.needsReview,false);
   assert.equal(p.climateTraits.coldTolerance,'very_low');
@@ -39,7 +41,9 @@ test('fallback overlays approved climate evidence while preserving legacy group 
   assert.equal(plants[0].climateTraits.needsReview,false);
   assert.equal(plants[0].climateTraits.coldTolerance,'very_low');
   assert.ok(plants[0].climateTraits.groupIds.includes('tropical-frost-sensitive-fruit'));
-  assert.equal(plants[0].approvedPacketClimateAuthority.verificationState,'verified');
+  assert.equal(plants[0].approvedPacketClimateAuthority.verificationState,'verified_packet');
+  assert.equal(plants[0].approvedPacketClimateAuthority.verificationScope,'packet-acceptance-only');
+  assert.equal(plants[0].approvedPacketClimateAuthority.coverageState,'complete');
 });
 test('verified canonical DB authority outranks static approved packet fallback',()=>{
   const plants=[{slug:'papaya',scientific:'Carica papaya',canonicalClimateAuthority:{
@@ -121,4 +125,20 @@ test('app applies verified canonical authority before approved-packet fallback',
   const fallback=app.indexOf('await applyApprovedPacketRuntimeClimateFallback();');
   assert.ok(canonical>=0&&fallback>canonical);
   assert.match(app,/preserveVerifiedCanonical:true/);
+});
+
+test('approved packet authority exposes partial field coverage instead of implying all climate fields are verified',()=>{
+  const sparse=payload.plants.artichoke;
+  assert.equal(sparse.packetVerificationState,'verified');
+  assert.equal(sparse.verificationScope,'packet-acceptance-only');
+  assert.equal(sparse.coverageState,'partial');
+  assert.ok(sparse.missingFields.includes('humidityTolerance'));
+  assert.equal(sparse.fieldCoverage.humidityTolerance.present,false);
+  assert.equal(sparse.fieldCoverage.humidityTolerance.evidenceClass,'UNKNOWN');
+  const plants=[{slug:'artichoke',climateTraits:{humidityTolerance:'legacy-medium'}}];
+  const out=applyApprovedPacketRuntimeClimateOverlay(plants,payload);
+  assert.deepEqual(out.applied,['artichoke']);
+  assert.equal(plants[0].climateTraits.humidityTolerance,'legacy-medium');
+  assert.equal(plants[0].approvedPacketClimateAuthority.coverageState,'partial');
+  assert.ok(plants[0].approvedPacketClimateAuthority.missingFields.includes('humidityTolerance'));
 });

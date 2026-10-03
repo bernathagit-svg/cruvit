@@ -29,7 +29,7 @@ export function applyApprovedPacketRuntimeClimateOverlay(plants,payload,{
       alias=>aliasToCanonical[alias]===slug&&rows[alias]
     );
     const sourceSlug=rows[slug]?slug:(packetAlias||null), row=sourceSlug?rows[sourceSlug]:null;
-    if(!row||row.verificationState!=='verified'||row.needsReview===true||!row.climateTraits){
+    if(!row||row.packetVerificationState!=='verified'||row.needsReview===true||!row.climateTraits){
       skipped.push({slug,reason:'no-verified-approved-packet-overlay'});
       continue;
     }
@@ -44,7 +44,12 @@ export function applyApprovedPacketRuntimeClimateOverlay(plants,payload,{
       source:'approved-catalog-expansion-packet',
       sourceSlug,
       packetId:row.packetId||null,
-      verificationState:'verified',
+      verificationState:'verified_packet',
+      verificationScope:row.verificationScope||'packet-acceptance-only',
+      coverageState:row.coverageState||'unknown',
+      trackedFields:Array.isArray(row.trackedFields)?[...row.trackedFields]:[],
+      missingFields:Array.isArray(row.missingFields)?[...row.missingFields]:[],
+      fieldCoverage:clone(row.fieldCoverage||{}),
       needsReview:false,
       overlayVersion:payload.overlayVersion||APPROVED_PACKET_RUNTIME_OVERLAY_VERSION
     };
