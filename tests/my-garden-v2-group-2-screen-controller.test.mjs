@@ -128,10 +128,11 @@ test('Task identity assertion uses canonical projected rows across all views',as
   );
 });
 
-test('active plant count includes plants with no tasks',async()=>{
+test('active plant count includes plants with no tasks without forcing the count back into approved UI',async()=>{
   const controller=createMyGardenGroup2ScreenController(fakeSupabase(fixtures));
   const list=await controller.loadUpcomingList('g1');
-  assert.match(list.html,/· 3 plants/);
+  assert.equal(list.activePlantCount,3);
+  assert.doesNotMatch(list.html,/· 3 plants/);
 });
 
 
