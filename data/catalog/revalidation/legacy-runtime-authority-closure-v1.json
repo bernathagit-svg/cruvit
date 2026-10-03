@@ -1,0 +1,42 @@
+{
+  "contract": "cruvit-legacy-runtime-authority-closure-v1",
+  "generatedAt": "2026-10-03",
+  "scope": {
+    "runtimePlantCount": 122,
+    "approvedPacketOverlayCount": 98,
+    "legacyAuthorityCount": 24
+  },
+  "policy": {
+    "speciesIdentityComplete": "May proceed to evidence assembly / approved Catalog Expansion packet.",
+    "identityReviewRequired": "Must not receive species-authoritative climate packet until canonical species identity is resolved.",
+    "registryMissing": "Identity registry entry is required before packetization."
+  },
+  "rows": [
+    {"slug":"lemon","state":"SPECIES_IDENTITY_COMPLETE","nextAction":"PACKET_BUILD_FROM_EXISTING_EVIDENCE","evidenceAssets":["catalog/enrichment-retrieval/evidence-records/lemon.evidence-records-v1.json"]},
+    {"slug":"rosemary","state":"SPECIES_IDENTITY_COMPLETE","nextAction":"PACKET_BUILD_FROM_EXISTING_EVIDENCE","evidenceAssets":["smart-recommendations-reviewed/batches/rosemary-sun-preference-v1","smart-recommendations-reviewed/batches/rosemary-water-preference-v1"]},
+    {"slug":"olive","state":"SPECIES_IDENTITY_COMPLETE","nextAction":"PACKET_BUILD_FROM_EXISTING_EVIDENCE","evidenceAssets":["catalog/enrichment-retrieval/evidence-records/olive.evidence-records-v1.json"]},
+    {"slug":"basil","state":"SPECIES_IDENTITY_COMPLETE","nextAction":"AUTO_ENRICH_TO_PACKET","queuePriority":"P2"},
+    {"slug":"mango","state":"SPECIES_IDENTITY_COMPLETE","nextAction":"EVIDENCE_ASSEMBLY_REQUIRED"},
+    {"slug":"hibiscus","state":"SPECIES_IDENTITY_COMPLETE","nextAction":"AUTO_ENRICH_TO_PACKET","queuePriority":"P2"},
+    {"slug":"strelitzia","state":"SPECIES_IDENTITY_COMPLETE","nextAction":"AUTO_ENRICH_TO_PACKET","queuePriority":"P2"},
+    {"slug":"ficus-benjamina","state":"SPECIES_IDENTITY_COMPLETE","nextAction":"AUTO_ENRICH_TO_PACKET","queuePriority":"P2"},
+    {"slug":"aloe-vera","state":"SPECIES_IDENTITY_COMPLETE","nextAction":"AUTO_ENRICH_TO_PACKET","queuePriority":"P2"},
+    {"slug":"cyclamen","state":"SPECIES_IDENTITY_COMPLETE","nextAction":"AUTO_ENRICH_TO_PACKET","queuePriority":"P2"},
+    {"slug":"black-eyed-susan-vine","state":"SPECIES_IDENTITY_COMPLETE","nextAction":"AUTO_ENRICH_TO_PACKET","queuePriority":"P2"},
+    {"slug":"avocado","state":"SPECIES_IDENTITY_COMPLETE","nextAction":"PACKET_BUILD_FROM_EXISTING_EVIDENCE","evidenceAssets":["catalog/enrichment-retrieval/evidence-records/avocado.evidence-records-v1.json"]},
+
+    {"slug":"succulent","state":"IDENTITY_REVIEW_REQUIRED","nextAction":"RESOLVE_SPECIES_OR_RETAIN_GROUP_ONLY"},
+    {"slug":"agapanthus","state":"IDENTITY_REVIEW_REQUIRED","nextAction":"RESOLVE_SPECIES_OR_RETAIN_GENUS_ONLY"},
+    {"slug":"geranium","state":"IDENTITY_REVIEW_REQUIRED","nextAction":"RESOLVE_PELARGONIUM_SPECIES_OR_GROUP"},
+    {"slug":"camellia","state":"IDENTITY_REVIEW_REQUIRED","nextAction":"RESOLVE_SPECIES_OR_RETAIN_GENUS_ONLY","queuePriority":"P0"},
+    {"slug":"azalea","state":"IDENTITY_REVIEW_REQUIRED","nextAction":"RESOLVE_RHODODENDRON_SPECIES_OR_GROUP","queuePriority":"P0"},
+    {"slug":"melaleuca","state":"IDENTITY_REVIEW_REQUIRED","nextAction":"RESOLVE_SPECIES_OR_RETAIN_GENUS_ONLY"},
+    {"slug":"banana","state":"IDENTITY_REVIEW_REQUIRED","nextAction":"RESOLVE_MUSA_SPECIES_CULTIVAR_OR_GROUP"},
+    {"slug":"rose","state":"IDENTITY_REVIEW_REQUIRED","nextAction":"RESOLVE_ROSA_SPECIES_CULTIVAR_OR_GROUP","queuePriority":"P0"},
+    {"slug":"oak-tree","state":"IDENTITY_REVIEW_REQUIRED","nextAction":"RESOLVE_QUERCUS_SPECIES_OR_GROUP","queuePriority":"P0"},
+    {"slug":"pine-tree","state":"IDENTITY_REVIEW_REQUIRED","nextAction":"RESOLVE_PINUS_SPECIES_OR_GROUP","queuePriority":"P0"},
+    {"slug":"orchid","state":"IDENTITY_REVIEW_REQUIRED","nextAction":"RESOLVE_PHALAENOPSIS_SPECIES_HYBRID_OR_GROUP","queuePriority":"P0"},
+
+    {"slug":"mulberry","state":"REGISTRY_MISSING","nextAction":"CREATE_CANONICAL_IDENTITY_BEFORE_PACKET"}
+  ]
+}
