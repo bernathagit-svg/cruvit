@@ -1119,3 +1119,43 @@ body:has(.plant-identifier-module .pi-entry-v210.show) .entry-topbar{visibility:
  .plant-identifier-module .pi-entry-v210 .pi-entry-main{margin-top:48px}
  .plant-identifier-module .pi-entry-v210 .pi-entry-history{margin-top:26px}
 }
+
+/* UI 2.10 · PI-02 capture/upload */
+.plant-identifier-module .pi-modal.show{background:rgba(2,12,7,.76);backdrop-filter:blur(18px)}
+.plant-identifier-module .pi-modal.show .pi-wizard{
+  width:min(92vw,620px);max-height:min(92dvh,860px);overflow:auto;
+  border-radius:30px;border:1px solid rgba(225,239,211,.20);
+  background:linear-gradient(160deg,rgba(12,39,22,.97),rgba(5,23,13,.98));
+  box-shadow:0 30px 80px rgba(0,0,0,.48);color:#f4f4e8;
+}
+.plant-identifier-module .pi-modal.show .pi-modal-top h2{color:#f4f4e8}
+.plant-identifier-module .pi-modal.show .pi-modal-top .pi-muted{color:rgba(239,242,226,.62)}
+.plant-identifier-module .pi-modal.show .pi-close{color:#f4f4e8;border-color:rgba(230,240,218,.18);background:rgba(255,255,255,.06)}
+.plant-identifier-module .pi-modal.show .pi-step{background:rgba(233,242,222,.14)}
+.plant-identifier-module .pi-modal.show .pi-step.on{background:#91bc78}
+.plant-identifier-module .pi-capture-v210{padding-top:6px}
+.plant-identifier-module .pi-capture-kicker{margin:8px 0 10px;color:#9bc784;font-size:10px;font-weight:800;letter-spacing:.16em}
+.plant-identifier-module .pi-capture-title{margin:0;color:#f5f4e9;font-size:clamp(25px,5vw,36px);line-height:1.04;letter-spacing:-.035em}
+.plant-identifier-module .pi-capture-sub{margin:12px 0 20px;color:rgba(239,242,226,.67);font-size:14px;line-height:1.5}
+.plant-identifier-module .pi-capture-preview{
+  min-height:220px;border-radius:24px;border:1px dashed rgba(213,232,197,.32);
+  background:linear-gradient(145deg,rgba(55,90,59,.30),rgba(10,35,19,.48));
+  color:#f4f4e8;overflow:hidden
+}
+.plant-identifier-module .pi-capture-preview .pi-muted{color:rgba(239,242,226,.62)}
+.plant-identifier-module .pi-capture-preview img{width:100%;height:100%;min-height:220px;max-height:360px;object-fit:cover;border-radius:22px}
+.plant-identifier-module .pi-capture-quality{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 18px}
+.plant-identifier-module .pi-capture-quality span{
+  padding:7px 10px;border-radius:999px;background:rgba(235,242,226,.07);
+  border:1px solid rgba(230,240,218,.12);color:rgba(239,242,226,.70);font-size:11px;font-weight:650
+}
+.plant-identifier-module .pi-capture-source-btns{grid-template-columns:1fr 1fr;gap:10px}
+.plant-identifier-module .pi-capture-source-btns .pi-btn{
+  min-height:50px;border-radius:16px;background:rgba(238,244,230,.08);border:1px solid rgba(231,240,221,.16);color:#f3f4e9
+}
+.plant-identifier-module .pi-analyze-v210{
+  width:100%;min-height:56px;margin-top:12px!important;border-radius:18px!important;
+  background:linear-gradient(135deg,#86b66d,#4e8658)!important;color:#07150d!important;
+  font-weight:800!important;display:flex!important;align-items:center;justify-content:center;gap:10px
+}
+.plant-identifier-module .pi-capture-consent{margin:10px 2px 0;text-align:center;color:rgba(239,242,226,.48);font-size:10px;line-height:1.4}
