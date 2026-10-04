@@ -134,4 +134,14 @@ body{display:grid;place-items:start center}
   <div class="home-indicator"></div>
 </nav>
 </div>
-</body></html>
+<script>
+(function(){
+ const nav=document.querySelectorAll('.bottom .nav');
+ const routes=['../index.html','../index.html','../approved/add-plant-approved.html','/modules/garden-design/','/store/'];
+ nav.forEach((el,i)=>{el.style.cursor='pointer';el.setAttribute('role','link');el.tabIndex=0;
+   const go=()=>{if(routes[i]) location.href=routes[i]};
+   el.addEventListener('click',go);el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}});
+ });
+ const back=document.querySelector('.top .back');if(back){back.style.cursor='pointer';back.tabIndex=0;back.setAttribute('role','link');back.onclick=()=>location.href='../index.html';}
+})();
+</script></body></html>
