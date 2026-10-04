@@ -2,9 +2,10 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>CRUVIT · My Plants + Plant Detail · Approved UI Integrated Preview v1</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;background:#06130b;font-family:Arial,sans-serif}
-body{display:grid;place-items:start center}
-.screen{position:relative;width:min(100vw,941px);aspect-ratio:941/1672;overflow:hidden;background:#06130b}
+*{box-sizing:border-box}html,body{margin:0;width:100%;min-height:100%;background:#06130b;font-family:Arial,sans-serif}
+html{overflow-x:hidden}
+body{display:block;width:100vw;min-height:100dvh;overflow-x:hidden}
+.screen{position:relative;width:100vw;max-width:none;margin:0;aspect-ratio:941/1672;overflow:hidden;background:#06130b}
 .hidden{display:none!important}.base{position:absolute;inset:0;width:100%;height:100%;display:block}
 .hotspot{position:absolute;border:0;background:transparent;cursor:pointer;z-index:10}
 .card-user-photo,.detail-card-user-photo,.detail-hero-user-photo{position:absolute;z-index:6;object-fit:cover;display:block}
