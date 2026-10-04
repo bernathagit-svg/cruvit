@@ -3,171 +3,213 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>CRUVIT — Plant Identification PI-01 Review</title>
+<title>CRUVIT — Plant Identification PI-01 Approved Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#04180d;--ink:#f5f1df;--muted:#c4cbbd;--line:rgba(190,221,176,.20);
-  --glass:rgba(12,49,27,.72);--glass2:rgba(22,65,37,.82);--green:#76c653;--green2:#a9f27a;
+  --forest:#164c30;
+  --forest-deep:#0c3622;
+  --forest-soft:#2f7b48;
+  --cream:#f8f1e3;
+  --cream-2:#efe5d2;
+  --ink:#17251c;
+  --muted:#59635c;
+  --line:rgba(24,72,45,.12);
 }
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:#142419;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+html,body{margin:0;min-height:100%;background:#c8d0ba;font-family:"DM Sans",Inter,system-ui,sans-serif;color:var(--ink)}
 button{font:inherit;color:inherit}
 .pi01{
-  position:relative;min-height:100svh;width:min(100%,547px);margin:0 auto;overflow:hidden;
-  padding:36px 24px 42px;
+  position:relative;
+  width:min(100vw,547px);
+  min-height:100svh;
+  margin:0 auto;
+  overflow:hidden;
   background:
-    linear-gradient(180deg,rgba(2,22,11,.24) 0%,rgba(3,25,13,.62) 28%,rgba(2,19,10,.93) 72%,rgba(2,15,8,.98) 100%),
-    url('/assets/garden-bg.jpg') center top/cover no-repeat,
-    var(--bg);
+    linear-gradient(180deg,rgba(247,241,227,.96) 0 50%,rgba(239,229,210,.88) 72%,rgba(18,70,42,.94) 100%),
+    url('/assets/mobile-welcome-bg.jpg') center/cover no-repeat;
 }
 .pi01:before{
-  content:"";position:absolute;inset:0;pointer-events:none;
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
   background:
-    radial-gradient(ellipse at 12% 4%,rgba(177,214,123,.15),transparent 26%),
-    radial-gradient(ellipse at 92% 6%,rgba(179,211,133,.10),transparent 25%),
-    linear-gradient(180deg,rgba(0,0,0,0),rgba(0,18,8,.12) 25%,rgba(0,12,6,.54) 76%);
+    url('/assets/intro-leaves.png') left 96px / 260px auto no-repeat,
+    radial-gradient(ellipse at 90% 20%,rgba(72,128,65,.16),transparent 26%),
+    linear-gradient(180deg,rgba(255,255,255,.18),transparent 38%);
+  opacity:.92;
 }
-.shell{position:relative;z-index:1}
-.topbar{height:58px;display:grid;grid-template-columns:48px 1fr 48px;align-items:center}
-.iconbtn{width:42px;height:42px;border:0;background:transparent;display:grid;place-items:center;padding:0}
-.iconbtn svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.topbar strong{justify-self:center;font-size:18px;font-weight:600;letter-spacing:.01em}
-.location-row{margin:20px 0 26px;display:flex;justify-content:flex-start}
-.location-chip{
-  min-height:40px;border:1px solid var(--line);border-radius:999px;background:rgba(6,35,18,.58);
-  display:inline-flex;align-items:center;gap:9px;padding:0 13px;color:#e3e8df;font-size:13px;backdrop-filter:blur(14px)
+.screen{position:relative;z-index:1;min-height:100svh;padding:22px 22px 108px;display:flex;flex-direction:column}
+.topbar{display:grid;grid-template-columns:54px 1fr 54px;align-items:center;height:54px}
+.brand-mark{display:grid;place-items:center;width:42px;height:42px;color:var(--forest)}
+.brand-mark svg,.help svg{width:29px;height:29px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.wordmark{text-align:center;letter-spacing:.30em;font-size:23px;font-weight:500;color:#263029}
+.help{justify-self:end;width:40px;height:40px;border:2px solid var(--forest-deep);border-radius:50%;background:rgba(255,255,255,.38);display:grid;place-items:center;padding:0}
+.hero{position:relative;padding:34px 4px 0;min-height:470px;text-align:center}
+.hero h1{margin:0 auto;max-width:410px;font-size:46px;line-height:1.02;letter-spacing:-.045em;font-weight:700}
+.hero .sub{margin:14px auto 0;max-width:340px;font-size:19px;line-height:1.35;color:#3f4a43}
+.story{
+  position:absolute;right:18px;top:250px;width:168px;transform:rotate(-6deg);
+  font:600 31px/1.02 "Caveat","Segoe Print",cursive;color:#1f5132;text-align:center
 }
-.location-chip svg{width:17px;height:17px;fill:none;stroke:var(--green2);stroke-width:1.8}
-.location-chip b{font-weight:600}
-.location-chip span{color:#aeb8ab}
-.copy{margin:0 4px 24px}
-.eyebrow{margin:0 0 8px;color:var(--green2);font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase}
-h1{margin:0;font:400 clamp(50px,13vw,70px)/.95 Georgia,"Times New Roman",serif;letter-spacing:-.04em}
-.lead{margin:14px 0 0;max-width:31ch;font:italic 23px/1.22 Georgia,"Times New Roman",serif;color:#eef1e8}
-.capture{
-  width:100%;min-height:325px;border:1px solid rgba(190,221,176,.25);border-radius:34px;
-  background:linear-gradient(145deg,rgba(27,78,43,.86),rgba(6,35,18,.86));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 20px 44px rgba(0,0,0,.18);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 24px;cursor:pointer;
-  backdrop-filter:blur(18px)
+.story svg{display:block;width:34px;height:34px;margin:5px auto 0;fill:none;stroke:#2f7b48;stroke-width:1.8}
+.plant-scene{
+  position:absolute;left:-22px;right:-22px;bottom:-18px;height:250px;overflow:hidden;
+  background:
+    linear-gradient(180deg,rgba(248,241,227,0) 0%,rgba(248,241,227,.04) 26%,rgba(196,174,139,.28) 100%),
+    url('/assets/entry-garden-bg.png') center 48% / cover no-repeat;
+  mask-image:linear-gradient(180deg,transparent 0,#000 16%,#000 100%);
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 16%,#000 100%);
 }
-.camera-orb{
-  width:104px;height:104px;border-radius:50%;display:grid;place-items:center;margin-bottom:22px;
-  background:linear-gradient(145deg,#7bc65a,#5a9840);
-  box-shadow:0 12px 34px rgba(62,126,51,.34),inset 0 1px 0 rgba(255,255,255,.22)
+.plant-scene:after{
+  content:"";
+  position:absolute;left:0;right:0;bottom:0;height:94px;
+  background:linear-gradient(180deg,rgba(228,211,184,.2),rgba(218,196,163,.78));
+  border-top:1px solid rgba(101,79,54,.12)
 }
-.camera-orb svg{width:48px;height:48px;fill:none;stroke:#fff;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
-.capture strong{font:400 31px/1.05 Georgia,"Times New Roman",serif}
-.capture p{margin:8px 0 18px;color:#c8d0c4;font-size:15px;line-height:1.45;max-width:28ch}
-.gallery-pill{
-  min-height:48px;border-radius:999px;border:1px solid rgba(201,231,185,.26);padding:0 20px;
-  display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,.06);font-size:14px;font-weight:600
+.actions{position:relative;margin-top:-1px;display:grid;gap:12px;padding:0 12px}
+.action{
+  width:100%;min-height:64px;border-radius:19px;border:0;display:flex;align-items:center;justify-content:center;gap:14px;
+  font-size:21px;font-weight:700;box-shadow:0 8px 20px rgba(39,55,39,.12)
 }
-.gallery-pill svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8}
-.guide{margin:13px 6px 0;color:#b8c1b5;font-size:12px;line-height:1.45;text-align:center}
-.recent{margin-top:32px}
-.section-head{display:flex;align-items:flex-end;justify-content:space-between;margin:0 4px 12px}
-.section-head h2{margin:0;font:400 27px/1 Georgia,"Times New Roman",serif}
-.section-head button{border:0;background:transparent;color:var(--green2);font-size:13px;padding:3px 0}
-.recent-list{display:grid;gap:8px}
-.recent-item{
-  min-height:76px;border:1px solid rgba(190,221,176,.18);border-radius:24px;
-  background:linear-gradient(105deg,rgba(25,72,39,.80),rgba(9,39,22,.79));
-  display:grid;grid-template-columns:58px 1fr 24px;align-items:center;gap:12px;padding:8px 14px 8px 8px
+.action svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.action.primary{background:linear-gradient(180deg,#2f7b48,#276b40);color:white}
+.action.secondary{background:rgba(255,253,248,.94);color:#283129;border:1px solid rgba(25,74,45,.08);font-weight:500}
+.help-panel{
+  margin:18px 0 0;padding:17px 14px 14px;border-radius:25px;
+  background:rgba(249,244,232,.88);border:1px solid rgba(64,91,59,.10);
+  box-shadow:0 10px 24px rgba(48,59,45,.10);backdrop-filter:blur(10px)
 }
-.thumb{
-  width:58px;height:58px;border-radius:18px;display:grid;place-items:center;
-  background:linear-gradient(145deg,rgba(112,165,79,.76),rgba(24,65,34,.86));font-size:28px
+.help-panel h2{margin:0 0 13px 2px;font-size:19px}
+.help-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.help-card{
+  min-height:122px;border-radius:17px;background:rgba(255,252,244,.92);border:1px solid rgba(26,71,45,.07);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:10px 6px;
+  box-shadow:0 6px 16px rgba(52,68,49,.06)
 }
-.recent-copy{min-width:0}.recent-copy strong{display:block;font-size:14px}.recent-copy span{display:block;margin-top:4px;color:#b7c0b4;font-size:12px}
-.chev{font-size:23px;color:#dbe3d8}
-.review-note{margin:28px 2px 0;text-align:center;color:#829184;font-size:11px;letter-spacing:.02em}
+.help-card svg{width:33px;height:33px;margin-bottom:13px;fill:none;stroke:var(--forest-soft);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.help-card.sun svg{stroke:#f49c28}
+.help-card.plus svg{fill:var(--forest-soft);stroke:none}
+.help-card span{font-size:12px;line-height:1.25;font-weight:500}
+.bottom-nav{
+  position:absolute;z-index:3;left:0;right:0;bottom:0;height:96px;padding:12px 16px 14px;
+  background:linear-gradient(180deg,#16472d,#0e3522);
+  display:grid;grid-template-columns:repeat(5,1fr);align-items:center
+}
+.nav-item{border:0;background:transparent;color:#d9e2d9;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;padding:0}
+.nav-item svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.nav-item.active{color:white;font-weight:600;transform:translateY(-10px)}
+.active-orb{
+  width:58px;height:58px;border-radius:50%;background:#fbf8ee;display:grid;place-items:center;
+  border:5px solid rgba(116,151,111,.30);box-shadow:0 4px 18px rgba(0,0,0,.18);color:var(--forest-soft)
+}
+.active-orb svg{width:31px;height:31px}
+.review-note{margin:10px 0 0;text-align:center;color:rgba(29,47,34,.52);font-size:10px}
 @media(min-width:480px){
-  .pi01{min-height:1248px;padding:52px 28px 52px}
-  .topbar strong{font-size:21px}
-  .location-row{margin-top:22px;margin-bottom:30px}
-  .location-chip{min-height:46px;font-size:15px;padding:0 16px}
-  .copy{margin-bottom:30px}
-  .eyebrow{font-size:14px}
-  h1{font-size:70px}
-  .lead{font-size:27px;margin-top:16px}
-  .capture{min-height:390px;border-radius:38px;padding:38px 28px}
-  .camera-orb{width:118px;height:118px;margin-bottom:26px}
-  .camera-orb svg{width:55px;height:55px}
-  .capture strong{font-size:36px}
-  .capture p{font-size:17px;margin-top:10px;margin-bottom:22px}
-  .gallery-pill{min-height:54px;padding:0 24px;font-size:16px}
-  .guide{font-size:14px;margin-top:16px}
-  .recent{margin-top:38px}
-  .section-head h2{font-size:31px}
-  .section-head button{font-size:15px}
-  .recent-item{min-height:92px;border-radius:28px;grid-template-columns:72px 1fr 28px;gap:14px;padding:9px 16px 9px 9px}
-  .thumb{width:72px;height:72px;border-radius:21px;font-size:34px}
-  .recent-copy strong{font-size:17px}.recent-copy span{font-size:14px}
+  .screen{padding:30px 28px 116px}
+  .topbar{height:58px}
+  .wordmark{font-size:25px}
+  .hero{min-height:520px;padding-top:42px}
+  .hero h1{font-size:54px;max-width:440px}
+  .hero .sub{font-size:21px;max-width:370px}
+  .story{top:285px;right:26px;font-size:34px}
+  .plant-scene{height:288px;left:-28px;right:-28px}
+  .action{min-height:70px;font-size:22px}
+  .help-panel{margin-top:22px;padding:19px 16px 16px}
+  .help-card{min-height:137px}
+  .help-card span{font-size:13px}
+  .bottom-nav{height:104px}
+  .nav-item{font-size:12px}
+}
+@media(max-width:380px){
+  .screen{padding-left:14px;padding-right:14px}
+  .hero h1{font-size:39px}
+  .hero .sub{font-size:16px}
+  .story{font-size:26px;right:5px;width:140px}
+  .help-grid{gap:6px}
+  .help-card{min-height:112px}
+  .help-card span{font-size:10px}
 }
 </style>
 </head>
 <body>
-<main class="pi01" aria-label="Plant Identification entry review">
-  <div class="shell">
+<main class="pi01" aria-label="CRUVIT Plant Identification approved PI-01 visual review">
+  <div class="screen">
     <header class="topbar">
-      <button class="iconbtn" type="button" aria-label="Back" onclick="history.back()">
-        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      <strong>Plant Identification</strong>
-      <button class="iconbtn" type="button" aria-label="Recent identifications" onclick="document.querySelector('.recent').scrollIntoView({behavior:'smooth'})">
-        <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32"><path d="M16 27V15"/><path d="M16 18c-6-1-9-5-9-11 6 0 10 3 11 8"/><path d="M16 15c2-6 6-9 12-9 0 6-4 10-12 11"/></svg>
+      </div>
+      <div class="wordmark">CRUVIT</div>
+      <button class="help" type="button" aria-label="Help">
+        <svg viewBox="0 0 24 24"><path d="M9.5 9a2.7 2.7 0 1 1 4.4 2.1c-1 .8-1.9 1.4-1.9 3"/><path d="M12 18h.01"/></svg>
       </button>
     </header>
 
-    <div class="location-row">
-      <div class="location-chip">
-        <svg viewBox="0 0 24 24"><path d="M12 21s6-5.2 6-11a6 6 0 1 0-12 0c0 5.8 6 11 6 11Z"/><circle cx="12" cy="10" r="2"/></svg>
-        <b>Garden location</b><span>Ready</span>
+    <section class="hero">
+      <h1>Let’s identify<br>your plant!</h1>
+      <p class="sub">Snap a photo and discover<br>its name, care tips and more.</p>
+      <div class="story">Every plant<br>has a story
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 27V16"/><path d="M16 20c-6-1-9-5-9-11 6 0 10 3 11 8"/><path d="M16 17c2-6 6-9 12-9 0 6-4 10-12 11"/></svg>
       </div>
-    </div>
-
-    <section class="copy">
-      <p class="eyebrow">AI plant identifier</p>
-      <h1>What do you want to identify?</h1>
-      <p class="lead">Start with one clear photo.</p>
+      <div class="plant-scene" aria-hidden="true"></div>
     </section>
 
-    <button class="capture" type="button" aria-label="Take a plant photo">
-      <span class="camera-orb" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path d="M4 8.5h3l1.5-2h7l1.5 2h3v10H4z"/><circle cx="12" cy="13" r="3.4"/></svg>
-      </span>
-      <strong>Take a photo</strong>
-      <p>Photograph a leaf, flower, or the whole plant. CRUVIT will ask before analyzing it.</p>
-      <span class="gallery-pill">
-        <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M7 16l4-4 3 3 2-2 3 3"/><circle cx="9" cy="9" r="1.3"/></svg>
-        Choose from gallery
-      </span>
-    </button>
+    <section class="actions" aria-label="Photo actions">
+      <button class="action primary" type="button">
+        <svg viewBox="0 0 24 24"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.4"/></svg>
+        <span>Take a photo</span>
+      </button>
+      <button class="action secondary" type="button">
+        <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="m6.5 16 4-4 3.2 3 2.1-2.1 2.7 3.1"/><circle cx="9" cy="9" r="1.2"/></svg>
+        <span>Choose from gallery</span>
+      </button>
+    </section>
 
-    <p class="guide">Best results: natural light, one main plant, and a sharp photo.</p>
-
-    <section class="recent" aria-label="Recent identifications">
-      <div class="section-head">
-        <h2>Recent identifications</h2>
-        <button type="button">See all</button>
-      </div>
-      <div class="recent-list">
-        <div class="recent-item">
-          <div class="thumb" aria-hidden="true">🍋</div>
-          <div class="recent-copy"><strong>Lemon</strong><span>Matched catalog plant · yesterday</span></div>
-          <div class="chev" aria-hidden="true">›</div>
+    <section class="help-panel">
+      <h2>Need help?</h2>
+      <div class="help-grid">
+        <div class="help-card">
+          <svg viewBox="0 0 32 32"><path d="M16 27V16"/><path d="M16 20c-6-1-9-5-9-11 6 0 10 3 11 8"/><path d="M16 17c2-6 6-9 12-9 0 6-4 10-12 11"/></svg>
+          <span>Plant care<br>tips</span>
         </div>
-        <div class="recent-item">
-          <div class="thumb" aria-hidden="true">🌿</div>
-          <div class="recent-copy"><strong>Rosemary</strong><span>Matched catalog plant · 3 days ago</span></div>
-          <div class="chev" aria-hidden="true">›</div>
+        <div class="help-card">
+          <svg viewBox="0 0 32 32"><path d="M16 27S5 20 5 12.5C5 7 12 5 16 10c4-5 11-3 11 2.5C27 20 16 27 16 27Z"/></svg>
+          <span>Is it right<br>for my garden?</span>
+        </div>
+        <div class="help-card sun">
+          <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="5"/><path d="M16 3v4M16 25v4M3 16h4M25 16h4M6.8 6.8l2.8 2.8M22.4 22.4l2.8 2.8M25.2 6.8l-2.8 2.8M9.6 22.4l-2.8 2.8"/></svg>
+          <span>Growing<br>conditions</span>
+        </div>
+        <div class="help-card plus">
+          <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="14"/><path d="M15 8h2v16h-2zM8 15h16v2H8z" fill="#fff"/></svg>
+          <span>Save to<br>My Garden</span>
         </div>
       </div>
     </section>
 
-    <div class="review-note">PI-01 design review · isolated prototype · no live identification call</div>
+    <p class="review-note">Approved Option 4 visual reference · isolated review · no identification call connected</p>
   </div>
+
+  <nav class="bottom-nav" aria-label="CRUVIT primary navigation">
+    <button class="nav-item" type="button">
+      <svg viewBox="0 0 32 32"><path d="M5 15 16 6l11 9v12h-8v-8h-6v8H5z"/></svg><span>Home</span>
+    </button>
+    <button class="nav-item" type="button">
+      <svg viewBox="0 0 32 32"><path d="M16 28V14"/><path d="M16 19c-6-1-9-5-9-11 6 0 10 3 11 8"/><path d="M16 16c2-6 6-9 12-9 0 6-4 10-12 11"/></svg><span>My Garden</span>
+    </button>
+    <button class="nav-item active" type="button">
+      <span class="active-orb"><svg viewBox="0 0 32 32"><path d="M7 12V7h5M20 7h5v5M25 20v5h-5M12 25H7v-5"/><path d="M16 23V14"/><path d="M16 17c-4-1-6-3-6-7 4 0 7 2 7.8 5"/><path d="M16 15c1.5-4 4-6 8-6 0 4-2.5 7-8 7.5"/></svg></span><span>Identify</span>
+    </button>
+    <button class="nav-item" type="button">
+      <svg viewBox="0 0 32 32"><path d="M5 10h4l2-3h10l2 3h4v16H5z"/><circle cx="16" cy="18" r="5"/></svg><span>Design</span>
+    </button>
+    <button class="nav-item" type="button">
+      <svg viewBox="0 0 32 32"><path d="M8 11h16l2 16H6z"/><path d="M12 11V8a4 4 0 0 1 8 0v3"/></svg><span>Shop</span>
+    </button>
+  </nav>
 </main>
 </body>
 </html>
