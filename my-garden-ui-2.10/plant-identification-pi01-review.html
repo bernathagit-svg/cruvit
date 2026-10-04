@@ -3,213 +3,71 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>CRUVIT — Plant Identification PI-01 Approved Review</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>CRUVIT — Plant Identification PI-01 Approved</title>
 <style>
-:root{
-  --forest:#164c30;
-  --forest-deep:#0c3622;
-  --forest-soft:#2f7b48;
-  --cream:#f8f1e3;
-  --cream-2:#efe5d2;
-  --ink:#17251c;
-  --muted:#59635c;
-  --line:rgba(24,72,45,.12);
-}
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:#c8d0ba;font-family:"DM Sans",Inter,system-ui,sans-serif;color:var(--ink)}
-button{font:inherit;color:inherit}
-.pi01{
+html,body{margin:0;min-height:100%;background:#0d2317}
+body{display:flex;justify-content:center;align-items:flex-start}
+.pi01-approved{
   position:relative;
   width:min(100vw,547px);
   min-height:100svh;
-  margin:0 auto;
+  background:#f5efdf;
   overflow:hidden;
-  background:
-    linear-gradient(180deg,rgba(247,241,227,.96) 0 50%,rgba(239,229,210,.88) 72%,rgba(18,70,42,.94) 100%),
-    url('/assets/mobile-welcome-bg.jpg') center/cover no-repeat;
 }
-.pi01:before{
-  content:"";
+.pi01-approved img{
+  display:block;
+  width:100%;
+  height:auto;
+  min-height:100svh;
+  object-fit:cover;
+  object-position:center top;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+.hotspot{
   position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:
-    url('/assets/intro-leaves.png') left 96px / 260px auto no-repeat,
-    radial-gradient(ellipse at 90% 20%,rgba(72,128,65,.16),transparent 26%),
-    linear-gradient(180deg,rgba(255,255,255,.18),transparent 38%);
-  opacity:.92;
+  display:block;
+  border:0;
+  background:transparent;
+  padding:0;
+  margin:0;
+  cursor:pointer;
+  outline:none;
+  -webkit-tap-highlight-color:transparent;
 }
-.screen{position:relative;z-index:1;min-height:100svh;padding:22px 22px 108px;display:flex;flex-direction:column}
-.topbar{display:grid;grid-template-columns:54px 1fr 54px;align-items:center;height:54px}
-.brand-mark{display:grid;place-items:center;width:42px;height:42px;color:var(--forest)}
-.brand-mark svg,.help svg{width:29px;height:29px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.wordmark{text-align:center;letter-spacing:.30em;font-size:23px;font-weight:500;color:#263029}
-.help{justify-self:end;width:40px;height:40px;border:2px solid var(--forest-deep);border-radius:50%;background:rgba(255,255,255,.38);display:grid;place-items:center;padding:0}
-.hero{position:relative;padding:34px 4px 0;min-height:470px;text-align:center}
-.hero h1{margin:0 auto;max-width:410px;font-size:46px;line-height:1.02;letter-spacing:-.045em;font-weight:700}
-.hero .sub{margin:14px auto 0;max-width:340px;font-size:19px;line-height:1.35;color:#3f4a43}
-.story{
-  position:absolute;right:18px;top:250px;width:168px;transform:rotate(-6deg);
-  font:600 31px/1.02 "Caveat","Segoe Print",cursive;color:#1f5132;text-align:center
-}
-.story svg{display:block;width:34px;height:34px;margin:5px auto 0;fill:none;stroke:#2f7b48;stroke-width:1.8}
-.plant-scene{
-  position:absolute;left:-22px;right:-22px;bottom:-18px;height:250px;overflow:hidden;
-  background:
-    linear-gradient(180deg,rgba(248,241,227,0) 0%,rgba(248,241,227,.04) 26%,rgba(196,174,139,.28) 100%),
-    url('/assets/entry-garden-bg.png') center 48% / cover no-repeat;
-  mask-image:linear-gradient(180deg,transparent 0,#000 16%,#000 100%);
-  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 16%,#000 100%);
-}
-.plant-scene:after{
-  content:"";
-  position:absolute;left:0;right:0;bottom:0;height:94px;
-  background:linear-gradient(180deg,rgba(228,211,184,.2),rgba(218,196,163,.78));
-  border-top:1px solid rgba(101,79,54,.12)
-}
-.actions{position:relative;margin-top:-1px;display:grid;gap:12px;padding:0 12px}
-.action{
-  width:100%;min-height:64px;border-radius:19px;border:0;display:flex;align-items:center;justify-content:center;gap:14px;
-  font-size:21px;font-weight:700;box-shadow:0 8px 20px rgba(39,55,39,.12)
-}
-.action svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.action.primary{background:linear-gradient(180deg,#2f7b48,#276b40);color:white}
-.action.secondary{background:rgba(255,253,248,.94);color:#283129;border:1px solid rgba(25,74,45,.08);font-weight:500}
-.help-panel{
-  margin:18px 0 0;padding:17px 14px 14px;border-radius:25px;
-  background:rgba(249,244,232,.88);border:1px solid rgba(64,91,59,.10);
-  box-shadow:0 10px 24px rgba(48,59,45,.10);backdrop-filter:blur(10px)
-}
-.help-panel h2{margin:0 0 13px 2px;font-size:19px}
-.help-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
-.help-card{
-  min-height:122px;border-radius:17px;background:rgba(255,252,244,.92);border:1px solid rgba(26,71,45,.07);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:10px 6px;
-  box-shadow:0 6px 16px rgba(52,68,49,.06)
-}
-.help-card svg{width:33px;height:33px;margin-bottom:13px;fill:none;stroke:var(--forest-soft);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.help-card.sun svg{stroke:#f49c28}
-.help-card.plus svg{fill:var(--forest-soft);stroke:none}
-.help-card span{font-size:12px;line-height:1.25;font-weight:500}
-.bottom-nav{
-  position:absolute;z-index:3;left:0;right:0;bottom:0;height:96px;padding:12px 16px 14px;
-  background:linear-gradient(180deg,#16472d,#0e3522);
-  display:grid;grid-template-columns:repeat(5,1fr);align-items:center
-}
-.nav-item{border:0;background:transparent;color:#d9e2d9;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;padding:0}
-.nav-item svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.nav-item.active{color:white;font-weight:600;transform:translateY(-10px)}
-.active-orb{
-  width:58px;height:58px;border-radius:50%;background:#fbf8ee;display:grid;place-items:center;
-  border:5px solid rgba(116,151,111,.30);box-shadow:0 4px 18px rgba(0,0,0,.18);color:var(--forest-soft)
-}
-.active-orb svg{width:31px;height:31px}
-.review-note{margin:10px 0 0;text-align:center;color:rgba(29,47,34,.52);font-size:10px}
-@media(min-width:480px){
-  .screen{padding:30px 28px 116px}
-  .topbar{height:58px}
-  .wordmark{font-size:25px}
-  .hero{min-height:520px;padding-top:42px}
-  .hero h1{font-size:54px;max-width:440px}
-  .hero .sub{font-size:21px;max-width:370px}
-  .story{top:285px;right:26px;font-size:34px}
-  .plant-scene{height:288px;left:-28px;right:-28px}
-  .action{min-height:70px;font-size:22px}
-  .help-panel{margin-top:22px;padding:19px 16px 16px}
-  .help-card{min-height:137px}
-  .help-card span{font-size:13px}
-  .bottom-nav{height:104px}
-  .nav-item{font-size:12px}
-}
-@media(max-width:380px){
-  .screen{padding-left:14px;padding-right:14px}
-  .hero h1{font-size:39px}
-  .hero .sub{font-size:16px}
-  .story{font-size:26px;right:5px;width:140px}
-  .help-grid{gap:6px}
-  .help-card{min-height:112px}
-  .help-card span{font-size:10px}
+.hotspot:focus-visible{outline:2px solid rgba(255,255,255,.9);outline-offset:-4px;border-radius:18px}
+.take-photo{left:9.5%;top:48.7%;width:81%;height:7.7%}
+.gallery{left:9.5%;top:57.5%;width:81%;height:7.2%}
+.help-care{left:7.5%;top:68.1%;width:21%;height:12.8%}
+.help-fit{left:29.5%;top:68.1%;width:21%;height:12.8%}
+.help-growing{left:51.5%;top:68.1%;width:21%;height:12.8%}
+.help-save{left:73.5%;top:68.1%;width:19%;height:12.8%}
+.nav-home{left:3%;bottom:2.2%;width:18%;height:8.8%}
+.nav-garden{left:21%;bottom:2.2%;width:20%;height:8.8%}
+.nav-identify{left:41%;bottom:1.5%;width:18%;height:10.8%}
+.nav-design{left:59%;bottom:2.2%;width:20%;height:8.8%}
+.nav-shop{left:79%;bottom:2.2%;width:18%;height:8.8%}
+@media (min-aspect-ratio: 1/1){
+  .pi01-approved{box-shadow:0 0 60px rgba(0,0,0,.35)}
 }
 </style>
 </head>
 <body>
-<main class="pi01" aria-label="CRUVIT Plant Identification approved PI-01 visual review">
-  <div class="screen">
-    <header class="topbar">
-      <div class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 32 32"><path d="M16 27V15"/><path d="M16 18c-6-1-9-5-9-11 6 0 10 3 11 8"/><path d="M16 15c2-6 6-9 12-9 0 6-4 10-12 11"/></svg>
-      </div>
-      <div class="wordmark">CRUVIT</div>
-      <button class="help" type="button" aria-label="Help">
-        <svg viewBox="0 0 24 24"><path d="M9.5 9a2.7 2.7 0 1 1 4.4 2.1c-1 .8-1.9 1.4-1.9 3"/><path d="M12 18h.01"/></svg>
-      </button>
-    </header>
-
-    <section class="hero">
-      <h1>Let’s identify<br>your plant!</h1>
-      <p class="sub">Snap a photo and discover<br>its name, care tips and more.</p>
-      <div class="story">Every plant<br>has a story
-        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 27V16"/><path d="M16 20c-6-1-9-5-9-11 6 0 10 3 11 8"/><path d="M16 17c2-6 6-9 12-9 0 6-4 10-12 11"/></svg>
-      </div>
-      <div class="plant-scene" aria-hidden="true"></div>
-    </section>
-
-    <section class="actions" aria-label="Photo actions">
-      <button class="action primary" type="button">
-        <svg viewBox="0 0 24 24"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.4"/></svg>
-        <span>Take a photo</span>
-      </button>
-      <button class="action secondary" type="button">
-        <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="m6.5 16 4-4 3.2 3 2.1-2.1 2.7 3.1"/><circle cx="9" cy="9" r="1.2"/></svg>
-        <span>Choose from gallery</span>
-      </button>
-    </section>
-
-    <section class="help-panel">
-      <h2>Need help?</h2>
-      <div class="help-grid">
-        <div class="help-card">
-          <svg viewBox="0 0 32 32"><path d="M16 27V16"/><path d="M16 20c-6-1-9-5-9-11 6 0 10 3 11 8"/><path d="M16 17c2-6 6-9 12-9 0 6-4 10-12 11"/></svg>
-          <span>Plant care<br>tips</span>
-        </div>
-        <div class="help-card">
-          <svg viewBox="0 0 32 32"><path d="M16 27S5 20 5 12.5C5 7 12 5 16 10c4-5 11-3 11 2.5C27 20 16 27 16 27Z"/></svg>
-          <span>Is it right<br>for my garden?</span>
-        </div>
-        <div class="help-card sun">
-          <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="5"/><path d="M16 3v4M16 25v4M3 16h4M25 16h4M6.8 6.8l2.8 2.8M22.4 22.4l2.8 2.8M25.2 6.8l-2.8 2.8M9.6 22.4l-2.8 2.8"/></svg>
-          <span>Growing<br>conditions</span>
-        </div>
-        <div class="help-card plus">
-          <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="14"/><path d="M15 8h2v16h-2zM8 15h16v2H8z" fill="#fff"/></svg>
-          <span>Save to<br>My Garden</span>
-        </div>
-      </div>
-    </section>
-
-    <p class="review-note">Approved Option 4 visual reference · isolated review · no identification call connected</p>
-  </div>
-
-  <nav class="bottom-nav" aria-label="CRUVIT primary navigation">
-    <button class="nav-item" type="button">
-      <svg viewBox="0 0 32 32"><path d="M5 15 16 6l11 9v12h-8v-8h-6v8H5z"/></svg><span>Home</span>
-    </button>
-    <button class="nav-item" type="button">
-      <svg viewBox="0 0 32 32"><path d="M16 28V14"/><path d="M16 19c-6-1-9-5-9-11 6 0 10 3 11 8"/><path d="M16 16c2-6 6-9 12-9 0 6-4 10-12 11"/></svg><span>My Garden</span>
-    </button>
-    <button class="nav-item active" type="button">
-      <span class="active-orb"><svg viewBox="0 0 32 32"><path d="M7 12V7h5M20 7h5v5M25 20v5h-5M12 25H7v-5"/><path d="M16 23V14"/><path d="M16 17c-4-1-6-3-6-7 4 0 7 2 7.8 5"/><path d="M16 15c1.5-4 4-6 8-6 0 4-2.5 7-8 7.5"/></svg></span><span>Identify</span>
-    </button>
-    <button class="nav-item" type="button">
-      <svg viewBox="0 0 32 32"><path d="M5 10h4l2-3h10l2 3h4v16H5z"/><circle cx="16" cy="18" r="5"/></svg><span>Design</span>
-    </button>
-    <button class="nav-item" type="button">
-      <svg viewBox="0 0 32 32"><path d="M8 11h16l2 16H6z"/><path d="M12 11V8a4 4 0 0 1 8 0v3"/></svg><span>Shop</span>
-    </button>
-  </nav>
+<main class="pi01-approved" aria-label="CRUVIT Plant Identification PI-01 approved visual implementation">
+  <img src="/assets/approved/pi01-option4-approved-screen.jpg"
+       alt="CRUVIT Plant Identification — approved Option 4 Friendly & Visual screen">
+  <button class="hotspot take-photo" type="button" aria-label="Take a photo"></button>
+  <button class="hotspot gallery" type="button" aria-label="Choose from gallery"></button>
+  <button class="hotspot help-care" type="button" aria-label="Plant care tips"></button>
+  <button class="hotspot help-fit" type="button" aria-label="Is it right for my garden?"></button>
+  <button class="hotspot help-growing" type="button" aria-label="Growing conditions"></button>
+  <button class="hotspot help-save" type="button" aria-label="Save to My Garden"></button>
+  <button class="hotspot nav-home" type="button" aria-label="Home"></button>
+  <button class="hotspot nav-garden" type="button" aria-label="My Garden"></button>
+  <button class="hotspot nav-identify" type="button" aria-label="Identify"></button>
+  <button class="hotspot nav-design" type="button" aria-label="Design"></button>
+  <button class="hotspot nav-shop" type="button" aria-label="Shop"></button>
 </main>
 </body>
 </html>
