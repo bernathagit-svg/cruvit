@@ -80,3 +80,24 @@ Build this first as an isolated Plant Identification preview on the Plant-ID UX 
 - Save conflict / plant already in My Garden
 
 These secondary states are not permission to alter the eight approved core screens.
+
+
+## Owner approval checkpoint — 2026-10-04
+
+The owner reviewed the primary Plant Identification flow screen-by-screen and approved the visual direction for every core step.
+
+- PI-01 Identify — OWNER APPROVED / LOCKED
+- PI-02 Camera — OWNER APPROVED / LOCKED
+- PI-03 Analyzing — OWNER APPROVED / LOCKED
+- PI-04 Identification Result — OWNER APPROVED / LOCKED
+- PI-05 Plant Profile — OWNER APPROVED / LOCKED
+- PI-06 Care — OWNER APPROVED / LOCKED
+- PI-07 Suitability / Growing Conditions — OWNER APPROVED / LOCKED
+- PI-08 Save to My Garden — OWNER APPROVED / LOCKED
+
+Approved secondary content:
+- Pet Safety — OWNER APPROVED / LOCKED as a secondary profile screen. It is not inserted as an extra step in the eight-screen core sequence.
+
+### Accuracy guardrail for secondary states
+
+Plant Identification must never silently convert uncertainty into a confident species result. When evidence is insufficient, the UI must explicitly request more evidence, offer likely candidates only as uncertain possibilities, or return no reliable match. Secondary-state design must preserve this behavior.
