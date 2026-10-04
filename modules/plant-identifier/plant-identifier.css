@@ -1106,3 +1106,16 @@
  .plant-identifier-module .pi-entry-capture{min-height:96px;border-radius:23px;grid-template-columns:56px 1fr 28px;padding:16px}
  .plant-identifier-module .pi-entry-camera{width:54px;height:54px}
 }
+
+/* PI-01 review refinements */
+.plant-identifier-module .pi-entry-top-spacer{width:44px;height:44px}
+.plant-identifier-module .pi-entry-v210 .pi-entry-main{margin-top:clamp(52px,8vh,88px)}
+.plant-identifier-module .pi-entry-v210 .pi-entry-history{margin-top:30px;margin-bottom:34px}
+.plant-identifier-module .pi-entry-v210 .pi-entry-scroll{padding-bottom:max(48px,env(safe-area-inset-bottom))}
+body:has(.plant-identifier-module .pi-entry-v210.show) #topBar,
+body:has(.plant-identifier-module .pi-entry-v210.show) .entry-screen,
+body:has(.plant-identifier-module .pi-entry-v210.show) .entry-topbar{visibility:hidden!important;pointer-events:none!important}
+@media(max-width:560px){
+ .plant-identifier-module .pi-entry-v210 .pi-entry-main{margin-top:48px}
+ .plant-identifier-module .pi-entry-v210 .pi-entry-history{margin-top:26px}
+}
