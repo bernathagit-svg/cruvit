@@ -1501,37 +1501,34 @@
   }
 
   function landingHTML(includeHistory) {
+    const locationLabel = String(getData()?.gardenLocation?.label || '').trim();
+    const compactLocation = locationLabel
+      ? '<span class="pi-entry-location-dot" aria-hidden="true"></span><span>' + esc(locationLabel) + '</span>'
+      : '<span class="pi-entry-location-dot is-muted" aria-hidden="true"></span><span>' + esc(state.lang === 'he' ? 'מיקום הגינה עדיין לא אושר' : 'Garden location not confirmed') + '</span>';
+
     return (
-      '<div data-pi-id="homeOverlay" class="pi-home" role="dialog" aria-modal="true" aria-label="' + esc(t('homeTitle')) + '">' +
-        '<div class="pi-home-scroll">' +
-          '<header class="pi-home-top">' +
-            '<div class="pi-home-pill">' + esc(t('pill')) + '</div>' +
-            '<div class="pi-home-actions">' +
-            '<button type="button" class="pi-home-btn" data-pi-action="home">' + esc(t('homeBtn')) + '</button>' +
-            '<button type="button" class="pi-home-close" data-pi-id="closeHome" aria-label="' + esc(t('closeHome')) + '">×</button>' +
-            '</div>' +
+      '<div data-pi-id="homeOverlay" class="pi-home pi-entry-v210" role="dialog" aria-modal="true" aria-label="' + esc(t('homeTitle')) + '">' +
+        '<div class="pi-entry-bg" aria-hidden="true"></div>' +
+        '<div class="pi-home-scroll pi-entry-scroll">' +
+          '<header class="pi-entry-top">' +
+            '<button type="button" class="pi-entry-back" data-pi-action="home" aria-label="' + esc(t('homeBtn')) + '">‹</button>' +
+            '<div class="pi-entry-brand"><span class="pi-entry-leaf">◆</span><b>CRUVIT</b><small>' + esc(state.lang === 'he' ? 'זיהוי צמחים' : 'Plant Identification') + '</small></div>' +
+            '<button type="button" class="pi-home-close pi-entry-close" data-pi-id="closeHome" aria-label="' + esc(t('closeHome')) + '">×</button>' +
           '</header>' +
-          '<section class="pi-hero">' +
-            '<div class="pi-hero-copy">' +
-              '<h1 class="pi-hero-title">' + esc(t('homeTitle')) + '</h1>' +
-              '<p class="pi-hero-sub">' + esc(t('homeSub')) + '</p>' +
-              '<button type="button" class="pi-hero-cta" data-pi-action="open">' + esc(t('identifyCta')) + '</button>' +
-              '<div class="pi-benefits">' +
-                '<div class="pi-benefit"><b>' + esc(t('f1')) + '</b><span>' + esc(t('f1s')) + '</span></div>' +
-                '<div class="pi-benefit"><b>' + esc(t('f2')) + '</b><span>' + esc(t('f2s')) + '</span></div>' +
-                '<div class="pi-benefit"><b>' + esc(t('f3')) + '</b><span>' + esc(t('f3s')) + '</span></div>' +
-              '</div>' +
-            '</div>' +
-            '<div class="pi-preview-card">' +
-              '<button type="button" class="pi-photo-tease" data-pi-action="open">' +
-                '<span class="pi-camera-icon">' + cameraIconSvg() + '</span>' +
-                '<span class="pi-tease-text"><b>' + esc(t('takePhoto')) + '</b><span>' + esc(t('takeSub')) + '</span></span>' +
-              '</button>' +
-              '<p class="pi-primary-line">' + esc(t('flowSub')) + '</p>' +
-            '</div>' +
-          '</section>' +
+          '<main class="pi-entry-main">' +
+            '<div class="pi-entry-kicker">' + esc(state.lang === 'he' ? 'זיהוי חכם' : 'SMART IDENTIFICATION') + '</div>' +
+            '<h1 class="pi-entry-title">' + esc(state.lang === 'he' ? 'מה תרצו לזהות?' : 'What do you want to identify?') + '</h1>' +
+            '<p class="pi-entry-sub">' + esc(state.lang === 'he' ? 'צלמו או בחרו תמונה ברורה אחת. CRUVIT יזהה את הצמח לפני כל בדיקת אקלים או הוספה לגינה.' : 'Take or choose one clear photo. CRUVIT identifies the plant before any climate check or garden action.') + '</p>' +
+            '<button type="button" class="pi-entry-capture" data-pi-action="open">' +
+              '<span class="pi-entry-camera">' + cameraIconSvg() + '</span>' +
+              '<span class="pi-entry-capture-copy"><b>' + esc(state.lang === 'he' ? 'צלמו או בחרו תמונה' : 'Take or choose a photo') + '</b><small>' + esc(state.lang === 'he' ? 'עלה · פרח · צמח מלא' : 'Leaf · flower · whole plant') + '</small></span>' +
+              '<span class="pi-entry-arrow" aria-hidden="true">→</span>' +
+            '</button>' +
+            '<div class="pi-entry-context"><span class="pi-entry-pin" aria-hidden="true">⌖</span>' + compactLocation + '</div>' +
+            '<p class="pi-entry-truth">' + esc(state.lang === 'he' ? 'לא נשמור צמח בגינה בלי אישור מפורש שלך.' : 'Nothing is added to My Garden without your explicit confirmation.') + '</p>' +
+          '</main>' +
           (includeHistory
-            ? '<section class="pi-history pi-history-landing" data-pi-id="historySection"><h2>' + esc(t('recent')) + '</h2><div data-pi-id="history" class="pi-history-grid"></div></section>'
+            ? '<section class="pi-history pi-history-landing pi-entry-history" data-pi-id="historySection"><div class="pi-entry-history-head"><h2>' + esc(t('recent')) + '</h2><span>' + esc(state.lang === 'he' ? 'היסטוריה' : 'History') + '</span></div><div data-pi-id="history" class="pi-history-grid"></div></section>'
             : '') +
         '</div>' +
       '</div>'
