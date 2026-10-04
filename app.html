@@ -11243,12 +11243,28 @@ function initPlantIdentifierModule(){
   return true;
 }
 
+function isMyGardenV2IntegratedPreview(){
+  try{
+    return new URLSearchParams(window.location.search).get('my-garden-v2')==='1';
+  }catch(_err){
+    return false;
+  }
+}
+
+function openMyGardenV2IntegratedPreview(){
+  window.location.assign('/my-garden-ui-2.10/');
+}
+
 function initEntryScreen(){
   applyEntryScreenLang();
   document.querySelectorAll('[data-entry-action]').forEach(btn=>{
     btn.addEventListener('click',()=>handleEntryAction(btn.getAttribute('data-entry-action')));
   });
   document.getElementById('entrySkipBtn')?.addEventListener('click',()=>{
+    if(isMyGardenV2IntegratedPreview()){
+      openMyGardenV2IntegratedPreview();
+      return;
+    }
     dismissEntryScreen();
     setTab('tasks',false);
   });

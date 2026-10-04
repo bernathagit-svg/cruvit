@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#06190e">
+  <title>CRUVIT · Upcoming · Visual Match Review</title>
+  <link rel="stylesheet" href="../modules/my-garden-v2/visual-contract/approved-upcoming.css?v=20261003-list-v2">
+  <style>
+    html,body{margin:0;min-height:100%;background:#6c7551}
+    body{
+      display:flex;justify-content:center;align-items:flex-start;
+      background:
+        radial-gradient(circle at 18% 8%,rgba(198,208,149,.5),transparent 28%),
+        radial-gradient(circle at 88% 12%,rgba(61,78,46,.48),transparent 30%),
+        linear-gradient(180deg,#7e875e,#44563e);
+      padding:8px 0 28px;
+    }
+    .phone-shell{
+      position:relative;width:571px;max-width:calc(100vw - 14px);
+      border:5px solid #050906;border-radius:61px;overflow:hidden;
+      background:#07150d;box-shadow:0 18px 52px rgba(0,0,0,.35),0 0 0 2px rgba(225,231,199,.5);
+    }
+    #upcoming-review-root{width:100%;min-height:1284px}
+    .statusbar{
+      position:absolute;z-index:20;top:18px;left:40px;right:38px;height:24px;
+      display:flex;align-items:center;justify-content:space-between;
+      color:#fff;font:600 19px/1 Inter,Arial,sans-serif;pointer-events:none;
+      text-shadow:0 1px 2px rgba(0,0,0,.45)
+    }
+    .status-icons{display:flex;align-items:center;gap:8px;font-size:15px}
+    .signal-icon{width:24px;height:16px;fill:#fff}.wifi-icon{width:24px;height:18px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round}.battery{width:29px;height:13px;border:2px solid #fff;border-radius:4px;position:relative}
+    .battery:after{content:"";position:absolute;right:-5px;top:3px;width:3px;height:5px;border-radius:1px;background:#fff}
+    .battery:before{content:"";position:absolute;inset:2px;background:#fff;border-radius:1px}
+
+    .upcoming-screen{background:linear-gradient(180deg,rgba(3,28,14,.18) 0%,rgba(3,24,12,.30) 33%,rgba(0,13,7,.78) 100%),url("data:image/webp;base64,UklGRtgGAABXRUJQVlA4IMwGAAAQTQCdASoeAXQCPpVGnk0lrymiodB5meASiWlu/HxnYmz7jqo4HplbzjeDO9v/OHrYJ//ynYB/1a3aXnTvb9wA+0ipQmCpKZip2ZLptaWka81TXZ5tSICc13k/Um2LSFuY2iS/2Q7LUgOxRK44pCY+IGf6PDWR2qbtGQJopNcaAlNgFd+S5nuNCgwZG1Asu5lB4tALYPtyfjYk9zeoYvW0VuB8wj0+CjpHw2VacKnGqnr9FE9f1q5B8VC5LJze+muPoos6uzwJK4S57K21D1zdO2gKYNNVsOQzNKJ6wrqleJpGBUybm1TltEsefr5m4TlDYawN0AE/ZvlQhYCXROlx8AsmPiek1Edf/H5x33PEE362MSHj7maXl0qS+gQqA8mmW+ADgSmPUQ/Sz6loeP3lMcWWpaVRHfhtPTO2x+eV4BiMfwWckcmP7TqzH143g56wEL+6wGDV5PDT556t7KbikAhv/tT1bv3VgBgW38QlPI2xDAE2LEhFKK6rWGemgfNcnPtsrcfoiqkDofXJl8wZE7Qj8RznX/oKewL2H2PDWstYoSXhfRZXuy3qhfXGswxfkBask/AOYPtpTMBepvr7bUa/R1/U3hK/ADi6z8x1W6xznnHXWUMoFcmSZQOXYagCWxCZfFqZ3l8RLVnNaTgzRBUe0sZHZ8Ejfpveam7aGcLV9vzNQtOy76SMQbelfZW2zwYztKeBAqh2ppcIfBDmoJ1QG4/SGxvuxoCCdt4Rw/Raf7GNSdCzmWFRVqo+t7Ms7e6QfgsIdmFJFhGxBeBYE0sZhjBFtEWD1hevDtqzVkerHqo9pkfzvnes/XsTmrwAAP7wycWhfpPO27g8z75KRVJeD2u5ZR3SkXws1H9IKdC7VWjpVNRYOITuBVM0GpNLzBh1fF++rYfeCDzoariLpKwYYU227LaHGs0qwWIJVzr5mQiwZxTRZgdw7G+sGSc3bPzez3goA9WEvAIUHNBGQqyv8GivANM6R8q9ykxtT3ZDr8/vy+WqXeTfH8HkQ8Isi/KtHYpxl6LDn4oCyg/kicyR8p1YVhkf3saYa5XsF4aKtrm5YX2tie53rBSIPXyWqz4PpvtE0PXbCF0ddC3FYQZqnKG88PVei2WmhD/ofHrTOj5re7Fb4L/VBQBNfunuShb0Y+ppDUFXe4TlF2uw5VnKdbh+zEOZ+4pWl01nPCeoc14bi7boSA16heuc6aUqdaROCkUhys8XcQ5M+d18OZCmBZmtqu2VPDdb/2TDl2xUvorlmUxKfTA+q4+z5FHaWNu8ElrpdnKS2GOy2SvLGiJJc7Zi6uLJW64UH/VSQ2nUH82cEG1icQTs/UnU4bp8/C7Lwau5ABLWCEm8NbUUAqXzOh0YHWnAyT/aJBJCz+jxN9f4SeB79DA8gIO3n0yC2iSh7ANYHnnSxyoQ8VRBt+4o7I61B/1RGnrdOuC+YyOcQSKzasxJIy96t8p18uMQa0VgFAITvC0Qk10V3RDY5BbShjIG6MWcQr47xXhViuYm5FxbbU5xM1B/JoPdb2QBsaRhLQsLLNafM23NYSE+UqliRnZ1iTIDxcS9JxunfGRqtgqMYGa53AANFUSTd/VDxp71Jl0LkAt0A9QdDzaaoQtCKkHdCcxSdYnlx+ODQLFFbhKAgg2DwABOW1z4mlH12gAEtZpO7y+aEqRPJZzgHydWiMUx9rs63yOEEE8/oEn47czto6qF8IWni4EqfaQ9cN5MPKsnuNcaNfukm+16CHKqwr+Cy2Qvt0prz//81NQ1SBr6vMGdI+aUUMMW07TvM5JQOjQVPru3eDJYM0yhqSZCDnRpdeg9nvatVCGikgV+3uoqUZFfTVT8FS/jfM8ix3oOChbpyQLiFo6SBCCdm+bxiGR6GXzHumlTKbdq4KFo/pTHtOx37+gYPHNuVaEYmMTQ5XYiFSqbbUp4mK10m8vMDAwEV32oDnSTP1v9/5dZVJh6IN3Q/wVXhvQFkiCKtsICDIsPKZ9T5IR60k591bFJVP3sy4jswznRjay2cpMASNnnzxIH7V83liff9wbPxmBZ6MeKgd1jJ3fyMMcvWasnIMrpLd3gdHLV0oyMMuElgj2im/emwM/ZiuXMYMVOuI+O9SWxIJrCKFbzscmvocPwTOmL0vMj41YgDA8Z16l04oQLvLmc6Jsg+m30nG8kBp4WCcnhWauLxw8YmVHg9PlJ7tvBZAa97EIaxAMFAfoOqDcV2IYN+MNcNuMOjsewVuPqSzNSkjTOlL8jop2D2o/Lq1Yu8+fPjB6bH64HJ5ZMPtYyl7BG3p6qohG9CWpaRC04+ghyRmCZCAA=") center top/cover no-repeat,#04180d!important}
+
+
+    body.is-exact-list{padding:0;background:#657252;display:flex;justify-content:center;align-items:flex-start}
+    body.is-exact-list .phone-shell{
+      width:607px;max-width:100vw;border:0;border-radius:0;box-shadow:none;
+      background:transparent;overflow:visible;
+    }
+    body.is-exact-list #upcoming-review-root{min-height:0}
+    body.is-exact-list .statusbar,
+    body.is-exact-list .home-indicator-shell{display:none}
+    .upcoming-exact-list{position:relative;width:100%;line-height:0}
+    .upcoming-exact-list>img{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
+    .exact-calendar{left:34%;top:21.2%;width:31%;height:6.2%}
+    .exact-list-add-task{left:77%;top:20.2%;width:17%;height:8.5%}
+    body.is-exact-calendar{padding:0;background:#657252;display:flex;justify-content:center;align-items:flex-start}
+    body.is-exact-calendar .phone-shell{
+      width:607px;max-width:100vw;border:0;border-radius:0;box-shadow:none;
+      background:transparent;overflow:visible;
+    }
+    body.is-exact-calendar #upcoming-review-root{min-height:0}
+    body.is-exact-calendar .statusbar,
+    body.is-exact-calendar .home-indicator-shell{display:none}
+    .upcoming-exact-calendar{position:relative;width:100%;line-height:0}
+    .upcoming-exact-calendar>img{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
+    .exact-hotspot{
+      position:absolute;border:0;background:transparent;padding:0;margin:0;
+      cursor:pointer;outline-offset:2px;
+    }
+
+    .exact-nav-home{left:0;bottom:0;width:20%;height:11%}
+    .exact-nav-mygarden{left:20%;bottom:0;width:20%;height:11%}
+    .exact-nav-add{left:40%;bottom:0;width:20%;height:11%}
+    .exact-nav-design{left:60%;bottom:0;width:20%;height:11%}
+    .exact-nav-shop{left:80%;bottom:0;width:20%;height:11%}
+    .exact-back{left:5.5%;top:5.3%;width:11%;height:6.5%}
+    .exact-list{left:7.5%;top:20.3%;width:26%;height:6.3%}
+    .exact-add-task{left:66%;top:20.3%;width:27%;height:6.3%}
+    .home-indicator-shell{position:absolute;z-index:30;left:50%;bottom:9px;transform:translateX(-50%);width:202px;height:6px;border-radius:999px;background:#f5f5ef;pointer-events:none}
+    @media(max-width:580px){
+      body{padding:0;background:#07150d}
+      .phone-shell{width:100vw;max-width:none;border:0;border-radius:0;box-shadow:none}
+      .statusbar{left:28px;right:28px}
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-shell">
+    <div class="statusbar" aria-hidden="true">
+      <span>9:41</span>
+      <span class="status-icons">
+  <svg class="signal-icon" viewBox="0 0 24 16" aria-hidden="true"><rect x="1" y="10" width="3" height="5" rx="1"/><rect x="7" y="7" width="3" height="8" rx="1"/><rect x="13" y="4" width="3" height="11" rx="1"/><rect x="19" y="1" width="3" height="14" rx="1"/></svg>
+  <svg class="wifi-icon" viewBox="0 0 24 18" aria-hidden="true"><path d="M2 5.5C7.6.5 16.4.5 22 5.5"/><path d="M5.5 9c3.8-3.3 9.2-3.3 13 0"/><path d="M9 12.5c1.7-1.5 4.3-1.5 6 0"/><circle cx="12" cy="15.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+  <span class="battery"></span>
+</span>
+    </div>
+    <div id="upcoming-review-root"></div><div class="home-indicator-shell" aria-hidden="true"></div>
+  </div>
+  <script type="module" src="./upcoming-review.js?v=20261003-list-v2"></script>
+</body>
+</html>
