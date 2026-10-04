@@ -101,3 +101,48 @@ Approved secondary content:
 ### Accuracy guardrail for secondary states
 
 Plant Identification must never silently convert uncertainty into a confident species result. When evidence is insufficient, the UI must explicitly request more evidence, offer likely candidates only as uncertain possibilities, or return no reliable match. Secondary-state design must preserve this behavior.
+
+
+## CRUVIT approved-screen implementation standard — LOCKED 2026-10-04
+
+This is the implementation method that produced the owner-approved Plant Identification Full-Resolution Flow and must be reused for the remaining CRUVIT screens unless the owner explicitly changes the rule.
+
+### Source-of-truth hierarchy
+
+1. Use the exact owner-approved full-resolution screen asset whenever it exists.
+2. If a screen exists only inside an approved multi-screen source image, extract that screen from the highest-resolution approved source available.
+3. Never use old thumbnails, compressed preview screenshots, browser screenshots, or previously cropped low-resolution assets as implementation sources.
+4. Never rebuild an approved visual in CSS when the approved visual asset itself can be used.
+5. Do not regenerate an approved screen with an image model merely to make implementation easier.
+
+### Visual assembly rule
+
+- Preserve the approved pixels.
+- Crop only external montage/background margins needed to isolate the approved phone/screen.
+- Do not redesign typography, spacing, color, navigation, imagery, card geometry, or phone proportions during implementation.
+- Avoid unnecessary resampling. If an extracted approved screen must be normalized for review, use high-quality resampling only and do not alter the design.
+- Render one phone/screen only, centered, large, and readable.
+- Use the same restrained review-shell principle as the successful Upcoming review: calm green background, no competing viewer UI, no external step counters, no Previous/Next panels, no decorative review chrome.
+
+### Interaction rule
+
+- Interaction is a transparent layer above the approved visual.
+- Use invisible hotspots over buttons already drawn in the approved screen.
+- Hotspots may change navigation behavior but must not change visible pixels.
+- Keep keyboard navigation only as a QA convenience; it must not add visible UI.
+- First prove the visual match. Add functional wiring only after the visual source is correct.
+
+### QA gate
+
+Before showing a review file to the owner:
+- verify every screen uses the intended approved source;
+- verify no low-resolution thumbnail or browser screenshot was substituted;
+- verify the phone is centered and readable at desktop width;
+- verify there is no extra viewer chrome;
+- verify every visible screen matches the approved visual;
+- verify hotspots navigate to the intended next screen;
+- do not connect the flow to the live application until the isolated review is owner-approved.
+
+### Key lesson from the Plant Identification correction
+
+The successful Full-Resolution Flow was achieved by replacing low-resolution montage-derived LOCKED thumbnails with the best available approved source assets, then using a minimal Upcoming-style HTML shell that only displays the approved screen and overlays transparent interaction hotspots. The visual asset—not reconstructed HTML/CSS—is the source of truth.
