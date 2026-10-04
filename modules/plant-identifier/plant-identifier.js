@@ -1513,7 +1513,7 @@
           '<header class="pi-entry-top">' +
             '<button type="button" class="pi-entry-back" data-pi-action="home" aria-label="' + esc(t('homeBtn')) + '">‹</button>' +
             '<div class="pi-entry-brand"><span class="pi-entry-leaf">◆</span><b>CRUVIT</b><small>' + esc(state.lang === 'he' ? 'זיהוי צמחים' : 'Plant Identification') + '</small></div>' +
-            '<button type="button" class="pi-home-close pi-entry-close" data-pi-id="closeHome" aria-label="' + esc(t('closeHome')) + '">×</button>' +
+            '<span class="pi-entry-top-spacer" aria-hidden="true"></span>' +
           '</header>' +
           '<main class="pi-entry-main">' +
             '<div class="pi-entry-kicker">' + esc(state.lang === 'he' ? 'זיהוי חכם' : 'SMART IDENTIFICATION') + '</div>' +
