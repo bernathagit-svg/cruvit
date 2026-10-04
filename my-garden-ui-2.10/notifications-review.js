@@ -15,6 +15,61 @@ const tasks=Object.freeze([
 ]);
 
 const frame=document.querySelector('#review-frame');
+
+const APPROVED_VIEWPORT = Object.freeze({ width:941, height:1672 });
+
+function installFullScreenAppShell(doc){
+  if(!doc || doc.getElementById('cruvit-full-screen-app-shell')) return;
+  const style=doc.createElement('style');
+  style.id='cruvit-full-screen-app-shell';
+  style.textContent=`
+    html,body{
+      margin:0!important;
+      width:100%!important;
+      min-height:100%!important;
+      background:#07150d!important;
+      overflow-x:hidden!important;
+    }
+    body{display:block!important;place-items:initial!important}
+    .phone{
+      width:100%!important;
+      max-width:none!important;
+      margin:0!important;
+      min-height:100vh!important;
+      box-shadow:none!important;
+      border:0!important;
+      border-radius:0!important;
+    }
+  `;
+  doc.head.appendChild(style);
+
+  const fit=()=>{
+    const phone=doc.querySelector('.phone');
+    if(!phone) throw new Error('notifications_approved_phone_root_missing');
+    const viewportWidth=Math.max(1,frame.clientWidth||window.innerWidth||APPROVED_VIEWPORT.width);
+    const viewportHeight=Math.max(1,frame.clientHeight||window.innerHeight||APPROVED_VIEWPORT.height);
+
+    if(viewportWidth<=APPROVED_VIEWPORT.width){
+      const scale=viewportWidth/APPROVED_VIEWPORT.width;
+      const requiredUnscaledHeight=Math.max(APPROVED_VIEWPORT.height,Math.ceil(viewportHeight/scale));
+      doc.body.style.width=APPROVED_VIEWPORT.width+'px';
+      doc.body.style.minHeight=requiredUnscaledHeight+'px';
+      doc.body.style.zoom=String(scale);
+      phone.style.width=APPROVED_VIEWPORT.width+'px';
+      phone.style.minHeight=requiredUnscaledHeight+'px';
+    }else{
+      doc.body.style.width='100%';
+      doc.body.style.minHeight='100vh';
+      doc.body.style.zoom='1';
+      phone.style.width='100%';
+      phone.style.minHeight='100vh';
+    }
+    doc.documentElement.dataset.runtimeShell='full-screen-app';
+  };
+  fit();
+  window.addEventListener('resize',fit,{passive:true});
+}
+
 function hydrate(){
  const vm=buildNotificationsScreenViewModel({plants,tasks,today:'2026-10-02',plantId:null,filter:'attention'});
  const model=buildApprovedNotificationsRenderModel(vm);
@@ -22,6 +77,7 @@ function hydrate(){
  const plan=buildNotificationsHydrationPlan(model);
  assertHydrationDoesNotTouchFrozenVisual(plan);
  const doc=frame.contentDocument;
+ installFullScreenAppShell(doc);
  for(const patch of plan.patches){
    const node=doc.querySelector(patch.selector);
    if(!node) throw new Error('notifications_review_selector_missing:'+patch.selector);
