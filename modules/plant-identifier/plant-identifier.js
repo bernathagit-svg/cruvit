@@ -2131,16 +2131,25 @@
             '<button type="button" class="pi-close" data-pi-id="closeModal" aria-label="Close">×</button>' +
           '</div>' +
           '<div class="pi-steps"><div class="pi-step on" data-pi-id="s1"></div><div class="pi-step" data-pi-id="s2"></div><div class="pi-step" data-pi-id="s3"></div></div>' +
-          '<div data-pi-id="uploadStep">' +
-            '<div class="pi-drop" data-pi-id="preview">' +
+          '<div data-pi-id="uploadStep" class="pi-capture-v210">' +
+            '<div class="pi-capture-kicker">' + esc(state.lang === 'he' ? 'תמונה אחת טובה מספיקה' : 'ONE USEFUL IMAGE IS ENOUGH') + '</div>' +
+            '<h3 class="pi-capture-title">' + esc(state.lang === 'he' ? 'תנו ל־CRUVIT תמונה שימושית אחת.' : 'Give CRUVIT one useful image.') + '</h3>' +
+            '<p class="pi-capture-sub">' + esc(state.lang === 'he' ? 'עדיף עלה, פרח או הצמח כולו באור טבעי וללא טשטוש.' : 'Leaf, flower or whole plant works best in natural light and without blur.') + '</p>' +
+            '<div class="pi-drop pi-capture-preview" data-pi-id="preview">' +
               '<div><div class="pi-camera-icon">' + cameraIconSvg() + '</div>' +
               '<b>' + esc(t('uploadTitle')) + '</b><p class="pi-muted">' + esc(t('uploadSub')) + '</p></div>' +
             '</div>' +
-            '<div class="pi-upload-btns">' +
-              '<button type="button" class="pi-btn pi-btn-secondary" data-pi-id="galleryBtn">' + esc(t('gallery')) + '</button>' +
-              '<button type="button" class="pi-btn pi-btn-secondary" data-pi-id="cameraBtn">' + esc(t('camera')) + '</button>' +
+            '<div class="pi-capture-quality" aria-label="Photo guidance">' +
+              '<span>◉ ' + esc(state.lang === 'he' ? 'צמח בפוקוס' : 'Plant in focus') + '</span>' +
+              '<span>☼ ' + esc(state.lang === 'he' ? 'אור ברור' : 'Clear light') + '</span>' +
+              '<span>✕ ' + esc(state.lang === 'he' ? 'בלי פילטרים' : 'No filters') + '</span>' +
             '</div>' +
-            '<button type="button" class="pi-btn pi-btn-primary" data-pi-id="analyzeBtn" style="width:100%;margin-top:12px">' + esc(t('analyzeBtn')) + '</button>' +
+            '<div class="pi-upload-btns pi-capture-source-btns">' +
+              '<button type="button" class="pi-btn pi-btn-secondary" data-pi-id="cameraBtn"><span aria-hidden="true">◉</span> ' + esc(t('camera')) + '</button>' +
+              '<button type="button" class="pi-btn pi-btn-secondary" data-pi-id="galleryBtn"><span aria-hidden="true">▣</span> ' + esc(t('gallery')) + '</button>' +
+            '</div>' +
+            '<button type="button" class="pi-btn pi-btn-primary pi-analyze-v210" data-pi-id="analyzeBtn">' + esc(t('analyzeBtn')) + ' <span aria-hidden="true">→</span></button>' +
+            '<p class="pi-capture-consent">' + esc(state.lang === 'he' ? 'הזיהוי מתחיל רק לאחר לחיצה על נתח צמח.' : 'Identification starts only when you tap Analyze Plant.') + '</p>' +
             '<div data-pi-id="error" class="pi-error"></div>' +
           '</div>' +
           '<div data-pi-id="loadingStep" style="display:none">' +
