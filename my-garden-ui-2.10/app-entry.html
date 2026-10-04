@@ -16,7 +16,7 @@ body{min-height:100dvh}
 .lang-hot{right:15%;top:3.5%;width:12%;height:7%}.profile-hot{right:3%;top:3.5%;width:10%;height:7%}
 .carousel{position:absolute;left:0;right:0;top:24%;height:58%;touch-action:pan-y;user-select:none;overflow:visible}
 .card{position:absolute;left:50%;top:50%;width:min(63vw,410px);aspect-ratio:0.73;transform:translate(-50%,-50%);border-radius:28px;overflow:hidden;box-shadow:0 24px 55px rgba(0,0,0,.35);transition:transform .42s ease,opacity .42s ease,filter .42s ease;cursor:pointer;background:#233b23;border:1px solid rgba(255,255,255,.16)}
-.card img{display:block;width:100%;height:100%;object-fit:cover}
+.card img,.card video{display:block;width:100%;height:100%;object-fit:cover}.card video{position:absolute;inset:0;z-index:1;background:#233b23}.card .poster{position:relative;z-index:0}.card.center .poster.has-motion{visibility:hidden}
 .card.side-left{transform:translate(-105%,-50%) scale(.86);opacity:.72;filter:saturate(.82);z-index:1}
 .card.side-right{transform:translate(5%,-50%) scale(.86);opacity:.72;filter:saturate(.82);z-index:1}
 .card.center{transform:translate(-50%,-50%) scale(1);opacity:1;z-index:3}
@@ -46,13 +46,14 @@ body{min-height:100dvh}
   </div>
 </main>
 <script>
+const A='https://smart-style-all-three--friendly-taiyaki-64aacb.netlify.app/assets/';
 const modules=[
- {id:'garden-design',src:'https://smart-style-all-three--friendly-taiyaki-64aacb.netlify.app/assets/card-garden-design-center.png',href:'/modules/garden-design/'},
- {id:'my-garden',src:'https://smart-style-all-three--friendly-taiyaki-64aacb.netlify.app/assets/card-my-garden.png',href:'./index.html?v=20261004-home-fullscreen2'},
- {id:'plant-doctor',src:'https://smart-style-all-three--friendly-taiyaki-64aacb.netlify.app/assets/card-plant-doctor-rectified.png',href:'/modules/plant-doctor/'},
- {id:'plant-id',src:'https://smart-style-all-three--friendly-taiyaki-64aacb.netlify.app/assets/card-plant-id-approved-exact.webp',href:'/modules/plant-identifier/'},
- {id:'smart',src:'https://smart-style-all-three--friendly-taiyaki-64aacb.netlify.app/assets/card-smart-approved-exact.webp',href:'/app.html?smart-recommendations=1'},
- {id:'shop',src:'https://smart-style-all-three--friendly-taiyaki-64aacb.netlify.app/assets/card-shop-approved-hq.webp',href:'/store/'}
+ {id:'garden-design',center:A+'card-garden-design-center.png',side:A+'card-garden-design.png',motion:A+'garden-design-approved-motion.mp4',href:'/modules/garden-design/'},
+ {id:'my-garden',center:A+'card-my-garden.png',side:A+'card-my-garden-side.png',motion:A+'my-garden-approved-motion.mp4',href:'./index.html?v=20261004-home-fullscreen2'},
+ {id:'plant-doctor',center:A+'card-plant-doctor-rectified.png',side:A+'card-plant-doctor-rectified.png',motion:A+'plant-doctor-approved-motion.mp4',href:'/modules/plant-doctor/'},
+ {id:'plant-id',center:A+'card-plant-id-approved-exact.webp',side:A+'card-plant-id-approved-exact.webp',motion:A+'plant-identification-approved-motion.mp4',href:'/modules/plant-identifier/'},
+ {id:'smart',center:A+'card-smart-approved-exact.webp',side:A+'card-smart-approved-exact.webp',motion:A+'smart-recommendations-approved-motion.mp4',href:'/app.html?smart-recommendations=1'},
+ {id:'shop',center:A+'card-shop-approved-hq.webp',side:A+'card-shop-approved-hq.webp',motion:A+'shop-approved-motion.mp4',href:'/store/'}
 ];
 let active=1,downX=null,moved=false;
 const carousel=document.getElementById('carousel'),dots=document.getElementById('dots');
@@ -68,7 +69,22 @@ function render(){
    else if(back===2||back===3) cls='far-left';
    const a=document.createElement('a');
    a.className='card '+cls;a.href=m.href;a.dataset.index=i;a.setAttribute('aria-label',m.id);
-   a.innerHTML='<img draggable="false" src="'+m.src+'" alt=""><span class="go"></span>';
+   const poster=i===active?m.center:m.side;
+   a.innerHTML='<img class="poster'+(i===active&&m.motion?' has-motion':'')+'" draggable="false" src="'+poster+'" alt=""><span class="go"></span>';
+   if(i===active&&m.motion){
+     const v=document.createElement('video');
+     v.src=m.motion;
+     v.muted=true;
+     v.playsInline=true;
+     v.autoplay=true;
+     v.loop=false;
+     v.preload='auto';
+     v.poster=m.center;
+     v.setAttribute('aria-hidden','true');
+     v.addEventListener('error',()=>{v.remove();const p=a.querySelector('.poster');if(p)p.style.visibility='visible'},{once:true});
+     a.insertBefore(v,a.querySelector('.go'));
+     requestAnimationFrame(()=>{v.currentTime=0;v.play().catch(()=>{const p=a.querySelector('.poster');if(p)p.style.visibility='visible'})});
+   }
    a.addEventListener('click',e=>{if(i!==active||moved){e.preventDefault();active=i;moved=false;render()}});
    carousel.appendChild(a);
  });
