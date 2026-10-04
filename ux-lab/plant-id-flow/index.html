@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17351f">
+<title>CRUVIT · Plant Identification · Approved Flow</title>
+<style>
+:root{--green:#2f6f3a;--green2:#173b24;--cream:#f5f1e7;--ink:#172018;--muted:#6f786e;--card:#fffef9;--line:#e5e9df;--shadow:0 18px 45px rgba(25,48,26,.18)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(circle at 50% 0,#fffdf7,#e8efe3 55%,#d8e5d3)}
+button{font:inherit}body{min-height:100vh}.app{min-height:100vh;padding:18px 14px 26px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.ownerbar{width:min(980px,100%);display:flex;align-items:center;justify-content:space-between;gap:16px}.ownerbar .brand{font-weight:800;letter-spacing:.28em;font-size:21px}.ownerbar .tag{font-size:11px;letter-spacing:.08em;color:#45604a;background:#ffffffb8;border:1px solid #d6e0d2;padding:8px 10px;border-radius:999px}
+.stage{width:min(980px,100%);display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:30px;align-items:center}.phoneWrap{display:grid;place-items:center;min-height:690px}
+.phone{position:relative;width:min(390px,92vw);aspect-ratio:390/844;border:8px solid #111;border-radius:48px;overflow:hidden;background:#f6f2e7;box-shadow:var(--shadow);isolation:isolate}
+.phone:before{content:"";position:absolute;z-index:50;top:9px;left:50%;transform:translateX(-50%);width:118px;height:31px;border-radius:18px;background:#050505}
+.screen{position:absolute;inset:0;display:none;overflow:hidden;background:var(--cream)}.screen.active{display:block}.status{height:48px;padding:14px 18px 0;display:flex;justify-content:space-between;font-size:12px;font-weight:700;position:relative;z-index:4}
+.topbar{height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 21px;position:relative;z-index:4}.logo{letter-spacing:.26em;font-weight:700;font-size:16px}.iconBtn{width:31px;height:31px;border-radius:50%;border:1.5px solid #263429;background:#fff8;display:grid;place-items:center;font-weight:700;color:#243226}
+.bottomNav{position:absolute;left:0;right:0;bottom:0;height:78px;background:#14391f;color:#eef6ed;display:flex;justify-content:space-around;align-items:center;padding:6px 8px calc(8px + env(safe-area-inset-bottom));z-index:40}.navitem{font-size:9px;opacity:.8;text-align:center;min-width:48px}.navitem b{display:block;font-size:21px;line-height:24px;font-weight:500}.navitem.active{opacity:1}.navitem.active b{width:42px;height:42px;border-radius:50%;margin:-16px auto 1px;background:#f7f7f2;color:#2f6f3a;display:grid;place-items:center;border:4px solid #dfe9db}
+.entry{background:
+linear-gradient(180deg,rgba(250,246,235,.94) 0 48%,rgba(250,246,235,.36) 66%,rgba(26,65,31,.12) 100%),
+url("https://thumb.wikimedia.org/wikipedia/commons/thumb/6/63/Monstera_deliciosa_WPC.jpg/500px-Monstera_deliciosa_WPC.jpg") center/cover}
+.entry .hero{padding:16px 28px 0;text-align:center;position:relative;z-index:2}.hero h1{font-family:Georgia,serif;font-size:38px;line-height:1.02;margin:5px 0 12px}.hero p{margin:0 auto;color:#4b5449;font-size:14px;max-width:290px;line-height:1.35}.story{font-family:"Comic Sans MS",cursive;transform:rotate(-8deg);font-size:23px;line-height:1.15;margin:20px 35px 10px auto;width:165px;color:#27452b}.entryActions{position:absolute;z-index:6;left:28px;right:28px;bottom:214px;display:grid;gap:12px}.bigBtn{border:0;border-radius:15px;padding:16px 18px;font-size:18px;font-weight:750;box-shadow:0 6px 18px rgba(30,55,30,.14);cursor:pointer}.bigBtn.primary{background:var(--green);color:white}.bigBtn.secondary{background:#fbfaf5;color:#202820}.need{position:absolute;z-index:7;left:17px;right:17px;bottom:84px;background:#f6f1e4e8;border-radius:22px;padding:13px 12px 12px;backdrop-filter:blur(10px)}.needTitle{font-weight:750;font-size:13px;margin-bottom:8px}.shortcutGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.shortcut{border:0;background:#fffdf6e8;border-radius:14px;padding:9px 5px;height:82px;font-size:9px;line-height:1.15;cursor:pointer;color:#263126}.shortcut i{font-style:normal;font-size:26px;display:block;margin-bottom:5px}
+.camera{background:#07110a}.camera .status,.camera .topbar{color:#fff}.camera .iconBtn{color:#fff;border-color:#fff;background:#0007}.cameraPhoto{position:absolute;inset:0 0 78px;background:url("https://thumb.wikimedia.org/wikipedia/commons/thumb/6/63/Monstera_deliciosa_WPC.jpg/500px-Monstera_deliciosa_WPC.jpg") center/cover}.focus{position:absolute;left:55px;right:55px;top:160px;height:295px}.focus:before,.focus:after,.focus span:before,.focus span:after{content:"";position:absolute;width:34px;height:34px;border-color:#fff;border-style:solid}.focus:before{left:0;top:0;border-width:3px 0 0 3px;border-radius:9px 0 0 0}.focus:after{right:0;top:0;border-width:3px 3px 0 0;border-radius:0 9px 0 0}.focus span:before{left:0;bottom:0;border-width:0 0 3px 3px;border-radius:0 0 0 9px}.focus span:after{right:0;bottom:0;border-width:0 3px 3px 0;border-radius:0 0 9px 0}.capture{position:absolute;bottom:101px;left:50%;transform:translateX(-50%);width:70px;height:70px;border-radius:50%;border:5px solid #fff;background:#fff2;box-shadow:0 0 0 3px #172018;cursor:pointer}.galleryThumb{position:absolute;left:23px;bottom:112px;width:48px;height:48px;border-radius:7px;background:url("https://thumb.wikimedia.org/wikipedia/commons/thumb/6/63/Monstera_deliciosa_WPC.jpg/500px-Monstera_deliciosa_WPC.jpg") center/cover;border:2px solid #fff}.mode{position:absolute;bottom:87px;left:0;right:0;text-align:center;color:#fff;font-size:10px;letter-spacing:.04em}.mode b{color:#d3f078;margin-right:18px}
+.analyze{background:#fbf8ef}.analyzeBody{padding:55px 31px 100px;text-align:center}.ghostPlant{height:225px;margin:0 auto 15px;border-radius:22px;background:linear-gradient(#ffffff96,#ffffffd0),url("https://thumb.wikimedia.org/wikipedia/commons/thumb/6/63/Monstera_deliciosa_WPC.jpg/500px-Monstera_deliciosa_WPC.jpg") center/cover;filter:saturate(.7)}.analyze h2{font-family:Georgia,serif;font-size:25px;margin:20px 0 8px}.analyze p{color:#5e665d;font-size:13px;line-height:1.45}.loader{width:102px;height:102px;border-radius:50%;border:9px solid #d8e4d3;border-top-color:#2d6b39;margin:27px auto 14px;display:grid;place-items:center;animation:spin 2.2s linear infinite}.loader:after{content:"🌿";font-size:33px;animation:counterspin 2.2s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}@keyframes counterspin{to{transform:rotate(-360deg)}}.fact{margin-top:25px;background:#ecf1e6;border-radius:16px;padding:12px;font-size:11px;color:#4d584c}
+.resultBody,.profileBody,.careBody,.suitBody,.saveBody{padding:7px 18px 98px}.plantPhoto{height:225px;border-radius:17px;background:url("https://thumb.wikimedia.org/wikipedia/commons/thumb/6/63/Monstera_deliciosa_WPC.jpg/500px-Monstera_deliciosa_WPC.jpg") center/cover;position:relative}.confidence{position:absolute;right:12px;bottom:10px;background:#dff0de;color:#1c6730;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:800}.plantName{font-family:Georgia,serif;font-size:28px;margin:15px 0 2px}.latin{font-size:13px;color:#666}.copy{font-size:13px;line-height:1.45;margin:12px 0 15px;color:#39433a}.chips{display:flex;gap:7px;flex-wrap:wrap}.chip{font-size:10px;background:#edf2e8;padding:6px 9px;border-radius:999px}.actionStack{display:grid;gap:9px;margin-top:13px}.fullBtn{border:0;border-radius:12px;padding:14px;background:var(--green);color:white;font-weight:800;cursor:pointer}.outlineBtn{border:1px solid #e0e5db;border-radius:12px;padding:13px;background:#fffef9;color:#20582f;font-weight:750;cursor:pointer}
+.tabs{display:flex;border-bottom:1px solid #d8ddd3;margin-top:13px}.tab{flex:1;text-align:center;padding:10px 4px;font-size:11px;border-bottom:2px solid transparent}.tab.active{font-weight:800;border-color:#2d6b39}.about h3,.careBody h2,.suitBody h2{font-family:Georgia,serif;margin:15px 0 8px;font-size:21px}.noteCard{background:#eaf1e5;border-radius:14px;padding:11px;margin-top:12px;font-size:11px;color:#3f5944}.careIntro,.suitIntro{text-align:center;font-size:12px;color:#606a5f;line-height:1.4}.careList{display:grid;gap:9px;margin-top:15px}.careItem{display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:center;background:#fffef9;border:1px solid #e7eadf;border-radius:13px;padding:9px;box-shadow:0 3px 10px #1e38120b}.careIcon{font-size:27px;text-align:center}.careItem b{display:block;font-size:12px;margin-bottom:2px}.careItem span{font-size:10px;color:#606a5f}.matchCard{display:grid;grid-template-columns:95px 1fr;gap:11px;align-items:center;background:#edf5ea;border-radius:16px;padding:10px;margin:14px 0}.matchPhoto{height:86px;border-radius:12px;background:url("https://thumb.wikimedia.org/wikipedia/commons/thumb/6/63/Monstera_deliciosa_WPC.jpg/500px-Monstera_deliciosa_WPC.jpg") center/cover}.matchCard b{color:#1f6a32}.grid4{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{background:#fffef9;border:1px solid #e7eadf;border-radius:14px;padding:12px;min-height:119px}.metric i{font-style:normal;font-size:24px}.metric b{font-size:11px;display:block;margin:6px 0}.metric span{font-size:9px;color:#606a5f}.good{font-size:9px;color:#207139;font-weight:800;margin-top:8px}.suitFoot{background:#eaf1e5;border-radius:14px;padding:12px;margin-top:11px;font-size:10px;text-align:center}
+.saveTop{text-align:center;padding:7px 0 13px}.savePlant{height:150px;background:url("https://thumb.wikimedia.org/wikipedia/commons/thumb/6/63/Monstera_deliciosa_WPC.jpg/500px-Monstera_deliciosa_WPC.jpg") center/contain no-repeat}.saveTop h2{font-family:Georgia,serif;margin:5px 0 4px;font-size:25px}.saveTop p{font-size:12px;color:#636c62}.field{margin:10px 0}.field label{font-size:10px;color:#5a655a;display:block;margin-bottom:5px}.input{background:#fffef9;border:1px solid #e2e7dd;border-radius:12px;padding:12px;font-size:12px}.doneStack{display:grid;gap:9px;margin-top:13px}
+.panel{background:#ffffffc9;border:1px solid #d8e1d4;border-radius:26px;padding:23px;backdrop-filter:blur(14px);box-shadow:0 20px 45px rgba(38,61,36,.08)}.panel .eyebrow{font-size:11px;letter-spacing:.15em;color:#6b7769}.panel h1{font-family:Georgia,serif;font-size:31px;margin:7px 0 9px}.panel p{font-size:14px;line-height:1.55;color:#5d685d;min-height:65px}.steps{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0 20px}.stepDot{width:28px;height:7px;border-radius:999px;border:0;background:#cbd5c6;cursor:pointer;padding:0}.stepDot.active{background:#2d6b39}.panelNav{display:grid;grid-template-columns:1fr 1fr;gap:9px}.panelNav button{border:0;border-radius:14px;padding:13px;font-weight:800;cursor:pointer}.back{background:#eef2eb;color:#244028}.next{background:#2d6b39;color:white}.guard{font-size:11px;line-height:1.45;color:#748073;margin-top:13px}.smallTitle{font-size:13px;font-weight:800}
+@media(max-width:780px){.app{padding-top:10px}.ownerbar{width:min(420px,100%)}.ownerbar .brand{font-size:17px}.ownerbar .tag{font-size:9px;padding:6px 8px}.stage{display:flex;flex-direction:column;gap:12px}.phoneWrap{min-height:auto}.phone{width:min(360px,92vw)}.panel{width:min(420px,100%);padding:15px 16px;border-radius:20px}.panel h1{font-size:22px;margin:4px 0}.panel p{font-size:12px;min-height:0}.steps{margin:10px 0 12px}.guard{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="ownerbar"><div class="brand">CRUVIT</div><div class="tag">OWNER APPROVED V1 · ISOLATED PREVIEW</div></header>
+<div class="stage">
+<section class="phoneWrap">
+<div class="phone" id="phone">
+<section class="screen entry active" data-step="0">
+  <div class="status"><span>9:41</span><span>●●●  Wi‑Fi  ▰</span></div>
+  <div class="topbar"><span>🌱</span><div class="logo">CRUVIT</div><button class="iconBtn">?</button></div>
+  <div class="hero"><h1>Let’s identify<br>your plant!</h1><p>Snap a photo and discover its name, care tips and more.</p><div class="story">Every plant<br>has a story 🌱</div></div>
+  <div class="entryActions"><button class="bigBtn primary" data-go="1">📷 &nbsp; Take a photo</button><button class="bigBtn secondary" data-go="1">▣ &nbsp; Choose from gallery</button></div>
+  <div class="need"><div class="needTitle">Need help?</div><div class="shortcutGrid">
+    <button class="shortcut" data-go="5"><i>🌿</i>Plant care<br>tips</button>
+    <button class="shortcut" data-go="6"><i>♡</i>Is it right<br>for my garden?</button>
+    <button class="shortcut" data-go="6"><i>☀️</i>Growing<br>conditions</button>
+    <button class="shortcut" data-go="7"><i>⊕</i>Save to<br>My Garden</button>
+  </div></div>
+  <div class="bottomNav"><div class="navitem"><b>⌂</b>Home</div><div class="navitem"><b>♧</b>My Garden</div><div class="navitem active"><b>🌿</b>Identify</div><div class="navitem"><b>▣</b>Design</div><div class="navitem"><b>▢</b>Shop</div></div>
+</section>
+
+<section class="screen camera" data-step="1">
+  <div class="cameraPhoto"></div><div class="status"><span>9:41</span><span>●●●  Wi‑Fi  ▰</span></div>
+  <div class="topbar"><button class="iconBtn" data-go="0">×</button><span></span><button class="iconBtn">⚡</button></div>
+  <div class="focus"><span></span></div><div class="galleryThumb" data-go="2"></div><button class="capture" data-go="2" aria-label="Capture"></button><div class="mode"><b>PHOTO</b> VIDEO</div>
+  <div class="bottomNav"><div class="navitem"><b>⌂</b>Home</div><div class="navitem"><b>♧</b>My Garden</div><div class="navitem active"><b>🌿</b>Identify</div><div class="navitem"><b>▣</b>Design</div><div class="navitem"><b>▢</b>Shop</div></div>
+</section>
+
+<section class="screen analyze" data-step="2">
+  <div class="status"><span>9:41</span><span>●●●  Wi‑Fi  ▰</span></div><div class="topbar"><span></span><div class="logo">CRUVIT</div><button class="iconBtn">?</button></div>
+  <div class="analyzeBody"><div class="ghostPlant"></div><h2>Identifying your plant...</h2><p>Our AI is analyzing the image to find the best match.</p><div class="loader"></div><p>Searching our plant database...</p><div class="fact">💡 &nbsp; Did you know?<br>There are over 400,000 plant species in the world!</div></div>
+  <div class="bottomNav"><div class="navitem"><b>⌂</b>Home</div><div class="navitem"><b>♧</b>My Garden</div><div class="navitem active"><b>🌿</b>Identify</div><div class="navitem"><b>▣</b>Design</div><div class="navitem"><b>▢</b>Shop</div></div>
+</section>
+
+<section class="screen" data-step="3">
+  <div class="status"><span>9:41</span><span>●●●  Wi‑Fi  ▰</span></div><div class="topbar"><span>‹</span><div class="logo">CRUVIT</div><button class="iconBtn">?</button></div>
+  <div class="resultBody"><div class="plantPhoto"><div class="confidence">✓ 95% match</div></div><div class="plantName">Monstera deliciosa</div><div class="latin">Swiss Cheese Plant</div><p class="copy">A stunning tropical plant known for its iconic split leaves. It’s a popular houseplant, loved for its unique foliage and easy-going nature.</p><div class="chips"><span class="chip">🌴 Tropical</span><span class="chip">💧 Easy care</span><span class="chip">◉ Popular</span></div><div class="actionStack"><button class="fullBtn" data-go="4">View full profile</button><button class="outlineBtn" data-go="7">⊕ &nbsp; Save to My Garden</button></div></div>
+  <div class="bottomNav"><div class="navitem"><b>⌂</b>Home</div><div class="navitem"><b>♧</b>My Garden</div><div class="navitem active"><b>🌿</b>Identify</div><div class="navitem"><b>▣</b>Design</div><div class="navitem"><b>▢</b>Shop</div></div>
+</section>
+
+<section class="screen" data-step="4">
+  <div class="status"><span>9:41</span><span>●●●  Wi‑Fi  ▰</span></div><div class="topbar"><span>‹</span><div class="logo">CRUVIT</div><span>♡</span></div>
+  <div class="profileBody"><div class="plantPhoto"></div><div class="plantName">Monstera deliciosa</div><div class="latin">Swiss Cheese Plant</div><div class="chips" style="margin-top:10px"><span class="chip">Tropical</span><span class="chip">Aroid</span><span class="chip">Evergreen</span></div><div class="tabs"><div class="tab active">Overview</div><button class="tab" data-go="5" style="border-width:0 0 2px;background:transparent">Care</button><div class="tab">Similar Plants</div></div><div class="about"><h3>About</h3><p class="copy">Monstera deliciosa is a tropical climbing plant native to the rainforests of Central America. It’s famous for its large, glossy leaves with natural splits and holes (fenestrations) that develop as the plant matures.</p><div class="noteCard">🌿 &nbsp; A striking plant that brings a touch of the tropics to any space.</div></div></div>
+  <div class="bottomNav"><div class="navitem"><b>⌂</b>Home</div><div class="navitem"><b>♧</b>My Garden</div><div class="navitem active"><b>🌿</b>Identify</div><div class="navitem"><b>▣</b>Design</div><div class="navitem"><b>▢</b>Shop</div></div>
+</section>
+
+<section class="screen" data-step="5">
+  <div class="status"><span>9:41</span><span>●●●  Wi‑Fi  ▰</span></div><div class="topbar"><span>‹</span><div class="logo">CRUVIT</div><span>♡</span></div>
+  <div class="careBody"><h2>Care tips</h2><div class="careIntro">Keep your Monstera happy and thriving<br>with these simple care guidelines.</div><div class="careList">
+    <div class="careItem"><div class="careIcon">☀️</div><div><b>Light</b><span>Bright, indirect light · Avoid direct sunlight</span></div></div>
+    <div class="careItem"><div class="careIcon">💧</div><div><b>Watering</b><span>Water when top 2–3 cm of soil is dry</span></div></div>
+    <div class="careItem"><div class="careIcon">💦</div><div><b>Humidity</b><span>Prefers high humidity (&gt; 60%)</span></div></div>
+    <div class="careItem"><div class="careIcon">🌡️</div><div><b>Temperature</b><span>18–30°C · Keep away from cold drafts</span></div></div>
+    <div class="careItem"><div class="careIcon">🐾</div><div><b>Pet safety</b><span>Toxic to pets if ingested · Keep out of reach</span></div></div>
+    <div class="careItem"><div class="careIcon">🌱</div><div><b>Fertilizing</b><span>Feed every 4–6 weeks during growing season</span></div></div>
+  </div></div>
+  <div class="bottomNav"><div class="navitem"><b>⌂</b>Home</div><div class="navitem"><b>♧</b>My Garden</div><div class="navitem active"><b>🌿</b>Identify</div><div class="navitem"><b>▣</b>Design</div><div class="navitem"><b>▢</b>Shop</div></div>
+</section>
+
+<section class="screen" data-step="6">
+  <div class="status"><span>9:41</span><span>●●●  Wi‑Fi  ▰</span></div><div class="topbar"><span>‹</span><div class="logo">CRUVIT</div><span>♡</span></div>
+  <div class="suitBody"><h2>Is it right for my garden?</h2><div class="suitIntro">See how well Monstera deliciosa<br>fits your growing conditions.</div><div class="matchCard"><div class="matchPhoto"></div><div><b>✓ Great match!</b><div style="font-size:10px;margin-top:5px;color:#526052">Monstera can thrive in your conditions.</div></div></div><div class="grid4">
+    <div class="metric"><i>☀️</i><b>Sun exposure</b><span>Bright, indirect light</span><div class="good">✓ Good match</div></div>
+    <div class="metric"><i>🌡️</i><b>Climate</b><span>Thrives in warm, humid conditions</span><div class="good">✓ Good match</div></div>
+    <div class="metric"><i>💧</i><b>Watering needs</b><span>Moderate · Keep soil slightly moist</span><div class="good">✓ Good match</div></div>
+    <div class="metric"><i>🌿</i><b>Growing conditions</b><span>Ideal for indoor spaces and shaded gardens</span><div class="good">✓ Good match</div></div>
+  </div><div class="suitFoot">🌿 &nbsp; Monstera is a great choice for your space!<br><small>With the right care, it will thrive.</small></div></div>
+  <div class="bottomNav"><div class="navitem"><b>⌂</b>Home</div><div class="navitem"><b>♧</b>My Garden</div><div class="navitem active"><b>🌿</b>Identify</div><div class="navitem"><b>▣</b>Design</div><div class="navitem"><b>▢</b>Shop</div></div>
+</section>
+
+<section class="screen" data-step="7">
+  <div class="status"><span>9:41</span><span>●●●  Wi‑Fi  ▰</span></div><div class="topbar"><span></span><div class="logo">CRUVIT</div><span></span></div>
+  <div class="saveBody"><div class="saveTop"><div class="savePlant"></div><h2>Added to My Garden!</h2><p>Your Monstera deliciosa has been saved.</p></div><div class="field"><label>⌖ &nbsp; Location</label><div class="input">Living room &nbsp;⌄</div></div><div class="field"><label>▧ &nbsp; Notes (optional)</label><div class="input">Near the window. Looks happy! 🌱</div></div><div class="field"><label>♢ &nbsp; Reminder</label><div class="input">Every 2 weeks &nbsp;⌄</div></div><div class="doneStack"><button class="fullBtn">Done</button><button class="outlineBtn">View in My Garden</button></div></div>
+  <div class="bottomNav"><div class="navitem"><b>⌂</b>Home</div><div class="navitem"><b>♧</b>My Garden</div><div class="navitem active"><b>🌿</b>Identify</div><div class="navitem"><b>▣</b>Design</div><div class="navitem"><b>▢</b>Shop</div></div>
+</section>
+</div>
+</section>
+
+<aside class="panel">
+  <div class="eyebrow" id="counter">SCREEN 1 OF 8</div>
+  <h1 id="panelTitle">Identify</h1>
+  <p id="panelCopy">Start from the approved CRUVIT Plant Identification screen.</p>
+  <div class="steps" id="steps"></div>
+  <div class="panelNav"><button class="back" id="back">← Back</button><button class="next" id="next">Next →</button></div>
+  <div class="guard"><b>Guardrail:</b> this is an isolated Plant Identification preview. It does not modify the approved Home, carousel or any other module.</div>
+</aside>
+</div>
+</div>
+<script>
+const info=[
+["Identify","Start from the approved CRUVIT Plant Identification screen."],
+["Camera","Take or choose a plant photo. The camera stays focused on the plant."],
+["Analyzing","CRUVIT analyzes the image and searches for the best match without pretending certainty."],
+["Result","Show the identified plant with visible confidence and clear next actions."],
+["Plant profile","Give the useful plant overview first, with Care and Similar Plants one tap away."],
+["Care","Present practical care guidance without overloading the user."],
+["Suitability","Connect identification to the user’s real garden conditions: sun, climate, water and growing environment."],
+["Save","Turn the identified plant into a My Garden item with location, notes and reminders."]
+];
+let current=0;const screens=[...document.querySelectorAll(".screen")];const counter=document.getElementById("counter"),title=document.getElementById("panelTitle"),copy=document.getElementById("panelCopy"),steps=document.getElementById("steps"),back=document.getElementById("back"),next=document.getElementById("next");
+function render(){screens.forEach((s,i)=>s.classList.toggle("active",i===current));counter.textContent="SCREEN "+(current+1)+" OF "+screens.length;title.textContent=info[current][0];copy.textContent=info[current][1];back.disabled=current===0;back.style.opacity=current===0?".4":"1";next.textContent=current===screens.length-1?"Done":"Next →";steps.innerHTML="";info.forEach((m,i)=>{const b=document.createElement("button");b.className="stepDot"+(i===current?" active":"");b.title=m[0];b.onclick=()=>go(i);steps.appendChild(b)})}
+function go(i){current=Math.max(0,Math.min(screens.length-1,i));render()}
+document.addEventListener("click",e=>{const t=e.target.closest("[data-go]");if(t)go(Number(t.dataset.go))});
+back.onclick=()=>go(current-1);next.onclick=()=>{if(current<screens.length-1)go(current+1)};document.addEventListener("keydown",e=>{if(e.key==="ArrowRight")go(current+1);if(e.key==="ArrowLeft")go(current-1)});render();
+</script>
+</body>
+</html>
