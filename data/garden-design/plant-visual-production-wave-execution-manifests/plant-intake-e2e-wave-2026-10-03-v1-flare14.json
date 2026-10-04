@@ -1,0 +1,422 @@
+{
+  "contract": "plant-visual-production-wave-execution-manifest-v1",
+  "runId": "plant-intake-e2e-wave-2026-10-03-v1-flare14",
+  "createdAt": "2026-10-04",
+  "source": {
+    "planner": "plant-visual-production-wave-v1",
+    "selectionRule": "Exact 15 required Design-ready gaps from approved E2E intake wave; reuse-covered plants excluded.",
+    "canonicalSlugs": [
+      "basil",
+      "black-eyed-susan-vine",
+      "cyclamen",
+      "ficus-benjamina",
+      "hibiscus",
+      "lemon",
+      "strelitzia"
+    ]
+  },
+  "bounded": true,
+  "jobCount": 14,
+  "plantCount": 6,
+  "canonicalSlugs": [
+    "basil",
+    "black-eyed-susan-vine",
+    "cyclamen",
+    "ficus-benjamina",
+    "hibiscus",
+    "lemon",
+    "strelitzia"
+  ],
+  "candidateStorage": {
+    "backend": "cloudflare-r2",
+    "bucketEnv": "PLANT_VISUAL_R2_CANDIDATES_BUCKET",
+    "immutableKeyPattern": "candidates/{runId}/{canonicalSlug}/{assetId}__{sha256}.png"
+  },
+  "executionPolicy": {
+    "provider": "openai-images-api",
+    "model": "gpt-image-2.5-flare-2026-09-08",
+    "maxJobs": 14,
+    "maxCalls": 14,
+    "maxRetries": 0,
+    "registryWritesAllowed": false,
+    "productionWritesAllowed": false,
+    "ownerSpendApprovalRequired": true,
+    "approvalArtifactContract": "plant-visual-production-wave-spend-approval-v1",
+    "fullPlantOnboardingRequiredBeforePaidGeneration": true
+  },
+  "spendPreflight": {
+    "mediumJobs": 15,
+    "highJobs": 0,
+    "projectedMediumCallUsd": 0.091,
+    "projectedMaximumSpendUsd": 1.274,
+    "label": "PREAPPROVAL_ESTIMATE_NOT_LIVE_QUOTE",
+    "approvedHardCapUsd": 1.52
+  },
+  "jobs": [
+    {
+      "jobId": "black-eyed-susan-vine__mature__default__flowering__v1",
+      "canonicalSlug": "black-eyed-susan-vine",
+      "scientific": "Thunbergia alata",
+      "visualForm": "climber",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenology": "flowering",
+      "reason": "FLOWERING_VISUALLY_SIGNIFICANT",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "FLOWERING_VISUALLY_SIGNIFICANT"
+      ],
+      "sizeAuthorityState": "SIZE_AUTHORITY_EVIDENCE_GAP",
+      "sizeAuthorityOwnerReviewRequired": true,
+      "sizeAuthorityReasonCodes": [
+        "CANONICAL_SIZE_RECORD_NOT_FOUND"
+      ],
+      "placementScaleHold": false,
+      "projectedUsd": 0.091
+    },
+    {
+      "jobId": "black-eyed-susan-vine__mature__default__vegetative__v1",
+      "canonicalSlug": "black-eyed-susan-vine",
+      "scientific": "Thunbergia alata",
+      "visualForm": "climber",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "reason": "BASELINE_MATURE_VEGETATIVE",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "sizeAuthorityState": "SIZE_AUTHORITY_EVIDENCE_GAP",
+      "sizeAuthorityOwnerReviewRequired": true,
+      "sizeAuthorityReasonCodes": [
+        "CANONICAL_SIZE_RECORD_NOT_FOUND"
+      ],
+      "placementScaleHold": false,
+      "projectedUsd": 0.091
+    },
+    {
+      "jobId": "black-eyed-susan-vine__young__default__vegetative__v1",
+      "canonicalSlug": "black-eyed-susan-vine",
+      "scientific": "Thunbergia alata",
+      "visualForm": "climber",
+      "architectureMode": "default",
+      "growthStage": "young",
+      "phenology": "vegetative",
+      "reason": "GROWTH_ARCHITECTURE_CHANGE",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "GROWTH_ARCHITECTURE_CHANGE"
+      ],
+      "sizeAuthorityState": "SIZE_AUTHORITY_EVIDENCE_GAP",
+      "sizeAuthorityOwnerReviewRequired": true,
+      "sizeAuthorityReasonCodes": [
+        "CANONICAL_SIZE_RECORD_NOT_FOUND"
+      ],
+      "placementScaleHold": false,
+      "projectedUsd": 0.091
+    },
+    {
+      "jobId": "cyclamen__mature__default__flowering__v1",
+      "canonicalSlug": "cyclamen",
+      "scientific": "Cyclamen persicum",
+      "visualForm": "herbaceous-clump",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenology": "flowering",
+      "reason": "FLOWERING_VISUALLY_SIGNIFICANT",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "FLOWERING_VISUALLY_SIGNIFICANT"
+      ],
+      "sizeAuthorityState": "SIZE_AUTHORITY_EVIDENCE_GAP",
+      "sizeAuthorityOwnerReviewRequired": true,
+      "sizeAuthorityReasonCodes": [
+        "CANONICAL_SIZE_RECORD_NOT_FOUND"
+      ],
+      "placementScaleHold": false,
+      "projectedUsd": 0.091
+    },
+    {
+      "jobId": "cyclamen__mature__default__vegetative__v1",
+      "canonicalSlug": "cyclamen",
+      "scientific": "Cyclamen persicum",
+      "visualForm": "herbaceous-clump",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "reason": "BASELINE_MATURE_VEGETATIVE",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "sizeAuthorityState": "SIZE_AUTHORITY_EVIDENCE_GAP",
+      "sizeAuthorityOwnerReviewRequired": true,
+      "sizeAuthorityReasonCodes": [
+        "CANONICAL_SIZE_RECORD_NOT_FOUND"
+      ],
+      "placementScaleHold": false,
+      "projectedUsd": 0.091
+    },
+    {
+      "jobId": "ficus-benjamina__mature__tree__vegetative__v1",
+      "canonicalSlug": "ficus-benjamina",
+      "scientific": "Ficus benjamina",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "reason": "BASELINE_MATURE_VEGETATIVE",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "sizeAuthorityState": "SIZE_AUTHORITY_READY",
+      "sizeAuthorityOwnerReviewRequired": false,
+      "sizeAuthorityReasonCodes": [],
+      "placementScaleHold": false,
+      "projectedUsd": 0.091
+    },
+    {
+      "jobId": "ficus-benjamina__young__tree__vegetative__v1",
+      "canonicalSlug": "ficus-benjamina",
+      "scientific": "Ficus benjamina",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "young",
+      "phenology": "vegetative",
+      "reason": "GROWTH_ARCHITECTURE_CHANGE",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "GROWTH_ARCHITECTURE_CHANGE"
+      ],
+      "sizeAuthorityState": "SIZE_AUTHORITY_PARTIAL",
+      "sizeAuthorityOwnerReviewRequired": false,
+      "sizeAuthorityReasonCodes": [
+        "GROWTH_STAGE_AUTHORITY_NOT_SUPPORTED"
+      ],
+      "placementScaleHold": false,
+      "projectedUsd": 0.091
+    },
+    {
+      "jobId": "hibiscus__mature__shrub__flowering__v1",
+      "canonicalSlug": "hibiscus",
+      "scientific": "Hibiscus rosa-sinensis",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "flowering",
+      "reason": "FLOWERING_VISUALLY_SIGNIFICANT",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "FLOWERING_VISUALLY_SIGNIFICANT"
+      ],
+      "sizeAuthorityState": "SIZE_AUTHORITY_EVIDENCE_GAP",
+      "sizeAuthorityOwnerReviewRequired": true,
+      "sizeAuthorityReasonCodes": [
+        "CANONICAL_SIZE_RECORD_NOT_FOUND"
+      ],
+      "placementScaleHold": false,
+      "projectedUsd": 0.091
+    },
+    {
+      "jobId": "hibiscus__mature__shrub__vegetative__v1",
+      "canonicalSlug": "hibiscus",
+      "scientific": "Hibiscus rosa-sinensis",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "reason": "BASELINE_MATURE_VEGETATIVE",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "sizeAuthorityState": "SIZE_AUTHORITY_EVIDENCE_GAP",
+      "sizeAuthorityOwnerReviewRequired": true,
+      "sizeAuthorityReasonCodes": [
+        "CANONICAL_SIZE_RECORD_NOT_FOUND"
+      ],
+      "placementScaleHold": false,
+      "projectedUsd": 0.091
+    },
+    {
+      "jobId": "lemon__mature__tree__fruiting__v1",
+      "canonicalSlug": "lemon",
+      "scientific": "Citrus × limon",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "fruiting",
+      "reason": "FRUITING_VISUALLY_SIGNIFICANT",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "FRUITING_VISUALLY_SIGNIFICANT"
+      ],
+      "sizeAuthorityState": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+      "sizeAuthorityOwnerReviewRequired": true,
+      "sizeAuthorityReasonCodes": [
+        "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+      ],
+      "placementScaleHold": true,
+      "projectedUsd": 0.091
+    },
+    {
+      "jobId": "lemon__mature__tree__vegetative__v1",
+      "canonicalSlug": "lemon",
+      "scientific": "Citrus × limon",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "reason": "BASELINE_MATURE_VEGETATIVE",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "sizeAuthorityState": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+      "sizeAuthorityOwnerReviewRequired": true,
+      "sizeAuthorityReasonCodes": [
+        "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+      ],
+      "placementScaleHold": true,
+      "projectedUsd": 0.091
+    },
+    {
+      "jobId": "lemon__young__tree__vegetative__v1",
+      "canonicalSlug": "lemon",
+      "scientific": "Citrus × limon",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "young",
+      "phenology": "vegetative",
+      "reason": "GROWTH_ARCHITECTURE_CHANGE",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "GROWTH_ARCHITECTURE_CHANGE"
+      ],
+      "sizeAuthorityState": "SIZE_AUTHORITY_PARTIAL",
+      "sizeAuthorityOwnerReviewRequired": false,
+      "sizeAuthorityReasonCodes": [
+        "GROWTH_STAGE_AUTHORITY_NOT_SUPPORTED"
+      ],
+      "placementScaleHold": false,
+      "projectedUsd": 0.091
+    },
+    {
+      "jobId": "strelitzia__mature__default__flowering__v1",
+      "canonicalSlug": "strelitzia",
+      "scientific": "Strelitzia reginae",
+      "visualForm": "herbaceous-clump",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenology": "flowering",
+      "reason": "FLOWERING_VISUALLY_SIGNIFICANT",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "FLOWERING_VISUALLY_SIGNIFICANT"
+      ],
+      "sizeAuthorityState": "SIZE_AUTHORITY_EVIDENCE_GAP",
+      "sizeAuthorityOwnerReviewRequired": true,
+      "sizeAuthorityReasonCodes": [
+        "CANONICAL_SIZE_RECORD_NOT_FOUND"
+      ],
+      "placementScaleHold": false,
+      "projectedUsd": 0.091
+    },
+    {
+      "jobId": "strelitzia__mature__default__vegetative__v1",
+      "canonicalSlug": "strelitzia",
+      "scientific": "Strelitzia reginae",
+      "visualForm": "herbaceous-clump",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "reason": "BASELINE_MATURE_VEGETATIVE",
+      "identityScope": "species",
+      "season": "season-neutral",
+      "formView": null,
+      "quality": "medium",
+      "detailClass": "UNKNOWN",
+      "variantReasonCodes": [
+        "BASELINE_MATURE_VEGETATIVE"
+      ],
+      "sizeAuthorityState": "SIZE_AUTHORITY_EVIDENCE_GAP",
+      "sizeAuthorityOwnerReviewRequired": true,
+      "sizeAuthorityReasonCodes": [
+        "CANONICAL_SIZE_RECORD_NOT_FOUND"
+      ],
+      "placementScaleHold": false,
+      "projectedUsd": 0.091
+    }
+  ],
+  "excludedJobs": [],
+  "safety": {
+    "noDuplicateGeneration": true,
+    "noFakeSeasonVariants": true,
+    "evergreenDormantGenerationForbidden": true,
+    "fullPlantOnboardingRequired": true
+  },
+  "executionAmendment": {
+    "basis": "narrower-subset-after-basil-gpt-image-2-http-400",
+    "excludedJobs": [
+      "basil__mature__default__vegetative__v1"
+    ],
+    "retryOfExcludedJobForbidden": true,
+    "modelSubstitution": "current-validated-factory-model",
+    "scopeExpanded": false,
+    "spendCapIncreased": false
+  }
+}

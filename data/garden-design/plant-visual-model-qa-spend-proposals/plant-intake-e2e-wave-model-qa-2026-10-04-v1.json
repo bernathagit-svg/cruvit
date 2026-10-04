@@ -1,0 +1,43 @@
+{
+  "contract": "plant-visual-model-qa-spend-proposal-v1",
+  "runId": "plant-intake-e2e-wave-model-qa-2026-10-04-v1",
+  "createdAt": "2026-10-04",
+  "provider": "openai-responses-api",
+  "model": "gpt-5.6-luna",
+  "maxCalls": 14,
+  "maxRetries": 0,
+  "perCallReserveUsd": 0.01,
+  "proposedMaxSpendUsd": 0.22,
+  "jobIds": [
+    "black-eyed-susan-vine__mature__default__flowering__v1",
+    "black-eyed-susan-vine__mature__default__vegetative__v1",
+    "black-eyed-susan-vine__young__default__vegetative__v1",
+    "cyclamen__mature__default__flowering__v1",
+    "cyclamen__mature__default__vegetative__v1",
+    "ficus-benjamina__mature__tree__vegetative__v1",
+    "ficus-benjamina__young__tree__vegetative__v1",
+    "hibiscus__mature__shrub__flowering__v1",
+    "hibiscus__mature__shrub__vegetative__v1",
+    "lemon__mature__tree__fruiting__v1",
+    "lemon__mature__tree__vegetative__v1",
+    "lemon__young__tree__vegetative__v1",
+    "strelitzia__mature__default__flowering__v1",
+    "strelitzia__mature__default__vegetative__v1"
+  ],
+  "approved": false,
+  "authorized": false,
+  "allowedActions": [
+    "read exact candidate PNG bytes from candidate R2",
+    "send one candidate image plus expected metadata to vision QA model",
+    "write model QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "imageGenerationAllowed": false,
+  "imageMutationAllowed": false,
+  "notes": [
+    "Only the 14 candidates with Technical PASS + Framing PASS are admitted.",
+    "Basil is excluded because its original gpt-image-2 request failed before image generation and retry was not authorized.",
+    "No retries are proposed."
+  ]
+}

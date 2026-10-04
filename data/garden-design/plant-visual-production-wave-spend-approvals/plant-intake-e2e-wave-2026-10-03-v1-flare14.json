@@ -1,0 +1,45 @@
+{
+  "contract": "plant-visual-production-wave-spend-approval-v1",
+  "runId": "plant-intake-e2e-wave-2026-10-03-v1-flare14",
+  "approved": true,
+  "approvedAt": "2026-10-04",
+  "ownerApprovalText": "מאשרת CRUVIT Plant Intake E2E Visual Wave עד $1.52, 15 קריאות generation, ללא retries.",
+  "provider": "openai-images-api",
+  "model": "gpt-image-2.5-flare-2026-09-08",
+  "maxJobs": 14,
+  "maxCalls": 14,
+  "maxRetries": 0,
+  "maxSpendUsd": 1.52,
+  "jobIds": [
+    "black-eyed-susan-vine__mature__default__flowering__v1",
+    "black-eyed-susan-vine__mature__default__vegetative__v1",
+    "black-eyed-susan-vine__young__default__vegetative__v1",
+    "cyclamen__mature__default__flowering__v1",
+    "cyclamen__mature__default__vegetative__v1",
+    "ficus-benjamina__mature__tree__vegetative__v1",
+    "ficus-benjamina__young__tree__vegetative__v1",
+    "hibiscus__mature__shrub__flowering__v1",
+    "hibiscus__mature__shrub__vegetative__v1",
+    "lemon__mature__tree__fruiting__v1",
+    "lemon__mature__tree__vegetative__v1",
+    "lemon__young__tree__vegetative__v1",
+    "strelitzia__mature__default__flowering__v1",
+    "strelitzia__mature__default__vegetative__v1"
+  ],
+  "allowedActions": [
+    "generate exact approved wave candidate jobs",
+    "write generated PNGs only to candidate R2",
+    "write generation and technical QA evidence only to candidate R2"
+  ],
+  "productionWritesAllowed": false,
+  "registryWritesAllowed": false,
+  "carryForward": false,
+  "narrowing": {
+    "originalRunId": "plant-intake-e2e-wave-2026-10-03-v1",
+    "originalMaxCalls": 15,
+    "originalMaxSpendUsd": 1.52,
+    "excludedFailedJob": "basil__mature__default__vegetative__v1",
+    "retryAuthorized": false,
+    "reason": "Use currently validated factory image model for untouched jobs only; no Basil retry."
+  }
+}
