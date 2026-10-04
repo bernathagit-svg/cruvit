@@ -100,14 +100,16 @@ async function renderExactList(){
   const src=await getExactListDataUrl();
   root.innerHTML=`
     <div class="upcoming-exact-list" aria-label="Upcoming List approved visual">
-      <img src="${src}" alt="Upcoming List" draggable="false">
-      <button type="button" class="exact-hotspot exact-calendar" data-upcoming-view="calendar" aria-label="Calendar view"></button>
-      <button type="button" class="exact-hotspot exact-list-add-task" data-upcoming-action="add-task" aria-label="Add task"></button>
-      <a class="exact-hotspot exact-nav-home" href="./index.html" aria-label="Home"></a>
-      <a class="exact-hotspot exact-nav-mygarden" href="./index.html" aria-label="My Garden"></a>
-      <a class="exact-hotspot exact-nav-add" href="./approved/add-plant-approved.html" aria-label="Add Plant"></a>
-      <a class="exact-hotspot exact-nav-design" href="/modules/garden-design/" aria-label="Design"></a>
-      <a class="exact-hotspot exact-nav-shop" href="/store/" aria-label="Shop"></a>
+      <div class="upcoming-exact-list-stage">
+        <img src="${src}" alt="Upcoming List" draggable="false">
+        <button type="button" class="exact-hotspot exact-calendar" data-upcoming-view="calendar" aria-label="Calendar view"></button>
+        <button type="button" class="exact-hotspot exact-list-add-task" data-upcoming-action="add-task" aria-label="Add task"></button>
+        <a class="exact-hotspot exact-nav-home" href="./index.html" aria-label="Home"></a>
+        <a class="exact-hotspot exact-nav-mygarden" href="./index.html" aria-label="My Garden"></a>
+        <a class="exact-hotspot exact-nav-add" href="./approved/add-plant-approved.html" aria-label="Add Plant"></a>
+        <a class="exact-hotspot exact-nav-design" href="/modules/garden-design/" aria-label="Design"></a>
+        <a class="exact-hotspot exact-nav-shop" href="/store/" aria-label="Shop"></a>
+      </div>
     </div>`;
 }
 
