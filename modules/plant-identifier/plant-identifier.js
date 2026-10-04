@@ -2124,38 +2124,33 @@
       landingHTML(includeHistory !== false) +
       '<input data-pi-id="fileInput" class="pi-file" type="file" accept="image/*">' +
       '<input data-pi-id="camInput" class="pi-file" type="file" accept="image/*" capture="environment">' +
-      '<div data-pi-id="wizardModal" class="pi-modal" role="dialog" aria-modal="true">' +
-        '<div class="pi-wizard">' +
-          '<div class="pi-modal-top">' +
-            '<div><h2>' + esc(t('modalTitle')) + '</h2><p class="pi-muted">' + esc(t('modalSub')) + '</p></div>' +
-            '<button type="button" class="pi-close" data-pi-id="closeModal" aria-label="Close">×</button>' +
-          '</div>' +
-          '<div class="pi-steps"><div class="pi-step on" data-pi-id="s1"></div><div class="pi-step" data-pi-id="s2"></div><div class="pi-step" data-pi-id="s3"></div></div>' +
-          '<div data-pi-id="uploadStep" class="pi-capture-v210">' +
-            '<div class="pi-capture-kicker">' + esc(state.lang === 'he' ? 'תמונה אחת טובה מספיקה' : 'ONE USEFUL IMAGE IS ENOUGH') + '</div>' +
-            '<h3 class="pi-capture-title">' + esc(state.lang === 'he' ? 'תנו ל־CRUVIT תמונה שימושית אחת.' : 'Give CRUVIT one useful image.') + '</h3>' +
-            '<p class="pi-capture-sub">' + esc(state.lang === 'he' ? 'עדיף עלה, פרח או הצמח כולו באור טבעי וללא טשטוש.' : 'Leaf, flower or whole plant works best in natural light and without blur.') + '</p>' +
-            '<div class="pi-drop pi-capture-preview" data-pi-id="preview">' +
-              '<div><div class="pi-camera-icon">' + cameraIconSvg() + '</div>' +
-              '<b>' + esc(t('uploadTitle')) + '</b><p class="pi-muted">' + esc(t('uploadSub')) + '</p></div>' +
+      '<div data-pi-id="wizardModal" class="pi-modal pi-capture-v210" role="dialog" aria-modal="true">' +
+        '<div class="pi-wizard pi-capture-shell">' +
+          '<div class="pi-capture-bg" aria-hidden="true"></div>' +
+          '<div class="pi-capture-content">' +
+            '<header class="pi-capture-top">' +
+              '<button type="button" class="pi-capture-back" data-pi-id="closeModal" aria-label="Back">‹</button>' +
+              '<div class="pi-capture-brand"><b>CRUVIT</b><small>' + esc(state.lang === 'he' ? 'זיהוי צמחים' : 'Plant Identification') + '</small></div>' +
+              '<span class="pi-capture-step">' + esc(state.lang === 'he' ? 'תמונה' : 'PHOTO') + '</span>' +
+            '</header>' +
+            '<div class="pi-steps pi-capture-steps"><div class="pi-step on" data-pi-id="s1"></div><div class="pi-step" data-pi-id="s2"></div><div class="pi-step" data-pi-id="s3"></div></div>' +
+            '<div data-pi-id="uploadStep" class="pi-capture-upload">' +
+              '<div class="pi-capture-copy"><span>' + esc(state.lang === 'he' ? 'שלב 1' : 'STEP 1') + '</span><h2>' + esc(state.lang === 'he' ? 'הראו לנו את הצמח' : 'Show us the plant') + '</h2><p>' + esc(state.lang === 'he' ? 'תמונה ברורה אחת מספיקה. אפשר לצלם עכשיו או לבחור תמונה קיימת.' : 'One clear photo is enough. Take one now or choose an existing photo.') + '</p></div>' +
+              '<div class="pi-drop pi-capture-preview" data-pi-id="preview">' +
+                '<div><div class="pi-camera-icon">' + cameraIconSvg() + '</div><b>' + esc(state.lang === 'he' ? 'בחרו תמונה ברורה' : 'Choose a clear photo') + '</b><p class="pi-muted">' + esc(state.lang === 'he' ? 'עלה, פרח או הצמח כולו' : 'Leaf, flower or the whole plant') + '</p></div>' +
+              '</div>' +
+              '<div class="pi-upload-btns pi-capture-source-actions">' +
+                '<button type="button" class="pi-btn pi-btn-secondary" data-pi-id="cameraBtn"><span aria-hidden="true">◎</span>' + esc(t('camera')) + '</button>' +
+                '<button type="button" class="pi-btn pi-btn-secondary" data-pi-id="galleryBtn"><span aria-hidden="true">▧</span>' + esc(t('gallery')) + '</button>' +
+              '</div>' +
+              '<div class="pi-capture-consent"><span aria-hidden="true">✓</span><p>' + esc(state.lang === 'he' ? 'בחירת תמונה לא מפעילה זיהוי. CRUVIT ינתח אותה רק לאחר לחיצה על "נתח צמח".' : 'Choosing a photo does not start identification. CRUVIT analyzes it only after you tap “Analyze Plant”.') + '</p></div>' +
+              '<button type="button" class="pi-btn pi-btn-primary pi-capture-analyze" data-pi-id="analyzeBtn">' + esc(t('analyzeBtn')) + '<span aria-hidden="true">→</span></button>' +
+              '<div data-pi-id="error" class="pi-error"></div>' +
             '</div>' +
-            '<div class="pi-capture-quality" aria-label="Photo guidance">' +
-              '<span>◉ ' + esc(state.lang === 'he' ? 'צמח בפוקוס' : 'Plant in focus') + '</span>' +
-              '<span>☼ ' + esc(state.lang === 'he' ? 'אור ברור' : 'Clear light') + '</span>' +
-              '<span>✕ ' + esc(state.lang === 'he' ? 'בלי פילטרים' : 'No filters') + '</span>' +
+            '<div data-pi-id="loadingStep" class="pi-capture-loading" style="display:none">' +
+              '<div class="pi-loader"><div class="pi-loader-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 21c0-6 4-10 9-10-1 6-5 10-9 10Z"/><path d="M12 21c0-6-4-10-9-10 1 6 5 10 9 10Z"/><path d="M12 21V7"/></svg></div>' +
+              '<h2>' + esc(t('loadingT')) + '</h2><div class="pi-loader-lines"><span>' + esc(t('l1')) + '</span><span>' + esc(t('l2')) + '</span><span>' + esc(t('l3')) + '</span></div></div>' +
             '</div>' +
-            '<div class="pi-upload-btns pi-capture-source-btns">' +
-              '<button type="button" class="pi-btn pi-btn-secondary" data-pi-id="cameraBtn"><span aria-hidden="true">◉</span> ' + esc(t('camera')) + '</button>' +
-              '<button type="button" class="pi-btn pi-btn-secondary" data-pi-id="galleryBtn"><span aria-hidden="true">▣</span> ' + esc(t('gallery')) + '</button>' +
-            '</div>' +
-            '<button type="button" class="pi-btn pi-btn-primary pi-analyze-v210" data-pi-id="analyzeBtn">' + esc(t('analyzeBtn')) + ' <span aria-hidden="true">→</span></button>' +
-            '<p class="pi-capture-consent">' + esc(state.lang === 'he' ? 'הזיהוי מתחיל רק לאחר לחיצה על נתח צמח.' : 'Identification starts only when you tap Analyze Plant.') + '</p>' +
-            '<div data-pi-id="error" class="pi-error"></div>' +
-          '</div>' +
-          '<div data-pi-id="loadingStep" style="display:none">' +
-            '<div class="pi-loader"><div class="pi-loader-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 21c0-6 4-10 9-10-1 6-5 10-9 10Z"/><path d="M12 21c0-6-4-10-9-10 1 6 5 10 9 10Z"/><path d="M12 21V7"/></svg></div>' +
-            '<h2>' + esc(t('loadingT')) + '</h2>' +
-            '<div class="pi-loader-lines"><span>' + esc(t('l1')) + '</span><span>' + esc(t('l2')) + '</span><span>' + esc(t('l3')) + '</span></div></div>' +
           '</div>' +
         '</div>' +
       '</div>' +
