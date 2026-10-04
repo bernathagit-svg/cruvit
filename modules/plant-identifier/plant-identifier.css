@@ -1222,3 +1222,25 @@ body:has(.plant-identifier-module .pi-entry-v210.show) .entry-topbar{visibility:
  .plant-identifier-module .pi-capture-preview{min-height:260px}
  .plant-identifier-module .pi-capture-preview>img{min-height:260px}
 }
+
+/* UI 2.10 · PI-02 capture */
+.plant-identifier-module .pi-capture-v210{position:fixed;inset:0;z-index:10030;background:#07150d;padding:0;overflow:hidden}
+.plant-identifier-module .pi-capture-v210.show{display:block}
+.plant-identifier-module .pi-capture-shell{position:relative;width:100%;max-width:none;height:100dvh;max-height:none;margin:0;border:0;border-radius:0;overflow:auto;background:#07150d;box-shadow:none}
+.plant-identifier-module .pi-capture-bg{position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,20,11,.30),rgba(3,15,8,.91)),url("./assets/garden-texture.jpg") center/cover no-repeat;filter:saturate(.82);transform:scale(1.03)}
+.plant-identifier-module .pi-capture-content{position:relative;z-index:1;width:min(100%,660px);min-height:100dvh;margin:0 auto;padding:max(18px,env(safe-area-inset-top)) clamp(18px,5vw,40px) max(36px,env(safe-area-inset-bottom));display:flex;flex-direction:column}
+.plant-identifier-module .pi-capture-top{display:grid;grid-template-columns:46px 1fr auto;align-items:center;gap:12px}
+.plant-identifier-module .pi-capture-back{width:44px;height:44px;border:1px solid rgba(230,241,218,.20);border-radius:50%;background:rgba(6,25,14,.5);color:#fff;font-size:30px;line-height:1}
+.plant-identifier-module .pi-capture-brand{display:flex;flex-direction:column;gap:1px}.plant-identifier-module .pi-capture-brand b{font-size:14px;letter-spacing:.09em;color:#f5f4e8}.plant-identifier-module .pi-capture-brand small{font-size:10px;color:rgba(239,242,226,.58);font-weight:700}
+.plant-identifier-module .pi-capture-step{font-size:10px;letter-spacing:.14em;font-weight:800;color:#a7cf8c}
+.plant-identifier-module .pi-capture-steps{margin:24px 0 0}.plant-identifier-module .pi-capture-steps .pi-step{background:rgba(255,255,255,.18)}.plant-identifier-module .pi-capture-steps .pi-step.on{background:#a7cf8c}
+.plant-identifier-module .pi-capture-upload{margin-top:34px}
+.plant-identifier-module .pi-capture-copy>span{font-size:10px;letter-spacing:.17em;font-weight:800;color:#a7cf8c}.plant-identifier-module .pi-capture-copy h2{margin:9px 0 9px;font-size:clamp(32px,7vw,50px);line-height:1;color:#f6f4e8;letter-spacing:-.035em}.plant-identifier-module .pi-capture-copy p{margin:0;color:rgba(239,242,226,.7);font-size:15px;line-height:1.5}
+.plant-identifier-module .pi-capture-preview{min-height:clamp(250px,39vh,390px);margin-top:24px;border:1px dashed rgba(220,237,203,.35);border-radius:28px;background:rgba(10,36,20,.58);backdrop-filter:blur(16px);color:#f5f4e8;overflow:hidden}
+.plant-identifier-module .pi-capture-preview>div{padding:32px 22px}.plant-identifier-module .pi-capture-preview img{width:100%;height:100%;min-height:250px;max-height:390px;object-fit:cover;border-radius:27px}
+.plant-identifier-module .pi-capture-preview .pi-camera-icon{margin:0 auto 14px;width:58px;height:58px;border-radius:19px;background:rgba(218,236,201,.12);display:grid;place-items:center}.plant-identifier-module .pi-capture-preview .pi-camera-icon svg{width:29px;stroke:#e8f1dd}
+.plant-identifier-module .pi-capture-source-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.plant-identifier-module .pi-capture-source-actions .pi-btn{height:54px;border-radius:18px;background:rgba(246,246,234,.09);border:1px solid rgba(230,241,218,.2);color:#f4f4e8;display:flex;align-items:center;justify-content:center;gap:9px}
+.plant-identifier-module .pi-capture-consent{display:flex;gap:10px;align-items:flex-start;margin:18px 3px 0;color:rgba(239,242,226,.58);font-size:11px;line-height:1.45}.plant-identifier-module .pi-capture-consent>span{color:#9bc981;font-weight:800}.plant-identifier-module .pi-capture-consent p{margin:0}
+.plant-identifier-module .pi-capture-analyze{width:100%;height:58px!important;margin-top:18px!important;border-radius:19px!important;display:flex!important;align-items:center;justify-content:space-between;padding:0 20px!important;background:linear-gradient(135deg,#769b5f,#3f6d48)!important;color:#fff!important;border:1px solid rgba(226,240,209,.3)!important;font-size:16px!important}
+.plant-identifier-module .pi-capture-loading{margin:auto 0;color:#f5f4e8}.plant-identifier-module .pi-capture-loading .pi-loader{background:rgba(8,28,16,.65);border:1px solid rgba(230,241,218,.18);border-radius:28px;backdrop-filter:blur(20px)}
+@media(max-width:560px){.plant-identifier-module .pi-capture-upload{margin-top:28px}.plant-identifier-module .pi-capture-preview{min-height:235px}.plant-identifier-module .pi-capture-preview img{min-height:235px}.plant-identifier-module .pi-capture-copy h2{font-size:38px}}
