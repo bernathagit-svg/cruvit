@@ -1,9 +1,54 @@
 # CRUVIT — Plant Identification UI 2.10 Flow Contract v1
 Date: 2026-10-04
-Status: DESIGN CONTRACT — NO IMPLEMENTATION REDESIGN APPLIED YET
+Status: VISUAL DIRECTION LOCKED — PI-01 APPROVED
+
+## Owner-approved PI-01 visual reference
+Locked direction:
+**Option 4 — Friendly & Visual**
+
+This is the selected and approved visual direction for Plant Identification entry.
+
+Do not replace it with:
+- dark botanical/glass redesigns
+- dashboard-like layouts
+- generic upload cards
+- a different visual concept
+- a new mockup unless the owner explicitly asks for one
+
+Implementation rule:
+**Mockup → owner approval → implementation → wiring.**
+For PI-01, the mockup approval is already complete. Implementation must follow the approved Option 4 reference rather than rediscovering the design.
+
+## PI-01 — visual contract
+Must preserve the approved composition:
+- CRUVIT wordmark centered at the top
+- small botanical mark on the left
+- help icon on the right
+- warm cream/light botanical canvas
+- large friendly headline: “Let’s identify your plant!”
+- short explanatory subtitle
+- prominent real/natural plant scene with leafy framing
+- handwritten “Every plant has a story” accent
+- dominant green “Take a photo” CTA
+- white/cream “Choose from gallery” secondary CTA
+- “Need help?” panel
+- four visual help cards:
+  - Plant care tips
+  - Is it right for my garden?
+  - Growing conditions
+  - Save to My Garden
+- bottom navigation:
+  - Home
+  - My Garden
+  - Identify
+  - Design
+  - Shop
+- Identify is the active central navigation item
+
+The phone/device frame in the concept board is presentation framing only. The actual application screen should reproduce the interior UI full-screen.
 
 ## Product goal
-Bring Plant Identification into the same dark botanical CRUVIT UI 2.10 language without changing the identification engine, canonical identity rules, climate engine, or Add Plant ownership.
+Bring Plant Identification into CRUVIT without changing the identification engine, canonical identity rules, climate engine, or Add Plant ownership.
 
 ## Preserve
 - camera / gallery acquisition
@@ -45,19 +90,9 @@ User image:
 ## Screen flow
 
 ### PI-01 — Identifier entry
-Primary question:
-**What do you want to identify?**
+Visual design is already approved and locked to Option 4 — Friendly & Visual.
 
-Content:
-- minimal module identity
-- one dominant camera/upload action
-- secondary recent identifications
-- compact location context
-- optional credits context
-
-Remove from current entry:
-- marketing-style feature-card overload
-- separate light-theme landing-page feel
+No live AI call is connected at visual-review stage.
 
 ### PI-02 — Capture / Upload
 Primary question:
@@ -199,17 +234,6 @@ Must explicitly design:
 - climate engine unavailable
 - add-to-garden blocked by schema/identity rule
 
-## Visual direction
-Use the locked CRUVIT dark botanical language:
-- deep garden imagery / living background
-- translucent dark glass surfaces
-- restrained green accent
-- same typography hierarchy as My Garden family
-- same app-shell/back/navigation language
-- no separate light-theme landing page
-- no dashed marketing-card system
-- one clear primary action per state
-
 ## Information simplification
 Do not put all of these on one result screen:
 - identification
@@ -221,16 +245,15 @@ Do not put all of these on one result screen:
 Progressive disclosure:
 Identity → resolve uncertainty → climate fit → add decision.
 
-## Acceptance order
-1. PI-01 entry
-2. PI-02 capture/upload
-3. PI-04 result + match states
-4. PI-06 climate fit
-5. PI-07 add confirmation
-6. PI-08 success
-7. recent/history + errors
-8. integrated E2E visual flow
-9. owner PASS
-10. implementation
+## Acceptance / implementation order
+1. PI-01 Option 4 mockup — OWNER APPROVED / LOCKED
+2. PI-01 isolated implementation review matching approved mockup
+3. PI-02 mockup
+4. owner approval
+5. PI-02 implementation
+6. continue screen-by-screen using the same approval rule
+7. integrated E2E visual flow
+8. owner PASS
+9. only then connect live behavior where explicitly approved
 
-No current Plant Identifier code has been visually redesigned by this document.
+No approved My Garden or other application screen may be visually changed as part of this work.
