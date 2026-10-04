@@ -83,8 +83,21 @@ function addHotspot(x,y,w,h,target,label){
   stage.appendChild(b);
 }
 
+function addLinkHotspot(x,y,w,h,href,label){
+  const a=document.createElement('a');
+  a.className='hotspot';
+  a.href=href;
+  a.style.left=x+'%';
+  a.style.top=y+'%';
+  a.style.width=w+'%';
+  a.style.height=h+'%';
+  a.setAttribute('aria-label',label||'Open');
+  stage.appendChild(a);
+}
+
 function mapHotspots(){
   stage.querySelectorAll('.hotspot').forEach(el=>el.remove());
+  addLinkHotspot(20,90,20,10,'./index.html','My Garden');
 
   if(index===0){
     addHotspot(12,49,76,9,1,'Take a photo');
