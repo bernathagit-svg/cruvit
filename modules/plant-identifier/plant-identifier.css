@@ -1159,3 +1159,66 @@ body:has(.plant-identifier-module .pi-entry-v210.show) .entry-topbar{visibility:
   font-weight:800!important;display:flex!important;align-items:center;justify-content:center;gap:10px
 }
 .plant-identifier-module .pi-capture-consent{margin:10px 2px 0;text-align:center;color:rgba(239,242,226,.48);font-size:10px;line-height:1.4}
+
+/* UI 2.10 · PI-02 capture */
+.plant-identifier-module .pi-modal.show:has(.pi-capture-v210){
+  background:rgba(2,13,7,.72);backdrop-filter:blur(18px);padding:0;
+}
+.plant-identifier-module .pi-modal.show:has(.pi-capture-v210) .pi-wizard{
+  width:min(100%,680px);max-height:100dvh;min-height:100dvh;margin:0 auto;border:0;border-radius:0;
+  padding:max(24px,env(safe-area-inset-top)) clamp(18px,5vw,38px) max(28px,env(safe-area-inset-bottom));
+  background:
+   linear-gradient(180deg,rgba(4,22,12,.72),rgba(3,16,9,.96)),
+   url("./assets/garden-texture.jpg") center/cover no-repeat;
+  box-shadow:none;overflow-y:auto;color:#f5f4e8;
+}
+.plant-identifier-module .pi-modal.show:has(.pi-capture-v210) .pi-modal-top{
+  align-items:center;padding-bottom:18px;border-bottom:1px solid rgba(225,239,210,.14)
+}
+.plant-identifier-module .pi-modal.show:has(.pi-capture-v210) .pi-modal-top h2{margin:0;color:#f5f4e8;font-size:20px}
+.plant-identifier-module .pi-modal.show:has(.pi-capture-v210) .pi-modal-top .pi-muted{margin:4px 0 0;color:rgba(239,242,226,.62);font-size:12px}
+.plant-identifier-module .pi-modal.show:has(.pi-capture-v210) .pi-close{
+  background:rgba(6,25,14,.52);border:1px solid rgba(225,239,210,.18);color:#fff
+}
+.plant-identifier-module .pi-modal.show:has(.pi-capture-v210) .pi-steps{margin:20px 0 30px}
+.plant-identifier-module .pi-modal.show:has(.pi-capture-v210) .pi-step{background:rgba(236,242,224,.18)}
+.plant-identifier-module .pi-modal.show:has(.pi-capture-v210) .pi-step.on{background:#9ac77d}
+.plant-identifier-module .pi-capture-v210{max-width:580px;margin:0 auto}
+.plant-identifier-module .pi-capture-kicker{font-size:10px;font-weight:850;letter-spacing:.18em;color:#a7cf8c;margin-bottom:12px}
+.plant-identifier-module .pi-capture-title{margin:0;color:#f5f4e8;font-size:clamp(30px,7vw,48px);line-height:1.02;letter-spacing:-.035em;font-weight:650}
+.plant-identifier-module .pi-capture-sub{margin:15px 0 24px;color:rgba(239,242,226,.68);font-size:15px;line-height:1.5}
+.plant-identifier-module .pi-capture-preview{
+  min-height:300px;border:1px dashed rgba(218,237,199,.38);border-radius:28px;
+  background:linear-gradient(145deg,rgba(38,73,44,.56),rgba(9,34,18,.60));
+  box-shadow:inset 0 1px rgba(255,255,255,.05),0 22px 48px rgba(0,0,0,.20);overflow:hidden
+}
+.plant-identifier-module .pi-capture-preview>div{padding:36px 24px;text-align:center}
+.plant-identifier-module .pi-capture-preview>img{width:100%;height:100%;min-height:300px;max-height:46vh;object-fit:cover;border-radius:27px}
+.plant-identifier-module .pi-capture-preview .pi-camera-icon{
+  width:64px;height:64px;margin:0 auto 16px;border-radius:22px;display:grid;place-items:center;
+  background:rgba(222,239,204,.10);border:1px solid rgba(222,239,204,.18)
+}
+.plant-identifier-module .pi-capture-preview .pi-camera-icon svg{width:31px;height:31px;stroke:#eef5e5}
+.plant-identifier-module .pi-capture-preview b{display:block;color:#f5f4e8;font-size:18px}
+.plant-identifier-module .pi-capture-preview .pi-muted{color:rgba(239,242,226,.62);font-size:12px;line-height:1.45}
+.plant-identifier-module .pi-capture-quality{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 18px}
+.plant-identifier-module .pi-capture-quality span{
+  padding:7px 10px;border:1px solid rgba(225,239,210,.16);border-radius:999px;
+  background:rgba(6,27,15,.48);color:rgba(239,242,226,.70);font-size:10px;font-weight:700
+}
+.plant-identifier-module .pi-capture-source-btns{grid-template-columns:1fr 1fr;gap:10px}
+.plant-identifier-module .pi-capture-source-btns .pi-btn{
+  min-height:54px;border-radius:18px;background:rgba(236,242,224,.09);border:1px solid rgba(225,239,210,.20);color:#f3f5e9
+}
+.plant-identifier-module .pi-analyze-v210{
+  width:100%;min-height:58px;margin-top:12px;border-radius:20px!important;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  background:linear-gradient(135deg,#79a95e,#527f43)!important;color:#fff!important;
+  box-shadow:0 15px 34px rgba(28,69,35,.28)
+}
+.plant-identifier-module .pi-capture-consent{margin:11px 4px 0;text-align:center;color:rgba(239,242,226,.48);font-size:10px;line-height:1.4}
+@media(max-width:560px){
+ .plant-identifier-module .pi-modal.show:has(.pi-capture-v210) .pi-wizard{width:100vw}
+ .plant-identifier-module .pi-capture-preview{min-height:260px}
+ .plant-identifier-module .pi-capture-preview>img{min-height:260px}
+}
