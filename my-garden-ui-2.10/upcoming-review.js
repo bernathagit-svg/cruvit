@@ -86,6 +86,11 @@ async function renderExactCalendar(){
       <button type="button" class="exact-hotspot exact-back" data-upcoming-action="back" aria-label="Back to List"></button>
       <button type="button" class="exact-hotspot exact-list" data-upcoming-view="list" aria-label="List view"></button>
       <button type="button" class="exact-hotspot exact-add-task" data-upcoming-action="add-task" aria-label="Add task"></button>
+      <a class="exact-hotspot exact-nav-home" href="./index.html" aria-label="Home"></a>
+      <a class="exact-hotspot exact-nav-mygarden" href="./index.html" aria-label="My Garden"></a>
+      <a class="exact-hotspot exact-nav-add" href="./approved/add-plant-approved.html" aria-label="Add Plant"></a>
+      <a class="exact-hotspot exact-nav-design" href="/modules/garden-design/" aria-label="Design"></a>
+      <a class="exact-hotspot exact-nav-shop" href="/store/" aria-label="Shop"></a>
     </div>`;
 }
 
@@ -98,6 +103,11 @@ async function renderExactList(){
       <img src="${src}" alt="Upcoming List" draggable="false">
       <button type="button" class="exact-hotspot exact-calendar" data-upcoming-view="calendar" aria-label="Calendar view"></button>
       <button type="button" class="exact-hotspot exact-list-add-task" data-upcoming-action="add-task" aria-label="Add task"></button>
+      <a class="exact-hotspot exact-nav-home" href="./index.html" aria-label="Home"></a>
+      <a class="exact-hotspot exact-nav-mygarden" href="./index.html" aria-label="My Garden"></a>
+      <a class="exact-hotspot exact-nav-add" href="./approved/add-plant-approved.html" aria-label="Add Plant"></a>
+      <a class="exact-hotspot exact-nav-design" href="/modules/garden-design/" aria-label="Design"></a>
+      <a class="exact-hotspot exact-nav-shop" href="/store/" aria-label="Shop"></a>
     </div>`;
 }
 
