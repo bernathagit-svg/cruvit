@@ -14,7 +14,8 @@ permissions:
   contents: read
 
 jobs:
-  my-garden-v2:
+  my-garden-and-plant-id:
+    name: My Garden + Plant ID atomic E2E
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,15 +24,6 @@ jobs:
           node-version: 22
       - name: Run isolated My Garden v2 tests
         run: node --test tests/my-garden-v2*.test.mjs
-
-  plant-id-mygarden-e2e:
-    name: Plant ID → My Garden atomic E2E
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
       - name: Run atomic Add Plant contract tests
         run: |
           node --test \
