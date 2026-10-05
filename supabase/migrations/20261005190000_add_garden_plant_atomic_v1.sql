@@ -226,7 +226,6 @@ begin
       'prefs', v_plant.prefs,
       'added_at', v_plant.added_at,
       'garden_area_id', v_plant.garden_area_id,
-      'cover_media_id', v_plant.cover_media_id,
       'created_at', v_plant.created_at,
       'updated_at', v_plant.updated_at
     ),

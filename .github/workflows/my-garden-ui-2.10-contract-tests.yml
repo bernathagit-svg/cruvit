@@ -58,17 +58,27 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: latest
-      - name: Initialize local Supabase config
+      - name: Prepare isolated local Supabase project
+        shell: bash
         run: |
-          if [ ! -f supabase/config.toml ]; then
-            supabase init
-          fi
-      - name: Start local Supabase
+          rm -rf .ci-atomic
+          mkdir -p .ci-atomic
+          cd .ci-atomic
+          supabase init
+          mkdir -p supabase/migrations
+          cp ../supabase/migrations/20250828120000_garden_profiles_v0.sql supabase/migrations/
+          cp ../supabase/migrations/20250828230000_garden_plants_v1.sql supabase/migrations/
+          cp ../supabase/migrations/20250829100000_garden_tasks_v1.sql supabase/migrations/
+          cp ../supabase/migrations/20260911180000_garden_os_spine_v1.sql supabase/migrations/
+          cp ../supabase/migrations/20260913190000_garden_areas_v1.sql supabase/migrations/
+          cp ../supabase/migrations/20261005175958_garden_plants_unassessed_health_v2.sql supabase/migrations/
+          cp ../supabase/migrations/20261005190000_add_garden_plant_atomic_v1.sql supabase/migrations/
+      - name: Start isolated local Supabase
+        working-directory: .ci-atomic
         run: supabase start
-      - name: Apply repository migrations to local Supabase
-        run: supabase db reset
       - name: Export local Supabase environment
         shell: bash
+        working-directory: .ci-atomic
         run: |
           eval "$(supabase status -o env)"
           echo "SUPABASE_URL=$API_URL" >> "$GITHUB_ENV"
@@ -81,4 +91,5 @@ jobs:
         run: node --test tests/plant-identifier-mygarden-atomic-rpc-live.test.mjs
       - name: Stop local Supabase
         if: always()
+        working-directory: .ci-atomic
         run: supabase stop --no-backup
