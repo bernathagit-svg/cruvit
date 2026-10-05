@@ -3,6 +3,13 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const app = fs.readFileSync(new URL('../app.html', import.meta.url), 'utf8');
+const bridge = fs.readFileSync(
+  new URL(
+    '../modules/plant-identifier/plant-identifier-mygarden-write-bridge-v1.js',
+    import.meta.url
+  ),
+  'utf8'
+);
 
 test('Plant Identification save loads the My Garden write bridge', () => {
   assert.match(
@@ -11,7 +18,7 @@ test('Plant Identification save loads the My Garden write bridge', () => {
   );
 });
 
-test('Plant Identification commit uses the authoritative write bridge', () => {
+test('Plant Identification commit uses authoritative write bridge only', () => {
   const start = app.indexOf('async function commitIdentifiedPlantFromModule');
   const end = app.indexOf('function plantIdentifierDeps', start);
   assert.ok(start >= 0 && end > start);
@@ -19,15 +26,23 @@ test('Plant Identification commit uses the authoritative write bridge', () => {
 
   assert.match(body, /CruvitPlantIdentifierMyGardenWriteBridge/);
   assert.match(body, /persistConfirmedIdentifierPlant/);
-  assert.match(body, /gardenPlantsUnassessedHealthV2/);
   assert.doesNotMatch(body, /savePlantFromLibrary\(/);
+  assert.doesNotMatch(body, /CruvitSchemaCapabilities/);
+  assert.doesNotMatch(body, /gardenPlantsUnassessedHealthV2/);
 });
 
-test('Plant Identification save remains fail-closed until schema capability is enabled', () => {
-  assert.match(
-    app,
-    /CruvitSchemaCapabilities\?\.gardenPlantsUnassessedHealthV2===true/
-  );
+test('schema readiness cannot be enabled by a hard-coded browser capability', () => {
+  assert.doesNotMatch(app, /schema-capabilities-v1\.js/);
+  assert.doesNotMatch(app, /CruvitSchemaCapabilities/);
+  assert.match(bridge, /verifyUnassessedHealthSchema/);
+  assert.match(bridge, /schema-verifier-unavailable/);
+  assert.match(bridge, /schema-attestation-mismatch/);
+});
+
+test('Plant Added history reconciliation is retried after reload', () => {
+  assert.match(app, /reconcilePendingIdentifierHistory/);
+  assert.match(bridge, /reconcileIdentifierPlantAddedHistory/);
+  assert.match(bridge, /historyPending/);
 });
 
 test('Plant Identification runtime view model is loaded and bound to results', () => {

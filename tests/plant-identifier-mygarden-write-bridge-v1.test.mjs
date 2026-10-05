@@ -31,6 +31,17 @@ const result = {
   scientific_name: 'Monstera deliciosa',
 };
 
+const schemaAttestation = Object.freeze({
+  ok: true,
+  statusDefault: 'unassessed',
+  markDefault: 'unknown',
+  allowedMarks: Object.freeze(['unknown', '✓', '!']),
+  environment: 'test',
+});
+
+const schemaVerifier = async () => schemaAttestation;
+
+
 test('bridge builds confirmed scan intent with stable identifier client id', () => {
   const intent = buildIdentifierAddIntent({
     result,
@@ -69,21 +80,40 @@ test('bridge fails closed without auth or active garden', async () => {
   assert.equal(noGarden.reason, 'active-garden-required');
 });
 
-test('bridge remains blocked until schema capability is enabled', async () => {
+test('bridge remains blocked until schema readiness is attested by the environment', async () => {
   const fake = fakeSupabase({});
-  const out = await persistConfirmedIdentifierPlant({
+  const baseDomain = {
+    getSession: () => ({ user: { id: 'u1' } }),
+    getActiveGardenId: () => 'g1',
+    getSupabaseClient: () => fake.client,
+  };
+
+  const noVerifier = await persistConfirmedIdentifierPlant({
     result,
     canonicalSlug: 'monstera-deliciosa',
     commitToken: 'x',
-    supportsUnassessedHealth: false,
-    personalDomain: {
-      getSession: () => ({ user: { id: 'u1' } }),
-      getActiveGardenId: () => 'g1',
-      getSupabaseClient: () => fake.client,
-    },
+    personalDomain: baseDomain,
   });
-  assert.equal(out.ok, false);
-  assert.equal(out.reason, 'schema-capability-required');
+  assert.equal(noVerifier.ok, false);
+  assert.equal(noVerifier.reason, 'schema-capability-required');
+  assert.equal(noVerifier.schema.reason, 'schema-verifier-unavailable');
+  assert.equal(fake.calls.length, 0);
+
+  const mismatch = await persistConfirmedIdentifierPlant({
+    result,
+    canonicalSlug: 'monstera-deliciosa',
+    commitToken: 'x',
+    schemaVerifier: async () => ({
+      ok: true,
+      statusDefault: 'Healthy',
+      markDefault: '✓',
+      allowedMarks: ['✓', '!'],
+    }),
+    personalDomain: baseDomain,
+  });
+  assert.equal(mismatch.ok, false);
+  assert.equal(mismatch.reason, 'schema-capability-required');
+  assert.equal(mismatch.schema.reason, 'schema-attestation-mismatch');
   assert.equal(fake.calls.length, 0);
 });
 
@@ -106,11 +136,12 @@ test('bridge persists exact canonical plant and hydrates active garden', async (
     result,
     canonicalSlug: 'monstera-deliciosa',
     commitToken: 'pi-save-1',
-    supportsUnassessedHealth: true,
+    schemaVerifier,
     personalDomain: {
       getSession: () => ({ user: { id: 'u1' } }),
       getActiveGardenId: () => 'g1',
       getSupabaseClient: () => fake.client,
+      emitPlantAddedMemory: async () => ({ ok: true }),
       hydrateActiveGardenPlants: async () => { hydrated += 1; },
     },
   });

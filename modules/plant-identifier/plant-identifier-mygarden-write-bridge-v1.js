@@ -1,5 +1,6 @@
 import { prepareAddPlantIntent } from '../my-garden-v2/add-plant-contract.js';
 import { createAddPlantWriteRepository } from '../my-garden-v2/add-plant-write-repository.js';
+import { reconcileIdentifierPlantAddedHistory } from './plant-identifier-history-reconciliation-v1.js';
 
 function asText(value) {
   return String(value ?? '').trim();
@@ -7,6 +8,51 @@ function asText(value) {
 
 function getPersonalDomain() {
   return globalThis.cruvitPersonalDomainV0 || null;
+}
+
+export async function verifyUnassessedHealthSchema(schemaVerifier, personalDomain = null) {
+  const verifier =
+    typeof schemaVerifier === 'function'
+      ? schemaVerifier
+      : typeof personalDomain?.verifyGardenPlantsUnassessedHealthV2 === 'function'
+        ? personalDomain.verifyGardenPlantsUnassessedHealthV2
+        : null;
+
+  if (!verifier) {
+    return Object.freeze({
+      ready: false,
+      reason: 'schema-verifier-unavailable',
+    });
+  }
+
+  let report;
+  try {
+    report = await verifier();
+  } catch (error) {
+    return Object.freeze({
+      ready: false,
+      reason: 'schema-verifier-failed',
+      message: error?.message || 'Schema verifier failed.',
+    });
+  }
+
+  const allowed = Array.isArray(report?.allowedMarks)
+    ? report.allowedMarks.map((v) => String(v))
+    : [];
+
+  const ready =
+    report?.ok === true &&
+    String(report?.statusDefault || '') === 'unassessed' &&
+    String(report?.markDefault || '') === 'unknown' &&
+    allowed.includes('unknown') &&
+    allowed.includes('✓') &&
+    allowed.includes('!');
+
+  return Object.freeze({
+    ready,
+    reason: ready ? null : 'schema-attestation-mismatch',
+    report: report && typeof report === 'object' ? Object.freeze({ ...report }) : null,
+  });
 }
 
 export function buildIdentifierAddIntent({
@@ -47,7 +93,7 @@ export async function persistConfirmedIdentifierPlant({
   canonicalSlug,
   commitToken,
   gardenAreaId = null,
-  supportsUnassessedHealth = false,
+  schemaVerifier = null,
   personalDomain = getPersonalDomain(),
 } = {}) {
   if (!personalDomain) {
@@ -96,20 +142,59 @@ export async function persistConfirmedIdentifierPlant({
     };
   }
 
+  const schema = await verifyUnassessedHealthSchema(schemaVerifier, personalDomain);
+  if (!schema.ready) {
+    return {
+      ok: false,
+      reason: 'schema-capability-required',
+      message: schema.reason || 'Schema readiness could not be verified.',
+      schema,
+    };
+  }
+
   try {
     const repo = createAddPlantWriteRepository(supabase, {
-      supportsUnassessedHealth,
+      supportsUnassessedHealth: true,
     });
     const plant = await repo.insert(intent);
 
+    let historyPending = false;
+    let historyError = null;
     if (typeof personalDomain.emitPlantAddedMemory === 'function') {
       try {
         await personalDomain.emitPlantAddedMemory(plant, {
           sourceModule: 'plant_identifier',
           clientEventId: 'plant-added:' + intent.clientInstanceId,
         });
-      } catch (_) {
-        // Memory failure must never roll back the authoritative plant row.
+      } catch (error) {
+        historyPending = true;
+        historyError = error?.message || 'plant_added_history_write_failed';
+      }
+    } else {
+      historyPending = true;
+      historyError = 'plant_added_history_writer_unavailable';
+    }
+
+    if (historyPending) {
+      try {
+        const reconciliation = await reconcileIdentifierPlantAddedHistory({
+          supabase,
+          gardenProfileId,
+        });
+        if (reconciliation.ok && reconciliation.pending === 0) {
+          historyPending = false;
+          historyError = null;
+        } else {
+          historyError =
+            reconciliation.failures?.[0]?.error ||
+            historyError ||
+            'plant_added_history_reconciliation_pending';
+        }
+      } catch (error) {
+        historyError =
+          error?.message ||
+          historyError ||
+          'plant_added_history_reconciliation_failed';
       }
     }
 
@@ -123,6 +208,8 @@ export async function persistConfirmedIdentifierPlant({
       gardenProfileId,
       canonicalSlug: intent.identity.profileSlug,
       plant,
+      historyPending,
+      historyError,
     };
   } catch (error) {
     const message = error?.message || 'Could not save plant.';
@@ -136,9 +223,56 @@ export async function persistConfirmedIdentifierPlant({
   }
 }
 
+export async function reconcilePendingIdentifierHistory(
+  personalDomain = getPersonalDomain()
+) {
+  if (!personalDomain) {
+    return { ok: false, reason: 'personal-domain-unavailable' };
+  }
+
+  const session =
+    typeof personalDomain.getSession === 'function'
+      ? personalDomain.getSession()
+      : null;
+  if (!asText(session?.user?.id)) {
+    return { ok: false, reason: 'auth-required' };
+  }
+
+  const gardenProfileId =
+    typeof personalDomain.getActiveGardenId === 'function'
+      ? asText(personalDomain.getActiveGardenId())
+      : '';
+  if (!gardenProfileId) {
+    return { ok: false, reason: 'active-garden-required' };
+  }
+
+  const supabase =
+    typeof personalDomain.getSupabaseClient === 'function'
+      ? personalDomain.getSupabaseClient()
+      : null;
+  if (!supabase) {
+    return { ok: false, reason: 'supabase-unavailable' };
+  }
+
+  try {
+    return await reconcileIdentifierPlantAddedHistory({
+      supabase,
+      gardenProfileId,
+    });
+  } catch (error) {
+    return {
+      ok: false,
+      reason: 'history-reconciliation-failed',
+      message: error?.message || 'History reconciliation failed.',
+    };
+  }
+}
+
 const api = Object.freeze({
+  verifyUnassessedHealthSchema,
   buildIdentifierAddIntent,
   persistConfirmedIdentifierPlant,
+  reconcilePendingIdentifierHistory,
 });
 
 if (typeof globalThis !== 'undefined') {

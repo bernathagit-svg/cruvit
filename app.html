@@ -11148,9 +11148,7 @@ async function commitIdentifiedPlantFromModule(result){
       scientific_name:(display&&display.scientific)||result.scientific_name||result.scientificName||''
     }),
     canonicalSlug:plan.write.canonicalSlug,
-    commitToken:plan.commitToken,
-    supportsUnassessedHealth:
-      globalThis.CruvitSchemaCapabilities?.gardenPlantsUnassessedHealthV2===true
+    commitToken:plan.commitToken
   });
 
   if(!persistResult?.ok){
@@ -11159,6 +11157,18 @@ async function commitIdentifiedPlantFromModule(result){
       reason:persistResult?.reason||'persist-failed',
       classified,
       message:persistResult?.message||'Could not save this plant to My Garden.'
+    };
+  }
+
+  if(persistResult.historyPending){
+    return {
+      ok:false,
+      persisted:true,
+      reason:'history-pending',
+      classified,
+      canonicalSlug:plan.write.canonicalSlug,
+      plant:persistResult.plant,
+      message:'Plant saved, but Plant Added history is still pending reconciliation. Retry to finish safely.'
     };
   }
 
@@ -11311,7 +11321,21 @@ loadPlantIdentifierScript()
 refreshGardenSession().finally(()=>{render();});
 setTab('tasks',false);
 scrollToPageTop('auto');
-window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
+window.addEventListener('load',()=>{
+  scrollToPageTop('auto');
+  setTimeout(async()=>{
+    const bridge=globalThis.CruvitPlantIdentifierMyGardenWriteBridge||null;
+    if(!bridge||typeof bridge.reconcilePendingIdentifierHistory!=='function')return;
+    try{
+      const out=await bridge.reconcilePendingIdentifierHistory();
+      if(out&&out.ok===false&&!['auth-required','active-garden-required','personal-domain-unavailable'].includes(out.reason)){
+        console.warn('Plant Identifier history reconciliation pending',out);
+      }
+    }catch(err){
+      console.warn('Plant Identifier history reconciliation failed',err);
+    }
+  },0);
+},{once:true});
 </script>
 <!-- Non-authoritative startup-only Plant Identity Shadow adapter (zero runtime consumers). -->
 <script type="module" src="modules/catalog-media/licensed-catalog-media-runtime-v1.js?v=20260913b"></script>
@@ -11319,7 +11343,6 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/suitability/hard-climate-survival-gate-v1.js?v=20260914e"></script>
 <script type="module" src="modules/smart-recommendations/smart-rec-garden-intelligence-v1.js?v=20260915c"></script>
 <script type="module" src="modules/plant-identifier/plant-identifier-garden-acquire-v1.js?v=20260914b"></script>
-<script type="module" src="modules/runtime-guards/schema-capabilities-v1.js?v=20261005a"></script>
 <script type="module" src="modules/plant-identifier/plant-identification-runtime-view-model-v1.js?v=20261005a"></script>
 <script type="module" src="modules/plant-identifier/plant-identifier-mygarden-write-bridge-v1.js?v=20261005a"></script>
 <script type="module" src="modules/plant-identifier/plant-identifier-location-context-v1.js?v=20260914b"></script>
