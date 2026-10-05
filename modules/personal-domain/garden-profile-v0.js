@@ -1386,48 +1386,6 @@ function requireActiveOwnedGardenId() {
   return gardenId;
 }
 
-async function verifyGardenPlantsUnassessedHealthV2() {
-  if (!currentSession?.access_token) {
-    return {
-      ok: false,
-      reason: 'authentication_required',
-      statusDefault: null,
-      markDefault: null,
-      allowedMarks: []
-    };
-  }
-
-  let response;
-  try {
-    response = await fetch('/.netlify/functions/garden-plants-schema-readiness', {
-      method: 'GET',
-      cache: 'no-store',
-      headers: {
-        Authorization: 'Bearer ' + currentSession.access_token
-      }
-    });
-  } catch (error) {
-    return {
-      ok: false,
-      reason: 'schema_attestation_request_failed',
-      message: error?.message || 'Schema attestation request failed.',
-      statusDefault: null,
-      markDefault: null,
-      allowedMarks: []
-    };
-  }
-
-  const payload = await response.json().catch(() => ({}));
-  return {
-    ok: response.ok && payload?.ok === true,
-    reason: payload?.reason || (response.ok ? null : 'schema_attestation_unavailable'),
-    environment: payload?.projectRef || null,
-    statusDefault: payload?.statusDefault || null,
-    markDefault: payload?.markDefault || null,
-    allowedMarks: Array.isArray(payload?.allowedMarks) ? payload.allowedMarks : []
-  };
-}
-
 async function upsertPlantOnActiveGarden(plant) {
   const gardenId = requireActiveOwnedGardenId();
   const payload = buildServerPlantPayload(plant);
@@ -2085,7 +2043,6 @@ window.cruvitPersonalDomainV0 = {
   getActiveGardenPlantSummaries: () => activeGardenPlantSummaries.slice(),
   getSupabaseClient: () => supabase,
   getSession: () => currentSession,
-  verifyGardenPlantsUnassessedHealthV2,
   getOwnedGardensCache: () => ownedGardensCache.slice(),
   getGardenContextReadiness,
   gardenContextReadyEvent: GARDEN_CONTEXT_READY_EVENT

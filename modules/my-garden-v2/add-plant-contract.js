@@ -73,14 +73,21 @@ export function prepareAddPlantIntent(input = {}) {
   const identity = normalizeIdentity(input, mode);
 
   const intent = {
-    gardenProfileId: requiredText(input.gardenProfileId ?? input.garden_profile_id, 'garden_profile_id_required'),
-    clientInstanceId: requiredText(input.clientInstanceId ?? input.client_instance_id, 'client_instance_id_required'),
-    displayName: requiredText(input.displayName ?? input.name, 'plant_display_name_required'),
+    gardenProfileId: requiredText(
+      input.gardenProfileId ?? input.garden_profile_id,
+      'garden_profile_id_required'
+    ),
+    clientInstanceId: requiredText(
+      input.clientInstanceId ?? input.client_instance_id,
+      'client_instance_id_required'
+    ),
+    displayName: requiredText(
+      input.displayName ?? input.name,
+      'plant_display_name_required'
+    ),
     mode,
     identity,
     gardenAreaId: input.gardenAreaId ?? input.garden_area_id ?? null,
-    // Exact physical position is not currently a first-class garden_plants field.
-    // Keep it out of the insert rather than hiding it in an unrelated field.
     exactPosition: input.exactPosition ?? input.exact_position ?? null,
     initialHealth: Object.freeze({
       status: 'unassessed',
@@ -105,34 +112,4 @@ export function assertAddPlantIntentSafe(intent) {
   }
 
   return true;
-}
-
-export function gardenPlantInsertSchemaGate(
-  intent,
-  { supportsUnassessedHealth = false } = {}
-) {
-  assertAddPlantIntentSafe(intent);
-
-  if (supportsUnassessedHealth === true) {
-    return Object.freeze({
-      blocked: false,
-      code: null,
-      reason: null,
-    });
-  }
-
-  return Object.freeze({
-    blocked: true,
-    code: 'GARDEN_PLANT_HEALTH_UNKNOWN_NOT_REPRESENTABLE',
-    reason:
-      'garden_plants must support status=unassessed and mark=unknown before live Add Plant is enabled.',
-  });
-}
-
-// Backward-compatible safety gate. Old callers remain blocked until they
-// explicitly opt in after the schema migration is confirmed.
-export function gardenPlantInsertIsBlockedByCurrentSchema(intent) {
-  return gardenPlantInsertSchemaGate(intent, {
-    supportsUnassessedHealth: false,
-  });
 }

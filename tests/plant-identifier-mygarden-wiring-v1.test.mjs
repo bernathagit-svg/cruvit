@@ -10,22 +10,21 @@ const bridge = fs.readFileSync(
   ),
   'utf8'
 );
-const lifecycle = fs.readFileSync(
-  new URL(
-    '../modules/plant-identifier/plant-identifier-history-lifecycle-v1.js',
-    import.meta.url
-  ),
+const command = fs.readFileSync(
+  new URL('../modules/my-garden-v2/add-plant-write-repository.js', import.meta.url),
   'utf8'
 );
 
-test('Plant Identification save loads the My Garden write bridge', () => {
+test('Plant Identification save loads only the atomic My Garden bridge', () => {
   assert.match(
     app,
     /plant-identifier-mygarden-write-bridge-v1\.js\?v=20261005a/
   );
+  assert.doesNotMatch(app, /plant-identifier-history-lifecycle-v1\.js/);
+  assert.doesNotMatch(app, /garden-plants-schema-readiness/);
 });
 
-test('Plant Identification commit uses authoritative write bridge only', () => {
+test('Plant Identification commit uses authoritative atomic bridge only', () => {
   const start = app.indexOf('async function commitIdentifiedPlantFromModule');
   const end = app.indexOf('function plantIdentifierDeps', start);
   assert.ok(start >= 0 && end > start);
@@ -34,35 +33,23 @@ test('Plant Identification commit uses authoritative write bridge only', () => {
   assert.match(body, /CruvitPlantIdentifierMyGardenWriteBridge/);
   assert.match(body, /persistConfirmedIdentifierPlant/);
   assert.doesNotMatch(body, /savePlantFromLibrary\(/);
-  assert.doesNotMatch(body, /CruvitSchemaCapabilities/);
-  assert.doesNotMatch(body, /gardenPlantsUnassessedHealthV2/);
+  assert.doesNotMatch(body, /historyPending/);
+  assert.doesNotMatch(body, /schema/i);
 });
 
-test('schema readiness cannot be enabled by a hard-coded browser capability', () => {
-  assert.doesNotMatch(app, /schema-capabilities-v1\.js/);
-  assert.doesNotMatch(app, /CruvitSchemaCapabilities/);
-  assert.match(bridge, /verifyUnassessedHealthSchema/);
-  assert.match(bridge, /schema-verifier-unavailable/);
-  assert.match(bridge, /schema-attestation-mismatch/);
+test('bridge contains no runtime schema attestation or history reconciliation', () => {
+  assert.match(bridge, /createAtomicAddPlantCommand/);
+  assert.doesNotMatch(bridge, /schemaVerifier|verifyUnassessedHealthSchema|Management API/i);
+  assert.doesNotMatch(bridge, /historyPending|reconcil/i);
 });
 
-test('Plant Added reconciliation is bound to Garden Context Ready, not window load', () => {
-  assert.match(
-    app,
-    /plant-identifier-history-lifecycle-v1\.js\?v=20261005a/
-  );
-  const bridgePos = app.indexOf('plant-identifier-mygarden-write-bridge-v1.js');
-  const lifecyclePos = app.indexOf('plant-identifier-history-lifecycle-v1.js');
-  const personalDomainPos = app.indexOf('modules/personal-domain/garden-profile-v0.js');
-  assert.ok(bridgePos >= 0 && lifecyclePos > bridgePos);
-  assert.ok(personalDomainPos > lifecyclePos);
-
-  assert.match(lifecycle, /cruvit:garden-context-ready/);
-  assert.match(lifecycle, /reconcilePendingIdentifierHistory/);
-  assert.doesNotMatch(lifecycle, /addEventListener\(['"]load/);
+test('Add Plant command is RPC-only and has no direct table upsert', () => {
+  assert.match(command, /supabase\.rpc\('add_garden_plant_once_v1'/);
+  assert.doesNotMatch(command, /\.from\(['"]garden_plants['"]\)/);
+  assert.doesNotMatch(command, /\.upsert\(/);
 });
 
-test('Plant Identification runtime view model is loaded and bound to results', () => {
+test('Plant Identification runtime view model remains loaded and bound to results', () => {
   assert.match(
     app,
     /plant-identification-runtime-view-model-v1\.js\?v=20261005a/

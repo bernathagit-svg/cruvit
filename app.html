@@ -11160,18 +11160,6 @@ async function commitIdentifiedPlantFromModule(result){
     };
   }
 
-  if(persistResult.historyPending){
-    return {
-      ok:false,
-      persisted:true,
-      reason:'history-pending',
-      classified,
-      canonicalSlug:plan.write.canonicalSlug,
-      plant:persistResult.plant,
-      message:'Plant saved, but Plant Added history is still pending reconciliation. Retry to finish safely.'
-    };
-  }
-
   if(getIdentifierAcquireIdempotency()&&typeof getIdentifierAcquireIdempotency().mark==='function'){
     getIdentifierAcquireIdempotency().mark(plan.commitToken);
   }
@@ -11184,7 +11172,7 @@ async function commitIdentifiedPlantFromModule(result){
   openMyGardenV2IntegratedPreview();
   return {
     ok:true,
-    duplicate:false,
+    duplicate:persistResult.duplicate===true,
     canonicalSlug:plan.write.canonicalSlug,
     plant:persistResult.plant
   };
@@ -11331,7 +11319,6 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/plant-identifier/plant-identifier-garden-acquire-v1.js?v=20260914b"></script>
 <script type="module" src="modules/plant-identifier/plant-identification-runtime-view-model-v1.js?v=20261005a"></script>
 <script type="module" src="modules/plant-identifier/plant-identifier-mygarden-write-bridge-v1.js?v=20261005a"></script>
-<script type="module" src="modules/plant-identifier/plant-identifier-history-lifecycle-v1.js?v=20261005a"></script>
 <script type="module" src="modules/plant-identifier/plant-identifier-location-context-v1.js?v=20260914b"></script>
 <script type="module" src="modules/identity/plant-identity-shadow.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-audit.js"></script>
