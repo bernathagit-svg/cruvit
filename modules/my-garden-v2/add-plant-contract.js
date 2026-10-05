@@ -107,15 +107,32 @@ export function assertAddPlantIntentSafe(intent) {
   return true;
 }
 
-export function gardenPlantInsertIsBlockedByCurrentSchema(intent) {
+export function gardenPlantInsertSchemaGate(
+  intent,
+  { supportsUnassessedHealth = false } = {}
+) {
   assertAddPlantIntentSafe(intent);
 
-  // Current garden_plants schema defaults status to Healthy and constrains mark to ✓ / !.
-  // That cannot faithfully persist the required unassessed/unknown state.
+  if (supportsUnassessedHealth === true) {
+    return Object.freeze({
+      blocked: false,
+      code: null,
+      reason: null,
+    });
+  }
+
   return Object.freeze({
     blocked: true,
     code: 'GARDEN_PLANT_HEALTH_UNKNOWN_NOT_REPRESENTABLE',
     reason:
-      'garden_plants currently defaults status=Healthy and mark=✓/! only; live Add Plant would silently infer health.',
+      'garden_plants must support status=unassessed and mark=unknown before live Add Plant is enabled.',
+  });
+}
+
+// Backward-compatible safety gate. Old callers remain blocked until they
+// explicitly opt in after the schema migration is confirmed.
+export function gardenPlantInsertIsBlockedByCurrentSchema(intent) {
+  return gardenPlantInsertSchemaGate(intent, {
+    supportsUnassessedHealth: false,
   });
 }
