@@ -103,6 +103,10 @@ export function resolvePlantSizeAuthorityReadiness(registry, input = {}, options
     reasonCodes.push('SIZE_EVIDENCE_GAP');
   }
 
+  const placementScaleHold =
+    state === SIZE_AUTHORITY_STATE.CONTEXT_REQUIRED
+    && options.contextResolved !== true;
+
   return Object.freeze({
     version: PLANT_SIZE_AUTHORITY_READINESS_VERSION,
     canonicalSlug,
@@ -120,6 +124,7 @@ export function resolvePlantSizeAuthorityReadiness(registry, input = {}, options
     explicitEstimateOnly,
     morphologyFallbackIsAuthority: false,
     ownerReviewRequired,
+    placementScaleHold,
     gardenDesignMayUseExplicitEstimate:
       state !== SIZE_AUTHORITY_STATE.READY,
     meterAccuracyClaimAllowed:
