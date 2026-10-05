@@ -11321,21 +11321,7 @@ loadPlantIdentifierScript()
 refreshGardenSession().finally(()=>{render();});
 setTab('tasks',false);
 scrollToPageTop('auto');
-window.addEventListener('load',()=>{
-  scrollToPageTop('auto');
-  setTimeout(async()=>{
-    const bridge=globalThis.CruvitPlantIdentifierMyGardenWriteBridge||null;
-    if(!bridge||typeof bridge.reconcilePendingIdentifierHistory!=='function')return;
-    try{
-      const out=await bridge.reconcilePendingIdentifierHistory();
-      if(out&&out.ok===false&&!['auth-required','active-garden-required','personal-domain-unavailable'].includes(out.reason)){
-        console.warn('Plant Identifier history reconciliation pending',out);
-      }
-    }catch(err){
-      console.warn('Plant Identifier history reconciliation failed',err);
-    }
-  },0);
-},{once:true});
+window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 </script>
 <!-- Non-authoritative startup-only Plant Identity Shadow adapter (zero runtime consumers). -->
 <script type="module" src="modules/catalog-media/licensed-catalog-media-runtime-v1.js?v=20260913b"></script>
@@ -11345,6 +11331,7 @@ window.addEventListener('load',()=>{
 <script type="module" src="modules/plant-identifier/plant-identifier-garden-acquire-v1.js?v=20260914b"></script>
 <script type="module" src="modules/plant-identifier/plant-identification-runtime-view-model-v1.js?v=20261005a"></script>
 <script type="module" src="modules/plant-identifier/plant-identifier-mygarden-write-bridge-v1.js?v=20261005a"></script>
+<script type="module" src="modules/plant-identifier/plant-identifier-history-lifecycle-v1.js?v=20261005a"></script>
 <script type="module" src="modules/plant-identifier/plant-identifier-location-context-v1.js?v=20260914b"></script>
 <script type="module" src="modules/identity/plant-identity-shadow.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-audit.js"></script>

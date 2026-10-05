@@ -6,6 +6,10 @@ import {
   reconcilePendingIdentifierHistory,
 } from '../modules/plant-identifier/plant-identifier-mygarden-write-bridge-v1.js';
 import {
+  IDENTIFIER_HISTORY_CONTEXT_EVENT,
+  installIdentifierHistoryReconciliationLifecycle,
+} from '../modules/plant-identifier/plant-identifier-history-lifecycle-v1.js';
+import {
   buildPlantAddedMemoryInput,
   writeGardenMemoryEvent,
 } from '../modules/personal-domain/garden-memory-writer-v1.js';
@@ -197,6 +201,12 @@ function createDomain({
   };
 }
 
+class FakeWindow extends EventTarget {
+  dispatch(name) {
+    this.dispatchEvent(new Event(name));
+  }
+}
+
 const identification = {
   common_name: 'Monstera',
   scientific_name: 'Monstera deliciosa',
@@ -234,13 +244,29 @@ test('E2E: login -> active garden -> canonical save -> reload -> duplicate -> Hi
   assert.equal(db.events[0].source_module, 'plant_identifier');
   assert.equal(db.events[0].garden_plant_id, first.plant.id);
 
-  // Reload: new domain instance reads the same durable database and reconciliation is clean.
+  // Reload/context-ready: browser load occurs before session/garden readiness.
   const reloadedDomain = createDomain({ db, userId: 'u1', gardenId: 'g1' });
-  const reloadReconcile = await reconcilePendingIdentifierHistory(reloadedDomain);
+  const fakeWindow = new FakeWindow();
+  let reloadReconcile = null;
+  const lifecycle = installIdentifierHistoryReconciliationLifecycle({
+    eventTarget: fakeWindow,
+    reconcile: async () => {
+      reloadReconcile = await reconcilePendingIdentifierHistory(reloadedDomain);
+      return reloadReconcile;
+    },
+  });
+
+  fakeWindow.dispatch('load');
+  await Promise.resolve();
+  assert.equal(reloadReconcile, null);
+
+  fakeWindow.dispatch(IDENTIFIER_HISTORY_CONTEXT_EVENT);
+  await new Promise((resolve) => setTimeout(resolve, 0));
   assert.equal(reloadReconcile.ok, true);
   assert.equal(reloadReconcile.pending, 0);
   assert.equal(db.plants.length, 1);
   assert.equal(db.events.length, 1);
+  lifecycle.dispose();
 
   // Duplicate Save with same stable commit token: upsert, not clone; History remains one event.
   const duplicate = await persistConfirmedIdentifierPlant({
@@ -301,14 +327,30 @@ test('E2E: failed Plant Added history survives as pending and is repaired after 
   assert.equal(db.plants.length, 1);
   assert.equal(db.events.length, 0);
 
-  // Simulate service recovery + reload.
+  // Simulate service recovery + reload. Window load is early; context-ready repairs history.
   db.failEventWrites = false;
   const afterReload = createDomain({ db, userId: 'u1', gardenId: 'g1' });
-  const reconciled = await reconcilePendingIdentifierHistory(afterReload);
+  const fakeWindow = new FakeWindow();
+  let reconciled = null;
+  const lifecycle = installIdentifierHistoryReconciliationLifecycle({
+    eventTarget: fakeWindow,
+    reconcile: async () => {
+      reconciled = await reconcilePendingIdentifierHistory(afterReload);
+      return reconciled;
+    },
+  });
+
+  fakeWindow.dispatch('load');
+  await Promise.resolve();
+  assert.equal(reconciled, null);
+
+  fakeWindow.dispatch(IDENTIFIER_HISTORY_CONTEXT_EVENT);
+  await new Promise((resolve) => setTimeout(resolve, 0));
 
   assert.equal(reconciled.ok, true);
   assert.equal(reconciled.repaired, 1);
   assert.equal(reconciled.pending, 0);
   assert.equal(db.events.length, 1);
   assert.equal(db.events[0].garden_plant_id, db.plants[0].id);
+  lifecycle.dispose();
 });

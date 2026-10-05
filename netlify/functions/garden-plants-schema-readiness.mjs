@@ -1,3 +1,9 @@
+const CRUVIT_PRODUCTION_PROJECT_REF = 'saiuscqbszafszpdmzfl';
+const DEFAULT_LEASE_MS = 5 * 60 * 1000;
+const MAX_LEASE_MS = 15 * 60 * 1000;
+
+let readinessLease = null;
+
 function json(statusCode, body) {
   return {
     statusCode,
@@ -17,6 +23,12 @@ function projectRefFromEnv() {
   return match ? match[1] : '';
 }
 
+function leaseMsFromEnv() {
+  const raw = Number(process.env.SCHEMA_ATTESTATION_LEASE_MS);
+  if (!Number.isFinite(raw) || raw <= 0) return DEFAULT_LEASE_MS;
+  return Math.min(Math.max(Math.round(raw), 1000), MAX_LEASE_MS);
+}
+
 function normalizeDefault(value) {
   return String(value || '')
     .replace(/::text$/i, '')
@@ -28,6 +40,28 @@ function allowedMarksFromConstraint(definition) {
   const text = String(definition || '');
   const matches = [...text.matchAll(/'([^']+)'::text/g)].map((m) => m[1]);
   return [...new Set(matches)];
+}
+
+function scopedPatIsAcceptable(token) {
+  return /^sbp_fc[A-Za-z0-9_-]+$/.test(String(token || '').trim());
+}
+
+function validLease(projectRef, now = Date.now()) {
+  return !!(
+    readinessLease &&
+    readinessLease.projectRef === projectRef &&
+    readinessLease.ready === true &&
+    Number.isFinite(readinessLease.expiresAt) &&
+    readinessLease.expiresAt > now
+  );
+}
+
+export function __resetSchemaReadinessLeaseForTests() {
+  readinessLease = null;
+}
+
+export function __setSchemaReadinessLeaseForTests(value) {
+  readinessLease = value;
 }
 
 export async function handler(event = {}) {
@@ -89,6 +123,42 @@ export async function handler(event = {}) {
       projectRef: projectRef || null,
     });
   }
+
+  if (projectRef !== CRUVIT_PRODUCTION_PROJECT_REF) {
+    return json(503, {
+      ok: false,
+      ready: false,
+      reason: 'schema_attestation_wrong_project',
+      projectRef,
+    });
+  }
+
+  if (!scopedPatIsAcceptable(token)) {
+    return json(503, {
+      ok: false,
+      ready: false,
+      reason: 'scoped_database_read_pat_required',
+      projectRef,
+    });
+  }
+
+  const now = Date.now();
+  if (validLease(projectRef, now)) {
+    return json(200, {
+      ok: true,
+      ready: true,
+      reason: null,
+      projectRef,
+      statusDefault: readinessLease.statusDefault,
+      markDefault: readinessLease.markDefault,
+      allowedMarks: readinessLease.allowedMarks,
+      cached: true,
+      leaseExpiresAt: new Date(readinessLease.expiresAt).toISOString(),
+    });
+  }
+
+  // Never use an expired/stale lease as proof.
+  readinessLease = null;
 
   const query = `
 select
@@ -159,13 +229,39 @@ select
     allowedMarks.includes('✓') &&
     allowedMarks.includes('!');
 
-  return json(ready ? 200 : 409, {
-    ok: ready,
-    ready,
-    reason: ready ? null : 'schema_attestation_mismatch',
+  if (!ready) {
+    return json(409, {
+      ok: false,
+      ready: false,
+      reason: 'schema_attestation_mismatch',
+      projectRef,
+      statusDefault,
+      markDefault,
+      allowedMarks,
+      cached: false,
+    });
+  }
+
+  const leaseMs = leaseMsFromEnv();
+  readinessLease = Object.freeze({
+    projectRef,
+    ready: true,
+    statusDefault,
+    markDefault,
+    allowedMarks: Object.freeze(allowedMarks.slice()),
+    verifiedAt: now,
+    expiresAt: now + leaseMs,
+  });
+
+  return json(200, {
+    ok: true,
+    ready: true,
+    reason: null,
     projectRef,
     statusDefault,
     markDefault,
     allowedMarks,
+    cached: false,
+    leaseExpiresAt: new Date(readinessLease.expiresAt).toISOString(),
   });
 }

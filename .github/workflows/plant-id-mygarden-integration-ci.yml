@@ -1,0 +1,33 @@
+name: Plant ID → My Garden integration CI
+
+on:
+  pull_request:
+    paths:
+      - 'app.html'
+      - 'modules/plant-identifier/**'
+      - 'modules/my-garden-v2/**'
+      - 'modules/personal-domain/**'
+      - 'netlify/functions/garden-plants-schema-readiness.mjs'
+      - 'supabase/migrations/*garden_plants_unassessed_health_v2.sql'
+      - 'tests/plant-identifier-*.test.mjs'
+      - 'tests/my-garden-v2-*.test.mjs'
+      - 'tests/garden-profile-plants-v1-contract.test.mjs'
+      - 'tests/garden-plants-schema-readiness-*.test.mjs'
+      - '.github/workflows/plant-id-mygarden-integration-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  plant-id-mygarden-e2e:
+    name: Plant ID → My Garden E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run Plant Identification → My Garden integration suite
+        run: |
+          node --test             tests/garden-plants-schema-readiness-function.test.mjs             tests/garden-plants-schema-readiness-runtime.test.mjs             tests/plant-identifier-history-lifecycle-v1.test.mjs             tests/plant-identifier-history-reconciliation-v1.test.mjs             tests/plant-identifier-mygarden-write-bridge-v1.test.mjs             tests/plant-identifier-mygarden-wiring-v1.test.mjs             tests/plant-identifier-mygarden-e2e-v1.test.mjs             tests/my-garden-v2-add-plant-write-repository.test.mjs             tests/my-garden-v2-add-plant-contract.test.mjs             tests/garden-profile-plants-v1-contract.test.mjs             tests/my-garden-v2-unassessed-health-migration.test.mjs             tests/my-garden-v2-read-model.test.mjs             tests/my-garden-v2-plant-detail-base.test.mjs             tests/my-garden-v2-task-projection.test.mjs

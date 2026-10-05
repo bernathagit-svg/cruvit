@@ -10,6 +10,13 @@ const bridge = fs.readFileSync(
   ),
   'utf8'
 );
+const lifecycle = fs.readFileSync(
+  new URL(
+    '../modules/plant-identifier/plant-identifier-history-lifecycle-v1.js',
+    import.meta.url
+  ),
+  'utf8'
+);
 
 test('Plant Identification save loads the My Garden write bridge', () => {
   assert.match(
@@ -39,10 +46,20 @@ test('schema readiness cannot be enabled by a hard-coded browser capability', ()
   assert.match(bridge, /schema-attestation-mismatch/);
 });
 
-test('Plant Added history reconciliation is retried after reload', () => {
-  assert.match(app, /reconcilePendingIdentifierHistory/);
-  assert.match(bridge, /reconcileIdentifierPlantAddedHistory/);
-  assert.match(bridge, /historyPending/);
+test('Plant Added reconciliation is bound to Garden Context Ready, not window load', () => {
+  assert.match(
+    app,
+    /plant-identifier-history-lifecycle-v1\.js\?v=20261005a/
+  );
+  const bridgePos = app.indexOf('plant-identifier-mygarden-write-bridge-v1.js');
+  const lifecyclePos = app.indexOf('plant-identifier-history-lifecycle-v1.js');
+  const personalDomainPos = app.indexOf('modules/personal-domain/garden-profile-v0.js');
+  assert.ok(bridgePos >= 0 && lifecyclePos > bridgePos);
+  assert.ok(personalDomainPos > lifecyclePos);
+
+  assert.match(lifecycle, /cruvit:garden-context-ready/);
+  assert.match(lifecycle, /reconcilePendingIdentifierHistory/);
+  assert.doesNotMatch(lifecycle, /addEventListener\(['"]load/);
 });
 
 test('Plant Identification runtime view model is loaded and bound to results', () => {
