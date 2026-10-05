@@ -14,7 +14,7 @@ test('atomic Add Plant RPC is SECURITY INVOKER with safe search_path', () => {
   assert.match(sql, /create or replace function public\.add_garden_plant_once_v1/i);
   assert.match(sql, /security invoker/i);
   assert.doesNotMatch(sql, /security definer/i);
-  assert.match(sql, /set search_path = pg_catalog, public/i);
+  assert.match(sql, /set search_path = pg_catalog/i);
 });
 
 test('RPC has no user_id parameter and keeps all objects schema-qualified', () => {

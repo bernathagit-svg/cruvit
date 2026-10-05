@@ -15,7 +15,7 @@ create or replace function public.add_garden_plant_once_v1(
 returns jsonb
 language plpgsql
 security invoker
-set search_path = pg_catalog, public
+set search_path = pg_catalog
 as $$
 declare
   v_user_id uuid := auth.uid();
