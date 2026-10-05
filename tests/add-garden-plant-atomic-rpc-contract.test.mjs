@@ -49,7 +49,7 @@ test('retry compares canonical identity and ignores mutable fields', () => {
 });
 
 test('plant_added identity and payload are server-derived from authoritative plant', () => {
-  assert.match(sql, /v_plant\.id::text/);
+  assert.match(sql, /v_plant\.client_instance_id/);
   assert.match(sql, /v_client_event_id/);
   assert.doesNotMatch(
     sql.slice(0, sql.indexOf('returns jsonb')),

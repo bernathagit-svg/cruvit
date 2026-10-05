@@ -145,9 +145,24 @@ begin
   end if;
 
   -- Deterministic History identity is derived server-side from the
-  -- authoritative Plant UUID, never accepted from the client.
-  v_event_stable_key :=
-    'plant_' || replace(v_plant.id::text, '-', '_') || '_added';
+  -- authoritative Plant client_instance_id, never accepted from the client.
+  -- Keep the same Garden Memory identity shape used by buildGardenClientEventId:
+  -- source=plant_identifier, event=plant_added, stableKey=plant_<client>_added.
+  v_event_stable_key := left(
+    trim(both '_' from regexp_replace(
+      lower('plant_' || v_plant.client_instance_id || '_added'),
+      '[^a-z0-9_-]+',
+      '_',
+      'g'
+    )),
+    64
+  );
+  if v_event_stable_key = '' then
+    raise exception using
+      errcode = '22023',
+      message = 'plant_added_event_key_invalid';
+  end if;
+
   v_client_event_id :=
     'gev_plant_identifier_plant_added_' || v_event_stable_key;
 

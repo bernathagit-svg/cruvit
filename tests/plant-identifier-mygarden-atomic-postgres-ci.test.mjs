@@ -39,6 +39,23 @@ async function asUser(userId, fn) {
   }
 }
 
+async function asAnon(fn) {
+  const client = new Client({ connectionString: DATABASE_URL });
+  await client.connect();
+  try {
+    await client.query('begin');
+    await client.query('set local role anon');
+    const out = await fn(client);
+    await client.query('commit');
+    return out;
+  } catch (error) {
+    await client.query('rollback').catch(() => {});
+    throw error;
+  } finally {
+    await client.end();
+  }
+}
+
 async function rpc(client, {
   gardenId = GARDEN_A,
   clientId,
@@ -323,4 +340,24 @@ test('reload reads authoritative Plant and History remains singular', async () =
   assert.equal(reloaded.plant.id, first.plant.id);
   assert.equal(reloaded.plant.profile_slug, 'monstera-deliciosa');
   assert.equal(reloaded.history.length, 1);
+});
+
+test('RPC execute is denied to anon role', async () => {
+  await assert.rejects(
+    () =>
+      asAnon((client) =>
+        rpc(client, {
+          gardenId: GARDEN_A,
+          clientId: 'identifier:anon-denied-1',
+        })
+      ),
+    /permission denied for function add_garden_plant_once_v1/i
+  );
+
+  assert.equal(
+    await countRows('garden_plants', 'client_instance_id=$1', [
+      'identifier:anon-denied-1',
+    ]),
+    0
+  );
 });
