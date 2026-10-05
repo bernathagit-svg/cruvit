@@ -121,15 +121,18 @@
     "garden-peony": "taxon:paeonia-lactiflora",
     "green-bean": "taxon:phaseolus-vulgaris",
     "soursop": "taxon:annona-muricata",
-    "blackberry": "taxon:rubus-fruticosus"
+    "blackberry": "taxon:rubus-fruticosus",
+    "strelitzia": "taxon:strelitzia-reginae",
+    "hibiscus": "taxon:hibiscus-rosa-sinensis",
+    "cyclamen": "taxon:cyclamen-persicum"
   },
   "expectedAccounting": {
-    "RUNTIME_AUTHORITY_READY": 13,
-    "RUNTIME_AUTHORITY_PARTIAL": 10,
-    "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED": 13,
-    "RUNTIME_AUTHORITY_CONFLICT_HOLD": 3,
-    "RUNTIME_AUTHORITY_EVIDENCE_GAP": 7,
-    "TOTAL": 46
+    "RUNTIME_AUTHORITY_READY": 79,
+    "RUNTIME_AUTHORITY_PARTIAL": 16,
+    "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED": 14,
+    "RUNTIME_AUTHORITY_CONFLICT_HOLD": 2,
+    "RUNTIME_AUTHORITY_EVIDENCE_GAP": 4,
+    "TOTAL": 115
   },
   "records": [
     {
@@ -5072,6 +5075,134 @@
       "gardenDesignFallback": null,
       "authorityVersion": "botanical-size-authority-v1",
       "runtimeWired": false
+    },
+    {
+      "botanicalTaxonId": "taxon:strelitzia-reginae",
+      "canonicalSlugAliases": [
+        "strelitzia"
+      ],
+      "scientificName": "Strelitzia reginae",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "strelitzia__rhs-ncsu__mature-size-2026-10-05-v1",
+      "selectedSpreadEvidenceRef": "strelitzia__rhs-ncsu__mature-size-2026-10-05-v1",
+      "selectedSource": "RHS + NCSU Extension",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.9144,
+          "max": 1.5
+        },
+        "spreadM": {
+          "min": 0.5,
+          "max": 1.2192
+        }
+      },
+      "provenanceEvidenceIds": [
+        "https://www.rhs.org.uk/plants/17807/strelitzia-reginae/details",
+        "https://plants.ces.ncsu.edu/plants/strelitzia-reginae/"
+      ],
+      "partialAnchor": "HEIGHT_AND_SPREAD_SOURCE_SUPPORTED",
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": false,
+        "rootstockSensitive": false,
+        "cultivarVariable": false,
+        "maintainedForm": true,
+        "notFinalPersonalGardenSize": true,
+        "reasons": [
+          "maintenance and container/landscape context can affect realized size"
+        ]
+      }
+    },
+    {
+      "botanicalTaxonId": "taxon:hibiscus-rosa-sinensis",
+      "canonicalSlugAliases": [
+        "hibiscus"
+      ],
+      "scientificName": "Hibiscus rosa-sinensis",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "hibiscus__rhs__mature-size-2026-10-05-v1",
+      "selectedSpreadEvidenceRef": "hibiscus__rhs__mature-size-2026-10-05-v1",
+      "selectedSource": "RHS",
+      "normalizedRange": {
+        "heightM": {
+          "min": 1,
+          "max": 1.5
+        },
+        "spreadM": {
+          "min": 0.5,
+          "max": 1
+        }
+      },
+      "provenanceEvidenceIds": [
+        "https://www.rhs.org.uk/plants/8738/hibiscus-%C3%97-rosa-sinensis/details",
+        "https://www.rhs.org.uk/plants/hibiscus/growing-guide"
+      ],
+      "partialAnchor": "HEIGHT_AND_SPREAD_SOURCE_SUPPORTED",
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": true,
+        "rootstockSensitive": false,
+        "cultivarVariable": true,
+        "maintainedForm": true,
+        "notFinalPersonalGardenSize": true,
+        "reasons": [
+          "cultivated forms and pruning can materially change realized size"
+        ]
+      }
+    },
+    {
+      "botanicalTaxonId": "taxon:cyclamen-persicum",
+      "canonicalSlugAliases": [
+        "cyclamen"
+      ],
+      "scientificName": "Cyclamen persicum",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
+      "defaultPreviewScenario": "LANDSCAPE_MATURE",
+      "selectedHeightEvidenceRef": "cyclamen__rhs__mature-size-2026-10-05-v1",
+      "selectedSpreadEvidenceRef": "cyclamen__rhs__mature-size-2026-10-05-v1",
+      "selectedSource": "RHS",
+      "normalizedRange": {
+        "heightM": {
+          "min": 0.1,
+          "max": 0.2
+        },
+        "spreadM": {
+          "min": 0.1,
+          "max": 0.5
+        }
+      },
+      "provenanceEvidenceIds": [
+        "https://www.rhs.org.uk/plants/101163/cyclamen-persicum/details"
+      ],
+      "partialAnchor": "HEIGHT_AND_SPREAD_SOURCE_SUPPORTED",
+      "spreadSourceSupported": true,
+      "HEIGHT_SCALE_READY": true,
+      "SPREAD_SCALE_READY": true,
+      "unknownFields": [],
+      "sensitivity": {
+        "cultivarSensitive": true,
+        "rootstockSensitive": false,
+        "cultivarVariable": true,
+        "maintainedForm": false,
+        "notFinalPersonalGardenSize": true,
+        "reasons": [
+          "cultivar size variation and container culture can affect realized size"
+        ]
+      }
     }
   ],
   "provenanceOverlays": [
