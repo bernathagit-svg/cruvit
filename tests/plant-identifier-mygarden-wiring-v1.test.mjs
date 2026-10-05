@@ -29,3 +29,20 @@ test('Plant Identification save remains fail-closed until schema capability is e
     /CruvitSchemaCapabilities\?\.gardenPlantsUnassessedHealthV2===true/
   );
 });
+
+test('Plant Identification runtime view model is loaded and bound to results', () => {
+  assert.match(
+    app,
+    /plant-identification-runtime-view-model-v1\.js\?v=20261005a/
+  );
+  const moduleSource = fs.readFileSync(
+    new URL(
+      '../modules/plant-identifier/plant-identifier.js',
+      import.meta.url
+    ),
+    'utf8'
+  );
+  assert.match(moduleSource, /CruvitPlantIdentificationRuntimeViewModel/);
+  assert.match(moduleSource, /result\._runtimeViewModel\s*=\s*buildRuntimeViewModel/);
+  assert.match(moduleSource, /state\.lastResult\._savedPlant\s*=\s*out\.plant/);
+});
