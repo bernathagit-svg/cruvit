@@ -20,9 +20,7 @@ test('migration expands mark constraint without rewriting existing rows', () => 
   assert.doesNotMatch(sql, /update\s+public\.garden_plants/i);
 });
 
-test('migration constrains health status to explicit supported states', () => {
-  assert.match(
-    sql,
-    /status in \('unassessed', 'Healthy', 'Needs attention', 'At risk'\)/i
-  );
+test('migration preserves existing free-form status values', () => {
+  assert.doesNotMatch(sql, /garden_plants_status_chk/i);
+  assert.doesNotMatch(sql, /status\s+in\s*\(/i);
 });

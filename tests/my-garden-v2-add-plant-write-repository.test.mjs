@@ -12,8 +12,8 @@ import {
 function makeSupabase(returnRow) {
   const calls = [];
   const chain = {
-    insert(payload) {
-      calls.push({ op: 'insert', payload });
+    upsert(payload, options) {
+      calls.push({ op: 'upsert', payload, options });
       return chain;
     },
     select(columns) {
@@ -105,10 +105,11 @@ test('repository writes one exact unassessed plant after capability enablement',
 
   const saved = await repo.insert(intent);
   assert.equal(saved.id, 'p1');
-  const write = fake.calls.find((c) => c.op === 'insert');
+  const write = fake.calls.find((c) => c.op === 'upsert');
   assert.equal(write.payload.status, 'unassessed');
   assert.equal(write.payload.mark, 'unknown');
   assert.equal(write.payload.profile_slug, 'monstera-deliciosa');
+  assert.equal(write.options.onConflict, 'garden_profile_id,client_instance_id');
 });
 
 test('unconfirmed scan still cannot persist canonical identity', () => {

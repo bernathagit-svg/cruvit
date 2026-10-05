@@ -69,7 +69,9 @@ export function createAddPlantWriteRepository(
 
     const result = await supabase
       .from('garden_plants')
-      .insert(payload)
+      .upsert(payload, {
+        onConflict: 'garden_profile_id,client_instance_id',
+      })
       .select(
         'id,garden_profile_id,user_id,client_instance_id,name,status,mark,source,' +
         'profile_slug,scientific,archived,prefs,added_at,garden_area_id,cover_media_id,' +

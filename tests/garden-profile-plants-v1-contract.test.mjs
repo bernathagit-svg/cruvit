@@ -212,3 +212,40 @@ test('migration SQL creates garden_plants with RLS ownership and no task/photo c
   assert.doesNotMatch(sql, /service_role/);
   assert.doesNotMatch(sql, /suitability|climate_fit|freezingRisk/i);
 });
+
+test('new plant defaults remain unassessed and unknown end to end', () => {
+  const payload = buildServerPlantPayload({
+    id: 'plant_new',
+    name: 'New plant',
+  });
+  assert.equal(payload.status, 'unassessed');
+  assert.equal(payload.mark, 'unknown');
+
+  const restored = serverPlantToAppPlant({
+    id: 'uuid-new',
+    client_instance_id: payload.client_instance_id,
+    name: payload.name,
+    status: payload.status,
+    mark: payload.mark,
+    source: payload.source,
+    profile_slug: null,
+    scientific: null,
+    archived: false,
+    prefs: payload.prefs,
+    added_at: payload.added_at,
+  });
+
+  assert.equal(restored.status, 'unassessed');
+  assert.equal(restored.mark, 'unknown');
+});
+
+test('invalid or missing server health never hydrates as Healthy by default', () => {
+  const missing = serverPlantToAppPlant({
+    id: 'uuid-missing',
+    client_instance_id: 'plant_missing',
+    name: 'Unknown health plant',
+    mark: null,
+  });
+  assert.equal(missing.status, 'unassessed');
+  assert.equal(missing.mark, 'unknown');
+});

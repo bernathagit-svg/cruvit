@@ -11110,6 +11110,11 @@ async function commitIdentifiedPlantFromModule(result){
   if(!result) return {ok:false,reason:'empty-result'};
   const api=getIdentifierAcquireApi();
   if(!api) return {ok:false,reason:'acquire-contract-missing',message:'Identifier catalog contract is not loaded.'};
+  const bridge=globalThis.CruvitPlantIdentifierMyGardenWriteBridge||null;
+  if(!bridge||typeof bridge.persistConfirmedIdentifierPlant!=='function'){
+    return {ok:false,reason:'write-bridge-missing',message:'My Garden write bridge is not loaded.'};
+  }
+
   const catalog=getActiveCatalogIdentitiesForIdentifier();
   const aliasMaps=identifierAliasMaps();
   const classified=result._catalogMatch&&result._catalogMatch.status
@@ -11126,38 +11131,53 @@ async function commitIdentifiedPlantFromModule(result){
     commitToken:result._commitToken||api.buildIdentifierCommitToken(result,classified.canonicalSlug||result._chosenCanonicalSlug||''),
     idempotency:getIdentifierAcquireIdempotency()
   },actor));
+
   if(plan.duplicate){
     return {ok:true,duplicate:true,canonicalSlug:plan.canonicalSlug};
   }
   if(!plan.ok||!plan.persist){
     return {ok:false,reason:plan.reason,classified,message:plan.reason==='no-safe-canonical-match'?'No safe catalog match for this identification.':''};
   }
-  const before=(data.plants||[]).length;
-  savePlantFromLibrary(plan.write.canonicalSlug,'Scan & Identify');
-  const plant=(data.plants||[])[(data.plants||[]).length-1];
-  if(plant&&(data.plants||[]).length>before){
-    if(typeof api.attachObservationalScanToOwnedPlant==='function'){
-      api.attachObservationalScanToOwnedPlant(plant,result._img||'');
-    }else if(result._img){
-      plant.scanPhotoUrl=result._img;
-    }
-    plant.identifyConfidence=result.confidence||'';
-    plant.identifyMatchClass=classified.status;
-    if(typeof resolvePlantDisplayMedia==='function'){
-      const display=resolvePlantDisplayMedia(plant);
-      plant.imageUrl=(display.kind==='catalog'||display.kind==='user'||display.kind==='user_cover')?display.url:'';
-    }
+
+  const display=typeof resolveCatalogIdentityDisplay==='function'
+    ?resolveCatalogIdentityDisplay(plan.write.canonicalSlug)
+    :null;
+  const persistResult=await bridge.persistConfirmedIdentifierPlant({
+    result:Object.assign({},result,{
+      common_name:(display&&display.name)||result.common_name||result.commonName||'',
+      scientific_name:(display&&display.scientific)||result.scientific_name||result.scientificName||''
+    }),
+    canonicalSlug:plan.write.canonicalSlug,
+    commitToken:plan.commitToken,
+    supportsUnassessedHealth:
+      globalThis.CruvitSchemaCapabilities?.gardenPlantsUnassessedHealthV2===true
+  });
+
+  if(!persistResult?.ok){
+    return {
+      ok:false,
+      reason:persistResult?.reason||'persist-failed',
+      classified,
+      message:persistResult?.message||'Could not save this plant to My Garden.'
+    };
   }
+
   if(getIdentifierAcquireIdempotency()&&typeof getIdentifierAcquireIdempotency().mark==='function'){
     getIdentifierAcquireIdempotency().mark(plan.commitToken);
   }
+
   if(typeof PlantIdentifier!=='undefined'){
     PlantIdentifier.closeScan();
     PlantIdentifier.closeHome();
   }
   dismissEntryScreen();
-  setTab('plants');
-  return {ok:true,duplicate:false,canonicalSlug:plan.write.canonicalSlug,plant};
+  openMyGardenV2IntegratedPreview();
+  return {
+    ok:true,
+    duplicate:false,
+    canonicalSlug:plan.write.canonicalSlug,
+    plant:persistResult.plant
+  };
 }
 
 function plantIdentifierDeps(langOverride){
@@ -11299,6 +11319,7 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/suitability/hard-climate-survival-gate-v1.js?v=20260914e"></script>
 <script type="module" src="modules/smart-recommendations/smart-rec-garden-intelligence-v1.js?v=20260915c"></script>
 <script type="module" src="modules/plant-identifier/plant-identifier-garden-acquire-v1.js?v=20260914b"></script>
+<script type="module" src="modules/plant-identifier/plant-identifier-mygarden-write-bridge-v1.js?v=20261005a"></script>
 <script type="module" src="modules/plant-identifier/plant-identifier-location-context-v1.js?v=20260914b"></script>
 <script type="module" src="modules/identity/plant-identity-shadow.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-audit.js"></script>
