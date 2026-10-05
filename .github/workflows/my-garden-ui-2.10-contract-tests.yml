@@ -24,8 +24,8 @@ jobs:
       - name: Run isolated My Garden v2 tests
         run: node --test tests/my-garden-v2*.test.mjs
 
-  plant-id-mygarden-contract:
-    name: Plant ID → My Garden contract
+  plant-id-mygarden-e2e:
+    name: Plant ID → My Garden atomic E2E
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -44,15 +44,6 @@ jobs:
             tests/my-garden-v2-read-model.test.mjs \
             tests/my-garden-v2-plant-detail-base.test.mjs \
             tests/my-garden-v2-task-projection.test.mjs
-
-  plant-id-mygarden-atomic-db:
-    name: Plant ID → My Garden atomic DB
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
       - name: Install app dependencies
         run: npm ci
       - uses: supabase/setup-cli@v1
