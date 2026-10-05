@@ -4,7 +4,7 @@ import fs from 'node:fs';
 
 const sql = fs.readFileSync(
   new URL(
-    '../supabase/migrations/20261005203000_garden_plants_unassessed_health_v2.sql',
+    '../supabase/migrations/20261005175958_garden_plants_unassessed_health_v2.sql',
     import.meta.url
   ),
   'utf8'
