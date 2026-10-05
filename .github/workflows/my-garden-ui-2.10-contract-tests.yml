@@ -1,7 +1,11 @@
-name: My Garden UI 2.10 Contract Tests
+name: My Garden UI 2.10 contract tests
 
 on:
   push:
+    branches:
+      - my-garden-ui-2.10-contract-20261002
+      - fix/plant-id-mygarden-unassessed-20261005
+  pull_request:
     branches:
       - my-garden-ui-2.10-contract-20261002
   workflow_dispatch:
@@ -19,3 +23,15 @@ jobs:
           node-version: 22
       - name: Run isolated My Garden v2 tests
         run: node --test tests/my-garden-v2*.test.mjs
+
+  plant-id-mygarden-e2e:
+    name: Plant ID → My Garden E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run Plant Identification → My Garden integration suite
+        run: |
+          node --test             tests/garden-plants-schema-readiness-function.test.mjs             tests/garden-plants-schema-readiness-runtime.test.mjs             tests/plant-identifier-history-lifecycle-v1.test.mjs             tests/plant-identifier-history-reconciliation-v1.test.mjs             tests/plant-identifier-mygarden-write-bridge-v1.test.mjs             tests/plant-identifier-mygarden-wiring-v1.test.mjs             tests/plant-identifier-mygarden-e2e-v1.test.mjs             tests/my-garden-v2-add-plant-write-repository.test.mjs             tests/my-garden-v2-add-plant-contract.test.mjs             tests/garden-profile-plants-v1-contract.test.mjs             tests/my-garden-v2-unassessed-health-migration.test.mjs             tests/my-garden-v2-read-model.test.mjs             tests/my-garden-v2-plant-detail-base.test.mjs             tests/my-garden-v2-task-projection.test.mjs
