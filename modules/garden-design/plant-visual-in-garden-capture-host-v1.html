@@ -70,7 +70,7 @@
     return URL.createObjectURL(await res.blob());
   }
 
-  async function storeCapture(jobId, capResult){
+  async function storeCapture(jobId, capResult, blendResult){
     const res=await fetch('/.netlify/functions/plant-visual-in-garden-capture-store',{
       method:'POST',
       headers:{'content-type':'application/json'},
@@ -79,7 +79,12 @@
         jobId,
         imageBase64:capResult.imageBase64,
         geometry:capResult.geometry||null,
-        realSavedGardenPhotoUsed:true
+        realSavedGardenPhotoUsed:true,
+        autoBlend:{
+          applied:blendResult?.ok===true && blendResult?.enabled===true,
+          code:blendResult?.code||null,
+          blend:blendResult?.blend||null
+        }
       })
     });
     const text=await res.text();
@@ -129,6 +134,9 @@
           qaMaxHeightPct:q.qaMaxHeightPct,
           qaMaxWidthPct:q.qaMaxWidthPct,
           qaScalePolicyVersion:q.qaScalePolicyVersion,
+          width:q.width,
+          height:q.height,
+          qaTreeScaleV3:q.qaTreeScaleV3||null,
           scale:q.scale,
           x:q.x,
           y:q.y,
@@ -137,6 +145,20 @@
         },location.origin);
 
         await sleep(1400);
+
+        const blendRequestId='blend_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+        const blendPending=waitMessage('cruvit:garden-design-qa-auto-blend-result',blendRequestId,15000);
+        iframe.contentWindow.postMessage({
+          type:'cruvit:garden-design-qa-auto-blend-set',
+          requestId:blendRequestId,
+          enabled:true
+        },location.origin);
+        const blendResult=await blendPending;
+        if(!(blendResult?.ok===true && blendResult?.enabled===true && blendResult?.code==='QA_AUTO_BLEND_APPLIED')){
+          throw new Error(blendResult?.code||'QA_AUTO_BLEND_REQUIRED');
+        }
+
+        await sleep(300);
         const requestId='cap_'+Date.now()+'_'+Math.random().toString(36).slice(2);
         const pending=waitMessage('cruvit:garden-design-qa-capture-result',requestId,15000);
         iframe.contentWindow.postMessage({
@@ -145,7 +167,7 @@
         },location.origin);
         const captured=await pending;
         if(!captured?.ok) throw new Error(captured?.code||'QA_CAPTURE_FAILED');
-        const stored=await storeCapture(job.jobId,captured);
+        const stored=await storeCapture(job.jobId,captured,blendResult);
         state.captured++;
         state.results.push({
           jobId:job.jobId,

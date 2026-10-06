@@ -92,6 +92,11 @@ export default async (req)=>{
     geometry:body.geometry||null,
     rendererOwner:'Garden Design production renderer',
     realSavedGardenPhotoUsed:body.realSavedGardenPhotoUsed===true,
+    autoBlend:{
+      applied:body.autoBlend?.applied===true,
+      code:String(body.autoBlend?.code||''),
+      blend:body.autoBlend?.blend||null
+    },
     sourceGardenSignedUrlPersisted:false,
     sourceGardenImageCopiedToPlantStorage:false,
     independentQaScaleMath:false,

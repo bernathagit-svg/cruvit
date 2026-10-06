@@ -47,6 +47,8 @@ export default async(req)=>{
       bytes:evidence.bytes,
       geometry:evidence.geometry||null,
       realSavedGardenPhotoUsed:evidence.realSavedGardenPhotoUsed===true,
+      autoBlendApplied:evidence.autoBlend?.applied===true,
+      autoBlendCode:evidence.autoBlend?.code||null,
       rendererOwner:evidence.rendererOwner||null
     }:{
       jobId:job.jobId,
@@ -61,6 +63,7 @@ export default async(req)=>{
     captured:rows.filter(r=>r.status==='CAPTURED').length,
     pending:rows.filter(r=>r.status==='PENDING').length,
     allRealSavedGardenPhoto:rows.filter(r=>r.status==='CAPTURED').every(r=>r.realSavedGardenPhotoUsed===true),
+    allAutoBlendApplied:rows.filter(r=>r.status==='CAPTURED').every(r=>r.autoBlendApplied===true && r.autoBlendCode==='QA_AUTO_BLEND_APPLIED'),
     productionWrites:0,
     registryWrites:0,
     rows

@@ -2820,7 +2820,9 @@ function gdApplyQaPreview(msg) {
     season: msg.season || 'unknown',
     phenology: msg.phenology || 'vegetative',
     x: Math.min(0.96, Math.max(0.04, Number(msg.x ?? 0.5))),
-    y: Math.min(0.96, Math.max(0.04, Number(msg.y ?? 0.82))),
+    y: msg.qaTreeScaleV3?.enabled === true
+      ? Math.min(0.995, Math.max(0.04, Number(msg.y ?? 0.93)))
+      : Math.min(0.96, Math.max(0.04, Number(msg.y ?? 0.82))),
     scale: Math.min(2.2, Math.max(0.35, Number(msg.scale ?? 1))),
     rotation: Number(msg.rotation || 0),
     zIndex: 1,
@@ -2837,6 +2839,9 @@ function gdApplyQaPreview(msg) {
     qaWidth: Number(msg.width || 0) || null,
     qaHeight: Number(msg.height || 0) || null,
     authorityUserResized: msg.authorityUserResized === true,
+    qaTreeScaleV3: msg.qaTreeScaleV3 && typeof msg.qaTreeScaleV3 === 'object'
+      ? msg.qaTreeScaleV3
+      : null,
     metadata: { qaPreview: true, jobId: msg.jobId || null }
   }];
 
@@ -3993,15 +3998,25 @@ function gdBuildPlantLayerInnerHtml(layer) {
     let qaEffectiveWidth = Number(layer.qaBaseWidthPx);
 
     // In-Garden QA scale policy is a visual-review bound, not botanical meter truth.
-    // It must never permit the candidate to crop outside the real scene.
+    // Tree Scale V3 sizes the visible alpha specimen rather than the full transparent PNG canvas.
     const configuredMaxHeightPct = Number(layer.qaMaxHeightPct || 0);
     const configuredMaxWidthPct = Number(layer.qaMaxWidthPct || 0);
+    const treeV3 = layer.qaTreeScaleV3 && layer.qaTreeScaleV3.enabled === true;
     const groundLimitedHeightPct = Math.max(10, Math.min(96, Number(layer.y || 0.86) * 100 - 4));
-    const effectiveMaxHeightPct = configuredMaxHeightPct > 0
+    let effectiveMaxHeightPct = configuredMaxHeightPct > 0
       ? Math.min(configuredMaxHeightPct, groundLimitedHeightPct)
       : groundLimitedHeightPct;
 
-    if (qaSceneH > 0 && qaAspect > 0) {
+    if (treeV3 && qaSceneH > 0 && qaAspect > 0) {
+      const requestedImgHeightPct = Number(layer.qaTreeScaleV3.imgHeightPct || 0);
+      const requestedVisibleHeightPct = Number(layer.qaTreeScaleV3.visibleHeightPct || 0);
+      if (requestedImgHeightPct > 0) {
+        qaEffectiveWidth = (qaSceneH * (requestedImgHeightPct / 100)) / (qaAspect * qaScale);
+        effectiveMaxHeightPct = requestedVisibleHeightPct > 0
+          ? requestedVisibleHeightPct
+          : effectiveMaxHeightPct;
+      }
+    } else if (qaSceneH > 0 && qaAspect > 0) {
       const heightBoundWidth = (qaSceneH * (effectiveMaxHeightPct / 100)) / (qaAspect * qaScale);
       qaEffectiveWidth = Math.min(qaEffectiveWidth, heightBoundWidth);
     }
