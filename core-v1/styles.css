@@ -1,0 +1,54 @@
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#17271b}
+.stage{width:100vw;height:100vh;display:grid;place-items:center;background:#17271b;overflow:hidden}
+.approved-home{position:relative;width:min(100vw,calc(100vh * 9 / 16));height:min(100vh,calc(100vw * 16 / 9));aspect-ratio:9/16;overflow:hidden;touch-action:pan-y}
+.base-screen{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;user-select:none;-webkit-user-drag:none}
+.carousel-stage{position:absolute;left:0;right:0;top:27.9%;height:45.8%;overflow:hidden;z-index:3;opacity:0;pointer-events:none}
+.carousel-stage.active{opacity:1}
+.clean-bg{position:absolute;inset:-61% 0 -57% 0;overflow:hidden}
+.clean-bg img{width:100%;height:100%;object-fit:cover;object-position:center;filter:saturate(.88) contrast(.97) brightness(.86)}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,45,29,.04),rgba(20,35,23,.08))}
+.card{position:absolute;will-change:left,top,width,height,transform;filter:drop-shadow(0 18px 28px rgba(20,30,20,.16))}
+.card .variant{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;user-select:none;-webkit-user-drag:none}
+.card .v1{opacity:0}
+.drag-surface{position:absolute;left:0;right:0;top:27.9%;height:45.8%;z-index:5;cursor:grab;background:transparent;touch-action:none}
+.drag-surface.dragging{cursor:grabbing}
+@media(max-aspect-ratio:941/1672){.approved-home{width:100vw;height:auto;aspect-ratio:941/1672}}
+.card-plant-id .variant{clip-path:none;transform:none;}
+
+.smart-approved-card{
+  position:absolute;inset:0;overflow:hidden;border-radius:13%;
+  border:1px solid rgba(255,255,255,.72);
+  background:
+    radial-gradient(circle at 50% 58%,rgba(255,244,179,.18),transparent 34%),
+    linear-gradient(180deg,rgba(255,255,255,.18),rgba(60,82,42,.26)),
+    rgba(68,88,49,.58);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.52),0 16px 30px rgba(20,30,20,.18);
+  backdrop-filter:blur(10px);
+}
+.smart-approved-content{position:absolute;inset:0;text-align:center;color:#fff;font-family:Georgia,'Times New Roman',serif}
+.smart-approved-title{position:absolute;top:7%;left:7%;right:7%;font-size:8.5%;line-height:1.04;text-shadow:0 2px 8px rgba(0,0,0,.32)}
+.smart-approved-copy{position:absolute;top:24%;left:8%;right:8%;font-family:Arial,sans-serif;font-size:4.45%;line-height:1.28;text-shadow:0 1px 6px rgba(0,0,0,.3)}
+.smart-approved-visual{position:absolute;left:15%;right:15%;top:37%;height:34%;display:grid;place-items:center}
+.smart-approved-halo{position:absolute;width:82%;aspect-ratio:1;border:1.5px solid rgba(255,236,157,.86);border-radius:50%;box-shadow:0 0 18px rgba(255,226,130,.34),inset 0 0 18px rgba(255,226,130,.14)}
+.smart-approved-plant{position:relative;width:78%;height:100%;object-fit:contain;filter:drop-shadow(0 8px 12px rgba(0,0,0,.2))}
+.smart-approved-chips{position:absolute;left:9%;right:9%;top:66%;height:15%;font-family:Arial,sans-serif;font-size:3.15%;color:#fff}
+.smart-approved-chips span{position:absolute;padding:2.3% 4.2%;border:1px solid rgba(255,255,255,.54);border-radius:999px;background:rgba(76,91,63,.58);box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+.smart-approved-chips span:nth-child(1){left:0;top:0}
+.smart-approved-chips span:nth-child(2){right:0;top:29%}
+.smart-approved-chips span:nth-child(3){right:4%;bottom:0}
+.smart-approved-cta{position:absolute;left:13%;right:13%;bottom:5%;padding:4.2% 5%;border-radius:999px;background:rgba(248,246,238,.94);color:#243b24;font-family:Arial,sans-serif;font-size:4.25%;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+
+/* Approved bright Home: soften ONLY the base artwork so live carousel stays dominant. */
+.base-screen{
+  filter:none;
+}
+.approved-home:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:transparent;
+}
+.carousel-stage,.drag-surface{z-index:3}

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#22351f">
+  <title>CRUVIT · Approved Home</title>
+  <link rel="stylesheet" href="./styles.css?v=12">
+  <link rel="stylesheet" href="./motion-carousel.css?v=1">
+</head>
+<body>
+  <main class="stage">
+    <section class="approved-home" id="home">
+      <img id="baseScreen" class="base-screen" src="./assets/approved-shell.png" alt="CRUVIT approved Home">
+
+      <div id="carouselStage" class="carousel-stage" aria-hidden="true">
+        <div class="clean-bg"><img src="/homepage-v1/assets/hero-garden.jpg" alt=""></div>
+        <div class="shade"></div>
+
+        <div id="cardDesign" data-motion="./assets/garden-design-approved-motion.mp4" class="card card-design">
+          <img class="variant v0" src="./assets/card-garden-design.png" alt="">
+          <img class="variant v1" src="./assets/card-garden-design-center.png" alt="">
+        </div>
+
+        <div id="cardGarden" data-motion="./assets/my-garden-approved-motion.mp4" class="card card-garden">
+          <img class="variant v0" src="./assets/card-my-garden.png" alt="">
+          <img class="variant v1" src="./assets/card-my-garden-side.png" alt="">
+        </div>
+
+        <div id="cardDoctor" data-motion="./assets/plant-doctor-approved-motion.mp4" class="card card-doctor">
+          <img class="variant v0" src="./assets/card-plant-doctor-rectified.png" alt="Plant Doctor">
+        </div>
+
+        <div id="cardPlantId" data-motion="./assets/plant-identification-approved-motion.mp4" class="card card-plant-id">
+          <img class="variant v0" src="./assets/card-plant-id-approved-exact.webp" alt="Plant Identification">
+        </div>
+
+        <div id="cardSmart" data-motion="./assets/smart-recommendations-approved-motion.mp4" class="card card-smart">
+          <img class="variant v0" src="./assets/card-smart-approved-exact.webp" alt="Smart Recommendations">
+        </div>
+
+        <div id="cardShop" data-motion="./assets/shop-approved-motion.mp4" class="card card-shop">
+          <img class="variant v0" src="./assets/card-shop-approved-hq.webp" alt="Shop">
+        </div>
+      </div>
+
+      <div id="dragSurface" class="drag-surface" aria-label="Swipe modules"></div>
+    </section>
+  </main>
+  <script src="./app.js?v=16"></script>
+  <script src="./core-nav.js?v=1"></script>
+</body>
+</html>

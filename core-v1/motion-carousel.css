@@ -1,0 +1,25 @@
+/* Integration preview: carousel geometry owns layout; video is content only. */
+.carousel-stage{position:absolute;left:0;right:0;top:27%;height:45.8%;overflow:visible;opacity:1!important;pointer-events:none!important;z-index:3}
+.base-screen{clip-path:none}.carousel-stage:before,.carousel-stage:after,.carousel-stage .clean-bg,.carousel-stage .shade{display:none!important}
+.carousel-stage .card{position:absolute!important;overflow:hidden;border-radius:10.5%;filter:drop-shadow(0 18px 28px rgba(20,30,20,.18));will-change:left,top,width,height,transform;transition:none!important;background:transparent}
+.carousel-stage .card video{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;border-radius:inherit}
+.carousel-stage .card img{display:none!important}
+.carousel-stage .card-garden img.variant{display:block!important}
+.carousel-stage .card-garden video{display:block!important;opacity:1;pointer-events:none;object-fit:fill}
+.carousel-stage .card-design img.variant{display:block!important}
+.carousel-stage .card-design video{display:block!important;opacity:0;pointer-events:none;object-fit:fill}
+.carousel-stage .card:after{content:"";position:absolute;inset:0;border:1px solid rgba(255,255,255,.72);border-radius:inherit;pointer-events:none}
+.drag-surface{position:absolute;left:0;right:0;top:27%;height:45.8%;z-index:5;cursor:grab;background:transparent;touch-action:none}
+.drag-surface.dragging{cursor:grabbing}
+@media(max-width:700px){.carousel-stage{top:27%;height:45.8%}}
+/* Glass-boundary cleanup: video is clipped to the approved glass silhouette. */
+.carousel-stage .card{
+  clip-path:inset(0 round 10.5%);
+  -webkit-clip-path:inset(0 round 10.5%);
+  isolation:isolate;
+}
+.carousel-stage .card video{
+  clip-path:inset(0 round 10.5%);
+  -webkit-clip-path:inset(0 round 10.5%);
+}
+.carousel-stage .card:after{border-radius:10.5%}
