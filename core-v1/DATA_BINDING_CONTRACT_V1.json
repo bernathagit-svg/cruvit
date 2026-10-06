@@ -1705,5 +1705,103 @@
     "noRuntimeImplementationInThisCommit": true,
     "myPlantsCurrentStatus": "UNPROVEN_FOR_ARBITRARY_PLANTS",
     "myPlantsProofRequired": "Two-fixture test: Monstera deliciosa plus a second different species. Same locked UI must change plant-bound name/image/data according to DB. Same mockup plant across both datasets is FAIL."
+  },
+  "apiMinimizationGovernance": {
+    "status": "ARCHITECTURE_INVARIANT",
+    "rule": "API minimization is an architecture invariant, not a future optimization.",
+    "principles": {
+      "canonicalFirst": {
+        "rule": "Every read starts with CRUVIT canonical/local persisted data. An external provider may be called only when the required datum is missing, expired under an explicit freshness policy, or the user initiated a new action that truly requires the provider.",
+        "externalCallDefault": "FORBIDDEN_UNLESS_NEEDED"
+      },
+      "uiNeverCallsProvidersDirectly": {
+        "rule": "No Screen or Component may call Anthropic, weather APIs, botanical APIs, image-generation providers, supplier APIs, or any other external provider directly.",
+        "requiredFlow": "UI -> CRUVIT domain/data layer -> provider-decision gate -> external provider only if required",
+        "forbidden": "UI/component -> external provider"
+      },
+      "fetchOnceReuseManyExplicitInvalidation": {
+        "rule": "Already-loaded Garden snapshot and canonical/catalog data are reused across screens while valid.",
+        "mutationRule": "After a successful mutation, perform targeted invalidation/hydration for affected identities only; do not reload the entire system.",
+        "forbidden": "blind full-app reload after local mutation"
+      },
+      "zeroExternalCallNavigationTargets": {
+        "target": "ZERO_EXTERNAL_PROVIDER_CALLS",
+        "routesAndOperations": {
+          "openHome": 0,
+          "openMyGarden": 0,
+          "openMyPlants": 0,
+          "openExistingPlantDetail": 0,
+          "reopenAlreadyIdentifiedPlant": 0,
+          "renderCanonicalPlantImageGenerationCalls": 0,
+          "evaluateSuitabilityWhenLocationCatalogClimateAreCanonical": 0
+        },
+        "note": "Internal bounded Supabase reads may still occur where no valid local snapshot exists; this target concerns external providers."
+      },
+      "plantIdentification": {
+        "newUserInitiatedImage": {
+          "normalPathMaxIdentificationProviderCalls": 1,
+          "additionalCallAllowedOnlyWhen": "User explicitly requests another attempt or a separately-approved recovery policy requires it."
+        },
+        "afterCanonicalResolution": "Persist/reuse the canonical result; reopening or reusing that result must not call the identification provider again while valid.",
+        "forbidden": "automatic repeated provider retries in the normal path"
+      },
+      "images": {
+        "personalImageSource": "garden_media for the exact garden_plants.id / cover_media_id",
+        "systemFallbackSource": "Canonical Production visual for the same profile_slug",
+        "generationDuringRender": "FORBIDDEN",
+        "providerImageLookupOnScreenOpen": "FORBIDDEN",
+        "forbiddenFallbacks": [
+          "another species image",
+          "nearest-looking image",
+          "image guess",
+          "per-render generation",
+          "provider lookup merely because a screen opened"
+        ]
+      },
+      "requestDeduplication": {
+        "rule": "Identical requests already in flight must be coalesced and reused rather than sent again concurrently.",
+        "duplicateConcurrentProviderCallsTarget": 0
+      },
+      "provenanceFreshness": {
+        "rule": "Externally acquired information must be persisted with enough provenance to decide whether reuse is safe.",
+        "requiredMetadata": [
+          "source/provider",
+          "source or model/version when applicable",
+          "acquiredAt timestamp",
+          "freshness/expiry policy",
+          "canonical identity/key",
+          "relevant input/context version when applicable"
+        ],
+        "refreshRule": "Refresh only when policy says the persisted value is stale, invalid, missing, or the user explicitly requests a new acquisition."
+      },
+      "internalDatabaseCalls": {
+        "rule": "Supabase reads/writes must also be bounded and batched.",
+        "forbidden": [
+          "N+1 query per plant/card when a garden snapshot or joined/batched query can satisfy the screen",
+          "one independent query per visible card solely because the UI renders multiple cards",
+          "unbounded full-system reload after a targeted mutation"
+        ],
+        "preferred": [
+          "garden-level snapshot/query",
+          "batched identity lookup",
+          "targeted hydration after mutation",
+          "reuse of valid loaded snapshot across screens"
+        ]
+      },
+      "acceptanceMetrics": {
+        "requiredForMeaningfulE2E": [
+          "externalProviderCalls",
+          "paidAICalls",
+          "supabaseReadCount",
+          "supabaseWriteCount",
+          "duplicateCalls"
+        ],
+        "targets": {
+          "duplicateCalls": 0,
+          "paidAICallsDuringPaidAIOffGate": 0
+        },
+        "rule": "A meaningful E2E is not considered fully characterized until these counters are reported."
+      }
+    }
   }
 }

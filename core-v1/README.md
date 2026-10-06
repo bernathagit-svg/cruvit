@@ -39,3 +39,19 @@ No later commit begins without its supervisor gate.
 ## First milestone
 
 Approved Home -> Approved Plant Identification -> known fixture -> atomic Save -> Approved My Garden -> My Plants -> refresh -> same authoritative Plant -> retry -> no duplicate.
+
+## API minimization governance
+
+API minimization is an architecture invariant, not a future optimization.
+
+1. **Canonical-first.** Every read starts from CRUVIT canonical/local persisted data. External providers are used only when data is missing, expired by explicit freshness policy, or a user initiates a genuinely new provider-dependent action.
+2. **UI never calls providers directly.** Screens/components never call Anthropic, weather, botanical, image-generation, supplier, or other external APIs. The only allowed path is UI -> CRUVIT domain/data layer -> provider-decision gate -> provider if required.
+3. **Fetch once -> reuse many -> explicit invalidation.** Reuse valid Garden snapshots/catalog data between screens. After a successful mutation, invalidate/hydrate only affected identities; do not reload the entire system.
+4. **Zero-external-call navigation targets.** Opening Home, My Garden, My Plants, an existing Plant Detail, or an already-identified plant targets zero external provider calls. Rendering a canonical plant image targets zero generation calls. Suitability with already-canonical location/catalog/climate data targets zero external calls.
+5. **Plant Identification.** A newly user-initiated image allows at most one identification-provider call on the normal path. Another call requires an explicit user retry or separately-approved recovery policy. Once canonical identity is resolved, persist and reuse it.
+6. **Images.** Personal image = stored `garden_media` for the exact Plant Instance. Otherwise use the canonical Production visual for the same `profile_slug`. No render-time generation and no provider image lookup on every screen open.
+7. **Request deduplication.** Identical in-flight requests are coalesced; concurrent duplicate provider calls are forbidden.
+8. **Provenance / freshness.** Externally acquired data carries source/provider, version where applicable, timestamp, freshness/expiry policy, canonical key, and relevant input/context version so reuse vs refresh is explicit.
+9. **Internal DB calls are bounded/batched.** No N+1 Supabase query per plant/card where a snapshot/join/batch can satisfy the screen. Prefer garden-level snapshots and targeted post-mutation hydration.
+10. **Acceptance metrics.** Meaningful E2E runs report external provider calls, paid AI calls, Supabase read count, Supabase write count, and duplicate calls. Duplicate-call target is zero; while paid AI is locked off, paid-AI-call target is zero.
+
