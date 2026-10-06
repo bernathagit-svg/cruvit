@@ -49,7 +49,8 @@ test('retry compares canonical identity and ignores mutable fields', () => {
 });
 
 test('plant_added identity and payload are server-derived from authoritative plant', () => {
-  assert.match(sql, /v_plant\.client_instance_id/);
+  assert.match(sql, /v_event_stable_key := v_plant\.id::text/);
+  assert.match(sql, /gev_plant_identifier_plant_added_/);
   assert.match(sql, /v_client_event_id/);
   assert.doesNotMatch(
     sql.slice(0, sql.indexOf('returns jsonb')),
@@ -59,6 +60,67 @@ test('plant_added identity and payload are server-derived from authoritative pla
   assert.match(sql, /'scientific', v_plant\.scientific/);
   assert.match(sql, /'profile_slug', v_plant\.profile_slug/);
   assert.match(sql, /'client_instance_id', v_plant\.client_instance_id/);
+});
+
+
+test('RPC enforces explicit server-side input bounds and shapes', () => {
+  assert.match(sql, /char_length\(v_client_instance_id\) > 160/);
+  assert.match(sql, /client_instance_id_invalid/);
+  assert.match(sql, /char_length\(v_display_name\) > 160/);
+  assert.match(sql, /plant_display_name_invalid/);
+  assert.match(sql, /char_length\(v_profile_slug\) > 160/);
+  assert.match(sql, /canonical_slug_invalid/);
+  assert.match(sql, /char_length\(v_scientific\) > 200/);
+  assert.match(sql, /scientific_name_invalid/);
+  assert.match(sql, /v_client_instance_id !~ '\^\[A-Za-z0-9:_-\]\+\
+  assert.match(
+    sql,
+    /insert into public\.garden_events[\s\S]*on conflict \(garden_profile_id, client_event_id\) do nothing/i
+  );
+  assert.match(sql, /plant_added_event_unavailable/);
+  assert.match(sql, /idempotency_history_mismatch/);
+});
+
+test('RPC execute permission is authenticated-only', () => {
+  assert.match(
+    sql,
+    /revoke execute on function public\.add_garden_plant_once_v1[\s\S]*from public/i
+  );
+  assert.match(
+    sql,
+    /revoke execute on function public\.add_garden_plant_once_v1[\s\S]*from anon/i
+  );
+  assert.match(
+    sql,
+    /grant execute on function public\.add_garden_plant_once_v1[\s\S]*to authenticated/i
+  );
+});
+/);
+  assert.match(sql, /v_profile_slug !~ '\^\[a-z0-9\]\+\(\?:-\[a-z0-9\]\+\)\*\
+  assert.match(
+    sql,
+    /insert into public\.garden_events[\s\S]*on conflict \(garden_profile_id, client_event_id\) do nothing/i
+  );
+  assert.match(sql, /plant_added_event_unavailable/);
+  assert.match(sql, /idempotency_history_mismatch/);
+});
+
+test('RPC execute permission is authenticated-only', () => {
+  assert.match(
+    sql,
+    /revoke execute on function public\.add_garden_plant_once_v1[\s\S]*from public/i
+  );
+  assert.match(
+    sql,
+    /revoke execute on function public\.add_garden_plant_once_v1[\s\S]*from anon/i
+  );
+  assert.match(
+    sql,
+    /grant execute on function public\.add_garden_plant_once_v1[\s\S]*to authenticated/i
+  );
+});
+/);
+  assert.match(sql, /\[\[:cntrl:\]\]/);
 });
 
 test('plant_added is create-if-absent in same function transaction', () => {
