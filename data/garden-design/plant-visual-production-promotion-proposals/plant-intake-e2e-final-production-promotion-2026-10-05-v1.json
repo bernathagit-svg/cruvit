@@ -1,0 +1,27 @@
+{
+  "contract": "plant-visual-production-promotion-proposal-v1",
+  "manifestId": "plant-intake-e2e-final-production-promotion-2026-10-05-v1",
+  "createdAt": "2026-10-05",
+  "executionAuthorized": false,
+  "candidateJobs": [
+    "strelitzia__mature__default__flowering__v1",
+    "hibiscus__mature__shrub__flowering__v1",
+    "lemon__mature__tree__fruiting__v1",
+    "cyclamen__mature__default__flowering__v1"
+  ],
+  "plannedActions": [
+    "copy exact verified candidate bytes to immutable Production R2 keys",
+    "verify production readback checksum",
+    "update design asset registry only for successfully verified production objects"
+  ],
+  "paidGenerationAllowed": false,
+  "newImageGenerationAllowed": false,
+  "unrelatedRegistryChangesAllowed": false,
+  "preconditions": {
+    "promotionReadinessMustBeAllReady": true,
+    "liveFullPlantOnboardingMustBeAllReady": true,
+    "ownerPromotionApprovalRequired": true
+  },
+  "productionWritesPlanned": 4,
+  "registryWritesPlannedAtMost": 4
+}
