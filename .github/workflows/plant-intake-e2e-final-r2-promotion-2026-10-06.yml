@@ -1,0 +1,52 @@
+name: CRUVIT Plant Intake E2E Final R2 Promotion
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/plant-intake-e2e-final-r2-promotion-2026-10-06.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BASE_URL: https://friendly-taiyaki-64aacb.netlify.app
+      MANIFEST_ID: plant-intake-e2e-final-production-promotion-2026-10-06-v1
+    steps:
+      - name: Promote four owner-approved jobs to Production R2
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p execution-results
+          jobs=(
+            "strelitzia__mature__default__flowering__v1"
+            "hibiscus__mature__shrub__flowering__v1"
+            "lemon__mature__tree__fruiting__v1"
+            "cyclamen__mature__default__flowering__v1"
+          )
+          for job in "${jobs[@]}"; do
+            payload=$(printf '{"manifestId":"%s","jobId":"%s"}' "$MANIFEST_ID" "$job")
+            curl --fail-with-body --silent --show-error               -X POST "$BASE_URL/.netlify/functions/plant-visual-promote-manifest"               -H 'content-type: application/json'               --data "$payload"               | tee "execution-results/$job.json"
+          done
+
+      - name: Verify Production R2 readback status
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error             "$BASE_URL/.netlify/functions/plant-visual-production-promotion-status?manifest=$MANIFEST_ID"             | tee execution-results/production-status.json
+          test "$(jq -r '.verified' execution-results/production-status.json)" = "4"
+          test "$(jq -r '.missing' execution-results/production-status.json)" = "0"
+          test "$(jq -r '.mismatch' execution-results/production-status.json)" = "0"
+
+      - name: Upload execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: plant-intake-e2e-final-r2-promotion-2026-10-06
+          path: execution-results/
+          if-no-files-found: warn
+          retention-days: 30
