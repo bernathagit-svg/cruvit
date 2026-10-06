@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CRUVIT · Plant Identification · Owner Approved Flow</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#eef2e7}
+body{display:grid;place-items:start center;font-family:Arial,sans-serif;overflow-x:hidden}
+.stage{position:relative;width:min(96vw,420px);line-height:0;background:#f7f6ee}
+.stage img{display:block;width:100%;height:auto}
+.hot{position:absolute;border:0;background:transparent;padding:0;cursor:pointer}
+.hot:focus-visible{outline:3px solid rgba(30,115,62,.8);outline-offset:-3px}
+@media(min-width:600px){
+ body{padding:18px 0}
+ .stage{box-shadow:0 18px 50px rgba(22,47,27,.14)}
+}
+</style>
+</head>
+<body>
+<main class="stage" id="stage"><img id="screen" alt=""></main>
+<script src="./assets/s1-00.js"></script>
+<script src="./assets/s1-01.js"></script>
+<script src="./assets/s1-02.js"></script>
+<script src="./assets/s1-03.js"></script>
+<script src="./assets/s2-00.js"></script>
+<script src="./assets/s2-01.js"></script>
+<script src="./assets/s2-02.js"></script>
+<script src="./assets/s2-03.js"></script>
+<script src="./assets/s2-04.js"></script>
+<script src="./assets/s3-00.js"></script>
+<script src="./assets/s3-01.js"></script>
+<script src="./assets/s3-02.js"></script>
+<script src="./assets/s4-00.js"></script>
+<script src="./assets/s4-01.js"></script>
+<script src="./assets/s4-02.js"></script>
+<script src="./assets/s5-00.js"></script>
+<script src="./assets/s5-01.js"></script>
+<script src="./assets/s5-02.js"></script>
+<script src="./assets/s5-03.js"></script>
+<script src="./assets/s6-00.js"></script>
+<script src="./assets/s6-01.js"></script>
+<script src="./assets/s6-02.js"></script>
+<script src="./assets/s7-00.js"></script>
+<script src="./assets/s7-01.js"></script>
+<script src="./assets/s7-02.js"></script>
+<script src="./assets/s8-00.js"></script>
+<script src="./assets/s8-01.js"></script>
+<script src="./assets/s8-02.js"></script>
+<script src="./assets/s8-03.js"></script>
+
+<script>
+const screens=Array.from({length:8},(_,i)=>(window.__PI?.[i]||[]).join(""));
+const expected=[2310742,3406426,1786662,2249934,2302594,2194902,1904574,2405466];
+if(screens.some((s,i)=>s.length!==expected[i])) throw new Error("Approved asset integrity check failed");
+const titles=["Identify","Camera","Analyzing","Result","Plant Profile","Care","Suitability","Save to My Garden"];
+const hotspots={
+0:[{x:10,y:50,w:80,h:13,to:1,label:"Take a photo"}],
+1:[{x:30,y:66,w:40,h:20,to:2,label:"Capture photo"}],
+2:[{x:4,y:8,w:92,h:80,to:3,label:"Continue to result"}],
+3:[{x:5,y:55,w:90,h:27,to:4,label:"View full profile"}],
+4:[{x:18,y:28,w:20,h:9,to:5,label:"Care"}],
+5:[{x:5,y:5,w:90,h:84,to:6,label:"Continue to suitability"}],
+6:[{x:5,y:80,w:90,h:13,to:7,label:"Save to My Garden"}],
+7:[{x:5,y:76,w:90,h:15,to:0,label:"Done"}]
+};
+let index=0;
+const stage=document.getElementById("stage"),img=document.getElementById("screen");
+function go(i){index=Math.max(0,Math.min(screens.length-1,i));render()}
+function render(){
+ stage.querySelectorAll(".hot").forEach(x=>x.remove());
+ img.src=screens[index];
+ img.alt="CRUVIT Plant Identification — "+titles[index];
+ document.title="CRUVIT · Plant Identification · "+titles[index];
+ for(const h of (hotspots[index]||[])){
+  const b=document.createElement("button");
+  b.className="hot";b.type="button";b.setAttribute("aria-label",h.label);
+  b.style.left=h.x+"%";b.style.top=h.y+"%";b.style.width=h.w+"%";b.style.height=h.h+"%";
+  b.onclick=e=>{e.stopPropagation();go(h.to)};stage.appendChild(b);
+ }
+}
+img.addEventListener("click",()=>{if(index<screens.length-1)go(index+1)});
+let touchStartX=null;
+stage.addEventListener("touchstart",e=>{touchStartX=e.changedTouches[0].clientX},{passive:true});
+stage.addEventListener("touchend",e=>{
+ if(touchStartX===null)return;
+ const dx=e.changedTouches[0].clientX-touchStartX;touchStartX=null;
+ if(dx<-40&&index<screens.length-1)go(index+1);
+ if(dx>40&&index>0)go(index-1);
+},{passive:true});
+document.addEventListener("keydown",e=>{
+ if(e.key==="ArrowRight")go(index+1);
+ if(e.key==="ArrowLeft")go(index-1);
+});
+render();
+</script>
+</body>
+</html>
