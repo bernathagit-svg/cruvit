@@ -73,14 +73,21 @@ export function prepareAddPlantIntent(input = {}) {
   const identity = normalizeIdentity(input, mode);
 
   const intent = {
-    gardenProfileId: requiredText(input.gardenProfileId ?? input.garden_profile_id, 'garden_profile_id_required'),
-    clientInstanceId: requiredText(input.clientInstanceId ?? input.client_instance_id, 'client_instance_id_required'),
-    displayName: requiredText(input.displayName ?? input.name, 'plant_display_name_required'),
+    gardenProfileId: requiredText(
+      input.gardenProfileId ?? input.garden_profile_id,
+      'garden_profile_id_required'
+    ),
+    clientInstanceId: requiredText(
+      input.clientInstanceId ?? input.client_instance_id,
+      'client_instance_id_required'
+    ),
+    displayName: requiredText(
+      input.displayName ?? input.name,
+      'plant_display_name_required'
+    ),
     mode,
     identity,
     gardenAreaId: input.gardenAreaId ?? input.garden_area_id ?? null,
-    // Exact physical position is not currently a first-class garden_plants field.
-    // Keep it out of the insert rather than hiding it in an unrelated field.
     exactPosition: input.exactPosition ?? input.exact_position ?? null,
     initialHealth: Object.freeze({
       status: 'unassessed',
@@ -105,17 +112,4 @@ export function assertAddPlantIntentSafe(intent) {
   }
 
   return true;
-}
-
-export function gardenPlantInsertIsBlockedByCurrentSchema(intent) {
-  assertAddPlantIntentSafe(intent);
-
-  // Current garden_plants schema defaults status to Healthy and constrains mark to ✓ / !.
-  // That cannot faithfully persist the required unassessed/unknown state.
-  return Object.freeze({
-    blocked: true,
-    code: 'GARDEN_PLANT_HEALTH_UNKNOWN_NOT_REPRESENTABLE',
-    reason:
-      'garden_plants currently defaults status=Healthy and mark=✓/! only; live Add Plant would silently infer health.',
-  });
 }

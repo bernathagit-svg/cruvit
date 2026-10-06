@@ -1706,6 +1706,26 @@
     return t('matchNone');
   }
 
+
+  function buildRuntimeViewModel(result, classified, display) {
+    const api = global.CruvitPlantIdentificationRuntimeViewModel || null;
+    if (!api || typeof api.buildPlantIdentificationRuntimeViewModel !== 'function') {
+      return null;
+    }
+    const vm = api.buildPlantIdentificationRuntimeViewModel({
+      identification: result,
+      catalogMatch: classified,
+      catalogDisplay: display,
+      gardenSuitability: result?._gardenSuitability || null,
+      gardenLocationContext: result?._gardenLocationContext || null,
+      savedPlant: result?._savedPlant || null,
+    });
+    if (typeof api.assertRuntimeViewModelHasNoFabricatedTruth === 'function') {
+      api.assertRuntimeViewModelHasNoFabricatedTruth(vm);
+    }
+    return vm;
+  }
+
   function renderResult(result) {
     const mount = $('result');
     if (!mount) return;
@@ -1718,6 +1738,7 @@
     applyGardenLocationContext(result, classified);
     const chosenSlug = state.chosenCanonicalSlug || classified.canonicalSlug || '';
     const display = catalogDisplayFor(chosenSlug);
+    result._runtimeViewModel = buildRuntimeViewModel(result, classified, display);
     const title = (display && display.name) || result.common_name || t('identity');
     const latin = (display && display.scientific) || result.scientific_name || '';
     const confidence = String(result.confidence || '').trim();
@@ -2020,6 +2041,10 @@
       if (out && out.ok === false) {
         showErr(out.message || acquireFailMessage(out.reason));
         return;
+      }
+      if (out?.plant && state.lastResult) {
+        state.lastResult._savedPlant = out.plant;
+        renderResult(state.lastResult);
       }
       toast(t('saved'));
     } catch (err) {

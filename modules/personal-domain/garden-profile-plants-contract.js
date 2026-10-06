@@ -3,7 +3,7 @@
  * Authoritative plant rows belong to garden_profiles via garden_plants.
  */
 
-export const GARDEN_PLANT_MARKS = Object.freeze(['✓', '!']);
+export const GARDEN_PLANT_MARKS = Object.freeze(['unknown', '✓', '!']);
 
 export const DEFAULT_PLANT_PREFS = Object.freeze({
   autoTasks: true,
@@ -32,8 +32,8 @@ export function buildServerPlantPayload(plant) {
   const p = plant && typeof plant === 'object' ? plant : {};
   const clientInstanceId = String(p.id || p.client_instance_id || '').trim();
   const name = String(p.name || '').trim();
-  const status = String(p.status || 'Healthy').trim() || 'Healthy';
-  const mark = String(p.mark || '✓').trim() || '✓';
+  const status = String(p.status || 'unassessed').trim() || 'unassessed';
+  const mark = String(p.mark || 'unknown').trim() || 'unknown';
   const source = String(p.source || 'My Garden').trim() || 'My Garden';
   const profileSlug = String(p.profileSlug || p.profile_slug || '').trim() || null;
   const scientific =
@@ -44,7 +44,7 @@ export function buildServerPlantPayload(plant) {
 
   if (!clientInstanceId) throw new Error('client_instance_id is required');
   if (!name) throw new Error('plant name is required');
-  if (!isValidPlantMark(mark)) throw new Error('plant mark must be ✓ or !');
+  if (!isValidPlantMark(mark)) throw new Error('plant mark must be unknown, ✓ or !');
 
   return {
     client_instance_id: clientInstanceId,
@@ -68,8 +68,8 @@ export function serverPlantToAppPlant(row) {
     id: clientId,
     serverId: row.id || null,
     name: String(row.name || 'Plant'),
-    status: String(row.status || 'Healthy'),
-    mark: isValidPlantMark(row.mark) ? String(row.mark) : '✓',
+    status: String(row.status || 'unassessed'),
+    mark: isValidPlantMark(row.mark) ? String(row.mark) : 'unknown',
     source: String(row.source || 'My Garden'),
     profileSlug: row.profile_slug ? String(row.profile_slug) : undefined,
     scientific: row.scientific ? String(row.scientific) : undefined,

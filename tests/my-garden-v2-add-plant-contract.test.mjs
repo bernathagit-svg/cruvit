@@ -3,7 +3,6 @@ import assert from 'node:assert/strict';
 import {
   prepareAddPlantIntent,
   assertAddPlantIntentSafe,
-  gardenPlantInsertIsBlockedByCurrentSchema,
 } from '../modules/my-garden-v2/add-plant-contract.js';
 
 const base = {
@@ -60,10 +59,12 @@ test('confirmed scan may carry canonical identity', () => {
   });
 
   assert.equal(intent.identity.profileSlug, 'lemon');
+  assert.equal(intent.identity.scientific, 'Citrus × limon');
   assert.equal(intent.identity.identitySource, 'identifier_confirmed');
+  assert.equal(assertAddPlantIntentSafe(intent), true);
 });
 
-test('catalog and recommendation paths require canonical identity', () => {
+test('catalog and recommendation paths preserve shared future Add Plant contract', () => {
   for (const mode of ['search', 'suggestions', 'popular']) {
     assert.throws(
       () => prepareAddPlantIntent({ ...base, mode }),
@@ -78,15 +79,7 @@ test('catalog and recommendation paths require canonical identity', () => {
     });
 
     assert.equal(intent.identity.profileSlug, 'lemon');
+    assert.equal(intent.initialHealth.status, 'unassessed');
+    assert.equal(intent.initialHealth.mark, 'unknown');
   }
-});
-
-test('current server schema is explicitly blocked for live Add Plant health state', () => {
-  const intent = prepareAddPlantIntent({
-    ...base,
-    mode: 'manual',
-  });
-  const gate = gardenPlantInsertIsBlockedByCurrentSchema(intent);
-  assert.equal(gate.blocked, true);
-  assert.equal(gate.code, 'GARDEN_PLANT_HEALTH_UNKNOWN_NOT_REPRESENTABLE');
 });
