@@ -1,0 +1,266 @@
+{
+  "contract": "CRUVIT_GOLDEN_BASELINE_V1",
+  "governanceVersion": 1,
+  "createdFor": "CRUVIT CORE V1 stabilization",
+  "base": {
+    "branch": "main",
+    "commit": "c04a885eb81f37aaa89abe98c4d67b250d7ac67e",
+    "rule": "Core V1 stabilization starts from this exact main commit. No full PR merge, rebase, or legacy app shell import is permitted."
+  },
+  "branch": "stabilize/core-v1",
+  "approvalStates": [
+    "OWNER_APPROVED_VISUAL",
+    "LOCKED_IMPLEMENTED"
+  ],
+  "coreShell": {
+    "route": "/core-v1/",
+    "sourceBranch": "ux-lab-add-smart-only",
+    "sourceCommit": "c4e6ba0d6b4f140136ad1eb6408f9721ef7dd5e6",
+    "approvedReference": {
+      "path": "ux-lab/assets/home-approved-reference.png",
+      "gitBlobSha": "a918c48fa497c7115ab301b17e480870d8d6d4a0"
+    },
+    "status": "LOCKED_IMPLEMENTED",
+    "rule": "Approved Home/carousel is the Core V1 visual entrypoint. app.html is not a Golden Source and remains untouched.",
+    "verticalSliceNavigationOnly": {
+      "myGardenCard": "/core-v1/my-garden/",
+      "plantIdentificationCard": "/core-v1/plant-identification/"
+    },
+    "forbiddenAtThisStage": [
+      "redesign",
+      "restyle",
+      "replacement card assets",
+      "routing activation for Garden Design",
+      "routing activation for Plant Doctor",
+      "routing activation for Smart Recommendations",
+      "routing activation for Shop"
+    ]
+  },
+  "myGarden": {
+    "sourceBranch": "my-garden-ui-2.10-contract-20261002",
+    "sourceCommit": "121b1e1d91aaf5fa8ce81ea8bc2429dec8abe5e3",
+    "governanceSources": {
+      "ownerVisualApprovalRegistry": {
+        "path": "modules/my-garden-v2/owner-visual-approval-registry.json",
+        "gitBlobSha": "db57b6813af8a0f9e6eb7bf201ca4b03e0c1b983"
+      },
+      "approvedReferenceManifest": {
+        "path": "modules/my-garden-v2/approved-reference-manifest.json",
+        "gitBlobSha": "e11a52e766f1dfd1bd1cbef9f44cf5202c675f6a"
+      }
+    },
+    "gardenPhoto": {
+      "status": "OWNER_APPROVED_VISUAL",
+      "distinction": "Garden Photo is Garden Profile state and is not Plant Photo.",
+      "currentApprovedFullScreenReference": {
+        "sourceName": "image(20261002-105215).png",
+        "sha256": "ca1a929b0226d46b8ae75a8b160fdc8780dd9d2f84f9f419ee4b47410f3bd676",
+        "dimensions": {
+          "width": 722,
+          "height": 1230
+        }
+      },
+      "taggedGardenBehaviorReference": {
+        "sourceName": "CRUVIT-My-Garden-Latest-Working-Photo-Tags-FIXED.html",
+        "sha256": "ae5555f12774168a10e61ebf05117d51abcf0048a62a9e1553cc9d56edcecaa3"
+      },
+      "recoveryEvidenceOnly": {
+        "sourceName": "CRUVIT-My-Garden-END-OF-DAY-2026-10-01.html",
+        "sha256": "ce3d2b64a2574ce9c0bdbe23bd6939f52ddb4e6285f6517ab67d531797919c70",
+        "importIntoVerticalSlice": false
+      },
+      "lockedVisibleControls": [
+        "current approved garden photo",
+        "tagged garden view",
+        "Change garden photo",
+        "Search",
+        "Profile",
+        "existing center +",
+        "complete existing bottom navigation"
+      ],
+      "standaloneGardenBaseAssetStatus": "NOT_VERIFIED_AS_STANDALONE_ARTIFACT",
+      "standaloneAssetRule": "Do not reconstruct, extract, crop, or regenerate garden-base-v2.png. If a standalone source becomes necessary, STOP until the original approved artifact is found."
+    },
+    "screens": [
+      {
+        "id": "my-garden-main",
+        "route": "/core-v1/my-garden/",
+        "status": "OWNER_APPROVED_VISUAL",
+        "referenceSha256": "ca1a929b0226d46b8ae75a8b160fdc8780dd9d2f84f9f419ee4b47410f3bd676",
+        "verticalSlice": true
+      },
+      {
+        "id": "my-plants",
+        "route": "/core-v1/my-garden/plants/",
+        "status": "LOCKED_IMPLEMENTED",
+        "referenceSha256": "64ddc9c59a62482c4050159a8a9109d19a71d1a777ebafc888d6d598d8b531d5",
+        "runtimeDataBindingStatus": "UNPROVEN_FOR_ARBITRARY_PLANTS",
+        "runtimeDataBindingGate": "Do not alter the approved composition to accommodate arbitrary newly-created plants. Prove arbitrary Plant data binding without unapproved visual change before Commit 4 can pass its supervisor gate.",
+        "verticalSlice": true
+      },
+      {
+        "id": "plant-overview",
+        "status": "LOCKED_IMPLEMENTED",
+        "referenceSha256": "eab2a113e2a14d11eef09e8e4bbca31bb373c4034a0ab77b9bd651237def7b5a",
+        "verticalSlice": false
+      },
+      {
+        "id": "plant-care",
+        "status": "LOCKED_IMPLEMENTED",
+        "referenceSha256": "5881d6f3856b8b7d3b1ea8177c5812e64042ed17f1caf74293a9ee70c4316c7a",
+        "verticalSlice": false
+      },
+      {
+        "id": "plant-schedule",
+        "status": "LOCKED_IMPLEMENTED",
+        "referenceSha256": "ad56e981c75e407a5601190fdf3ac212fe5607e39bec94d52c683d9aa58dea75",
+        "verticalSlice": false
+      },
+      {
+        "id": "plant-history",
+        "status": "LOCKED_IMPLEMENTED",
+        "referenceSha256": "a9be08e731153677bbc4a89291c603cdbfeaac576b3a67ac41d83a2c783dbfa2",
+        "verticalSlice": false
+      },
+      {
+        "id": "add-plant",
+        "status": "LOCKED_IMPLEMENTED",
+        "referenceSha256": "aba9460f2caae847dbcf1017abbb71e2c1c9a986e5de89cc27ffdcfe189dbd7b",
+        "verticalSlice": false
+      },
+      {
+        "id": "upcoming-list",
+        "status": "OWNER_APPROVED_VISUAL",
+        "referenceSha256": "03cca6920c02e4ec191f9dc1d8cfa197a4c1913a6da9b31af9e1a3b2385d7430",
+        "verticalSlice": false
+      },
+      {
+        "id": "upcoming-calendar",
+        "status": "OWNER_APPROVED_VISUAL",
+        "referenceSha256": "322b3ef6c07203be8c5547930bd0a95ce2e79fb8824d01f7b1319f012212b4db",
+        "verticalSlice": false
+      },
+      {
+        "id": "garden-journal",
+        "status": "OWNER_APPROVED_VISUAL",
+        "referenceSha256": "39017bb6c981198637e34dd8b2d8faadd7668f50a00c2e57c7c7e80749758a",
+        "verticalSlice": false
+      },
+      {
+        "id": "notifications",
+        "status": "OWNER_APPROVED_VISUAL",
+        "referenceSha256": "36110c332c519ad959a173bd5fe6c1175308c847ff491ff5d02064549edf32d7",
+        "verticalSlice": false
+      }
+    ]
+  },
+  "plantIdentification": {
+    "sourceBranch": "plant-id-approved-flow-v2-20261005",
+    "sourceCommit": "b7d1464254477996617aeaa20ad346b30534d75e",
+    "approvedPackage": {
+      "path": "ux-lab/plant-id-approved-flow-v2/",
+      "treeSha": "01f33d2478f723e94383acdb7c1fa55524a1b87a",
+      "assetsTreeSha": "595ea3ace7692ba616b1a1ab7d1d97c320ed5440",
+      "indexBlobSha": "309a11a177eb06fd81e48c57e244dce640c1d954",
+      "manifestBlobSha": "18bf0da0487250fe76e9102f246619a8547373af"
+    },
+    "externalApprovedArtifact": {
+      "sourceName": "CRUVIT-Plant-ID-APPROVED-FLOW-2026-10-05-v2.html",
+      "sha256": "3c8b0175771dab0735f4a0394f62bf4bf68dfce760363f8ad31ca8b9111fc15b"
+    },
+    "fullResProvenance": {
+      "sourceName": "CRUVIT-Plant-Identification-FullRes-Flow.html",
+      "sha256": "7de39ba43c2b4f5f9d96ca236a693adb79430c4acb6d52974675b04569ca09ed"
+    },
+    "screens": [
+      {
+        "id": "PI-01",
+        "name": "Identify",
+        "status": "OWNER_APPROVED_VISUAL",
+        "verticalSlice": true
+      },
+      {
+        "id": "PI-02",
+        "name": "Camera",
+        "status": "OWNER_APPROVED_VISUAL",
+        "verticalSlice": true
+      },
+      {
+        "id": "PI-03",
+        "name": "Analyzing",
+        "status": "OWNER_APPROVED_VISUAL",
+        "verticalSlice": true
+      },
+      {
+        "id": "PI-04",
+        "name": "Result",
+        "status": "OWNER_APPROVED_VISUAL",
+        "verticalSlice": true
+      },
+      {
+        "id": "PI-05",
+        "name": "Plant Profile",
+        "status": "OWNER_APPROVED_VISUAL",
+        "verticalSlice": true
+      },
+      {
+        "id": "PI-06",
+        "name": "Care",
+        "status": "OWNER_APPROVED_VISUAL",
+        "verticalSlice": true
+      },
+      {
+        "id": "PI-07",
+        "name": "Suitability",
+        "status": "OWNER_APPROVED_VISUAL",
+        "verticalSlice": true
+      },
+      {
+        "id": "PI-08",
+        "name": "Save to My Garden",
+        "status": "OWNER_APPROVED_VISUAL",
+        "verticalSlice": true
+      }
+    ],
+    "rules": [
+      "Use approved pixels exactly.",
+      "Transparent interaction layers only.",
+      "No phone frame or unapproved status bar.",
+      "No image replacement, crop change, typography change, color change, copy change, or proportional change.",
+      "Paid AI remains OFF until a later explicit Owner approval."
+    ]
+  },
+  "atomicAddPlant": {
+    "sourceCheckpoint": "aeddddea9ec826394fb60e13212b5d9bb3b2a331",
+    "verticalSlice": true,
+    "invariant": "Core V1 MUST inject personalDomain explicitly. The legacy globalThis.cruvitPersonalDomainV0 fallback is forbidden in Core V1 runtime wiring.",
+    "runtimeGlobalFallbackForbidden": "globalThis.cruvitPersonalDomainV0",
+    "sharedContract": "prepareAddPlantIntent",
+    "command": "add_garden_plant_once_v1",
+    "fixturePolicy": "The first Core V1 vertical slice uses a known identification fixture; paid AI is not used.",
+    "productionMigrationStatus": "FORBIDDEN_UNTIL_SEPARATE_OWNER_APPROVAL"
+  },
+  "routes": {
+    "home": "/core-v1/",
+    "plantIdentification": "/core-v1/plant-identification/",
+    "myGarden": "/core-v1/my-garden/",
+    "myPlants": "/core-v1/my-garden/plants/"
+  },
+  "commitSequence": [
+    "Commit 1: governance only",
+    "Commit 2: approved Home/carousel + thin Core V1 shell + transparent My Garden/Plant ID navigation only",
+    "Commit 3: approved 8-screen Plant Identification flow only",
+    "Commit 4: minimal approved My Garden path: My Garden main -> My Plants",
+    "Commit 5: atomic Add Plant layer + required tests only"
+  ],
+  "milestone": "Approved Home -> Approved Plant Identification -> atomic Save -> Approved My Garden -> My Plants -> refresh -> same Plant, no duplicate.",
+  "globalLocks": [
+    "No full merge of PR #140, #145, or #146.",
+    "No legacy app.html import or modification.",
+    "No Production DB changes.",
+    "No new Preview in Commit 1.",
+    "No paid AI.",
+    "No visual reconstruction or regeneration.",
+    "No module work outside the first Core V1 vertical slice before Owner PASS."
+  ]
+}

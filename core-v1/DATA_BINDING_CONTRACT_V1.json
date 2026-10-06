@@ -1,0 +1,1709 @@
+{
+  "contract": "CRUVIT_DATA_BINDING_CONTRACT_V1",
+  "governanceVersion": 1,
+  "commitScope": "GOVERNANCE_ONLY",
+  "baseGoldenContract": "CRUVIT_GOLDEN_BASELINE_V1",
+  "fundamentalRule": "Approved screens are Visual Contracts, not static production data.",
+  "sampleContentPolicy": {
+    "rule": "Example content inside an approved mockup is sample content only unless an element is explicitly classified STATIC_VISUAL.",
+    "examplesThatAreNeverProductionTruthByThemselves": [
+      "Lemon tree",
+      "Monstera deliciosa",
+      "example plant photographs used to illustrate a result",
+      "task counts",
+      "health/status labels",
+      "dates",
+      "care values",
+      "confidence percentages",
+      "climate/suitability percentages",
+      "location/area labels",
+      "notes/reminder values"
+    ],
+    "failureRule": "If runtime data is unavailable, do not silently retain sample content and present it as user truth."
+  },
+  "classifications": {
+    "STATIC_VISUAL": "Approved pixels/artwork/copy whose meaning is intentionally fixed and not user/business data.",
+    "DYNAMIC_TEXT": "Text bound to authoritative runtime records.",
+    "DYNAMIC_IMAGE": "Image bound to an exact authoritative entity/state.",
+    "DYNAMIC_STATE": "Selection, progress, health/task/filter/nav state or other runtime state.",
+    "DERIVED_VALUE": "Value calculated from authoritative records/engines rather than stored as independent truth.",
+    "ACTION": "Visible control that invokes navigation or an allowed command."
+  },
+  "globalInvariants": [
+    "My Plants Plant identity is garden_plants.id. All display fields on a Plant card belong to that exact Plant Instance.",
+    "Plant Detail MUST use the same garden_plants.id as the My Plants card that opened it.",
+    "Personal Plant Photo is garden_media selected by garden_plants.cover_media_id for the same garden_plants.id.",
+    "System-image fallback MUST be the canonical visual for the same profile_slug. Never substitute another species image and never guess an image.",
+    "Schedule, Upcoming, Calendar, Need your attention, and Notifications are views of the same garden_tasks records, not copies.",
+    "Plant History and Garden Journal are scopes over the same garden_events records, not duplicate history stores.",
+    "Garden Photo is Garden Profile state and is separate from Plant Photo. Local/demo images are never production source of truth.",
+    "Plant Identification approved screenshots define layout. Actual identity, image, confidence, profile and care content bind to the real identification result plus canonical catalog identity.",
+    "Climate/Suitability requires trusted Garden location + Area context + canonical catalog climate traits + the approved climate/suitability engine. Decorative hardcoded scores are forbidden.",
+    "Missing data must stay missing/unknown or block the dependent action. Silent inference and sample-content fallback are forbidden."
+  ],
+  "myPlantsTwoFixtureProofGate": {
+    "status": "REQUIRED_BEFORE_PROVEN",
+    "currentRuntimeDataBindingStatus": "UNPROVEN_FOR_ARBITRARY_PLANTS",
+    "fixtures": [
+      {
+        "canonicalSlug": "monstera-deliciosa",
+        "scientificName": "Monstera deliciosa"
+      },
+      {
+        "canonicalSlug": "SECOND_DISTINCT_SPECIES_REQUIRED",
+        "scientificName": "Second different species"
+      }
+    ],
+    "requiredProof": [
+      "Same approved My Plants composition is used for both datasets.",
+      "Visible name changes according to garden_plants for each fixture.",
+      "Visible canonical/system image changes according to the exact profile_slug for each fixture.",
+      "Visible plant-bound data changes according to the exact garden_plants.id.",
+      "No layout, artwork, typography, spacing or proportions are altered to make either fixture fit."
+    ],
+    "failCondition": "If the same mockup plant identity/image remains visible for both fixture datasets where a plant-bound dynamic element should differ, FAIL as hardcoded content."
+  },
+  "screens": [
+    {
+      "id": "core-home-carousel",
+      "module": "HOME / APP SHELL",
+      "route": "/core-v1/",
+      "goldenStatus": "LOCKED_IMPLEMENTED",
+      "approvedSource": "ux-lab-add-smart-only@c4e6ba0d6b4f140136ad1eb6408f9721ef7dd5e6",
+      "visibleElements": [
+        {
+          "id": "home.background-shell",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Approved Home background/shell",
+          "approvedVisualSource": "ux-lab/assets/home-approved-reference.png#a918c48fa497c7115ab301b17e480870d8d6d4a0",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "home.carousel.garden-design-card",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Garden Design card artwork",
+          "approvedVisualSource": "card-garden-design*.approved source",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "home.carousel.my-garden-card",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "My Garden card artwork",
+          "approvedVisualSource": "card-my-garden*.approved source",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "home.carousel.plant-doctor-card",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Plant Doctor card artwork",
+          "approvedVisualSource": "card-plant-doctor-rectified.png",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "home.carousel.plant-id-card",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Plant Identification card artwork",
+          "approvedVisualSource": "card-plant-id-approved-exact.webp",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "home.carousel.smart-card",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Smart Recommendations card artwork",
+          "approvedVisualSource": "card-smart-approved-exact.webp",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "home.carousel.shop-card",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Shop card artwork",
+          "approvedVisualSource": "card-shop-approved-hq.webp",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "home.carousel.centered-index",
+          "classification": "DYNAMIC_STATE",
+          "visibleRole": "Which approved card is centered",
+          "authoritativeSource": "Core V1 carousel interaction state",
+          "identityKey": "carouselIndex",
+          "allowedFallback": "Initial approved center state only",
+          "forbiddenFallback": "Changing card artwork or substituting another card",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "home.action.my-garden",
+          "classification": "ACTION",
+          "visibleRole": "Centered My Garden card tap",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "/core-v1/my-garden/",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "home.action.plant-identification",
+          "classification": "ACTION",
+          "visibleRole": "Centered Plant Identification card tap",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "/core-v1/plant-identification/",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        }
+      ]
+    },
+    {
+      "id": "my-garden-main",
+      "module": "MY GARDEN",
+      "route": "/core-v1/my-garden/",
+      "goldenStatus": "OWNER_APPROVED_VISUAL",
+      "approvedSource": "image(20261002-105215).png#ca1a929b0226d46b8ae75a8b160fdc8780dd9d2f84f9f419ee4b47410f3bd676",
+      "visibleElements": [
+        {
+          "id": "mg.brand-shell",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "CRUVIT brand, fixed card geometry, glass treatment, typography, icon geometry",
+          "approvedVisualSource": "approved full-screen reference",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "mg.garden-photo",
+          "classification": "DYNAMIC_IMAGE",
+          "visibleRole": "Current Garden Photo",
+          "authoritativeSource": "garden_profiles + validated garden_media purpose=garden_overview",
+          "identityKey": "garden_profiles.id -> selected current Garden Photo pointer/state",
+          "allowedFallback": "Approved system/default Garden Photo only when no user-selected current photo exists and the fallback is explicitly part of the approved contract",
+          "forbiddenFallback": "localStorage/demo image; newest media chosen silently; Plant Photo; generated/reconstructed image",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "mg.search",
+          "classification": "ACTION",
+          "visibleRole": "Search control",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "my-garden.search",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "mg.profile",
+          "classification": "ACTION",
+          "visibleRole": "Profile control",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "profile",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "mg.change-garden-photo",
+          "classification": "ACTION",
+          "visibleRole": "Change garden photo",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "garden-profile.change-photo",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "mg.tile.labels",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Fixed tile labels: My Plants / Upcoming / Garden Journal / Add Plant",
+          "approvedVisualSource": "approved full-screen reference",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "mg.tile.my-plants-count",
+          "classification": "DERIVED_VALUE",
+          "visibleRole": "My Plants count",
+          "authoritativeSource": "garden_plants",
+          "identityKey": "count(active garden_plants for garden_profiles.id)",
+          "allowedFallback": "0 when authoritative query returns an empty set",
+          "forbiddenFallback": "mockup count; cached demo count; inferred count",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "mg.tile.upcoming-count",
+          "classification": "DERIVED_VALUE",
+          "visibleRole": "Upcoming count",
+          "authoritativeSource": "garden_tasks",
+          "identityKey": "count(pending/in-scope garden_tasks for garden_profiles.id)",
+          "allowedFallback": "0 when authoritative query returns an empty set",
+          "forbiddenFallback": "mockup count; independent copied counter",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "mg.attention-count",
+          "classification": "DERIVED_VALUE",
+          "visibleRole": "Need your attention badge",
+          "authoritativeSource": "garden_tasks attention projection",
+          "identityKey": "garden_tasks.id set for active garden",
+          "allowedFallback": "0 when no authoritative attention tasks",
+          "forbiddenFallback": "mockup number; notifications-local copied count",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "mg.attention-preview",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Attention preview text",
+          "authoritativeSource": "garden_tasks joined to garden_plants",
+          "identityKey": "garden_tasks.id + garden_plants.id",
+          "allowedFallback": "Empty approved attention state if no rows",
+          "forbiddenFallback": "mockup task text; another plant/task",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "mg.tile.my-plants",
+          "classification": "ACTION",
+          "visibleRole": "My Plants tile",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "/core-v1/my-garden/plants/",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "mg.tile.upcoming",
+          "classification": "ACTION",
+          "visibleRole": "Upcoming tile",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "OUT_OF_VERTICAL_SLICE",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "mg.tile.journal",
+          "classification": "ACTION",
+          "visibleRole": "Garden Journal tile",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "OUT_OF_VERTICAL_SLICE",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "mg.tile.add-plant",
+          "classification": "ACTION",
+          "visibleRole": "Add Plant tile",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "OUT_OF_VERTICAL_SLICE",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "mg.attention",
+          "classification": "ACTION",
+          "visibleRole": "Need your attention card",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "OUT_OF_VERTICAL_SLICE",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "mg.bottom-nav.visuals",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Existing five-item bottom navigation, labels/icons/order/center-plus geometry",
+          "approvedVisualSource": "approved full-screen reference",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "mg.bottom-nav.active",
+          "classification": "DYNAMIC_STATE",
+          "visibleRole": "Active bottom navigation item",
+          "authoritativeSource": "Core V1 route state",
+          "identityKey": "current route",
+          "allowedFallback": "My Garden active on this route",
+          "forbiddenFallback": "legacy navigation active state or duplicated nav",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "mg.bottom-nav.home",
+          "classification": "ACTION",
+          "visibleRole": "Home",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "/core-v1/",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "mg.bottom-nav.my-garden",
+          "classification": "ACTION",
+          "visibleRole": "My Garden",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "/core-v1/my-garden/",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "mg.bottom-nav.center-plus",
+          "classification": "ACTION",
+          "visibleRole": "Existing center +",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "DEFERRED_ACTION",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "mg.bottom-nav.notifications",
+          "classification": "ACTION",
+          "visibleRole": "Notifications",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "OUT_OF_VERTICAL_SLICE",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "mg.bottom-nav.more",
+          "classification": "ACTION",
+          "visibleRole": "More",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "OUT_OF_VERTICAL_SLICE",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "mg.garden-photo-tags",
+          "classification": "DYNAMIC_STATE",
+          "visibleRole": "Plant tag positions/associations on Garden Photo",
+          "authoritativeSource": "Garden Profile tagged-photo state + exact garden_plants identities",
+          "identityKey": "garden_profiles.id + garden_plants.id + tag coordinate",
+          "allowedFallback": "No tags when none are stored",
+          "forbiddenFallback": "demo tags; species/name matching; guessed positions; Plant Photo tags",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "mg.garden-photo-tag-open",
+          "classification": "ACTION",
+          "visibleRole": "Tap an existing Garden Photo plant tag",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "exact garden_plants.id",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        }
+      ]
+    },
+    {
+      "id": "my-plants",
+      "module": "MY GARDEN",
+      "route": "/core-v1/my-garden/plants/",
+      "goldenStatus": "LOCKED_IMPLEMENTED",
+      "runtimeDataBindingStatus": "UNPROVEN_FOR_ARBITRARY_PLANTS",
+      "approvedSource": "My Plants — APPROVED LOCKED 2026-10-02.png#64ddc9c59a62482c4050159a8a9109d19a71d1a777ebafc888d6d598d8b531d5",
+      "visibleElements": [
+        {
+          "id": "plants.shell",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Approved My Plants background, grid geometry, title, fixed visual chrome",
+          "approvedVisualSource": "approved My Plants reference",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "plants.active-count",
+          "classification": "DERIVED_VALUE",
+          "visibleRole": "Active plant count",
+          "authoritativeSource": "garden_plants",
+          "identityKey": "count where garden_profile_id + archived=false",
+          "allowedFallback": "0 for authoritative empty garden",
+          "forbiddenFallback": "mockup count; fixed 9-card count",
+          "runtimeBindingStatus": "UNPROVEN_FOR_ARBITRARY_PLANTS"
+        },
+        {
+          "id": "plants.card-presence",
+          "classification": "DYNAMIC_STATE",
+          "visibleRole": "Which Plant cards exist",
+          "authoritativeSource": "garden_plants",
+          "identityKey": "garden_plants.id",
+          "allowedFallback": "Approved empty state only; otherwise no invented card",
+          "forbiddenFallback": "mockup cards not present in DB; species-name dedupe",
+          "runtimeBindingStatus": "UNPROVEN_FOR_ARBITRARY_PLANTS"
+        },
+        {
+          "id": "plants.card.name",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Plant display name",
+          "authoritativeSource": "garden_plants",
+          "identityKey": "garden_plants.id -> name",
+          "allowedFallback": "Explicit missing/unknown state only if approved",
+          "forbiddenFallback": "Lemon tree or any mockup name; catalog name substituted for instance name without contract",
+          "runtimeBindingStatus": "UNPROVEN_FOR_ARBITRARY_PLANTS"
+        },
+        {
+          "id": "plants.card.scientific",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Scientific name",
+          "authoritativeSource": "garden_plants canonical identity / catalog_plants",
+          "identityKey": "garden_plants.id -> profile_slug -> verified catalog scientific name",
+          "allowedFallback": "garden_plants.scientific when it is authoritative for the same instance",
+          "forbiddenFallback": "scientific name from another species; guessed taxonomy",
+          "runtimeBindingStatus": "UNPROVEN_FOR_ARBITRARY_PLANTS"
+        },
+        {
+          "id": "plants.card.status",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Plant status",
+          "authoritativeSource": "garden_plants",
+          "identityKey": "garden_plants.id -> status",
+          "allowedFallback": "unassessed/unknown when authoritative row says so",
+          "forbiddenFallback": "mockup health; catalog health; inferred Healthy",
+          "runtimeBindingStatus": "UNPROVEN_FOR_ARBITRARY_PLANTS"
+        },
+        {
+          "id": "plants.card.area",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Garden area",
+          "authoritativeSource": "garden_plants + garden_areas",
+          "identityKey": "garden_plants.id -> garden_area_id -> garden_areas.id",
+          "allowedFallback": "No area / empty approved state",
+          "forbiddenFallback": "mockup area; location inferred from other plants",
+          "runtimeBindingStatus": "UNPROVEN_FOR_ARBITRARY_PLANTS"
+        },
+        {
+          "id": "plants.card.photo",
+          "classification": "DYNAMIC_IMAGE",
+          "visibleRole": "Plant card image",
+          "authoritativeSource": "garden_plants + garden_media + canonical visual registry",
+          "identityKey": "garden_plants.id -> cover_media_id OR same profile_slug canonical system visual",
+          "allowedFallback": "Canonical system image for the SAME profile_slug when no valid personal cover exists",
+          "forbiddenFallback": "another plant image; another species; nearest-looking image; mockup Lemon image for arbitrary plants; AI guess",
+          "runtimeBindingStatus": "UNPROVEN_FOR_ARBITRARY_PLANTS"
+        },
+        {
+          "id": "plants.card.open",
+          "classification": "ACTION",
+          "visibleRole": "Open exact Plant Instance",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "garden_plants.id",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNPROVEN_FOR_ARBITRARY_PLANTS"
+        },
+        {
+          "id": "plants.card.camera",
+          "classification": "ACTION",
+          "visibleRole": "Change exact Plant Instance photo",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "garden_plants.id",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNPROVEN_FOR_ARBITRARY_PLANTS"
+        },
+        {
+          "id": "plants.filter-state",
+          "classification": "DYNAMIC_STATE",
+          "visibleRole": "Search/filter state",
+          "authoritativeSource": "UI query over authoritative My Plants view",
+          "identityKey": "query + exact garden_plants.id set",
+          "allowedFallback": "All active plants",
+          "forbiddenFallback": "hardcoded fixture subset",
+          "runtimeBindingStatus": "UNPROVEN_FOR_ARBITRARY_PLANTS"
+        }
+      ]
+    },
+    {
+      "id": "plant-detail-overview",
+      "module": "MY GARDEN",
+      "goldenStatus": "LOCKED_IMPLEMENTED",
+      "approvedSource": "plant-overview#eab2a113e2a14d11eef09e8e4bbca31bb373c4034a0ab77b9bd651237def7b5a",
+      "visibleElements": [
+        {
+          "id": "detail.overview.shell",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Approved Overview layout/tab geometry/static labels",
+          "approvedVisualSource": "approved Overview reference",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "detail.identity",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Name/scientific identity",
+          "authoritativeSource": "garden_plants + canonical catalog",
+          "identityKey": "SAME garden_plants.id opened from My Plants",
+          "allowedFallback": "Explicit unknown only",
+          "forbiddenFallback": "different Plant Instance; sample Lemon identity",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY",
+          "crossScreenInvariant": "Must equal My Plants garden_plants.id"
+        },
+        {
+          "id": "detail.hero-photo",
+          "classification": "DYNAMIC_IMAGE",
+          "visibleRole": "Hero/card plant image",
+          "authoritativeSource": "garden_plants + garden_media + canonical visual registry",
+          "identityKey": "same garden_plants.id cover_media_id OR same profile_slug system visual",
+          "allowedFallback": "Canonical system image for SAME profile_slug",
+          "forbiddenFallback": "different Plant Instance/species image; image guess",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "detail.status",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Current Plant status",
+          "authoritativeSource": "garden_plants",
+          "identityKey": "same garden_plants.id -> status",
+          "allowedFallback": "unassessed/unknown if authoritative",
+          "forbiddenFallback": "mockup status; inferred health",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "detail.area",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Area/location label",
+          "authoritativeSource": "garden_plants + garden_areas",
+          "identityKey": "same garden_plants.id -> garden_area_id",
+          "allowedFallback": "No area",
+          "forbiddenFallback": "mockup location; inferred location",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "detail.summary-values",
+          "classification": "DERIVED_VALUE",
+          "visibleRole": "Overview summaries",
+          "authoritativeSource": "garden_plants + garden_tasks + garden_events + verified catalog knowledge",
+          "identityKey": "same garden_plants.id",
+          "allowedFallback": "Omit unavailable values",
+          "forbiddenFallback": "mockup metrics; copied Care/Schedule/History truth",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "detail.active-tab",
+          "classification": "DYNAMIC_STATE",
+          "visibleRole": "Overview tab selected",
+          "authoritativeSource": "route state",
+          "identityKey": "same garden_plants.id + tab=overview",
+          "allowedFallback": "overview",
+          "forbiddenFallback": "wrong plant/tab state",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "detail.tabs",
+          "classification": "ACTION",
+          "visibleRole": "Care/Schedule/History tab navigation",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "same garden_plants.id + target tab",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        }
+      ]
+    },
+    {
+      "id": "plant-detail-care",
+      "module": "MY GARDEN",
+      "goldenStatus": "LOCKED_IMPLEMENTED",
+      "approvedSource": "plant-care#5881d6f3856b8b7d3b1ea8177c5812e64042ed17f1caf74293a9ee70c4316c7a",
+      "visibleElements": [
+        {
+          "id": "detail.care.shell",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Approved Care layout/static care labels",
+          "approvedVisualSource": "approved Care reference",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "detail.care.identity",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Plant identity header",
+          "authoritativeSource": "garden_plants + canonical catalog",
+          "identityKey": "same garden_plants.id as My Plants",
+          "allowedFallback": "Explicit unknown",
+          "forbiddenFallback": "sample Lemon identity",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "detail.care.photo",
+          "classification": "DYNAMIC_IMAGE",
+          "visibleRole": "Plant image",
+          "authoritativeSource": "same Plant photo contract",
+          "identityKey": "same garden_plants.id",
+          "allowedFallback": "Same profile_slug canonical image",
+          "forbiddenFallback": "another species/image guess",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "detail.care.guidance",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Light/water/soil/fertilizer/pruning/humidity/temperature/pet-safety guidance",
+          "authoritativeSource": "verified canonical plant knowledge/catalog",
+          "identityKey": "same profile_slug resolved from same garden_plants.id",
+          "allowedFallback": "Unknown/not available where data is unverified",
+          "forbiddenFallback": "mockup care text; silent inference; unrelated species care",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "detail.care.site-context",
+          "classification": "DERIVED_VALUE",
+          "visibleRole": "Site/climate care implications",
+          "authoritativeSource": "trusted Garden/Area context + verified catalog traits/engine",
+          "identityKey": "garden_profiles.id + garden_area_id + profile_slug",
+          "allowedFallback": "No site-specific guidance when context is untrusted",
+          "forbiddenFallback": "hardcoded climate/care score",
+          "runtimeBindingStatus": "REQUIRES_TRUSTED_RUNTIME_ENGINE"
+        },
+        {
+          "id": "detail.care.active-tab",
+          "classification": "DYNAMIC_STATE",
+          "visibleRole": "Care tab selected",
+          "authoritativeSource": "route state",
+          "identityKey": "same garden_plants.id + tab=care",
+          "allowedFallback": "care",
+          "forbiddenFallback": "wrong plant/tab",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        }
+      ]
+    },
+    {
+      "id": "plant-detail-schedule",
+      "module": "MY GARDEN",
+      "goldenStatus": "LOCKED_IMPLEMENTED",
+      "approvedSource": "plant-schedule#ad56e981c75e407a5601190fdf3ac212fe5607e39bec94d52c683d9aa58dea75",
+      "visibleElements": [
+        {
+          "id": "detail.schedule.shell",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Approved Schedule layout/static labels",
+          "approvedVisualSource": "approved Schedule reference",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "detail.schedule.identity",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Plant identity",
+          "authoritativeSource": "garden_plants",
+          "identityKey": "same garden_plants.id",
+          "allowedFallback": "Explicit unknown",
+          "forbiddenFallback": "sample Lemon identity",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "detail.schedule.rows",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Task titles/dates",
+          "authoritativeSource": "garden_tasks",
+          "identityKey": "garden_tasks.id where garden_plant_id=same garden_plants.id",
+          "allowedFallback": "Approved empty schedule state",
+          "forbiddenFallback": "mockup tasks; generated care tasks not persisted as garden_tasks",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "detail.schedule.task-state",
+          "classification": "DYNAMIC_STATE",
+          "visibleRole": "Pending/completed/cancelled task state",
+          "authoritativeSource": "garden_tasks",
+          "identityKey": "garden_tasks.id",
+          "allowedFallback": "Authoritative current state only",
+          "forbiddenFallback": "local copy; stale fixture",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "detail.schedule.counts",
+          "classification": "DERIVED_VALUE",
+          "visibleRole": "Schedule totals",
+          "authoritativeSource": "garden_tasks",
+          "identityKey": "set of garden_tasks.id for same plant",
+          "allowedFallback": "0 for empty set",
+          "forbiddenFallback": "hardcoded count",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "detail.schedule.task-action",
+          "classification": "ACTION",
+          "visibleRole": "Task action",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "exact garden_tasks.id",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        }
+      ]
+    },
+    {
+      "id": "plant-detail-history",
+      "module": "MY GARDEN",
+      "goldenStatus": "LOCKED_IMPLEMENTED",
+      "approvedSource": "plant-history#a9be08e731153677bbc4a89291c603cdbfeaac576b3a67ac41d83a2c783dbfa2",
+      "visibleElements": [
+        {
+          "id": "detail.history.shell",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Approved History timeline layout/static labels",
+          "approvedVisualSource": "approved History reference",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "detail.history.identity",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Plant identity",
+          "authoritativeSource": "garden_plants",
+          "identityKey": "same garden_plants.id",
+          "allowedFallback": "Explicit unknown",
+          "forbiddenFallback": "sample Lemon identity",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "detail.history.events",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Plant History entries",
+          "authoritativeSource": "garden_events",
+          "identityKey": "garden_events.id where garden_plant_id=same garden_plants.id",
+          "allowedFallback": "Approved empty history state",
+          "forbiddenFallback": "mockup events; copied journal records stored separately",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "detail.history.timestamps",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Event dates/times",
+          "authoritativeSource": "garden_events",
+          "identityKey": "garden_events.id -> occurred_at",
+          "allowedFallback": "Unknown date if authoritative timestamp absent and approved",
+          "forbiddenFallback": "mockup dates; current date substitution",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "detail.history.event-media",
+          "classification": "DYNAMIC_IMAGE",
+          "visibleRole": "Event photo/media",
+          "authoritativeSource": "garden_events + garden_media",
+          "identityKey": "event media_id and same garden/profile ownership",
+          "allowedFallback": "No image",
+          "forbiddenFallback": "unrelated plant/garden media",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        }
+      ]
+    },
+    {
+      "id": "add-plant",
+      "module": "MY GARDEN",
+      "goldenStatus": "LOCKED_IMPLEMENTED",
+      "approvedSource": "add-plant#aba9460f2caae847dbcf1017abbb71e2c1c9a986e5de89cc27ffdcfe189dbd7b",
+      "visibleElements": [
+        {
+          "id": "add.shell",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Approved Add Plant layout/title/entry-card artwork",
+          "approvedVisualSource": "approved Add Plant reference",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "add.scan",
+          "classification": "ACTION",
+          "visibleRole": "Scan plant",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "Plant Identification",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "add.manual",
+          "classification": "ACTION",
+          "visibleRole": "Add manually",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "manual add flow",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "add.suggestions",
+          "classification": "ACTION",
+          "visibleRole": "Get suggestions",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "Smart Recommendations",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "add.search",
+          "classification": "ACTION",
+          "visibleRole": "Search plants",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "catalog search",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "add.popular",
+          "classification": "ACTION",
+          "visibleRole": "Popular for your area",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "catalog/location-derived discovery",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "add.search-results",
+          "classification": "DYNAMIC_STATE",
+          "visibleRole": "Search/result cards when opened",
+          "authoritativeSource": "verified catalog_plants",
+          "identityKey": "canonical slug",
+          "allowedFallback": "Approved empty/no-result state",
+          "forbiddenFallback": "mockup plant list; invented catalog entries",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "add.result.image",
+          "classification": "DYNAMIC_IMAGE",
+          "visibleRole": "Catalog plant image",
+          "authoritativeSource": "canonical visual registry/catalog",
+          "identityKey": "profile_slug",
+          "allowedFallback": "No-image approved state",
+          "forbiddenFallback": "another species image; image guess",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        }
+      ]
+    },
+    {
+      "id": "upcoming-list",
+      "module": "MY GARDEN",
+      "goldenStatus": "OWNER_APPROVED_VISUAL",
+      "approvedSource": "Upcoming-List-NEW-APPROVED-LOCKED-2026-10-02.png#03cca6920c02e4ec191f9dc1d8cfa197a4c1913a6da9b31af9e1a3b2385d7430",
+      "visibleElements": [
+        {
+          "id": "upcoming.list.shell",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Approved List layout/static headings/filter labels",
+          "approvedVisualSource": "approved Upcoming List reference",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "upcoming.list.counts",
+          "classification": "DERIVED_VALUE",
+          "visibleRole": "To do / Completed / All counts",
+          "authoritativeSource": "garden_tasks",
+          "identityKey": "same scoped set of garden_tasks.id",
+          "allowedFallback": "0 for empty set",
+          "forbiddenFallback": "mockup 5/2/7; independent counters",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "upcoming.list.rows",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Task title / plant / due label",
+          "authoritativeSource": "garden_tasks + garden_plants",
+          "identityKey": "garden_tasks.id -> garden_plant_id",
+          "allowedFallback": "Approved empty list",
+          "forbiddenFallback": "mockup Water/Lemon/etc; copied task records",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "upcoming.list.state",
+          "classification": "DYNAMIC_STATE",
+          "visibleRole": "Selected List/filter state",
+          "authoritativeSource": "route/UI state over garden_tasks",
+          "identityKey": "filter + same task IDs",
+          "allowedFallback": "To do default only if contract says so",
+          "forbiddenFallback": "fixture-only state",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "upcoming.list.task",
+          "classification": "ACTION",
+          "visibleRole": "Open/act on task",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "exact garden_tasks.id",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        }
+      ]
+    },
+    {
+      "id": "upcoming-calendar",
+      "module": "MY GARDEN",
+      "goldenStatus": "OWNER_APPROVED_VISUAL",
+      "approvedSource": "Upcoming-Calendar-NEW-APPROVED-LOCKED-2026-10-02.png#322b3ef6c07203be8c5547930bd0a95ce2e79fb8824d01f7b1319f012212b4db",
+      "visibleElements": [
+        {
+          "id": "upcoming.calendar.shell",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Approved Calendar grid/static labels",
+          "approvedVisualSource": "approved Upcoming Calendar reference",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "upcoming.calendar.month",
+          "classification": "DYNAMIC_STATE",
+          "visibleRole": "Displayed month/selected date",
+          "authoritativeSource": "calendar UI state",
+          "identityKey": "selected YYYY-MM / YYYY-MM-DD",
+          "allowedFallback": "Current contract default only",
+          "forbiddenFallback": "hardcoded October 2026 as production truth",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "upcoming.calendar.dots",
+          "classification": "DERIVED_VALUE",
+          "visibleRole": "Task-day indicators",
+          "authoritativeSource": "garden_tasks",
+          "identityKey": "due_on grouped by exact garden_tasks.id",
+          "allowedFallback": "No dot when no tasks",
+          "forbiddenFallback": "decorative dots independent of tasks",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "upcoming.calendar.day-rows",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Selected-day tasks",
+          "authoritativeSource": "garden_tasks + garden_plants",
+          "identityKey": "same garden_tasks.id used by Upcoming List",
+          "allowedFallback": "Approved empty day",
+          "forbiddenFallback": "mockup task names/dates",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "upcoming.calendar.day-select",
+          "classification": "ACTION",
+          "visibleRole": "Select date",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "calendar selectedDate",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        }
+      ]
+    },
+    {
+      "id": "garden-journal",
+      "module": "MY GARDEN",
+      "goldenStatus": "OWNER_APPROVED_VISUAL",
+      "approvedSource": "CRUVIT-Garden-Journal-UI-2.10-PROPOSAL-v1.html#39017bb6c981198637e34dd8b2d8faadd7668f50a00c2e57c7c7e80749758a",
+      "visibleElements": [
+        {
+          "id": "journal.shell",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Approved Journal layout/static labels",
+          "approvedVisualSource": "approved Journal reference",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "journal.entries",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Whole-garden activity rows",
+          "authoritativeSource": "garden_events",
+          "identityKey": "garden_events.id scoped to garden_profiles.id",
+          "allowedFallback": "Approved empty Journal",
+          "forbiddenFallback": "mockup notes/events; separately persisted Journal copies",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "journal.entry-plant",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Plant context",
+          "authoritativeSource": "garden_events + garden_plants",
+          "identityKey": "event garden_plant_id -> garden_plants.id",
+          "allowedFallback": "Garden-wide/no-plant event where authoritative",
+          "forbiddenFallback": "name matching; mockup plant",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "journal.entry-media",
+          "classification": "DYNAMIC_IMAGE",
+          "visibleRole": "Event media",
+          "authoritativeSource": "garden_events + garden_media",
+          "identityKey": "event/media identity in same garden",
+          "allowedFallback": "No media",
+          "forbiddenFallback": "unrelated image",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "journal.filters",
+          "classification": "DYNAMIC_STATE",
+          "visibleRole": "Search/scope/type/plant filters",
+          "authoritativeSource": "UI projection over garden_events",
+          "identityKey": "filter + exact event IDs",
+          "allowedFallback": "All events",
+          "forbiddenFallback": "fixture result list",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "journal.entry-open",
+          "classification": "ACTION",
+          "visibleRole": "Open event / exact Plant History",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "garden_events.id + garden_plants.id",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        }
+      ]
+    },
+    {
+      "id": "notifications",
+      "module": "MY GARDEN",
+      "goldenStatus": "OWNER_APPROVED_VISUAL",
+      "approvedSource": "CRUVIT-Notifications-UI-2.10-PROPOSAL-v1.html#36110c332c519ad959a173bd5fe6c1175308c847ff491ff5d02064549edf32d7",
+      "visibleElements": [
+        {
+          "id": "notifications.shell",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Approved Notifications layout/static labels",
+          "approvedVisualSource": "approved Notifications reference",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "notifications.counts",
+          "classification": "DERIVED_VALUE",
+          "visibleRole": "Attention/today/overdue counts",
+          "authoritativeSource": "garden_tasks",
+          "identityKey": "same scoped garden_tasks.id set used by Schedule/Upcoming",
+          "allowedFallback": "0 for empty set",
+          "forbiddenFallback": "mockup counts; separate notification database count",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "notifications.rows",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Notification task rows",
+          "authoritativeSource": "garden_tasks + garden_plants",
+          "identityKey": "garden_tasks.id -> garden_plant_id",
+          "allowedFallback": "Approved empty notifications state",
+          "forbiddenFallback": "mockup alerts; duplicated task copy",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "notifications.state",
+          "classification": "DYNAMIC_STATE",
+          "visibleRole": "Today/overdue/attention filter",
+          "authoritativeSource": "projection state over garden_tasks",
+          "identityKey": "filter + exact garden_tasks.id set",
+          "allowedFallback": "Contract default filter",
+          "forbiddenFallback": "stale fixture filter",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "notifications.complete",
+          "classification": "ACTION",
+          "visibleRole": "Mark task complete",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "exact garden_tasks.id",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "notifications.open-plant",
+          "classification": "ACTION",
+          "visibleRole": "Open exact Plant Instance",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "exact garden_plants.id",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        }
+      ]
+    },
+    {
+      "id": "pi-01-identify",
+      "module": "PLANT IDENTIFICATION",
+      "goldenStatus": "OWNER_APPROVED_VISUAL",
+      "approvedSource": "Plant ID approved flow screen 1",
+      "visibleElements": [
+        {
+          "id": "pi01.layout",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Option 4 — Friendly & Visual approved artwork/layout/copy labels",
+          "approvedVisualSource": "approved PI screen 1 pixels",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "pi01.take-photo",
+          "classification": "ACTION",
+          "visibleRole": "Take a photo",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "PI Camera",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "pi01.gallery",
+          "classification": "ACTION",
+          "visibleRole": "Choose from gallery",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "PI Gallery/Capture",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "pi01.care-shortcut",
+          "classification": "ACTION",
+          "visibleRole": "Plant care tips",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "requires active identification; otherwise identify first",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi01.suitability-shortcut",
+          "classification": "ACTION",
+          "visibleRole": "Is it right for my garden?",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "requires active identification + trusted context",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi01.growing-shortcut",
+          "classification": "ACTION",
+          "visibleRole": "Growing conditions",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "requires active identification",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi01.save-shortcut",
+          "classification": "ACTION",
+          "visibleRole": "Save to My Garden",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "requires confirmed canonical identification",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi01.bottom-nav.visual",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Approved bottom-nav artwork",
+          "approvedVisualSource": "approved PI screen 1 pixels",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "pi01.bottom-nav",
+          "classification": "ACTION",
+          "visibleRole": "Bottom navigation destinations",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "Core V1 navigation contract",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        }
+      ]
+    },
+    {
+      "id": "pi-02-camera",
+      "module": "PLANT IDENTIFICATION",
+      "goldenStatus": "OWNER_APPROVED_VISUAL",
+      "approvedSource": "Plant ID approved flow screen 2",
+      "visibleElements": [
+        {
+          "id": "pi02.chrome",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Approved camera framing guides/control geometry",
+          "approvedVisualSource": "approved PI screen 2 pixels",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "pi02.live-view",
+          "classification": "DYNAMIC_IMAGE",
+          "visibleRole": "Live camera/captured plant view",
+          "authoritativeSource": "device camera or chosen user image",
+          "identityKey": "current capture session",
+          "allowedFallback": "User-selected gallery image",
+          "forbiddenFallback": "approved mockup Monstera as a live production capture; unrelated image",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi02.flash-state",
+          "classification": "DYNAMIC_STATE",
+          "visibleRole": "Flash state",
+          "authoritativeSource": "camera capability/session",
+          "identityKey": "capture session",
+          "allowedFallback": "Disabled when unsupported",
+          "forbiddenFallback": "fake enabled flash",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi02.capture",
+          "classification": "ACTION",
+          "visibleRole": "Capture photo",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "capture session",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi02.gallery",
+          "classification": "ACTION",
+          "visibleRole": "Open gallery",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "user file picker",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi02.close",
+          "classification": "ACTION",
+          "visibleRole": "Close/back",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "PI Identify",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        }
+      ]
+    },
+    {
+      "id": "pi-03-analyzing",
+      "module": "PLANT IDENTIFICATION",
+      "goldenStatus": "OWNER_APPROVED_VISUAL",
+      "approvedSource": "Plant ID approved flow screen 3",
+      "visibleElements": [
+        {
+          "id": "pi03.layout",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Approved analyzing visual, headings and explanatory static copy",
+          "approvedVisualSource": "approved PI screen 3 pixels",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "pi03.phase",
+          "classification": "DYNAMIC_STATE",
+          "visibleRole": "Detecting/comparing/care/finalizing progress",
+          "authoritativeSource": "Plant Identification request state",
+          "identityKey": "identification request id",
+          "allowedFallback": "Explicit waiting/error state",
+          "forbiddenFallback": "timer-only fake success presented as real analysis",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi03.input-image",
+          "classification": "DYNAMIC_IMAGE",
+          "visibleRole": "Identification input when visible",
+          "authoritativeSource": "current capture/gallery input",
+          "identityKey": "identification request id",
+          "allowedFallback": "No image where layout does not show one",
+          "forbiddenFallback": "mockup sample image substituted for user capture",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        }
+      ]
+    },
+    {
+      "id": "pi-04-result",
+      "module": "PLANT IDENTIFICATION",
+      "goldenStatus": "OWNER_APPROVED_VISUAL",
+      "approvedSource": "Plant ID approved flow screen 4",
+      "visibleElements": [
+        {
+          "id": "pi04.layout",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Approved result composition/buttons/static labels",
+          "approvedVisualSource": "approved PI screen 4 pixels",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "pi04.common-name",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Identified common/display name",
+          "authoritativeSource": "Plant Identification result + verified canonical catalog",
+          "identityKey": "identification result -> canonical profile_slug",
+          "allowedFallback": "Unknown/no reliable match state",
+          "forbiddenFallback": "Monstera mockup name; best guess without safe canonical match",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi04.scientific-name",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Scientific name",
+          "authoritativeSource": "verified canonical catalog",
+          "identityKey": "profile_slug",
+          "allowedFallback": "Unknown when no safe canonical match",
+          "forbiddenFallback": "mockup taxonomy; guessed species",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi04.confidence",
+          "classification": "DERIVED_VALUE",
+          "visibleRole": "Match confidence",
+          "authoritativeSource": "Plant Identification engine result",
+          "identityKey": "identification request/result id",
+          "allowedFallback": "Omit/uncertain state",
+          "forbiddenFallback": "hardcoded 95%; fabricated precision",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi04.image",
+          "classification": "DYNAMIC_IMAGE",
+          "visibleRole": "Plant/result image",
+          "authoritativeSource": "user identification image or exact canonical visual per approved runtime contract",
+          "identityKey": "identification result + profile_slug",
+          "allowedFallback": "Same user capture or same profile_slug canonical visual",
+          "forbiddenFallback": "mockup Monstera for another species; nearest image",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi04.description",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Brief plant description",
+          "authoritativeSource": "verified canonical catalog/plant knowledge",
+          "identityKey": "profile_slug",
+          "allowedFallback": "Unavailable text",
+          "forbiddenFallback": "mockup description; generated unsupported description",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi04.profile",
+          "classification": "ACTION",
+          "visibleRole": "View full profile",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "PI Plant Profile",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi04.save",
+          "classification": "ACTION",
+          "visibleRole": "Save to My Garden",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "requires confirmed canonical match",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        }
+      ]
+    },
+    {
+      "id": "pi-05-profile",
+      "module": "PLANT IDENTIFICATION",
+      "goldenStatus": "OWNER_APPROVED_VISUAL",
+      "approvedSource": "Plant ID approved flow screen 5",
+      "visibleElements": [
+        {
+          "id": "pi05.layout",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Approved profile layout/tabs/static labels",
+          "approvedVisualSource": "approved PI screen 5 pixels",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "pi05.identity",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Plant identity",
+          "authoritativeSource": "verified canonical catalog",
+          "identityKey": "same identification profile_slug",
+          "allowedFallback": "Unknown/no-match route",
+          "forbiddenFallback": "mockup Monstera for other result",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi05.image",
+          "classification": "DYNAMIC_IMAGE",
+          "visibleRole": "Profile image",
+          "authoritativeSource": "canonical visual for same profile_slug or approved current identification image",
+          "identityKey": "profile_slug",
+          "allowedFallback": "Same identification capture where contract allows",
+          "forbiddenFallback": "another species; image guess",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi05.profile-data",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Biological/profile facts",
+          "authoritativeSource": "verified canonical catalog/plant knowledge",
+          "identityKey": "profile_slug",
+          "allowedFallback": "Unavailable/unknown",
+          "forbiddenFallback": "mockup facts; unsupported generated facts",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi05.similar-plants",
+          "classification": "DERIVED_VALUE",
+          "visibleRole": "Similar plants when visible",
+          "authoritativeSource": "verified catalog similarity relation",
+          "identityKey": "profile_slug -> canonical candidate slugs",
+          "allowedFallback": "No similar plants",
+          "forbiddenFallback": "arbitrary visual lookalikes",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi05.active-tab",
+          "classification": "DYNAMIC_STATE",
+          "visibleRole": "Profile tab/section state",
+          "authoritativeSource": "PI route state",
+          "identityKey": "profile_slug + section",
+          "allowedFallback": "Overview default",
+          "forbiddenFallback": "hardcoded section unrelated to route",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi05.care",
+          "classification": "ACTION",
+          "visibleRole": "Open Care",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "PI Care",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi05.suitability",
+          "classification": "ACTION",
+          "visibleRole": "Open Growing Conditions/Suitability",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "PI Suitability",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi05.save",
+          "classification": "ACTION",
+          "visibleRole": "Save",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "confirmed canonical identity only",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        }
+      ]
+    },
+    {
+      "id": "pi-06-care",
+      "module": "PLANT IDENTIFICATION",
+      "goldenStatus": "OWNER_APPROVED_VISUAL",
+      "approvedSource": "Plant ID approved flow screen 6",
+      "visibleElements": [
+        {
+          "id": "pi06.layout",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Approved Care layout/static category labels",
+          "approvedVisualSource": "approved PI screen 6 pixels",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "pi06.identity",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Care subject identity",
+          "authoritativeSource": "verified canonical catalog",
+          "identityKey": "same profile_slug from identification",
+          "allowedFallback": "Unknown/no-match",
+          "forbiddenFallback": "mockup Monstera identity",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi06.care-values",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Light/water/humidity/temperature/fertilizer/pet-safety values",
+          "authoritativeSource": "verified canonical plant data layer",
+          "identityKey": "profile_slug",
+          "allowedFallback": "Unknown/not available",
+          "forbiddenFallback": "mockup care values; silent guesses",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi06.suitability",
+          "classification": "ACTION",
+          "visibleRole": "Continue to Suitability",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "same identification profile_slug",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        }
+      ]
+    },
+    {
+      "id": "pi-07-suitability",
+      "module": "PLANT IDENTIFICATION",
+      "goldenStatus": "OWNER_APPROVED_VISUAL",
+      "approvedSource": "Plant ID approved flow screen 7",
+      "visibleElements": [
+        {
+          "id": "pi07.layout",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Approved Growing Conditions / Suitability layout/static labels",
+          "approvedVisualSource": "approved PI screen 7 pixels",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "pi07.identity",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Suitability subject identity",
+          "authoritativeSource": "verified canonical catalog",
+          "identityKey": "same profile_slug",
+          "allowedFallback": "Unknown/no-match",
+          "forbiddenFallback": "mockup Monstera identity",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi07.growing-values",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Light/temperature/humidity/soil/watering/fertilizing conditions",
+          "authoritativeSource": "verified canonical plant knowledge",
+          "identityKey": "profile_slug",
+          "allowedFallback": "Unknown where unavailable",
+          "forbiddenFallback": "mockup values; guessed conditions",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi07.location",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Garden/location context",
+          "authoritativeSource": "trusted garden_profiles location + garden_areas context",
+          "identityKey": "garden_profiles.id + garden_area_id",
+          "allowedFallback": "Ask user to confirm/choose location",
+          "forbiddenFallback": "inferred precise location; device/coarse location silently used",
+          "runtimeBindingStatus": "REQUIRES_TRUSTED_RUNTIME_ENGINE"
+        },
+        {
+          "id": "pi07.score",
+          "classification": "DERIVED_VALUE",
+          "visibleRole": "Climate/suitability score or outcomes",
+          "authoritativeSource": "Climate Suitability Engine + trusted Garden/Area context + canonical climate traits",
+          "identityKey": "profile_slug + trusted location + engine version",
+          "allowedFallback": "Unavailable / request trusted location",
+          "forbiddenFallback": "hardcoded 95/100; decorative score; care-derived heuristic shown as truth",
+          "runtimeBindingStatus": "REQUIRES_TRUSTED_RUNTIME_ENGINE"
+        },
+        {
+          "id": "pi07.recommendation",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Good match/warnings/limiter",
+          "authoritativeSource": "same suitability engine output",
+          "identityKey": "same engine evaluation id",
+          "allowedFallback": "No recommendation when evaluation unavailable",
+          "forbiddenFallback": "hardcoded Good match",
+          "runtimeBindingStatus": "REQUIRES_TRUSTED_RUNTIME_ENGINE"
+        },
+        {
+          "id": "pi07.check-location",
+          "classification": "ACTION",
+          "visibleRole": "Check my location",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "explicit trusted Garden Location flow",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        },
+        {
+          "id": "pi07.add",
+          "classification": "ACTION",
+          "visibleRole": "Add to My Garden",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "confirmed canonical identity",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "UNBOUND_GOVERNANCE_ONLY"
+        }
+      ]
+    },
+    {
+      "id": "pi-08-save",
+      "module": "PLANT IDENTIFICATION",
+      "goldenStatus": "OWNER_APPROVED_VISUAL",
+      "approvedSource": "Plant ID approved flow screen 8",
+      "visibleElements": [
+        {
+          "id": "pi08.layout",
+          "classification": "STATIC_VISUAL",
+          "visibleRole": "Approved Save composition/static labels",
+          "approvedVisualSource": "approved PI screen 8 pixels",
+          "runtimeBindingStatus": "LOCKED_APPROVED_VISUAL"
+        },
+        {
+          "id": "pi08.identity",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Plant being saved",
+          "authoritativeSource": "confirmed canonical identification",
+          "identityKey": "canonical profile_slug",
+          "allowedFallback": "Block save if identity is not safely canonical",
+          "forbiddenFallback": "mockup Monstera identity",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "pi08.image",
+          "classification": "DYNAMIC_IMAGE",
+          "visibleRole": "Plant image on Save screen",
+          "authoritativeSource": "same identification/canonical visual identity",
+          "identityKey": "same profile_slug",
+          "allowedFallback": "Same capture or same profile_slug canonical visual where contract allows",
+          "forbiddenFallback": "another species/mockup image",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "pi08.area",
+          "classification": "DYNAMIC_STATE",
+          "visibleRole": "Selected garden area/location",
+          "authoritativeSource": "garden_areas + user selection",
+          "identityKey": "garden_area_id in active garden",
+          "allowedFallback": "No area selected where optional",
+          "forbiddenFallback": "mockup Indoor/Living room; another user's area",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "pi08.reminders",
+          "classification": "DYNAMIC_STATE",
+          "visibleRole": "Reminder/task choices",
+          "authoritativeSource": "user-selected save intent; persisted task records only when explicitly created",
+          "identityKey": "exact garden_plants.id + garden_tasks.id after save",
+          "allowedFallback": "Off/unset",
+          "forbiddenFallback": "mockup 7 days/4 weeks as silent production defaults",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "pi08.note",
+          "classification": "DYNAMIC_TEXT",
+          "visibleRole": "Optional note input",
+          "authoritativeSource": "user input -> approved durable note/event model when implemented",
+          "identityKey": "new plant id + note event/id",
+          "allowedFallback": "Empty",
+          "forbiddenFallback": "mockup note; generated note",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "pi08.save-command",
+          "classification": "ACTION",
+          "visibleRole": "Save to My Garden",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "prepareAddPlantIntent -> add_garden_plant_once_v1",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        },
+        {
+          "id": "pi08.view-garden",
+          "classification": "ACTION",
+          "visibleRole": "View in My Garden",
+          "authoritativeSource": "Core V1 route/action contract",
+          "identityKey": "/core-v1/my-garden/",
+          "allowedFallback": "NO_OP / blocked action when prerequisite is absent; never invent success",
+          "forbiddenFallback": "legacy app.html route, unrelated module action, hidden write, or substitute destination",
+          "runtimeBindingStatus": "PLANNED_FOR_GATED_VERTICAL_SLICE"
+        }
+      ]
+    }
+  ],
+  "crossScreenIdentityContracts": {
+    "plantInstance": "My Plants and all Plant Detail tabs must carry the same exact garden_plants.id; name/species matching is forbidden.",
+    "tasks": "Schedule / Upcoming / Calendar / Notifications must render the same garden_tasks.id identities for overlapping scope.",
+    "history": "Plant History / Garden Journal must render the same garden_events.id identities for overlapping scope.",
+    "images": "Personal Plant image stays exact-instance scoped; canonical system fallback stays exact-profile_slug scoped.",
+    "gardenPhoto": "Garden Photo belongs to Garden Profile; Plant Photo belongs to garden_plants.id. They are never interchangeable."
+  },
+  "runtimeProofPolicy": {
+    "governanceOnlyNow": true,
+    "noRuntimeImplementationInThisCommit": true,
+    "myPlantsCurrentStatus": "UNPROVEN_FOR_ARBITRARY_PLANTS",
+    "myPlantsProofRequired": "Two-fixture test: Monstera deliciosa plus a second different species. Same locked UI must change plant-bound name/image/data according to DB. Same mockup plant across both datasets is FAIL."
+  }
+}
