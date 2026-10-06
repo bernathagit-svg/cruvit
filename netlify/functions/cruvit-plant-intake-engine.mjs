@@ -53,6 +53,38 @@ function identityRecord(registry,slug){
     || (x?.aliasSlugs||[]).some(a=>String(a||'').toLowerCase()===s)
   )||null;
 }
+export function identityLookupSlugs(registry,requestedSlug){
+  const requested=safeSlug(requestedSlug);
+  const identity=identityRecord(registry,requested);
+  const canonical=safeSlug(identity?.canonicalSlug||requested);
+  const aliases=(identity?.aliasSlugs||[]).map(safeSlug).filter(Boolean);
+  return {
+    requestedSlug:requested,
+    canonicalSlug:canonical,
+    lookupSlugs:[...new Set([canonical,requested,...aliases].filter(Boolean))]
+  };
+}
+async function fetchCatalogRowByIdentity(registry,requestedSlug){
+  const lookup=identityLookupSlugs(registry,requestedSlug);
+  const matches=[];
+  for(const lookupSlug of lookup.lookupSlugs){
+    const row=await fetchCanonicalCatalogRow(lookupSlug);
+    if(row) matches.push({lookupSlug,row});
+  }
+  const unique=[...new Map(matches.map(x=>[String(x.row?.slug||x.lookupSlug).toLowerCase(),x])).values()];
+  if(unique.length>1){
+    return {...lookup,conflict:true,matches:unique.map(x=>String(x.row?.slug||x.lookupSlug)),row:null};
+  }
+  if(!unique.length) return {...lookup,conflict:false,matches:[],sourceCatalogSlug:null,row:null};
+  const source=unique[0].row;
+  return {
+    ...lookup,
+    conflict:false,
+    matches:[String(source?.slug||unique[0].lookupSlug)],
+    sourceCatalogSlug:String(source?.slug||unique[0].lookupSlug).toLowerCase(),
+    row:{...source,slug:lookup.canonicalSlug}
+  };
+}
 function candidateRowsForSlug(doc,slug){
   return (doc?.rows||[]).filter(row=>String(row?.canonicalSlug||'').toLowerCase()===slug);
 }
@@ -97,11 +129,22 @@ export default async(req)=>{
 
   const results=[];
   for(const item of items){
-    const slug=item.canonicalSlug;
-    let catalogRow=null;
-    try{catalogRow=await fetchCanonicalCatalogRow(slug);}catch(err){
-      return json(503,{ok:false,code:'CANONICAL_CATALOG_READ_FAILED',canonicalSlug:slug,errorName:err?.message||null});
+    const requestedSlug=item.canonicalSlug;
+    let catalogLookup=null;
+    try{catalogLookup=await fetchCatalogRowByIdentity(identityRegistry,requestedSlug);}catch(err){
+      return json(503,{ok:false,code:'CANONICAL_CATALOG_READ_FAILED',canonicalSlug:requestedSlug,errorName:err?.message||null});
     }
+    if(catalogLookup.conflict){
+      return json(409,{
+        ok:false,
+        code:'CANONICAL_CATALOG_IDENTITY_DUPLICATE',
+        requestedSlug,
+        canonicalSlug:catalogLookup.canonicalSlug,
+        matchingCatalogSlugs:catalogLookup.matches
+      });
+    }
+    const slug=catalogLookup.canonicalSlug;
+    const catalogRow=catalogLookup.row;
 
     let packetState=null;
     if(!catalogRow && item.packetPath){
@@ -220,6 +263,13 @@ export default async(req)=>{
 
     results.push({
       ...intake,
+      catalogIdentityResolution:{
+        requestedSlug,
+        canonicalSlug:slug,
+        sourceCatalogSlug:catalogLookup.sourceCatalogSlug||null,
+        aliasResolved:Boolean(catalogLookup.sourceCatalogSlug && catalogLookup.sourceCatalogSlug!==slug),
+        lookupSlugs:catalogLookup.lookupSlugs||[]
+      },
       packet:packetState ? {
         packetId:packetState.packetId||null,
         packetPath:packetState.packetPath||null,

@@ -4,6 +4,10 @@ import {
   resolveCruvitPlantIntakeStage,
   INTAKE_STAGE
 } from '../modules/catalog/cruvit-plant-intake-engine-v1.js';
+import { identityLookupSlugs } from '../netlify/functions/cruvit-plant-intake-engine.mjs';
+import fs from 'node:fs';
+
+const identityRegistry=JSON.parse(fs.readFileSync('data/plant-identity.registry.json','utf8'));
 
 test('missing catalog and packet routes to evidence packet',()=>{
   const r=resolveCruvitPlantIntakeStage({request:{canonicalSlug:'new-plant'},catalogExists:false});
@@ -68,4 +72,20 @@ test('full approval is the only final approved state',()=>{
   });
   assert.equal(r.stage,INTAKE_STAGE.FULL_CRUVIT_APPROVED);
   assert.equal(r.finalApproved,true);
+});
+
+test('identity lookup normalizes alias and canonical Hydrangea slugs to one canonical identity',()=>{
+  const fromCanonical=identityLookupSlugs(identityRegistry,'hydrangea');
+  const fromAlias=identityLookupSlugs(identityRegistry,'bigleaf-hydrangea');
+  assert.equal(fromCanonical.canonicalSlug,'hydrangea');
+  assert.equal(fromAlias.canonicalSlug,'hydrangea');
+  assert.ok(fromCanonical.lookupSlugs.includes('bigleaf-hydrangea'));
+  assert.ok(fromAlias.lookupSlugs.includes('hydrangea'));
+  assert.deepEqual(new Set(fromCanonical.lookupSlugs),new Set(fromAlias.lookupSlugs));
+});
+
+test('identity lookup leaves an unrelated canonical slug stable',()=>{
+  const r=identityLookupSlugs(identityRegistry,'mango');
+  assert.equal(r.canonicalSlug,'mango');
+  assert.ok(r.lookupSlugs.includes('mango'));
 });

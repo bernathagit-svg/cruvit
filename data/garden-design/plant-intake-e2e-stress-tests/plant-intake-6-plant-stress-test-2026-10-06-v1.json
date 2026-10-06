@@ -1,0 +1,79 @@
+{
+  "contract": "cruvit-plant-intake-e2e-stress-test-v1",
+  "runId": "plant-intake-6-plant-stress-test-2026-10-06-v1",
+  "createdAt": "2026-10-06",
+  "purpose": "Prove the Plant Intake Factory can move diverse plants from their current canonical stage to Full CRUVIT approval with minimal owner intervention.",
+  "plants": [
+    {
+      "canonicalSlug": "mango",
+      "stressClass": "EVIDENCE_FIRST_TREE_FRUIT",
+      "startingStage": "EVIDENCE_PACKET_REQUIRED",
+      "expectedPath": ["EVIDENCE_PACKET_REQUIRED","CATALOG_INGEST","DATA_ENRICHMENT_IF_REQUIRED","VISUAL_PLANNING","VISUAL_QA","IN_GARDEN_QA","PRODUCTION_R2","REGISTRY","FULL_CRUVIT_APPROVED"]
+    },
+    {
+      "canonicalSlug": "hydrangea",
+      "stressClass": "EVIDENCE_FIRST_FLOWERING_SHRUB",
+      "startingStage": "EVIDENCE_PACKET_REQUIRED",
+      "expectedPath": ["EVIDENCE_PACKET_REQUIRED","CATALOG_INGEST","DATA_ENRICHMENT_IF_REQUIRED","VISUAL_PLANNING","VISUAL_QA","IN_GARDEN_QA","PRODUCTION_R2","REGISTRY","FULL_CRUVIT_APPROVED"]
+    },
+    {
+      "canonicalSlug": "date-palm",
+      "stressClass": "PALM_FRUIT_ENRICHMENT",
+      "startingStage": "DATA_ENRICHMENT_REQUIRED",
+      "knownBlockers": ["FULL_PLANT_ONBOARDING_BLOCKED","SEASONALITY_RESEARCH_REQUIRED","SIZE_AUTHORITY_ENRICHMENT_REQUIRED","REQUIRED_VISUAL_VARIANTS_MISSING"],
+      "expectedMissingVisuals": 3
+    },
+    {
+      "canonicalSlug": "monstera",
+      "stressClass": "LARGE_LEAF_HERBACEOUS_ENRICHMENT",
+      "startingStage": "DATA_ENRICHMENT_REQUIRED",
+      "knownBlockers": ["FULL_PLANT_ONBOARDING_BLOCKED","SEASONALITY_RESEARCH_REQUIRED","SIZE_AUTHORITY_ENRICHMENT_REQUIRED","REQUIRED_VISUAL_VARIANTS_MISSING"],
+      "expectedMissingVisuals": 3
+    },
+    {
+      "canonicalSlug": "fig",
+      "stressClass": "VISUAL_ONLY_FRUIT_TREE",
+      "startingStage": "VISUAL_GENERATION_REQUIRED",
+      "knownBlockers": ["REQUIRED_VISUAL_VARIANTS_MISSING"],
+      "expectedMissingVisuals": 5
+    },
+    {
+      "canonicalSlug": "lettuce",
+      "stressClass": "VISUAL_ONLY_SMALL_HERBACEOUS",
+      "startingStage": "VISUAL_GENERATION_REQUIRED",
+      "knownBlockers": ["REQUIRED_VISUAL_VARIANTS_MISSING"],
+      "expectedMissingVisuals": 1
+    }
+  ],
+  "successCriteria": {
+    "minimumFullE2EPassPlants": 5,
+    "totalPlants": 6,
+    "ownerInterventionPolicy": "Owner review is allowed only for genuine visual exceptions or explicit spend/promotion approvals; systemic manual calibration counts as a factory failure.",
+    "silentGuessingAllowed": false,
+    "autoBlendRequiredBeforeCapture": true,
+    "productionReadbackChecksumRequired": true,
+    "registryActivationAfterVerifiedProductionOnly": true,
+    "duplicateCanonicalRecordsAllowed": false
+  },
+  "failureSignals": [
+    "same systemic defect appears on more than one plant",
+    "manual scale correction required because canonical scale engine failed",
+    "raw in-garden capture stored without QA_AUTO_BLEND_APPLIED",
+    "production object promoted without checksum readback",
+    "registry activation before production verification",
+    "unbounded paid retries",
+    "silent fallback to morphology guess as botanical truth"
+  ],
+  "spendPolicy": {
+    "paidGenerationAuthorized": false,
+    "paidModelQaAuthorized": false,
+    "paidInGardenVisionQaAuthorized": false,
+    "retriesAuthorized": false,
+    "nextStep": "Research and planning are zero-spend. Build exact generation and QA call counts, then request bounded owner approval."
+  },
+  "writes": {
+    "catalogWritesAuthorized": false,
+    "productionWritesAuthorized": false,
+    "registryWritesAuthorized": false
+  }
+}
