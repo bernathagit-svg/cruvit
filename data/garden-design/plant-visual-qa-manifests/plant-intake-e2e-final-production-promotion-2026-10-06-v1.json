@@ -1,0 +1,528 @@
+{
+  "contract": "plant-visual-qa-manifest-v1",
+  "manifestId": "plant-intake-e2e-final-production-promotion-2026-10-06-v1",
+  "generatedAt": "2026-10-06",
+  "derivedFromManifestId": "plant-intake-e2e-wave-2026-10-03-v1-flare14",
+  "batchId": "plant-intake-e2e-final-production-promotion-2026-10-06-v1",
+  "bucket": "cruvit-plant-visual-candidates",
+  "bounded": true,
+  "totalJobs": 4,
+  "ownerReviewJobs": 0,
+  "automaticPassJobs": 0,
+  "ownerApprovedJobs": 4,
+  "heldJobs": 0,
+  "paidAiCalls": 0,
+  "productionWrites": 0,
+  "registryWrites": 0,
+  "rendererInputContract": "production-renderer-qa-preview-v1",
+  "ownerVisualApprovalApplied": true,
+  "productionPromotionAuthorized": true,
+  "rows": [
+    {
+      "jobId": "strelitzia__mature__default__flowering__v1",
+      "canonicalSlug": "strelitzia",
+      "scientific": "Strelitzia reginae",
+      "visualForm": "herbaceous-clump",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenology": "flowering",
+      "sha256": "4b39276b60e35a065cca385ad8474b3698780bf7ee275cb208ab4115c0158245",
+      "objectKey": "candidates/plant-intake-e2e-wave-2026-10-03-v1-flare14/strelitzia/strelitzia__mature__default__flowering__v1__4b39276b60e35a065cca385ad8474b3698780bf7ee275cb208ab4115c0158245.png",
+      "qaRendererInput": {
+        "ok": true,
+        "code": "QA_PREVIEW_PRESENTATION_BASELINE",
+        "source": "presentation-sizing-v1.1+relative-preview-scale-v1.1+in-garden-qa-scale-policy-v1.1",
+        "baseWidthPx": 438,
+        "effectivePresentationForm": "herbaceous-clump",
+        "qaScaleBand": "large",
+        "qaMaxHeightPct": 78,
+        "qaMaxWidthPct": 80,
+        "qaScalePolicyVersion": "in-garden-qa-scale-policy-v1.1",
+        "scale": 1,
+        "x": 0.56,
+        "y": 0.86,
+        "rotation": 0,
+        "authorityUserResized": false,
+        "renderingOwner": "Garden Design production renderer",
+        "independentQaScaleMath": false,
+        "autoBlendRequired": true
+      },
+      "bytes": 2039913,
+      "lineage": "plant-intake-e2e-wave-2026-10-03-v1-flare14",
+      "sourceStatus": "CANDIDATE_R2_VERIFIED",
+      "evidenceMismatch": false,
+      "expectedEvidenceSha256": null,
+      "technicalQA": "PASS",
+      "framingQA": "PASS",
+      "botanicalIdentityQA": "PASS",
+      "architectureQA": "PASS",
+      "growthStageQA": "PASS",
+      "phenologyStateQA": "PASS",
+      "inGardenQA": "PASS",
+      "technicalMetrics": {
+        "format": "png",
+        "decodes": true,
+        "width": 1024,
+        "height": 1536,
+        "colorType": 6,
+        "hasAlphaChannel": true,
+        "bytes": 2039913,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "edgeOpaqueRatio": 0,
+        "bbox": {
+          "exists": true,
+          "minX": 61,
+          "minY": 122,
+          "maxX": 958,
+          "maxY": 1433,
+          "opaque": 527656
+        },
+        "alphaCoverage": 0.3354746500651042,
+        "haloPartialPixels": 5
+      },
+      "sizeAuthorityPlan": {
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "strelitzia",
+        "botanicalTaxonId": "taxon:strelitzia-reginae",
+        "scientificName": "Strelitzia reginae",
+        "growthStage": "mature",
+        "visualForm": "herbaceous-clump",
+        "state": "SIZE_AUTHORITY_PARTIAL",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
+        "authoritativeMetersAvailable": true,
+        "heightScaleReady": true,
+        "spreadScaleReady": true,
+        "normalizedRange": {
+          "heightM": {
+            "min": 0.9144,
+            "max": 1.5
+          },
+          "spreadM": {
+            "min": 0.5,
+            "max": 1.2192
+          }
+        },
+        "sensitivity": {
+          "cultivarSensitive": false,
+          "rootstockSensitive": false,
+          "cultivarVariable": false,
+          "maintainedForm": true,
+          "notFinalPersonalGardenSize": true,
+          "reasons": [
+            "maintenance and container/landscape context can affect realized size"
+          ]
+        },
+        "explicitEstimateOnly": false,
+        "morphologyFallbackIsAuthority": false,
+        "ownerReviewRequired": false,
+        "placementScaleHold": false,
+        "gardenDesignMayUseExplicitEstimate": true,
+        "meterAccuracyClaimAllowed": false,
+        "reasonCodes": [
+          "PARTIAL_DIMENSION_AUTHORITY"
+        ]
+      },
+      "ownerReviewRequired": false,
+      "productionApproved": true,
+      "ownerVisualQA": "PASS",
+      "ownerDecision": "PASS_OWNER_VISUAL_GATES",
+      "ownerApprovalEvidence": {
+        "source": "R2 model QA PASS + final Auto Blend In-Garden Vision PASS + explicit owner visual PASS",
+        "modelQaRunId": "plant-intake-e2e-wave-model-qa-2026-10-04-v1",
+        "finalVisionQaRunId": "plant-intake-e2e-final-in-garden-vision-revalidation-2026-10-05-v1",
+        "ownerReviewId": "plant-intake-e2e-final-owner-promotion-2026-10-06-v1",
+        "reviewedAt": "2026-10-06",
+        "assetBytesChanged": false
+      }
+    },
+    {
+      "jobId": "hibiscus__mature__shrub__flowering__v1",
+      "canonicalSlug": "hibiscus",
+      "scientific": "Hibiscus rosa-sinensis",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenology": "flowering",
+      "sha256": "d833d4a2045135e7a88bf2dde9574b3b5d00f4a4c5c89e3e85c97dc72f158c08",
+      "objectKey": "candidates/plant-intake-e2e-wave-2026-10-03-v1-flare14/hibiscus/hibiscus__mature__shrub__flowering__v1__d833d4a2045135e7a88bf2dde9574b3b5d00f4a4c5c89e3e85c97dc72f158c08.png",
+      "qaRendererInput": {
+        "ok": true,
+        "code": "QA_PREVIEW_PRESENTATION_BASELINE",
+        "source": "presentation-sizing-v1.1+relative-preview-scale-v1.1+in-garden-qa-scale-policy-v1.1",
+        "baseWidthPx": 316,
+        "effectivePresentationForm": "shrub",
+        "qaScaleBand": "large",
+        "qaMaxHeightPct": 78,
+        "qaMaxWidthPct": 80,
+        "qaScalePolicyVersion": "in-garden-qa-scale-policy-v1.1",
+        "scale": 1,
+        "x": 0.56,
+        "y": 0.86,
+        "rotation": 0,
+        "authorityUserResized": false,
+        "renderingOwner": "Garden Design production renderer",
+        "independentQaScaleMath": false,
+        "autoBlendRequired": true
+      },
+      "bytes": 2138812,
+      "lineage": "plant-intake-e2e-wave-2026-10-03-v1-flare14",
+      "sourceStatus": "CANDIDATE_R2_VERIFIED",
+      "evidenceMismatch": false,
+      "expectedEvidenceSha256": null,
+      "technicalQA": "PASS",
+      "framingQA": "PASS",
+      "botanicalIdentityQA": "PASS",
+      "architectureQA": "PASS",
+      "growthStageQA": "PASS",
+      "phenologyStateQA": "PASS",
+      "inGardenQA": "PASS",
+      "technicalMetrics": {
+        "format": "png",
+        "decodes": true,
+        "width": 1024,
+        "height": 1536,
+        "colorType": 6,
+        "hasAlphaChannel": true,
+        "bytes": 2138812,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "edgeOpaqueRatio": 0,
+        "bbox": {
+          "exists": true,
+          "minX": 58,
+          "minY": 227,
+          "maxX": 950,
+          "maxY": 1378,
+          "opaque": 546804
+        },
+        "alphaCoverage": 0.34764862060546875,
+        "haloPartialPixels": 0
+      },
+      "sizeAuthorityPlan": {
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "hibiscus",
+        "botanicalTaxonId": "taxon:hibiscus-rosa-sinensis",
+        "scientificName": "Hibiscus rosa-sinensis",
+        "growthStage": "mature",
+        "visualForm": "shrub",
+        "state": "SIZE_AUTHORITY_PARTIAL",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
+        "authoritativeMetersAvailable": true,
+        "heightScaleReady": true,
+        "spreadScaleReady": true,
+        "normalizedRange": {
+          "heightM": {
+            "min": 1,
+            "max": 1.5
+          },
+          "spreadM": {
+            "min": 0.5,
+            "max": 1
+          }
+        },
+        "sensitivity": {
+          "cultivarSensitive": true,
+          "rootstockSensitive": false,
+          "cultivarVariable": true,
+          "maintainedForm": true,
+          "notFinalPersonalGardenSize": true,
+          "reasons": [
+            "cultivated forms and pruning can materially change realized size"
+          ]
+        },
+        "explicitEstimateOnly": false,
+        "morphologyFallbackIsAuthority": false,
+        "ownerReviewRequired": false,
+        "placementScaleHold": false,
+        "gardenDesignMayUseExplicitEstimate": true,
+        "meterAccuracyClaimAllowed": false,
+        "reasonCodes": [
+          "PARTIAL_DIMENSION_AUTHORITY"
+        ]
+      },
+      "ownerReviewRequired": false,
+      "productionApproved": true,
+      "ownerVisualQA": "PASS",
+      "ownerDecision": "PASS_OWNER_VISUAL_GATES",
+      "ownerApprovalEvidence": {
+        "source": "R2 model QA PASS + final Auto Blend In-Garden Vision PASS + explicit owner visual PASS",
+        "modelQaRunId": "plant-intake-e2e-wave-model-qa-2026-10-04-v1",
+        "finalVisionQaRunId": "plant-intake-e2e-final-in-garden-vision-revalidation-2026-10-05-v1",
+        "ownerReviewId": "plant-intake-e2e-final-owner-promotion-2026-10-06-v1",
+        "reviewedAt": "2026-10-06",
+        "assetBytesChanged": false
+      }
+    },
+    {
+      "jobId": "lemon__mature__tree__fruiting__v1",
+      "canonicalSlug": "lemon",
+      "scientific": "Citrus × limon",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "fruiting",
+      "sha256": "2a4fb92673858b8217840ce7515a0a7fab09666c2903cf7a72ae7e388a939f0d",
+      "objectKey": "candidates/plant-intake-e2e-wave-2026-10-03-v1-flare14/lemon/lemon__mature__tree__fruiting__v1__2a4fb92673858b8217840ce7515a0a7fab09666c2903cf7a72ae7e388a939f0d.png",
+      "qaRendererInput": {
+        "ok": true,
+        "code": "QA_PREVIEW_PRESENTATION_BASELINE",
+        "source": "tree-scale-v3+alpha-bbox+auto-blend-v3",
+        "baseWidthPx": 490,
+        "effectivePresentationForm": "tree",
+        "qaScaleBand": "xxl",
+        "qaMaxHeightPct": 96,
+        "qaMaxWidthPct": 96,
+        "qaScalePolicyVersion": "in-garden-qa-scale-policy-v1.1",
+        "scale": 1,
+        "x": 0.56,
+        "y": 0.995,
+        "rotation": 0,
+        "authorityUserResized": false,
+        "renderingOwner": "Garden Design production renderer",
+        "independentQaScaleMath": false,
+        "autoBlendRequired": true,
+        "qaTreeScaleV3": {
+          "enabled": true,
+          "model": "tree-scale-v3",
+          "depthId": "near",
+          "imgHeightPct": 108.3680981595092,
+          "visibleHeightPct": 92,
+          "targetVisiblePct": 92,
+          "bboxFillRatio": 0.8489583333333334,
+          "groundAnchor": {
+            "nx": 0.50439453125,
+            "ny": 0.9388020833333334,
+            "source": "alpha-bbox-base-center"
+          },
+          "alphaBBox": {
+            "exists": true,
+            "minX": 41,
+            "minY": 138,
+            "maxX": 992,
+            "maxY": 1442,
+            "opaque": 583526
+          },
+          "noMeterClaim": true
+        }
+      },
+      "bytes": 2316870,
+      "lineage": "plant-intake-e2e-wave-2026-10-03-v1-flare14",
+      "sourceStatus": "CANDIDATE_R2_VERIFIED",
+      "evidenceMismatch": false,
+      "expectedEvidenceSha256": null,
+      "technicalQA": "PASS",
+      "framingQA": "PASS",
+      "botanicalIdentityQA": "PASS",
+      "architectureQA": "PASS",
+      "growthStageQA": "PASS",
+      "phenologyStateQA": "PASS",
+      "inGardenQA": "PASS",
+      "technicalMetrics": {
+        "format": "png",
+        "decodes": true,
+        "width": 1024,
+        "height": 1536,
+        "colorType": 6,
+        "hasAlphaChannel": true,
+        "bytes": 2316870,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "edgeOpaqueRatio": 0,
+        "bbox": {
+          "exists": true,
+          "minX": 41,
+          "minY": 138,
+          "maxX": 992,
+          "maxY": 1442,
+          "opaque": 583526
+        },
+        "alphaCoverage": 0.37099583943684894,
+        "haloPartialPixels": 508
+      },
+      "sizeAuthorityPlan": {
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "lemon",
+        "botanicalTaxonId": "taxon:citrus-limon",
+        "scientificName": "Citrus × limon",
+        "growthStage": "mature",
+        "visualForm": "tree",
+        "state": "SIZE_AUTHORITY_CONTEXT_REQUIRED",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+        "authoritativeMetersAvailable": false,
+        "heightScaleReady": true,
+        "spreadScaleReady": true,
+        "normalizedRange": null,
+        "sensitivity": {
+          "cultivarSensitive": true,
+          "rootstockSensitive": true,
+          "cultivarVariable": false,
+          "maintainedForm": true,
+          "notFinalPersonalGardenSize": true,
+          "reasons": [
+            "cultivar sensitive",
+            "rootstock sensitive",
+            "maintained form",
+            "not final personal garden size"
+          ]
+        },
+        "explicitEstimateOnly": true,
+        "morphologyFallbackIsAuthority": false,
+        "ownerReviewRequired": true,
+        "placementScaleHold": true,
+        "gardenDesignMayUseExplicitEstimate": true,
+        "meterAccuracyClaimAllowed": false,
+        "reasonCodes": [
+          "CULTIVAR_ROOTSTOCK_OR_MAINTAINED_CONTEXT_REQUIRED"
+        ]
+      },
+      "ownerReviewRequired": false,
+      "productionApproved": true,
+      "ownerVisualQA": "PASS",
+      "ownerDecision": "PASS_OWNER_VISUAL_GATES",
+      "ownerApprovalEvidence": {
+        "source": "R2 model QA PASS + final Auto Blend In-Garden Vision PASS + explicit owner visual PASS",
+        "modelQaRunId": "plant-intake-e2e-wave-model-qa-2026-10-04-v1",
+        "finalVisionQaRunId": "plant-intake-e2e-final-in-garden-vision-revalidation-2026-10-05-v1",
+        "ownerReviewId": "plant-intake-e2e-final-owner-promotion-2026-10-06-v1",
+        "reviewedAt": "2026-10-06",
+        "assetBytesChanged": false
+      }
+    },
+    {
+      "jobId": "cyclamen__mature__default__flowering__v1",
+      "canonicalSlug": "cyclamen",
+      "scientific": "Cyclamen persicum",
+      "visualForm": "herbaceous-clump",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenology": "flowering",
+      "sha256": "b5adc258e13715c021cde93cd2bbd6981f93912c98a72f82a2abca30762a5c42",
+      "objectKey": "candidates/plant-intake-e2e-wave-2026-10-03-v1-flare14/cyclamen/cyclamen__mature__default__flowering__v1__b5adc258e13715c021cde93cd2bbd6981f93912c98a72f82a2abca30762a5c42.png",
+      "qaRendererInput": {
+        "ok": true,
+        "code": "QA_PREVIEW_PRESENTATION_BASELINE",
+        "source": "OWNER_EXACT_JOB_CALIBRATION_LOG_MIDPOINT_V1+auto-blend-v3",
+        "baseWidthPx": 82.6578513746892,
+        "effectivePresentationForm": "herbaceous-clump",
+        "qaScaleBand": "owner-exact-calibration",
+        "qaMaxHeightPct": 20,
+        "qaMaxWidthPct": 20,
+        "qaScalePolicyVersion": "in-garden-qa-scale-policy-v1.1",
+        "scale": 1,
+        "x": 0.56,
+        "y": 0.94,
+        "rotation": 0,
+        "authorityUserResized": true,
+        "renderingOwner": "Garden Design production renderer",
+        "independentQaScaleMath": false,
+        "autoBlendRequired": true,
+        "ownerCalibrationReason": "BRACKETED_OWNER_REVIEW_V2_TOO_LARGE_V3_TOO_SMALL"
+      },
+      "bytes": 2152387,
+      "lineage": "plant-intake-e2e-wave-2026-10-03-v1-flare14",
+      "sourceStatus": "CANDIDATE_R2_VERIFIED",
+      "evidenceMismatch": false,
+      "expectedEvidenceSha256": null,
+      "technicalQA": "PASS",
+      "framingQA": "PASS",
+      "botanicalIdentityQA": "PASS",
+      "architectureQA": "PASS",
+      "growthStageQA": "PASS",
+      "phenologyStateQA": "PASS",
+      "inGardenQA": "PASS",
+      "technicalMetrics": {
+        "format": "png",
+        "decodes": true,
+        "width": 1024,
+        "height": 1536,
+        "colorType": 6,
+        "hasAlphaChannel": true,
+        "bytes": 2152387,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "edgeOpaqueRatio": 0,
+        "bbox": {
+          "exists": true,
+          "minX": 57,
+          "minY": 236,
+          "maxX": 968,
+          "maxY": 1351,
+          "opaque": 568020
+        },
+        "alphaCoverage": 0.36113739013671875,
+        "haloPartialPixels": 248
+      },
+      "sizeAuthorityPlan": {
+        "version": "plant-size-authority-readiness-v1",
+        "canonicalSlug": "cyclamen",
+        "botanicalTaxonId": "taxon:cyclamen-persicum",
+        "scientificName": "Cyclamen persicum",
+        "growthStage": "mature",
+        "visualForm": "herbaceous-clump",
+        "state": "SIZE_AUTHORITY_PARTIAL",
+        "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
+        "authoritativeMetersAvailable": true,
+        "heightScaleReady": true,
+        "spreadScaleReady": true,
+        "normalizedRange": {
+          "heightM": {
+            "min": 0.1,
+            "max": 0.2
+          },
+          "spreadM": {
+            "min": 0.1,
+            "max": 0.5
+          }
+        },
+        "sensitivity": {
+          "cultivarSensitive": true,
+          "rootstockSensitive": false,
+          "cultivarVariable": true,
+          "maintainedForm": false,
+          "notFinalPersonalGardenSize": true,
+          "reasons": [
+            "cultivar size variation and container culture can affect realized size"
+          ]
+        },
+        "explicitEstimateOnly": false,
+        "morphologyFallbackIsAuthority": false,
+        "ownerReviewRequired": false,
+        "placementScaleHold": false,
+        "gardenDesignMayUseExplicitEstimate": true,
+        "meterAccuracyClaimAllowed": false,
+        "reasonCodes": [
+          "PARTIAL_DIMENSION_AUTHORITY"
+        ]
+      },
+      "ownerReviewRequired": false,
+      "productionApproved": true,
+      "ownerVisualQA": "PASS",
+      "ownerDecision": "PASS_OWNER_VISUAL_GATES",
+      "ownerApprovalEvidence": {
+        "source": "R2 model QA PASS + final Auto Blend In-Garden Vision PASS + explicit owner visual PASS",
+        "modelQaRunId": "plant-intake-e2e-wave-model-qa-2026-10-04-v1",
+        "finalVisionQaRunId": "plant-intake-e2e-final-in-garden-vision-revalidation-2026-10-05-v1",
+        "ownerReviewId": "plant-intake-e2e-final-owner-promotion-2026-10-06-v1",
+        "reviewedAt": "2026-10-06",
+        "assetBytesChanged": false
+      }
+    }
+  ]
+}
