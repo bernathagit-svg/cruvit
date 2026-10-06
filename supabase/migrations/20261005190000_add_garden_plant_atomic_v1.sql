@@ -59,7 +59,48 @@ begin
       message = 'client_instance_id_required';
   end if;
   if char_length(v_client_instance_id) > 160
-     or v_client_instance_id !~ '^[A-Za-z0-9:_-]+
+     or v_client_instance_id !~ '^[A-Za-z0-9:_-]+$' then
+    raise exception using
+      errcode = '22023',
+      message = 'client_instance_id_invalid';
+  end if;
+
+  if v_display_name = '' then
+    raise exception using
+      errcode = '22023',
+      message = 'plant_display_name_required';
+  end if;
+  if char_length(v_display_name) > 160
+     or v_display_name ~ '[[:cntrl:]]' then
+    raise exception using
+      errcode = '22023',
+      message = 'plant_display_name_invalid';
+  end if;
+
+  if v_profile_slug = '' then
+    raise exception using
+      errcode = '22023',
+      message = 'canonical_slug_required';
+  end if;
+  if char_length(v_profile_slug) > 160
+     or v_profile_slug !~ '^[a-z0-9]+(-[a-z0-9]+)*$' then
+    raise exception using
+      errcode = '22023',
+      message = 'canonical_slug_invalid';
+  end if;
+
+  if v_scientific = '' then
+    raise exception using
+      errcode = '22023',
+      message = 'scientific_name_required';
+  end if;
+  if char_length(v_scientific) > 200
+     or v_scientific ~ '[[:cntrl:]]' then
+    raise exception using
+      errcode = '22023',
+      message = 'scientific_name_invalid';
+  end if;
+
   -- Explicit ownership preflight. SECURITY INVOKER + table RLS still enforce
   -- the same boundary on every table statement below.
   perform 1
