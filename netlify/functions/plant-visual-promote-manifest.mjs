@@ -43,7 +43,7 @@ function sha256(bytes) {
   return crypto.createHash('sha256').update(bytes).digest('hex');
 }
 
-function s3Client() {
+function candidateS3Client() {
   return new S3Client({
     region: 'auto',
     endpoint: `https://${env('PLANT_VISUAL_R2_ACCOUNT_ID')}.r2.cloudflarestorage.com`,
@@ -51,6 +51,22 @@ function s3Client() {
       accessKeyId: env('PLANT_VISUAL_R2_ACCESS_KEY_ID'),
       secretAccessKey: env('PLANT_VISUAL_R2_SECRET_ACCESS_KEY')
     }
+  });
+}
+
+function productionS3Client() {
+  const accessKeyId =
+    env('PLANT_VISUAL_R2_PRODUCTION_ACCESS_KEY_ID')
+    || env('PLANT_VISUAL_R2_PROD_ACCESS_KEY_ID')
+    || env('PLANT_VISUAL_R2_ACCESS_KEY_ID');
+  const secretAccessKey =
+    env('PLANT_VISUAL_R2_PRODUCTION_SECRET_ACCESS_KEY')
+    || env('PLANT_VISUAL_R2_PROD_SECRET_ACCESS_KEY')
+    || env('PLANT_VISUAL_R2_SECRET_ACCESS_KEY');
+  return new S3Client({
+    region: 'auto',
+    endpoint: `https://${env('PLANT_VISUAL_R2_ACCOUNT_ID')}.r2.cloudflarestorage.com`,
+    credentials: { accessKeyId, secretAccessKey }
   });
 }
 
@@ -162,7 +178,7 @@ async function readBytes(client, bucket, key) {
   }
 }
 
-async function copyOne(client, manifestId, row) {
+async function copyOne(candidateClient, productionClient, manifestId, row) {
   if (!row?.jobId || !row?.objectKey || !row?.sha256 || !(Number(row.bytes) > 0)) {
     return { jobId: row?.jobId || null, ok: false, code: 'PROMOTION_ROW_INCOMPLETE' };
   }
@@ -181,7 +197,7 @@ async function copyOne(client, manifestId, row) {
 
   const candidateBucket = env('PLANT_VISUAL_R2_CANDIDATES_BUCKET');
   const productionBucket = env('PLANT_VISUAL_R2_PRODUCTION_BUCKET');
-  const candidate = await readBytes(client, candidateBucket, row.objectKey);
+  const candidate = await readBytes(candidateClient, candidateBucket, row.objectKey);
   if (!candidate) return { jobId: row.jobId, ok: false, code: 'CANDIDATE_NOT_FOUND' };
 
   const actualCandidateSha = sha256(candidate);
@@ -193,7 +209,7 @@ async function copyOne(client, manifestId, row) {
   }
 
   const key = productionKey(row);
-  const existing = await readBytes(client, productionBucket, key);
+  const existing = await readBytes(productionClient, productionBucket, key);
   if (existing) {
     const existingSha = sha256(existing);
     if (existing.length !== candidate.length || existingSha !== actualCandidateSha) {
@@ -210,7 +226,7 @@ async function copyOne(client, manifestId, row) {
     };
   }
 
-  await client.send(new PutObjectCommand({
+  await productionClient.send(new PutObjectCommand({
     Bucket: productionBucket,
     Key: key,
     Body: candidate,
@@ -223,7 +239,7 @@ async function copyOne(client, manifestId, row) {
     }
   }));
 
-  const readback = await readBytes(client, productionBucket, key);
+  const readback = await readBytes(productionClient, productionBucket, key);
   if (!readback) return { jobId: row.jobId, ok: false, code: 'PRODUCTION_READBACK_MISSING', productionKey: key };
   const readbackSha = sha256(readback);
   if (readback.length !== candidate.length || readbackSha !== actualCandidateSha) {
@@ -344,11 +360,12 @@ export default async (req) => {
     });
   }
 
-  const client = s3Client();
+  const candidateClient = candidateS3Client();
+  const productionClient = productionS3Client();
   const results = [];
   for (const row of rows) {
     try {
-      results.push(await copyOne(client, manifestId, row));
+      results.push(await copyOne(candidateClient, productionClient, manifestId, row));
     } catch (err) {
       results.push({
         jobId: row?.jobId || null,

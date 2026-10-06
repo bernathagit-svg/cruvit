@@ -13,13 +13,18 @@ function safeKey(value) {
 }
 
 function s3Client() {
+  const accessKeyId =
+    env('PLANT_VISUAL_R2_PRODUCTION_ACCESS_KEY_ID')
+    || env('PLANT_VISUAL_R2_PROD_ACCESS_KEY_ID')
+    || env('PLANT_VISUAL_R2_ACCESS_KEY_ID');
+  const secretAccessKey =
+    env('PLANT_VISUAL_R2_PRODUCTION_SECRET_ACCESS_KEY')
+    || env('PLANT_VISUAL_R2_PROD_SECRET_ACCESS_KEY')
+    || env('PLANT_VISUAL_R2_SECRET_ACCESS_KEY');
   return new S3Client({
     region: 'auto',
     endpoint: `https://${env('PLANT_VISUAL_R2_ACCOUNT_ID')}.r2.cloudflarestorage.com`,
-    credentials: {
-      accessKeyId: env('PLANT_VISUAL_R2_ACCESS_KEY_ID'),
-      secretAccessKey: env('PLANT_VISUAL_R2_SECRET_ACCESS_KEY')
-    }
+    credentials: { accessKeyId, secretAccessKey }
   });
 }
 

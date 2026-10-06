@@ -15,10 +15,17 @@ async function probe(accountId,accessKeyId,secretAccessKey,bucket){
 export default async(req)=>{
   if(req.method!=='GET')return json(405,{ok:false,code:'METHOD_NOT_ALLOWED'});
   const bucket=env('PLANT_VISUAL_R2_PRODUCTION_BUCKET');
-  const [plantVisual,generic]=await Promise.all([
+  const productionAccessKeyId=
+    env('PLANT_VISUAL_R2_PRODUCTION_ACCESS_KEY_ID')
+    || env('PLANT_VISUAL_R2_PROD_ACCESS_KEY_ID');
+  const productionSecretAccessKey=
+    env('PLANT_VISUAL_R2_PRODUCTION_SECRET_ACCESS_KEY')
+    || env('PLANT_VISUAL_R2_PROD_SECRET_ACCESS_KEY');
+  const [production,plantVisual,generic]=await Promise.all([
+    probe(env('PLANT_VISUAL_R2_ACCOUNT_ID'),productionAccessKeyId,productionSecretAccessKey,bucket),
     probe(env('PLANT_VISUAL_R2_ACCOUNT_ID'),env('PLANT_VISUAL_R2_ACCESS_KEY_ID'),env('PLANT_VISUAL_R2_SECRET_ACCESS_KEY'),bucket),
     probe(env('R2_ACCOUNT_ID'),env('R2_ACCESS_KEY_ID'),env('R2_SECRET_ACCESS_KEY'),bucket)
   ]);
-  return json(200,{ok:true,bucketConfigured:Boolean(bucket),plantVisual,generic,valuesExposed:false,writeAttempted:false});
+  return json(200,{ok:true,bucketConfigured:Boolean(bucket),production,plantVisual,generic,valuesExposed:false,writeAttempted:false});
 };
 export const config={path:'/.netlify/functions/plant-visual-r2-production-access-diagnostic'};
