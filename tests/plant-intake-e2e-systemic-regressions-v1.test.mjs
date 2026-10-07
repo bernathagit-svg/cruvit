@@ -73,3 +73,21 @@ test('Production access diagnostic checks dedicated credentials separately and n
   assert.match(diag,/production,plantVisual,generic/);
   assert.match(diag,/writeAttempted:false/);
 });
+test('Size Authority CONTEXT_REQUIRED carries an explicit placementScaleHold while preserving visual promotion',()=>{ 
+  const resolver=read('modules/garden-design/asset-factory-v1/plant-size-authority-readiness-v1.js');
+  const readiness=read('modules/garden-design/asset-factory-v1/plant-visual-promotion-readiness-v1.js');
+  assert.match(resolver,/const placementScaleHold\s*=\s*state === SIZE_AUTHORITY_STATE\.CONTEXT_REQUIRED/);
+  assert.match(resolver,/placementScaleHold,/);
+  assert.match(readiness,/SIZE_AUTHORITY_CONTEXT_REQUIRED/);
+  assert.match(readiness,/placementScaleHold\s*===\s*true/);
+});
+
+test('Registry activation is driven only by verified promotion results with exact SHA and byte equality',()=>{ 
+  const activation=read('modules/garden-design/asset-factory-v1/plant-visual-registry-activation-v1.js');
+  assert.match(activation,/promoted\.ok !== true/);
+  assert.match(activation,/!text\(promoted\.productionKey\)/);
+  assert.match(activation,/text\(promoted\.sha256\)\.toLowerCase\(\) !== text\(row\.sha256\)\.toLowerCase\(\)/);
+  assert.match(activation,/Number\(promoted\.bytes\) !== Number\(row\.bytes\)/);
+  assert.match(activation,/productionReadbackVerified:\s*true/);
+  assert.match(activation,/registryActivationAfterR2VerificationOnly:\s*true/);
+});
