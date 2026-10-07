@@ -1,0 +1,608 @@
+{
+  "id": "six-plant-climate-supplement-2026-10-07-v1",
+  "status": "APPLIED_AND_INDEPENDENT_READBACK_VERIFIED",
+  "appliedAt": "2026-10-07T19:48:18.743002+00:00",
+  "verifiedAt": "2026-10-07T19:48:41.016483+00:00",
+  "authorization": {
+    "id": "six-plant-climate-supplement-2026-10-07-v1",
+    "approvedAt": "2026-10-07T19:34:24Z",
+    "approvalText": "מאשרת את תיקון נתוני האקלים המשלים ל־Mango, Date Palm ו־Monstera לפי הטיוטה, תוך שמירת UNKNOWN והערכות מסומנות במפורש, ללא paid AI, ללא יצירת תמונות, ללא פריסת Production וללא שינוי Registry ויזואלי.",
+    "proposalCommit": "278ab87150fe60377c3a3e56f82dfdf0182c6f67",
+    "proposalPath": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-evidence-followup-2026-10-07-v1/proposal.json",
+    "proposalSha256": "76ccbadccb92fafed23e14f4b12c9920b97033435a739cb9786a3fb74181fd52",
+    "proposalGitBlob": "11c4ebd5a62004fa6f2311205fd08cd3ff0903de",
+    "executionAuthorized": true,
+    "catalogWritesAllowed": true,
+    "catalogAllowedSlugs": [
+      "mango",
+      "date-palm",
+      "monstera"
+    ],
+    "paidAiAllowed": false,
+    "imageGenerationAllowed": false,
+    "productionDeployAllowed": false,
+    "productionR2WritesAllowed": false,
+    "visualRegistryWritesAllowed": false,
+    "scope": "Exact catalog patches and directly necessary source-provenance consistency. No runtime code, media, size or visual Registry change."
+  },
+  "transaction": {
+    "targetTable": "public.catalog_plants",
+    "rowsUpdated": 3,
+    "atomic": true,
+    "optimisticApprovedRowHashesChecked": true,
+    "updatedFields": "Approved climate paths, directly necessary botanical provenance, updated_at",
+    "exactAfterRowsVerifiedExcludingExpectedUpdatedAt": true,
+    "otherRowsPreserved": 133,
+    "otherRowsMd5": "27f152f94fadbdf8fca6da219d8c3744",
+    "otherRowsHashFormula": "md5(string_agg(to_jsonb(c)::text,'' order by c.slug)) excluding three target slugs",
+    "controlRowsPreserved": [
+      {
+        "slug": "bigleaf-hydrangea",
+        "rowMd5": "c058087788fb7a29fe235f89570b09fc"
+      },
+      {
+        "slug": "fig",
+        "rowMd5": "226f465d558f73a78e2086d98c4d1807"
+      },
+      {
+        "slug": "lettuce",
+        "rowMd5": "300f24b4ab8969593140c62c3fddbf47"
+      }
+    ],
+    "targetReadback": [
+      {
+        "slug": "date-palm",
+        "rowMd5": "2106324a3727873347c7d8b3c264f8b2"
+      },
+      {
+        "slug": "mango",
+        "rowMd5": "ff345a8888c45e607b737ff1c5c2cd79"
+      },
+      {
+        "slug": "monstera",
+        "rowMd5": "c5ff3578ea10353fe795048ab6ef93ea"
+      }
+    ]
+  },
+  "actualCatalogEvaluation": [
+    {
+      "slug": "date-palm",
+      "scientificName": "Phoenix dactylifera",
+      "readinessClass": "A",
+      "dataGate": "PASS",
+      "readinessReasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "onboardingReady": true,
+      "onboarding": {
+        "version": "full-plant-onboarding-gate-v1",
+        "canonicalSlug": "date-palm",
+        "scientific": "Phoenix dactylifera",
+        "phenology": null,
+        "ready": true,
+        "code": "FULL_PLANT_ONBOARDING_READY",
+        "reasons": [],
+        "gates": {
+          "identity": "PASS",
+          "verification": "PASS",
+          "climate": "PASS",
+          "outcome": "PASS",
+          "knowledge": "PASS",
+          "provenance": "PASS"
+        },
+        "climate": {
+          "missingCoreTraits": [],
+          "explicitUnknownCoreTraits": [
+            "needsWinterChill"
+          ],
+          "traitStates": {
+            "frostSensitivity": "ASSERTED",
+            "coldTolerance": "ASSERTED",
+            "heatTolerance": "ASSERTED",
+            "humidityTolerance": "ASSERTED",
+            "waterNeeds": "ASSERTED",
+            "sunNeeds": "ASSERTED",
+            "drainageNeeds": "ASSERTED",
+            "needsWinterChill": "EXPLICIT_UNKNOWN"
+          },
+          "needsReview": false
+        },
+        "outcome": {
+          "ok": true,
+          "code": "VEGETATIVE_OR_NONPRODUCTIVE_OUTCOME_READY"
+        },
+        "knowledge": {
+          "ok": true,
+          "code": "PLANT_KNOWLEDGE_READY",
+          "sourceCount": 4,
+          "warningCount": 0
+        },
+        "provenance": {
+          "sourceCount": 4,
+          "sourcePacket": "date-palm-semantic-audit-proposal-v1"
+        }
+      },
+      "fullApprovalFlag": false,
+      "unknownVisualStates": [
+        "flowering"
+      ],
+      "missingRequiredCount": 3,
+      "allStatesComplete": false,
+      "evidenceScope": "Actual catalog row, current checked-out pure contracts; not a location suitability assessment or deployed size metadata."
+    },
+    {
+      "slug": "mango",
+      "scientificName": "Mangifera indica",
+      "readinessClass": "A",
+      "dataGate": "PASS",
+      "readinessReasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "onboardingReady": true,
+      "onboarding": {
+        "version": "full-plant-onboarding-gate-v1",
+        "canonicalSlug": "mango",
+        "scientific": "Mangifera indica",
+        "phenology": null,
+        "ready": true,
+        "code": "FULL_PLANT_ONBOARDING_READY",
+        "reasons": [],
+        "gates": {
+          "identity": "PASS",
+          "verification": "PASS",
+          "climate": "PASS",
+          "outcome": "PASS",
+          "knowledge": "PASS",
+          "provenance": "PASS"
+        },
+        "climate": {
+          "missingCoreTraits": [],
+          "explicitUnknownCoreTraits": [
+            "humidityTolerance",
+            "needsWinterChill"
+          ],
+          "traitStates": {
+            "frostSensitivity": "ASSERTED",
+            "coldTolerance": "ASSERTED",
+            "heatTolerance": "ASSERTED",
+            "humidityTolerance": "EXPLICIT_UNKNOWN",
+            "waterNeeds": "ASSERTED",
+            "sunNeeds": "ASSERTED",
+            "drainageNeeds": "ASSERTED",
+            "needsWinterChill": "EXPLICIT_UNKNOWN"
+          },
+          "needsReview": false
+        },
+        "outcome": {
+          "ok": true,
+          "code": "VEGETATIVE_OR_NONPRODUCTIVE_OUTCOME_READY"
+        },
+        "knowledge": {
+          "ok": true,
+          "code": "PLANT_KNOWLEDGE_READY",
+          "sourceCount": 3,
+          "warningCount": 1
+        },
+        "provenance": {
+          "sourceCount": 3,
+          "sourcePacket": "mango-six-plant-recovery-2026-10-07-v1"
+        }
+      },
+      "fullApprovalFlag": true,
+      "unknownVisualStates": [
+        "flowering"
+      ],
+      "missingRequiredCount": 0,
+      "allStatesComplete": false,
+      "evidenceScope": "Actual catalog row, current checked-out pure contracts; not a location suitability assessment or deployed size metadata."
+    },
+    {
+      "slug": "monstera",
+      "scientificName": "Monstera deliciosa",
+      "readinessClass": "A",
+      "dataGate": "PASS",
+      "readinessReasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "onboardingReady": true,
+      "onboarding": {
+        "version": "full-plant-onboarding-gate-v1",
+        "canonicalSlug": "monstera",
+        "scientific": "Monstera deliciosa",
+        "phenology": null,
+        "ready": true,
+        "code": "FULL_PLANT_ONBOARDING_READY",
+        "reasons": [],
+        "gates": {
+          "identity": "PASS",
+          "verification": "PASS",
+          "climate": "PASS",
+          "outcome": "PASS",
+          "knowledge": "PASS",
+          "provenance": "PASS"
+        },
+        "climate": {
+          "missingCoreTraits": [],
+          "explicitUnknownCoreTraits": [
+            "needsWinterChill"
+          ],
+          "traitStates": {
+            "frostSensitivity": "ASSERTED",
+            "coldTolerance": "ASSERTED",
+            "heatTolerance": "ASSERTED",
+            "humidityTolerance": "ASSERTED",
+            "waterNeeds": "ASSERTED",
+            "sunNeeds": "ASSERTED",
+            "drainageNeeds": "ASSERTED",
+            "needsWinterChill": "EXPLICIT_UNKNOWN"
+          },
+          "needsReview": false
+        },
+        "outcome": {
+          "ok": true,
+          "code": "VEGETATIVE_OR_NONPRODUCTIVE_OUTCOME_READY"
+        },
+        "knowledge": {
+          "ok": true,
+          "code": "PLANT_KNOWLEDGE_READY",
+          "sourceCount": 3,
+          "warningCount": 0
+        },
+        "provenance": {
+          "sourceCount": 3,
+          "sourcePacket": "monstera-semantic-audit-proposal-v1"
+        }
+      },
+      "fullApprovalFlag": false,
+      "unknownVisualStates": [
+        "flowering"
+      ],
+      "missingRequiredCount": 3,
+      "allStatesComplete": false,
+      "evidenceScope": "Actual catalog row, current checked-out pure contracts; not a location suitability assessment or deployed size metadata."
+    },
+    {
+      "slug": "bigleaf-hydrangea",
+      "scientificName": "Hydrangea macrophylla",
+      "readinessClass": "A",
+      "dataGate": "PASS",
+      "readinessReasons": [
+        "REPRODUCTIVE_CONTEXT_MISSING",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "onboardingReady": true,
+      "onboarding": {
+        "version": "full-plant-onboarding-gate-v1",
+        "canonicalSlug": "bigleaf-hydrangea",
+        "scientific": "Hydrangea macrophylla",
+        "phenology": null,
+        "ready": true,
+        "code": "FULL_PLANT_ONBOARDING_READY",
+        "reasons": [],
+        "gates": {
+          "identity": "PASS",
+          "verification": "PASS",
+          "climate": "PASS",
+          "outcome": "PASS",
+          "knowledge": "PASS",
+          "provenance": "PASS"
+        },
+        "climate": {
+          "missingCoreTraits": [],
+          "explicitUnknownCoreTraits": [],
+          "traitStates": {
+            "frostSensitivity": "ASSERTED",
+            "coldTolerance": "ASSERTED",
+            "heatTolerance": "ASSERTED",
+            "humidityTolerance": "ASSERTED",
+            "waterNeeds": "ASSERTED",
+            "sunNeeds": "ASSERTED",
+            "drainageNeeds": "ASSERTED",
+            "needsWinterChill": "ASSERTED"
+          },
+          "needsReview": false
+        },
+        "outcome": {
+          "ok": true,
+          "code": "VEGETATIVE_OR_NONPRODUCTIVE_OUTCOME_READY"
+        },
+        "knowledge": {
+          "ok": true,
+          "code": "PLANT_KNOWLEDGE_READY",
+          "sourceCount": 1,
+          "warningCount": 0
+        },
+        "provenance": {
+          "sourceCount": 2,
+          "sourcePacket": "bigleaf-hydrangea-bulk-batch-3-v1"
+        }
+      },
+      "fullApprovalFlag": false,
+      "unknownVisualStates": [
+        "fruiting"
+      ],
+      "missingRequiredCount": 3,
+      "allStatesComplete": false,
+      "evidenceScope": "Actual catalog row, current checked-out pure contracts; not a location suitability assessment or deployed size metadata."
+    },
+    {
+      "slug": "fig",
+      "scientificName": "Ficus carica",
+      "readinessClass": "A",
+      "dataGate": "PASS",
+      "readinessReasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "onboardingReady": true,
+      "onboarding": {
+        "version": "full-plant-onboarding-gate-v1",
+        "canonicalSlug": "fig",
+        "scientific": "Ficus carica",
+        "phenology": null,
+        "ready": true,
+        "code": "FULL_PLANT_ONBOARDING_READY",
+        "reasons": [],
+        "gates": {
+          "identity": "PASS",
+          "verification": "PASS",
+          "climate": "PASS",
+          "outcome": "PASS",
+          "knowledge": "PASS",
+          "provenance": "PASS"
+        },
+        "climate": {
+          "missingCoreTraits": [],
+          "explicitUnknownCoreTraits": [],
+          "traitStates": {
+            "frostSensitivity": "ASSERTED",
+            "coldTolerance": "ASSERTED",
+            "heatTolerance": "ASSERTED",
+            "humidityTolerance": "ASSERTED",
+            "waterNeeds": "ASSERTED",
+            "sunNeeds": "ASSERTED",
+            "drainageNeeds": "ASSERTED",
+            "needsWinterChill": "ASSERTED"
+          },
+          "needsReview": false
+        },
+        "outcome": {
+          "ok": true,
+          "code": "VEGETATIVE_OR_NONPRODUCTIVE_OUTCOME_READY"
+        },
+        "knowledge": {
+          "ok": true,
+          "code": "PLANT_KNOWLEDGE_READY",
+          "sourceCount": 1,
+          "warningCount": 0
+        },
+        "provenance": {
+          "sourceCount": 3,
+          "sourcePacket": "fig-bulk-batch-3-v1"
+        }
+      },
+      "fullApprovalFlag": false,
+      "unknownVisualStates": [
+        "flowering"
+      ],
+      "missingRequiredCount": 5,
+      "allStatesComplete": false,
+      "evidenceScope": "Actual catalog row, current checked-out pure contracts; not a location suitability assessment or deployed size metadata."
+    },
+    {
+      "slug": "lettuce",
+      "scientificName": "Lactuca sativa",
+      "readinessClass": "A",
+      "dataGate": "PASS",
+      "readinessReasons": [
+        "REPRODUCTIVE_CONTEXT_MISSING",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "onboardingReady": true,
+      "onboarding": {
+        "version": "full-plant-onboarding-gate-v1",
+        "canonicalSlug": "lettuce",
+        "scientific": "Lactuca sativa",
+        "phenology": null,
+        "ready": true,
+        "code": "FULL_PLANT_ONBOARDING_READY",
+        "reasons": [],
+        "gates": {
+          "identity": "PASS",
+          "verification": "PASS",
+          "climate": "PASS",
+          "outcome": "PASS",
+          "knowledge": "PASS",
+          "provenance": "PASS"
+        },
+        "climate": {
+          "missingCoreTraits": [],
+          "explicitUnknownCoreTraits": [],
+          "traitStates": {
+            "frostSensitivity": "ASSERTED",
+            "coldTolerance": "ASSERTED",
+            "heatTolerance": "ASSERTED",
+            "humidityTolerance": "ASSERTED",
+            "waterNeeds": "ASSERTED",
+            "sunNeeds": "ASSERTED",
+            "drainageNeeds": "ASSERTED",
+            "needsWinterChill": "ASSERTED"
+          },
+          "needsReview": false
+        },
+        "outcome": {
+          "ok": true,
+          "code": "VEGETATIVE_OR_NONPRODUCTIVE_OUTCOME_READY"
+        },
+        "knowledge": {
+          "ok": true,
+          "code": "PLANT_KNOWLEDGE_READY",
+          "sourceCount": 1,
+          "warningCount": 0
+        },
+        "provenance": {
+          "sourceCount": 3,
+          "sourcePacket": "lettuce-bulk-batch-3-v1"
+        }
+      },
+      "fullApprovalFlag": false,
+      "unknownVisualStates": [
+        "flowering",
+        "fruiting"
+      ],
+      "missingRequiredCount": 1,
+      "allStatesComplete": false,
+      "evidenceScope": "Actual catalog row, current checked-out pure contracts; not a location suitability assessment or deployed size metadata."
+    }
+  ],
+  "tests": {
+    "passed": 87,
+    "failed": 0,
+    "skipped": 0,
+    "newIndependentExecutionTests": 9,
+    "execution": "Local node --test against seven relevant suites; not remote CI",
+    "log": "regression-tests.log"
+  },
+  "liveReadback": {
+    "endpoint": "https://friendly-taiyaki-64aacb.netlify.app/.netlify/functions/cruvit-plant-intake-engine?slugs=mango,date-palm,monstera,hydrangea,fig,lettuce",
+    "ok": true,
+    "total": 6,
+    "engineMinimumCoverageApprovalCount": 1,
+    "byStage": {
+      "FULL_CRUVIT_APPROVED": 1,
+      "DATA_ENRICHMENT_REQUIRED": 2,
+      "VISUAL_GENERATION_REQUIRED": 3
+    },
+    "paidCallsExecuted": 0,
+    "catalogWritesExecuted": 0,
+    "productionWritesExecuted": 0,
+    "registryWritesExecuted": 0,
+    "rows": [
+      {
+        "slug": "mango",
+        "stage": "FULL_CRUVIT_APPROVED",
+        "blockers": [],
+        "identity": {
+          "requestedSlug": "mango",
+          "canonicalSlug": "mango",
+          "sourceCatalogSlug": "mango",
+          "aliasResolved": false,
+          "lookupSlugs": [
+            "mango"
+          ]
+        }
+      },
+      {
+        "slug": "date-palm",
+        "stage": "DATA_ENRICHMENT_REQUIRED",
+        "blockers": [
+          "SIZE_AUTHORITY_ENRICHMENT_REQUIRED",
+          "REQUIRED_VISUAL_VARIANTS_MISSING"
+        ],
+        "identity": {
+          "requestedSlug": "date-palm",
+          "canonicalSlug": "date-palm",
+          "sourceCatalogSlug": "date-palm",
+          "aliasResolved": false,
+          "lookupSlugs": [
+            "date-palm"
+          ]
+        }
+      },
+      {
+        "slug": "monstera",
+        "stage": "DATA_ENRICHMENT_REQUIRED",
+        "blockers": [
+          "SIZE_AUTHORITY_ENRICHMENT_REQUIRED",
+          "REQUIRED_VISUAL_VARIANTS_MISSING"
+        ],
+        "identity": {
+          "requestedSlug": "monstera",
+          "canonicalSlug": "monstera",
+          "sourceCatalogSlug": "monstera",
+          "aliasResolved": false,
+          "lookupSlugs": [
+            "monstera"
+          ]
+        }
+      },
+      {
+        "slug": "hydrangea",
+        "stage": "VISUAL_GENERATION_REQUIRED",
+        "blockers": [
+          "REQUIRED_VISUAL_VARIANTS_MISSING"
+        ],
+        "identity": {
+          "requestedSlug": "hydrangea",
+          "canonicalSlug": "hydrangea",
+          "sourceCatalogSlug": "bigleaf-hydrangea",
+          "aliasResolved": true,
+          "lookupSlugs": [
+            "hydrangea",
+            "bigleaf-hydrangea"
+          ]
+        }
+      },
+      {
+        "slug": "fig",
+        "stage": "VISUAL_GENERATION_REQUIRED",
+        "blockers": [
+          "REQUIRED_VISUAL_VARIANTS_MISSING"
+        ],
+        "identity": {
+          "requestedSlug": "fig",
+          "canonicalSlug": "fig",
+          "sourceCatalogSlug": "fig",
+          "aliasResolved": false,
+          "lookupSlugs": [
+            "fig",
+            "fig-tree"
+          ]
+        }
+      },
+      {
+        "slug": "lettuce",
+        "stage": "VISUAL_GENERATION_REQUIRED",
+        "blockers": [
+          "REQUIRED_VISUAL_VARIANTS_MISSING"
+        ],
+        "identity": {
+          "requestedSlug": "lettuce",
+          "canonicalSlug": "lettuce",
+          "sourceCatalogSlug": "lettuce",
+          "aliasResolved": false,
+          "lookupSlugs": [
+            "lettuce"
+          ]
+        }
+      }
+    ]
+  },
+  "scopeCounters": {
+    "catalogRowsUpdated": 3,
+    "paidAiCalls": 0,
+    "imageGenerationCalls": 0,
+    "productionDeploys": 0,
+    "productionR2Writes": 0,
+    "visualRegistryWrites": 0
+  },
+  "protectedFileHashes": {
+    "data/plant-identity.registry.json": "bde1ace6d6e2c2733c218443a18845f4c3bae1fdc8205011f831b79cea07a3f0",
+    "data/plants.seed.json": "8dcd67f536fecc9ddc9b22ec790c70a9e108968f51029cac64b7b31448afd1b2",
+    "data/catalog/botanical-size-authority-v1.json": "86447803a6ad2245b8422448edc91e7197481370138a582453b631131e04c90b",
+    "modules/garden-design/assets/plants/design-asset-registry-v1.json": "0c0c898152ae10ba2c939c3cc2373b193741aad0c0145bbb923317e5fc7649a5"
+  },
+  "codeAndVisualAuthoritiesUnchanged": true,
+  "remainingWork": {
+    "allStatesCompleteForTargets": false,
+    "sourceReviewedUnknownPreserved": true,
+    "sizeAuthorityMetadataDeploymentPerformed": false,
+    "notes": [
+      "Mango is Class A for data readiness. This does not certify suitability for every location.",
+      "Mango still has flowering UNKNOWN although the live minimum-coverage gate reports FULL_CRUVIT_APPROVED.",
+      "Date Palm and Monstera still have live size-authority and required-visual blockers; their missing winter-chill evidence-state blocker is resolved.",
+      "Previously approved local size metadata remains undeployed; the approved scope prohibited Production deployment.",
+      "No flowering UNKNOWN state was converted to NOT_REQUIRED and no new visual asset was generated."
+    ]
+  }
+}

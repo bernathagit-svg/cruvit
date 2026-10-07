@@ -1,0 +1,811 @@
+{
+  "id": "six-plant-climate-supplement-2026-10-07-v1",
+  "mode": "OFFLINE_PREPARATION_ONLY",
+  "catalogWritesExecuted": 0,
+  "before": [
+    {
+      "slug": "date-palm",
+      "scientificName": "Phoenix dactylifera",
+      "readinessClass": "A",
+      "dataGate": "PASS",
+      "readinessReasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "onboardingReady": false,
+      "onboarding": {
+        "version": "full-plant-onboarding-gate-v1",
+        "canonicalSlug": "date-palm",
+        "scientific": "Phoenix dactylifera",
+        "phenology": null,
+        "ready": false,
+        "code": "FULL_PLANT_ONBOARDING_BLOCKED",
+        "reasons": [
+          "core-climate-traits-missing:needsWinterChill"
+        ],
+        "gates": {
+          "identity": "PASS",
+          "verification": "PASS",
+          "climate": "FAIL",
+          "outcome": "PASS",
+          "knowledge": "PASS",
+          "provenance": "PASS"
+        },
+        "climate": {
+          "missingCoreTraits": [
+            "needsWinterChill"
+          ],
+          "explicitUnknownCoreTraits": [],
+          "traitStates": {
+            "frostSensitivity": "ASSERTED",
+            "coldTolerance": "ASSERTED",
+            "heatTolerance": "ASSERTED",
+            "humidityTolerance": "ASSERTED",
+            "waterNeeds": "ASSERTED",
+            "sunNeeds": "ASSERTED",
+            "drainageNeeds": "ASSERTED",
+            "needsWinterChill": "MISSING"
+          },
+          "needsReview": false
+        },
+        "outcome": {
+          "ok": true,
+          "code": "VEGETATIVE_OR_NONPRODUCTIVE_OUTCOME_READY"
+        },
+        "knowledge": {
+          "ok": true,
+          "code": "PLANT_KNOWLEDGE_READY",
+          "sourceCount": 4,
+          "warningCount": 0
+        },
+        "provenance": {
+          "sourceCount": 4,
+          "sourcePacket": "date-palm-semantic-audit-proposal-v1"
+        }
+      },
+      "fullApprovalFlag": false,
+      "unknownVisualStates": [
+        "flowering"
+      ],
+      "missingRequiredCount": 3,
+      "allStatesComplete": false,
+      "evidenceScope": "Actual catalog row, current checked-out pure contracts; not a location suitability assessment or deployed size metadata."
+    },
+    {
+      "slug": "mango",
+      "scientificName": "Mangifera indica",
+      "readinessClass": "C",
+      "dataGate": "PARTIAL",
+      "readinessReasons": [
+        "MISSING_CLIMATE_CORE",
+        "REPRODUCTIVE_CONTEXT_MISSING",
+        "HUMIDITY_UNKNOWN"
+      ],
+      "onboardingReady": true,
+      "onboarding": {
+        "version": "full-plant-onboarding-gate-v1",
+        "canonicalSlug": "mango",
+        "scientific": "Mangifera indica",
+        "phenology": null,
+        "ready": true,
+        "code": "FULL_PLANT_ONBOARDING_READY",
+        "reasons": [],
+        "gates": {
+          "identity": "PASS",
+          "verification": "PASS",
+          "climate": "PASS",
+          "outcome": "PASS",
+          "knowledge": "PASS",
+          "provenance": "PASS"
+        },
+        "climate": {
+          "missingCoreTraits": [],
+          "explicitUnknownCoreTraits": [
+            "heatTolerance",
+            "humidityTolerance",
+            "needsWinterChill"
+          ],
+          "traitStates": {
+            "frostSensitivity": "ASSERTED",
+            "coldTolerance": "ASSERTED",
+            "heatTolerance": "EXPLICIT_UNKNOWN",
+            "humidityTolerance": "EXPLICIT_UNKNOWN",
+            "waterNeeds": "ASSERTED",
+            "sunNeeds": "ASSERTED",
+            "drainageNeeds": "ASSERTED",
+            "needsWinterChill": "EXPLICIT_UNKNOWN"
+          },
+          "needsReview": false
+        },
+        "outcome": {
+          "ok": true,
+          "code": "VEGETATIVE_OR_NONPRODUCTIVE_OUTCOME_READY"
+        },
+        "knowledge": {
+          "ok": true,
+          "code": "PLANT_KNOWLEDGE_READY",
+          "sourceCount": 2,
+          "warningCount": 1
+        },
+        "provenance": {
+          "sourceCount": 2,
+          "sourcePacket": "mango-six-plant-recovery-2026-10-07-v1"
+        }
+      },
+      "fullApprovalFlag": false,
+      "unknownVisualStates": [
+        "flowering"
+      ],
+      "missingRequiredCount": 0,
+      "allStatesComplete": false,
+      "evidenceScope": "Actual catalog row, current checked-out pure contracts; not a location suitability assessment or deployed size metadata."
+    },
+    {
+      "slug": "monstera",
+      "scientificName": "Monstera deliciosa",
+      "readinessClass": "A",
+      "dataGate": "PASS",
+      "readinessReasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "onboardingReady": false,
+      "onboarding": {
+        "version": "full-plant-onboarding-gate-v1",
+        "canonicalSlug": "monstera",
+        "scientific": "Monstera deliciosa",
+        "phenology": null,
+        "ready": false,
+        "code": "FULL_PLANT_ONBOARDING_BLOCKED",
+        "reasons": [
+          "core-climate-traits-missing:needsWinterChill"
+        ],
+        "gates": {
+          "identity": "PASS",
+          "verification": "PASS",
+          "climate": "FAIL",
+          "outcome": "PASS",
+          "knowledge": "PASS",
+          "provenance": "PASS"
+        },
+        "climate": {
+          "missingCoreTraits": [
+            "needsWinterChill"
+          ],
+          "explicitUnknownCoreTraits": [],
+          "traitStates": {
+            "frostSensitivity": "ASSERTED",
+            "coldTolerance": "ASSERTED",
+            "heatTolerance": "ASSERTED",
+            "humidityTolerance": "ASSERTED",
+            "waterNeeds": "ASSERTED",
+            "sunNeeds": "ASSERTED",
+            "drainageNeeds": "ASSERTED",
+            "needsWinterChill": "MISSING"
+          },
+          "needsReview": false
+        },
+        "outcome": {
+          "ok": true,
+          "code": "VEGETATIVE_OR_NONPRODUCTIVE_OUTCOME_READY"
+        },
+        "knowledge": {
+          "ok": true,
+          "code": "PLANT_KNOWLEDGE_READY",
+          "sourceCount": 3,
+          "warningCount": 0
+        },
+        "provenance": {
+          "sourceCount": 3,
+          "sourcePacket": "monstera-semantic-audit-proposal-v1"
+        }
+      },
+      "fullApprovalFlag": false,
+      "unknownVisualStates": [
+        "flowering"
+      ],
+      "missingRequiredCount": 3,
+      "allStatesComplete": false,
+      "evidenceScope": "Actual catalog row, current checked-out pure contracts; not a location suitability assessment or deployed size metadata."
+    },
+    {
+      "slug": "bigleaf-hydrangea",
+      "scientificName": "Hydrangea macrophylla",
+      "readinessClass": "A",
+      "dataGate": "PASS",
+      "readinessReasons": [
+        "REPRODUCTIVE_CONTEXT_MISSING",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "onboardingReady": true,
+      "onboarding": {
+        "version": "full-plant-onboarding-gate-v1",
+        "canonicalSlug": "bigleaf-hydrangea",
+        "scientific": "Hydrangea macrophylla",
+        "phenology": null,
+        "ready": true,
+        "code": "FULL_PLANT_ONBOARDING_READY",
+        "reasons": [],
+        "gates": {
+          "identity": "PASS",
+          "verification": "PASS",
+          "climate": "PASS",
+          "outcome": "PASS",
+          "knowledge": "PASS",
+          "provenance": "PASS"
+        },
+        "climate": {
+          "missingCoreTraits": [],
+          "explicitUnknownCoreTraits": [],
+          "traitStates": {
+            "frostSensitivity": "ASSERTED",
+            "coldTolerance": "ASSERTED",
+            "heatTolerance": "ASSERTED",
+            "humidityTolerance": "ASSERTED",
+            "waterNeeds": "ASSERTED",
+            "sunNeeds": "ASSERTED",
+            "drainageNeeds": "ASSERTED",
+            "needsWinterChill": "ASSERTED"
+          },
+          "needsReview": false
+        },
+        "outcome": {
+          "ok": true,
+          "code": "VEGETATIVE_OR_NONPRODUCTIVE_OUTCOME_READY"
+        },
+        "knowledge": {
+          "ok": true,
+          "code": "PLANT_KNOWLEDGE_READY",
+          "sourceCount": 1,
+          "warningCount": 0
+        },
+        "provenance": {
+          "sourceCount": 2,
+          "sourcePacket": "bigleaf-hydrangea-bulk-batch-3-v1"
+        }
+      },
+      "fullApprovalFlag": false,
+      "unknownVisualStates": [
+        "fruiting"
+      ],
+      "missingRequiredCount": 3,
+      "allStatesComplete": false,
+      "evidenceScope": "Actual catalog row, current checked-out pure contracts; not a location suitability assessment or deployed size metadata."
+    },
+    {
+      "slug": "fig",
+      "scientificName": "Ficus carica",
+      "readinessClass": "A",
+      "dataGate": "PASS",
+      "readinessReasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "onboardingReady": true,
+      "onboarding": {
+        "version": "full-plant-onboarding-gate-v1",
+        "canonicalSlug": "fig",
+        "scientific": "Ficus carica",
+        "phenology": null,
+        "ready": true,
+        "code": "FULL_PLANT_ONBOARDING_READY",
+        "reasons": [],
+        "gates": {
+          "identity": "PASS",
+          "verification": "PASS",
+          "climate": "PASS",
+          "outcome": "PASS",
+          "knowledge": "PASS",
+          "provenance": "PASS"
+        },
+        "climate": {
+          "missingCoreTraits": [],
+          "explicitUnknownCoreTraits": [],
+          "traitStates": {
+            "frostSensitivity": "ASSERTED",
+            "coldTolerance": "ASSERTED",
+            "heatTolerance": "ASSERTED",
+            "humidityTolerance": "ASSERTED",
+            "waterNeeds": "ASSERTED",
+            "sunNeeds": "ASSERTED",
+            "drainageNeeds": "ASSERTED",
+            "needsWinterChill": "ASSERTED"
+          },
+          "needsReview": false
+        },
+        "outcome": {
+          "ok": true,
+          "code": "VEGETATIVE_OR_NONPRODUCTIVE_OUTCOME_READY"
+        },
+        "knowledge": {
+          "ok": true,
+          "code": "PLANT_KNOWLEDGE_READY",
+          "sourceCount": 1,
+          "warningCount": 0
+        },
+        "provenance": {
+          "sourceCount": 3,
+          "sourcePacket": "fig-bulk-batch-3-v1"
+        }
+      },
+      "fullApprovalFlag": false,
+      "unknownVisualStates": [
+        "flowering"
+      ],
+      "missingRequiredCount": 5,
+      "allStatesComplete": false,
+      "evidenceScope": "Actual catalog row, current checked-out pure contracts; not a location suitability assessment or deployed size metadata."
+    },
+    {
+      "slug": "lettuce",
+      "scientificName": "Lactuca sativa",
+      "readinessClass": "A",
+      "dataGate": "PASS",
+      "readinessReasons": [
+        "REPRODUCTIVE_CONTEXT_MISSING",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "onboardingReady": true,
+      "onboarding": {
+        "version": "full-plant-onboarding-gate-v1",
+        "canonicalSlug": "lettuce",
+        "scientific": "Lactuca sativa",
+        "phenology": null,
+        "ready": true,
+        "code": "FULL_PLANT_ONBOARDING_READY",
+        "reasons": [],
+        "gates": {
+          "identity": "PASS",
+          "verification": "PASS",
+          "climate": "PASS",
+          "outcome": "PASS",
+          "knowledge": "PASS",
+          "provenance": "PASS"
+        },
+        "climate": {
+          "missingCoreTraits": [],
+          "explicitUnknownCoreTraits": [],
+          "traitStates": {
+            "frostSensitivity": "ASSERTED",
+            "coldTolerance": "ASSERTED",
+            "heatTolerance": "ASSERTED",
+            "humidityTolerance": "ASSERTED",
+            "waterNeeds": "ASSERTED",
+            "sunNeeds": "ASSERTED",
+            "drainageNeeds": "ASSERTED",
+            "needsWinterChill": "ASSERTED"
+          },
+          "needsReview": false
+        },
+        "outcome": {
+          "ok": true,
+          "code": "VEGETATIVE_OR_NONPRODUCTIVE_OUTCOME_READY"
+        },
+        "knowledge": {
+          "ok": true,
+          "code": "PLANT_KNOWLEDGE_READY",
+          "sourceCount": 1,
+          "warningCount": 0
+        },
+        "provenance": {
+          "sourceCount": 3,
+          "sourcePacket": "lettuce-bulk-batch-3-v1"
+        }
+      },
+      "fullApprovalFlag": false,
+      "unknownVisualStates": [
+        "flowering",
+        "fruiting"
+      ],
+      "missingRequiredCount": 1,
+      "allStatesComplete": false,
+      "evidenceScope": "Actual catalog row, current checked-out pure contracts; not a location suitability assessment or deployed size metadata."
+    }
+  ],
+  "after": [
+    {
+      "slug": "mango",
+      "scientificName": "Mangifera indica",
+      "readinessClass": "A",
+      "dataGate": "PASS",
+      "readinessReasons": [
+        "HUMIDITY_UNKNOWN",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "onboardingReady": true,
+      "onboarding": {
+        "version": "full-plant-onboarding-gate-v1",
+        "canonicalSlug": "mango",
+        "scientific": "Mangifera indica",
+        "phenology": null,
+        "ready": true,
+        "code": "FULL_PLANT_ONBOARDING_READY",
+        "reasons": [],
+        "gates": {
+          "identity": "PASS",
+          "verification": "PASS",
+          "climate": "PASS",
+          "outcome": "PASS",
+          "knowledge": "PASS",
+          "provenance": "PASS"
+        },
+        "climate": {
+          "missingCoreTraits": [],
+          "explicitUnknownCoreTraits": [
+            "humidityTolerance",
+            "needsWinterChill"
+          ],
+          "traitStates": {
+            "frostSensitivity": "ASSERTED",
+            "coldTolerance": "ASSERTED",
+            "heatTolerance": "ASSERTED",
+            "humidityTolerance": "EXPLICIT_UNKNOWN",
+            "waterNeeds": "ASSERTED",
+            "sunNeeds": "ASSERTED",
+            "drainageNeeds": "ASSERTED",
+            "needsWinterChill": "EXPLICIT_UNKNOWN"
+          },
+          "needsReview": false
+        },
+        "outcome": {
+          "ok": true,
+          "code": "VEGETATIVE_OR_NONPRODUCTIVE_OUTCOME_READY"
+        },
+        "knowledge": {
+          "ok": true,
+          "code": "PLANT_KNOWLEDGE_READY",
+          "sourceCount": 3,
+          "warningCount": 1
+        },
+        "provenance": {
+          "sourceCount": 3,
+          "sourcePacket": "mango-six-plant-recovery-2026-10-07-v1"
+        }
+      },
+      "fullApprovalFlag": true,
+      "unknownVisualStates": [
+        "flowering"
+      ],
+      "missingRequiredCount": 0,
+      "allStatesComplete": false,
+      "evidenceScope": "Actual catalog row, current checked-out pure contracts; not a location suitability assessment or deployed size metadata."
+    },
+    {
+      "slug": "date-palm",
+      "scientificName": "Phoenix dactylifera",
+      "readinessClass": "A",
+      "dataGate": "PASS",
+      "readinessReasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "onboardingReady": true,
+      "onboarding": {
+        "version": "full-plant-onboarding-gate-v1",
+        "canonicalSlug": "date-palm",
+        "scientific": "Phoenix dactylifera",
+        "phenology": null,
+        "ready": true,
+        "code": "FULL_PLANT_ONBOARDING_READY",
+        "reasons": [],
+        "gates": {
+          "identity": "PASS",
+          "verification": "PASS",
+          "climate": "PASS",
+          "outcome": "PASS",
+          "knowledge": "PASS",
+          "provenance": "PASS"
+        },
+        "climate": {
+          "missingCoreTraits": [],
+          "explicitUnknownCoreTraits": [
+            "needsWinterChill"
+          ],
+          "traitStates": {
+            "frostSensitivity": "ASSERTED",
+            "coldTolerance": "ASSERTED",
+            "heatTolerance": "ASSERTED",
+            "humidityTolerance": "ASSERTED",
+            "waterNeeds": "ASSERTED",
+            "sunNeeds": "ASSERTED",
+            "drainageNeeds": "ASSERTED",
+            "needsWinterChill": "EXPLICIT_UNKNOWN"
+          },
+          "needsReview": false
+        },
+        "outcome": {
+          "ok": true,
+          "code": "VEGETATIVE_OR_NONPRODUCTIVE_OUTCOME_READY"
+        },
+        "knowledge": {
+          "ok": true,
+          "code": "PLANT_KNOWLEDGE_READY",
+          "sourceCount": 4,
+          "warningCount": 0
+        },
+        "provenance": {
+          "sourceCount": 4,
+          "sourcePacket": "date-palm-semantic-audit-proposal-v1"
+        }
+      },
+      "fullApprovalFlag": false,
+      "unknownVisualStates": [
+        "flowering"
+      ],
+      "missingRequiredCount": 3,
+      "allStatesComplete": false,
+      "evidenceScope": "Actual catalog row, current checked-out pure contracts; not a location suitability assessment or deployed size metadata."
+    },
+    {
+      "slug": "monstera",
+      "scientificName": "Monstera deliciosa",
+      "readinessClass": "A",
+      "dataGate": "PASS",
+      "readinessReasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "onboardingReady": true,
+      "onboarding": {
+        "version": "full-plant-onboarding-gate-v1",
+        "canonicalSlug": "monstera",
+        "scientific": "Monstera deliciosa",
+        "phenology": null,
+        "ready": true,
+        "code": "FULL_PLANT_ONBOARDING_READY",
+        "reasons": [],
+        "gates": {
+          "identity": "PASS",
+          "verification": "PASS",
+          "climate": "PASS",
+          "outcome": "PASS",
+          "knowledge": "PASS",
+          "provenance": "PASS"
+        },
+        "climate": {
+          "missingCoreTraits": [],
+          "explicitUnknownCoreTraits": [
+            "needsWinterChill"
+          ],
+          "traitStates": {
+            "frostSensitivity": "ASSERTED",
+            "coldTolerance": "ASSERTED",
+            "heatTolerance": "ASSERTED",
+            "humidityTolerance": "ASSERTED",
+            "waterNeeds": "ASSERTED",
+            "sunNeeds": "ASSERTED",
+            "drainageNeeds": "ASSERTED",
+            "needsWinterChill": "EXPLICIT_UNKNOWN"
+          },
+          "needsReview": false
+        },
+        "outcome": {
+          "ok": true,
+          "code": "VEGETATIVE_OR_NONPRODUCTIVE_OUTCOME_READY"
+        },
+        "knowledge": {
+          "ok": true,
+          "code": "PLANT_KNOWLEDGE_READY",
+          "sourceCount": 3,
+          "warningCount": 0
+        },
+        "provenance": {
+          "sourceCount": 3,
+          "sourcePacket": "monstera-semantic-audit-proposal-v1"
+        }
+      },
+      "fullApprovalFlag": false,
+      "unknownVisualStates": [
+        "flowering"
+      ],
+      "missingRequiredCount": 3,
+      "allStatesComplete": false,
+      "evidenceScope": "Actual catalog row, current checked-out pure contracts; not a location suitability assessment or deployed size metadata."
+    },
+    {
+      "slug": "bigleaf-hydrangea",
+      "scientificName": "Hydrangea macrophylla",
+      "readinessClass": "A",
+      "dataGate": "PASS",
+      "readinessReasons": [
+        "REPRODUCTIVE_CONTEXT_MISSING",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "onboardingReady": true,
+      "onboarding": {
+        "version": "full-plant-onboarding-gate-v1",
+        "canonicalSlug": "bigleaf-hydrangea",
+        "scientific": "Hydrangea macrophylla",
+        "phenology": null,
+        "ready": true,
+        "code": "FULL_PLANT_ONBOARDING_READY",
+        "reasons": [],
+        "gates": {
+          "identity": "PASS",
+          "verification": "PASS",
+          "climate": "PASS",
+          "outcome": "PASS",
+          "knowledge": "PASS",
+          "provenance": "PASS"
+        },
+        "climate": {
+          "missingCoreTraits": [],
+          "explicitUnknownCoreTraits": [],
+          "traitStates": {
+            "frostSensitivity": "ASSERTED",
+            "coldTolerance": "ASSERTED",
+            "heatTolerance": "ASSERTED",
+            "humidityTolerance": "ASSERTED",
+            "waterNeeds": "ASSERTED",
+            "sunNeeds": "ASSERTED",
+            "drainageNeeds": "ASSERTED",
+            "needsWinterChill": "ASSERTED"
+          },
+          "needsReview": false
+        },
+        "outcome": {
+          "ok": true,
+          "code": "VEGETATIVE_OR_NONPRODUCTIVE_OUTCOME_READY"
+        },
+        "knowledge": {
+          "ok": true,
+          "code": "PLANT_KNOWLEDGE_READY",
+          "sourceCount": 1,
+          "warningCount": 0
+        },
+        "provenance": {
+          "sourceCount": 2,
+          "sourcePacket": "bigleaf-hydrangea-bulk-batch-3-v1"
+        }
+      },
+      "fullApprovalFlag": false,
+      "unknownVisualStates": [
+        "fruiting"
+      ],
+      "missingRequiredCount": 3,
+      "allStatesComplete": false,
+      "evidenceScope": "Actual catalog row, current checked-out pure contracts; not a location suitability assessment or deployed size metadata."
+    },
+    {
+      "slug": "fig",
+      "scientificName": "Ficus carica",
+      "readinessClass": "A",
+      "dataGate": "PASS",
+      "readinessReasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "onboardingReady": true,
+      "onboarding": {
+        "version": "full-plant-onboarding-gate-v1",
+        "canonicalSlug": "fig",
+        "scientific": "Ficus carica",
+        "phenology": null,
+        "ready": true,
+        "code": "FULL_PLANT_ONBOARDING_READY",
+        "reasons": [],
+        "gates": {
+          "identity": "PASS",
+          "verification": "PASS",
+          "climate": "PASS",
+          "outcome": "PASS",
+          "knowledge": "PASS",
+          "provenance": "PASS"
+        },
+        "climate": {
+          "missingCoreTraits": [],
+          "explicitUnknownCoreTraits": [],
+          "traitStates": {
+            "frostSensitivity": "ASSERTED",
+            "coldTolerance": "ASSERTED",
+            "heatTolerance": "ASSERTED",
+            "humidityTolerance": "ASSERTED",
+            "waterNeeds": "ASSERTED",
+            "sunNeeds": "ASSERTED",
+            "drainageNeeds": "ASSERTED",
+            "needsWinterChill": "ASSERTED"
+          },
+          "needsReview": false
+        },
+        "outcome": {
+          "ok": true,
+          "code": "VEGETATIVE_OR_NONPRODUCTIVE_OUTCOME_READY"
+        },
+        "knowledge": {
+          "ok": true,
+          "code": "PLANT_KNOWLEDGE_READY",
+          "sourceCount": 1,
+          "warningCount": 0
+        },
+        "provenance": {
+          "sourceCount": 3,
+          "sourcePacket": "fig-bulk-batch-3-v1"
+        }
+      },
+      "fullApprovalFlag": false,
+      "unknownVisualStates": [
+        "flowering"
+      ],
+      "missingRequiredCount": 5,
+      "allStatesComplete": false,
+      "evidenceScope": "Actual catalog row, current checked-out pure contracts; not a location suitability assessment or deployed size metadata."
+    },
+    {
+      "slug": "lettuce",
+      "scientificName": "Lactuca sativa",
+      "readinessClass": "A",
+      "dataGate": "PASS",
+      "readinessReasons": [
+        "REPRODUCTIVE_CONTEXT_MISSING",
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "onboardingReady": true,
+      "onboarding": {
+        "version": "full-plant-onboarding-gate-v1",
+        "canonicalSlug": "lettuce",
+        "scientific": "Lactuca sativa",
+        "phenology": null,
+        "ready": true,
+        "code": "FULL_PLANT_ONBOARDING_READY",
+        "reasons": [],
+        "gates": {
+          "identity": "PASS",
+          "verification": "PASS",
+          "climate": "PASS",
+          "outcome": "PASS",
+          "knowledge": "PASS",
+          "provenance": "PASS"
+        },
+        "climate": {
+          "missingCoreTraits": [],
+          "explicitUnknownCoreTraits": [],
+          "traitStates": {
+            "frostSensitivity": "ASSERTED",
+            "coldTolerance": "ASSERTED",
+            "heatTolerance": "ASSERTED",
+            "humidityTolerance": "ASSERTED",
+            "waterNeeds": "ASSERTED",
+            "sunNeeds": "ASSERTED",
+            "drainageNeeds": "ASSERTED",
+            "needsWinterChill": "ASSERTED"
+          },
+          "needsReview": false
+        },
+        "outcome": {
+          "ok": true,
+          "code": "VEGETATIVE_OR_NONPRODUCTIVE_OUTCOME_READY"
+        },
+        "knowledge": {
+          "ok": true,
+          "code": "PLANT_KNOWLEDGE_READY",
+          "sourceCount": 1,
+          "warningCount": 0
+        },
+        "provenance": {
+          "sourceCount": 3,
+          "sourcePacket": "lettuce-bulk-batch-3-v1"
+        }
+      },
+      "fullApprovalFlag": false,
+      "unknownVisualStates": [
+        "flowering",
+        "fruiting"
+      ],
+      "missingRequiredCount": 1,
+      "allStatesComplete": false,
+      "evidenceScope": "Actual catalog row, current checked-out pure contracts; not a location suitability assessment or deployed size metadata."
+    }
+  ],
+  "protectedHashes": {
+    "data/plant-identity.registry.json": "bde1ace6d6e2c2733c218443a18845f4c3bae1fdc8205011f831b79cea07a3f0",
+    "data/plants.seed.json": "8dcd67f536fecc9ddc9b22ec790c70a9e108968f51029cac64b7b31448afd1b2",
+    "data/catalog/botanical-size-authority-v1.json": "86447803a6ad2245b8422448edc91e7197481370138a582453b631131e04c90b",
+    "modules/garden-design/assets/plants/design-asset-registry-v1.json": "0c0c898152ae10ba2c939c3cc2373b193741aad0c0145bbb923317e5fc7649a5"
+  },
+  "otherRowsCount": 133,
+  "otherRowsMd5": "27f152f94fadbdf8fca6da219d8c3744",
+  "provenanceCorrections": [
+    "Cold excerpt now matches ST404 rather than retaining MG216 text.",
+    "Superseded active heat UNKNOWN removed only from Mango source claims; original packet stays immutable.",
+    "HS1499 added to both provenance and plantKnowledge.sources.",
+    "New biological and chill evidence has source-linked claim coverage."
+  ],
+  "limits": [
+    "Readiness Class A is not successful climate suitability at a location.",
+    "Unresolved flowering stays UNKNOWN; minimum visual coverage is not all-states completion."
+  ]
+}

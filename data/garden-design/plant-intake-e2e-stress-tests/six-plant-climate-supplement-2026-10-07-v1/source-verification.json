@@ -1,0 +1,68 @@
+{
+  "id": "six-plant-climate-supplement-2026-10-07-v1",
+  "reviewedAt": "2026-10-07",
+  "mode": "PRIMARY_SOURCE_READ_ONLY",
+  "checks": [
+    {
+      "sourceId": "uf-ifas-mango-st404-20261007",
+      "url": "https://ask.ifas.ufl.edu/publication/ST404",
+      "locator": "General Information",
+      "fact": "USDA hardiness zones 10B through 11",
+      "sourceFactVerified": true,
+      "interpretation": "coldTolerance very_low is derived only via the existing hardiness-zone-to-cold-traits-v1@1.1.0; frost remains unchanged."
+    },
+    {
+      "sourceId": "uf-ifas-fruit-hs1499-20261007",
+      "url": "https://ask.ifas.ufl.edu/publication/HS1499",
+      "locator": "Table 10, Mango",
+      "sourceHeatDamageF": {
+        "operator": ">",
+        "value": 104
+      },
+      "sourceHeatDamageC": {
+        "operator": ">",
+        "value": 40
+      },
+      "sourceOptimumGrowingTemperatureF": {
+        "min": 75,
+        "max": 86
+      },
+      "sourceFactVerified": true,
+      "interpretation": "The medium ordinal is the owner-approved HEURISTIC_ASSERTION, not a literal source classification or a no-damage guarantee."
+    },
+    {
+      "sourceId": "uf-ifas-mango-mg216-20261007",
+      "url": "https://ask.ifas.ufl.edu/publication/MG216",
+      "locator": "Inflorescence; Pollination; Production",
+      "facts": [
+        "Male and bisexual flowers",
+        "Insect pollination",
+        "Dry weather before and during bloom is favorable"
+      ],
+      "sourceFactVerified": true,
+      "interpretation": "No self-fertility or mandatory dry-season boolean inferred."
+    },
+    {
+      "sourceId": "uf-ifas-phoenix-dactylifera",
+      "url": "https://ask.ifas.ufl.edu/publication/FR314",
+      "reviewResult": "REVIEWED_UNQUANTIFIED",
+      "interpretation": "Reviewed source does not establish a universal winter-chill boolean; record UNKNOWN."
+    },
+    {
+      "sourceId": "uf-ifas-monstera-fruit",
+      "url": "https://ask.ifas.ufl.edu/publication/HS311",
+      "reviewResult": "REVIEWED_UNQUANTIFIED",
+      "interpretation": "Reviewed source does not establish a universal winter-chill boolean; record UNKNOWN."
+    },
+    {
+      "sourceId": "ncsu-monstera-deliciosa",
+      "url": "https://plants.ces.ncsu.edu/plants/monstera-deliciosa/",
+      "reviewResult": "REVIEWED_UNQUANTIFIED",
+      "interpretation": "Reviewed source does not establish a universal winter-chill boolean; record UNKNOWN."
+    }
+  ],
+  "limits": [
+    "This bounded review does not assert absence of all possible external research.",
+    "Local readiness classification is distinct from location-specific suitability and complete visual coverage."
+  ]
+}
