@@ -88,6 +88,22 @@ async function fetchCatalogRowByIdentity(registry,requestedSlug){
 function candidateRowsForSlug(doc,slug){
   return (doc?.rows||[]).filter(row=>String(row?.canonicalSlug||'').toLowerCase()===slug);
 }
+export function sizeAuthorityRegistryForIdentity(registry,identityLookup={}){
+  if(!registry || typeof registry!=='object') return registry;
+  const map={...(registry.slugToBotanicalTaxonId||{})};
+  const slugs=[...new Set([
+    identityLookup.canonicalSlug,
+    identityLookup.requestedSlug,
+    identityLookup.sourceCatalogSlug,
+    ...(identityLookup.lookupSlugs||[])
+  ].map(safeSlug).filter(Boolean))];
+  const existing=slugs.map(slug=>map[slug]).filter(Boolean);
+  const uniqueTaxa=[...new Set(existing)];
+  if(uniqueTaxa.length!==1) return registry;
+  const taxonId=uniqueTaxa[0];
+  for(const slug of slugs) if(!map[slug]) map[slug]=taxonId;
+  return {...registry,slugToBotanicalTaxonId:map};
+}
 
 async function requestItems(req){
   if(req.method==='GET'){
@@ -190,11 +206,15 @@ export default async(req)=>{
         String(x?.slug||'').toLowerCase()===mediaSlug
       )||null;
 
+      const identityAwareSizeAuthorityRegistry=sizeAuthorityRegistryForIdentity(
+        sizeAuthorityRegistry,
+        catalogLookup
+      );
       fullApproval=evaluateFullCruvitPlantApproval({
         catalogRow,
         identityRegistry,
         designAssetRegistry,
-        sizeAuthorityRegistry,
+        sizeAuthorityRegistry:identityAwareSizeAuthorityRegistry,
         catalogMediaCoverageRecord:mediaRecord
       });
 

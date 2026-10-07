@@ -4,7 +4,10 @@ import {
   resolveCruvitPlantIntakeStage,
   INTAKE_STAGE
 } from '../modules/catalog/cruvit-plant-intake-engine-v1.js';
-import { identityLookupSlugs } from '../netlify/functions/cruvit-plant-intake-engine.mjs';
+import {
+  identityLookupSlugs,
+  sizeAuthorityRegistryForIdentity
+} from '../netlify/functions/cruvit-plant-intake-engine.mjs';
 import fs from 'node:fs';
 
 const identityRegistry=JSON.parse(fs.readFileSync('data/plant-identity.registry.json','utf8'));
@@ -88,4 +91,37 @@ test('identity lookup leaves an unrelated canonical slug stable',()=>{
   const r=identityLookupSlugs(identityRegistry,'mango');
   assert.equal(r.canonicalSlug,'mango');
   assert.ok(r.lookupSlugs.includes('mango'));
+});
+
+test('size authority follows a proven identity alias without duplicating botanical evidence',()=>{
+  const registry={
+    slugToBotanicalTaxonId:{'bigleaf-hydrangea':'taxon:hydrangea-macrophylla'},
+    records:[{botanicalTaxonId:'taxon:hydrangea-macrophylla',runtimeAuthority:'RUNTIME_AUTHORITY_READY'}]
+  };
+  const identity={
+    canonicalSlug:'hydrangea',
+    requestedSlug:'hydrangea',
+    sourceCatalogSlug:'bigleaf-hydrangea',
+    lookupSlugs:['hydrangea','bigleaf-hydrangea']
+  };
+  const resolved=sizeAuthorityRegistryForIdentity(registry,identity);
+  assert.equal(resolved.slugToBotanicalTaxonId.hydrangea,'taxon:hydrangea-macrophylla');
+  assert.equal(resolved.slugToBotanicalTaxonId['bigleaf-hydrangea'],'taxon:hydrangea-macrophylla');
+  assert.equal(resolved.records,registry.records);
+});
+
+test('size authority alias propagation fails closed when identity slugs point to conflicting taxa',()=>{
+  const registry={
+    slugToBotanicalTaxonId:{
+      hydrangea:'taxon:a',
+      'bigleaf-hydrangea':'taxon:b'
+    },
+    records:[]
+  };
+  const resolved=sizeAuthorityRegistryForIdentity(registry,{
+    canonicalSlug:'hydrangea',
+    sourceCatalogSlug:'bigleaf-hydrangea',
+    lookupSlugs:['hydrangea','bigleaf-hydrangea']
+  });
+  assert.equal(resolved,registry);
 });
