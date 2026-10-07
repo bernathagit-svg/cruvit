@@ -1,0 +1,27 @@
+{
+  "id":"six-plant-evidence-followup-2026-10-07-v1",
+  "status":"DRAFT_NOT_APPLIED",
+  "createdAt":"2026-10-07",
+  "baseCommit":"bbc7f1b0f03c1eaff8d7f83e9e0599f086d67033",
+  "executionAuthorized":false,
+  "catalogWritesAllowed":false,
+  "productionDeployAllowed":false,
+  "productionR2WritesAllowed":false,
+  "visualRegistryWritesAllowed":false,
+  "paidAiAllowed":false,
+  "sourceReview":{
+    "uf-ifas-mango-st404-20261007":{"url":"https://ask.ifas.ufl.edu/publication/ST404","title":"Mangifera indica: Mango","locator":"General Information","rawQuote":"USDA hardiness zones: 10B through 11","verifiedAt":"2026-10-07"},
+    "uf-ifas-fruit-hs1499-20261007":{"url":"https://ask.ifas.ufl.edu/publication/HS1499","title":"Quick Guide to Environmental Factors Impacting Subtropical and Tropical Fruit Crops in Florida","locator":"Table 10, Mango","rawHeatDamageF":">104","rawOptimumF":"75-86","verifiedAt":"2026-10-07"},
+    "uf-ifas-mango-mg216-20261007":{"url":"https://ask.ifas.ufl.edu/publication/MG216","title":"Mango Growing in the Florida Home Landscape","locator":"Inflorescence; Pollination; Climate; Production","paraphrase":"Male and bisexual flowers occur; several kinds of insects pollinate. Dry bloom weather is favorable, not an established universal requirement.","verifiedAt":"2026-10-07"},
+    "uf-ifas-phoenix-dactylifera":{"url":"https://ask.ifas.ufl.edu/publication/FR314","title":"Phoenix dactylifera, Date Palm","locator":"Description and Horticultural","verifiedAt":"2026-10-07","winterChillReview":"No quantified or explicit boolean winter-chill requirement found in this reviewed source. Absence of a statement is NOT proof of false."},
+    "uf-ifas-monstera-fruit":{"url":"https://ask.ifas.ufl.edu/publication/HS311","title":"Monstera Growing in the Florida Home Landscape","locator":"Climate; Inflorescence and Fruit","verifiedAt":"2026-10-07","winterChillReview":"No quantified or explicit boolean winter-chill requirement found in this reviewed source. Absence of a statement is NOT proof of false."},
+    "ncsu-monstera-deliciosa":{"url":"https://plants.ces.ncsu.edu/plants/monstera-deliciosa/","title":"Monstera deliciosa","verifiedAt":"2026-10-07","winterChillReview":"Reviewed without establishing a species-wide winter-chill boolean."}
+  },
+  "catalogPatches":[
+    {"slug":"mango","expectedRowMd5":"decc962b92f64986adc48ffd02ea9954","coldTolerance":{"value":"very_low","sourceId":"uf-ifas-mango-st404-20261007","sourceClaim":{"claimType":"usda_hardiness_zone_band","hardinessZoneSystem":"USDA","hardinessZoneMin":10.5,"hardinessZoneMax":11,"rawValue":"10B through 11"},"transformRef":"hardiness-zone-to-cold-traits-v1@1.1.0","evidenceLineage":"DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM","note":"Keep the existing ordinal; replace generic heuristic provenance with explicit zone evidence and the existing approved transform."},"heatTolerance":{"value":"medium","evidenceClass":"HEURISTIC_ASSERTION","sourceId":"uf-ifas-fruit-hs1499-20261007","sourceHeatDamageC":{"operator":">","value":40},"interpretation":"Proposed conservative CRUVIT qualitative category, NOT the source's literal ordinal and NOT a universal damage-free survival boundary. It retains extreme-heat constraint in the current evaluator.","approvalRequired":true},"reproductiveBiology":{"flowerSexExpression":"male_and_bisexual_flowers","pollinationAgents":["insects"],"sourceId":"uf-ifas-mango-mg216-20261007","evidenceClass":"SOURCE_SUPPORTED","selfFertilityNotInferred":true},"preserveExplicitUnknown":["humidityTolerance","needsWinterChill"],"preserveSourceQualification":"Favorable dry bloom weather must not become requiresDrySeason=true."},
+    {"slug":"date-palm","expectedRowMd5":"3a944ab33e4615fa5f8d11a84368526c","field":"needsWinterChill","value":null,"evidenceClass":"UNKNOWN","status":"unknown","reviewState":"REVIEWED_UNQUANTIFIED","sourceIds":["uf-ifas-phoenix-dactylifera"],"booleanNotInferred":true,"preserveAllOtherClimateFields":true},
+    {"slug":"monstera","expectedRowMd5":"c932d4184241f5afee54b88561b30bdc","field":"needsWinterChill","value":null,"evidenceClass":"UNKNOWN","status":"unknown","reviewState":"REVIEWED_UNQUANTIFIED","sourceIds":["uf-ifas-monstera-fruit","ncsu-monstera-deliciosa"],"booleanNotInferred":true,"preserveAllOtherClimateFields":true}
+  ],
+  "unresolvedVisualAccounting":{"plants":["mango","date-palm","monstera"],"state":"flowering","liveState":"UNKNOWN","minimumRequiredCoverageIsNotAllStatesComplete":true,"generationCountIsNotFinal":true},
+  "nextControlledAction":"After explicit approval, atomically apply exact catalog patches with optimistic row-hash checks. Verify unchanged unrelated data. Deployment of approved size metadata is a separate authorization; no binary image or visual Registry changes."
+}

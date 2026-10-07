@@ -1,0 +1,334 @@
+TAP version 13
+# Subtest: missing catalog and packet routes to evidence packet
+ok 1 - missing catalog and packet routes to evidence packet
+  ---
+  duration_ms: 0.724
+  type: 'test'
+  ...
+# Subtest: validated but unapproved packet requires owner ingest approval
+ok 2 - validated but unapproved packet requires owner ingest approval
+  ---
+  duration_ms: 0.0905
+  type: 'test'
+  ...
+# Subtest: catalog plant with Class A gap routes enrichment before visuals
+ok 3 - catalog plant with Class A gap routes enrichment before visuals
+  ---
+  duration_ms: 0.0808
+  type: 'test'
+  ...
+# Subtest: visual generation requires bounded owner spend approval action
+ok 4 - visual generation requires bounded owner spend approval action
+  ---
+  duration_ms: 0.0855
+  type: 'test'
+  ...
+# Subtest: full approval is the only final approved state
+ok 5 - full approval is the only final approved state
+  ---
+  duration_ms: 0.0785
+  type: 'test'
+  ...
+# Subtest: identity lookup normalizes alias and canonical Hydrangea slugs to one canonical identity
+ok 6 - identity lookup normalizes alias and canonical Hydrangea slugs to one canonical identity
+  ---
+  duration_ms: 0.6313
+  type: 'test'
+  ...
+# Subtest: identity lookup leaves an unrelated canonical slug stable
+ok 7 - identity lookup leaves an unrelated canonical slug stable
+  ---
+  duration_ms: 0.0859
+  type: 'test'
+  ...
+# Subtest: size authority follows a proven identity alias without duplicating botanical evidence
+ok 8 - size authority follows a proven identity alias without duplicating botanical evidence
+  ---
+  duration_ms: 0.1435
+  type: 'test'
+  ...
+# Subtest: size authority alias propagation fails closed when identity slugs point to conflicting taxa
+ok 9 - size authority alias propagation fails closed when identity slugs point to conflicting taxa
+  ---
+  duration_ms: 0.1076
+  type: 'test'
+  ...
+# Subtest: live full approval hydrates approved-packet design metadata before variant planning
+ok 10 - live full approval hydrates approved-packet design metadata before variant planning
+  ---
+  duration_ms: 0.8431
+  type: 'test'
+  ...
+# Subtest: full approval fails closed when visual production coverage is missing
+ok 11 - full approval fails closed when visual production coverage is missing
+  ---
+  duration_ms: 4.0783
+  type: 'test'
+  ...
+# Subtest: explicit UNKNOWN humidity stays unknown but does not manufacture a suitability blocker
+ok 12 - explicit UNKNOWN humidity stays unknown but does not manufacture a suitability blocker
+  ---
+  duration_ms: 0.7514
+  type: 'test'
+  ...
+# Subtest: visual factory readiness alone never equals full CRUVIT approval
+ok 13 - visual factory readiness alone never equals full CRUVIT approval
+  ---
+  duration_ms: 0.4575
+  type: 'test'
+  ...
+# Subtest: shop remains outside botanical approval
+ok 14 - shop remains outside botanical approval
+  ---
+  duration_ms: 0.3698
+  type: 'test'
+  ...
+# Subtest: fruit-oriented recommendation readiness requires structured reproductive climate
+ok 15 - fruit-oriented recommendation readiness requires structured reproductive climate
+  ---
+  duration_ms: 0.3624
+  type: 'test'
+  ...
+# Subtest: fruit-oriented recommendation readiness accepts structured provenance-backed climate
+ok 16 - fruit-oriented recommendation readiness accepts structured provenance-backed climate
+  ---
+  duration_ms: 0.3617
+  type: 'test'
+  ...
+# Subtest: ornamental fruit/seed description does not require fruit-production climate
+ok 17 - ornamental fruit/seed description does not require fruit-production climate
+  ---
+  duration_ms: 0.1556
+  type: 'test'
+  ...
+# Subtest: source-backed legacy fruit purpose remains applicable when structural group is missing
+ok 18 - source-backed legacy fruit purpose remains applicable when structural group is missing
+  ---
+  duration_ms: 0.1541
+  type: 'test'
+  ...
+# Subtest: source-backed edible/ripening fruit wording can recover legacy fruit purpose
+ok 19 - source-backed edible/ripening fruit wording can recover legacy fruit purpose
+  ---
+  duration_ms: 0.2992
+  type: 'test'
+  ...
+# Subtest: edible non-fruit crop wording does not manufacture a fruit-production requirement
+ok 20 - edible non-fruit crop wording does not manufacture a fruit-production requirement
+  ---
+  duration_ms: 0.0821
+  type: 'test'
+  ...
+# Subtest: legacy fruit group cannot override explicit leafy/root/flower-bud harvest purpose
+ok 21 - legacy fruit group cannot override explicit leafy/root/flower-bud harvest purpose
+  ---
+  duration_ms: 0.1083
+  type: 'test'
+  ...
+# Subtest: legume/cucurbit/melon yield remains reproductive-climate applicable
+ok 22 - legume/cucurbit/melon yield remains reproductive-climate applicable
+  ---
+  duration_ms: 0.093
+  type: 'test'
+  ...
+# Subtest: source-backed researched-unquantified reproductive state closes research blocker without claiming supported fruiting
+ok 23 - source-backed researched-unquantified reproductive state closes research blocker without claiming supported fruiting
+  ---
+  duration_ms: 0.3519
+  type: 'test'
+  ...
+# Subtest: researched reproductive state without source lineage is still blocked
+ok 24 - researched reproductive state without source lineage is still blocked
+  ---
+  duration_ms: 0.7562
+  type: 'test'
+  ...
+# Subtest: context-dependent reproductive state with source lineage is research-complete
+ok 25 - context-dependent reproductive state with source lineage is research-complete
+  ---
+  duration_ms: 0.4112
+  type: 'test'
+  ...
+# Subtest: reproductive source id must resolve to botanical provenance
+ok 26 - reproductive source id must resolve to botanical provenance
+  ---
+  duration_ms: 0.9965
+  type: 'test'
+  ...
+# Subtest: verified catalog identity provenance is accepted when registry entry is absent
+ok 27 - verified catalog identity provenance is accepted when registry entry is absent
+  ---
+  duration_ms: 0.3413
+  type: 'test'
+  ...
+# Subtest: explicit registry needsReview blocks catalog fallback even with verified provenance
+ok 28 - explicit registry needsReview blocks catalog fallback even with verified provenance
+  ---
+  duration_ms: 0.187
+  type: 'test'
+  ...
+# Subtest: in-garden capture requires Auto Blend V3 before any capture can be stored
+ok 29 - in-garden capture requires Auto Blend V3 before any capture can be stored
+  ---
+  duration_ms: 1.3646
+  type: 'test'
+  ...
+# Subtest: capture evidence and status fail closed unless Auto Blend was actually applied
+ok 30 - capture evidence and status fail closed unless Auto Blend was actually applied
+  ---
+  duration_ms: 0.3845
+  type: 'test'
+  ...
+# Subtest: Tree Scale V3 sizes visible alpha content instead of treating the full PNG canvas as botanical height
+ok 31 - Tree Scale V3 sizes visible alpha content instead of treating the full PNG canvas as botanical height
+  ---
+  duration_ms: 1.171
+  type: 'test'
+  ...
+# Subtest: Production R2 prefers dedicated credentials while candidate reads stay on candidate credentials
+ok 32 - Production R2 prefers dedicated credentials while candidate reads stay on candidate credentials
+  ---
+  duration_ms: 0.2177
+  type: 'test'
+  ...
+# Subtest: Production read and status surfaces use the same dedicated Production credential preference
+ok 33 - Production read and status surfaces use the same dedicated Production credential preference
+  ---
+  duration_ms: 0.2582
+  type: 'test'
+  ...
+# Subtest: Production access diagnostic checks dedicated credentials separately and never attempts a write
+ok 34 - Production access diagnostic checks dedicated credentials separately and never attempts a write
+  ---
+  duration_ms: 0.2662
+  type: 'test'
+  ...
+# Subtest: Size Authority CONTEXT_REQUIRED carries an explicit placementScaleHold while preserving visual promotion
+ok 35 - Size Authority CONTEXT_REQUIRED carries an explicit placementScaleHold while preserving visual promotion
+  ---
+  duration_ms: 0.3167
+  type: 'test'
+  ...
+# Subtest: Registry activation is driven only by verified promotion results with exact SHA and byte equality
+ok 36 - Registry activation is driven only by verified promotion results with exact SHA and byte equality
+  ---
+  duration_ms: 0.2335
+  type: 'test'
+  ...
+# Subtest: Mango recovery uses the canonical packet validator and materializer without bypass
+ok 37 - Mango recovery uses the canonical packet validator and materializer without bypass
+  ---
+  duration_ms: 3.5752
+  type: 'test'
+  ...
+# Subtest: Mango retains unknowns and does not turn favorable dry weather into a requirement
+ok 38 - Mango retains unknowns and does not turn favorable dry weather into a requirement
+  ---
+  duration_ms: 0.0965
+  type: 'test'
+  ...
+# Subtest: Both evergreen patches carry resolvable primary source links
+ok 39 - Both evergreen patches carry resolvable primary source links
+  ---
+  duration_ms: 0.454
+  type: 'test'
+  ...
+# Subtest: Date palm source bounds remain separate; context hold prevents unsupported meters
+ok 40 - Date palm source bounds remain separate; context hold prevents unsupported meters
+  ---
+  duration_ms: 0.376
+  type: 'test'
+  ...
+# Subtest: Monstera indoor height is not combined with outdoor vine length
+ok 41 - Monstera indoor height is not combined with outdoor vine length
+  ---
+  duration_ms: 0.1199
+  type: 'test'
+  ...
+# Subtest: Repair authorization excludes images, Production R2, visual Registry and production deploy
+ok 42 - Repair authorization excludes images, Production R2, visual Registry and production deploy
+  ---
+  duration_ms: 0.2096
+  type: 'test'
+  ...
+# Subtest: reproduces Mango current Class C from its exact persisted recovery artifact
+ok 43 - reproduces Mango current Class C from its exact persisted recovery artifact
+  ---
+  duration_ms: 1.1927
+  type: 'test'
+  ...
+# Subtest: existing approved zone transform produces cold evidence without manufacturing frost evidence
+ok 44 - existing approved zone transform produces cold evidence without manufacturing frost evidence
+  ---
+  duration_ms: 0.1715
+  type: 'test'
+  ...
+# Subtest: heat damage and optimum temperature are kept distinct; ordinal remains explicitly heuristic
+ok 45 - heat damage and optimum temperature are kept distinct; ordinal remains explicitly heuristic
+  ---
+  duration_ms: 0.0693
+  type: 'test'
+  ...
+# Subtest: cold evidence alone does not conceal missing heat evidence
+ok 46 - cold evidence alone does not conceal missing heat evidence
+  ---
+  duration_ms: 0.1802
+  type: 'test'
+  ...
+# Subtest: reviewed data draft moves Mango to Class A without changing readiness rules
+ok 47 - reviewed data draft moves Mango to Class A without changing readiness rules
+  ---
+  duration_ms: 0.2818
+  type: 'test'
+  ...
+# Subtest: humidity and chill remain explicit unknown, not invented numeric or boolean defaults
+ok 48 - humidity and chill remain explicit unknown, not invented numeric or boolean defaults
+  ---
+  duration_ms: 0.1993
+  type: 'test'
+  ...
+# Subtest: flowering weather preference never becomes a mandatory dry season in the draft
+ok 49 - flowering weather preference never becomes a mandatory dry season in the draft
+  ---
+  duration_ms: 0.1937
+  type: 'test'
+  ...
+# Subtest: UNKNOWN records satisfy the existing intake contract while staying unknown: contract fixture, not a live write
+ok 50 - UNKNOWN records satisfy the existing intake contract while staying unknown: contract fixture, not a live write
+  ---
+  duration_ms: 0.5378
+  type: 'test'
+  ...
+# Subtest: both approved size records resolve offline but retain placement hold and no personal-meter claim
+ok 51 - both approved size records resolve offline but retain placement hold and no personal-meter claim
+  ---
+  duration_ms: 0.2714
+  type: 'test'
+  ...
+# Subtest: reproduces minimum coverage versus all-states gap; this must NOT be counted as complete
+ok 52 - reproduces minimum coverage versus all-states gap; this must NOT be counted as complete
+  ---
+  duration_ms: 6.2497
+  type: 'test'
+  ...
+# Subtest: draft cannot authorize data writes, paid calls, image changes or deployment
+ok 53 - draft cannot authorize data writes, paid calls, image changes or deployment
+  ---
+  duration_ms: 0.0827
+  type: 'test'
+  ...
+# Subtest: simulation does not mutate the base row or its approved sources
+ok 54 - simulation does not mutate the base row or its approved sources
+  ---
+  duration_ms: 0.2594
+  type: 'test'
+  ...
+1..54
+# tests 54
+# suites 0
+# pass 54
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2465.1919
