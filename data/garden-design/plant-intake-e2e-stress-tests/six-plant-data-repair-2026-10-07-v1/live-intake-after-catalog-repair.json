@@ -1,0 +1,396 @@
+{
+  "ok": true,
+  "version": "cruvit-plant-intake-engine-v1",
+  "total": 6,
+  "fullCruvitApproved": 0,
+  "pending": 6,
+  "byStage": {
+    "DATA_ENRICHMENT_REQUIRED": 3,
+    "VISUAL_GENERATION_REQUIRED": 3
+  },
+  "ownerActionCount": 0,
+  "paidActionCount": 3,
+  "paidGenerationCallsRequired": 15,
+  "reusableCandidateCount": 0,
+  "ownerVisualExceptionCount": 0,
+  "rows": [
+    {
+      "version": "cruvit-plant-intake-engine-v1",
+      "canonicalSlug": "mango",
+      "stage": "DATA_ENRICHMENT_REQUIRED",
+      "finalApproved": false,
+      "blockingReasons": [
+        "REAL_SUITABILITY_ENRICHMENT_REQUIRED"
+      ],
+      "nextActions": [
+        {
+          "actor": "SYSTEM",
+          "code": "ENRICH_CLASS_A_SUITABILITY",
+          "reason": "Complete authoritative climate/outcome evidence until plant-data-contract-v1 reaches Class A."
+        }
+      ],
+      "ownerActions": [],
+      "paidActions": [],
+      "systemActions": [
+        {
+          "actor": "SYSTEM",
+          "code": "ENRICH_CLASS_A_SUITABILITY",
+          "reason": "Complete authoritative climate/outcome evidence until plant-data-contract-v1 reaches Class A."
+        }
+      ],
+      "invariants": {
+        "oneCanonicalPlantRecord": true,
+        "endToEndRequired": true,
+        "finalApprovalAuthority": "full-cruvit-plant-approval-v1",
+        "noSilentGuessing": true,
+        "paidActionsRequireExplicitOwnerSpendApproval": true,
+        "productionPromotionRequiresExplicitOwnerApproval": true,
+        "ownerReviewReservedForExceptions": true
+      },
+      "catalogIdentityResolution": {
+        "requestedSlug": "mango",
+        "canonicalSlug": "mango",
+        "sourceCatalogSlug": "mango",
+        "aliasResolved": false,
+        "lookupSlugs": [
+          "mango"
+        ]
+      },
+      "packet": null,
+      "fullApprovalStatus": "ENRICHMENT_REQUIRED",
+      "fullApprovalBlockers": [
+        "REAL_SUITABILITY_ENRICHMENT_REQUIRED"
+      ],
+      "visualTransient": null
+    },
+    {
+      "version": "cruvit-plant-intake-engine-v1",
+      "canonicalSlug": "hydrangea",
+      "stage": "VISUAL_GENERATION_REQUIRED",
+      "finalApproved": false,
+      "blockingReasons": [
+        "REQUIRED_VISUAL_VARIANTS_MISSING"
+      ],
+      "nextActions": [
+        {
+          "actor": "SYSTEM_AFTER_OWNER_SPEND_APPROVAL",
+          "code": "GENERATE_MISSING_VISUAL_VARIANTS",
+          "reason": "Generate only missing required variants under a bounded spend approval, zero retries unless separately approved."
+        }
+      ],
+      "ownerActions": [],
+      "paidActions": [
+        {
+          "actor": "SYSTEM_AFTER_OWNER_SPEND_APPROVAL",
+          "code": "GENERATE_MISSING_VISUAL_VARIANTS",
+          "reason": "Generate only missing required variants under a bounded spend approval, zero retries unless separately approved."
+        }
+      ],
+      "systemActions": [],
+      "invariants": {
+        "oneCanonicalPlantRecord": true,
+        "endToEndRequired": true,
+        "finalApprovalAuthority": "full-cruvit-plant-approval-v1",
+        "noSilentGuessing": true,
+        "paidActionsRequireExplicitOwnerSpendApproval": true,
+        "productionPromotionRequiresExplicitOwnerApproval": true,
+        "ownerReviewReservedForExceptions": true
+      },
+      "catalogIdentityResolution": {
+        "requestedSlug": "hydrangea",
+        "canonicalSlug": "hydrangea",
+        "sourceCatalogSlug": "bigleaf-hydrangea",
+        "aliasResolved": true,
+        "lookupSlugs": [
+          "hydrangea",
+          "bigleaf-hydrangea"
+        ]
+      },
+      "packet": null,
+      "fullApprovalStatus": "VISUAL_COMPLETION_REQUIRED",
+      "fullApprovalBlockers": [
+        "REQUIRED_VISUAL_VARIANTS_MISSING"
+      ],
+      "visualTransient": {
+        "requiredPlanReady": true,
+        "missingRequiredCount": 3,
+        "missingGenerationCount": 3,
+        "existingCandidateReuseCount": 0,
+        "qaPendingCount": 0,
+        "ownerVisualReviewCount": 0,
+        "promotionReadyCount": 0,
+        "candidateManifest": null,
+        "routeCounts": {
+          "GENERATE_READY_SCALE_RESEARCH_REQUIRED": 3
+        },
+        "paidGenerationReady": 3,
+        "qaRepairReady": 0
+      }
+    },
+    {
+      "version": "cruvit-plant-intake-engine-v1",
+      "canonicalSlug": "date-palm",
+      "stage": "DATA_ENRICHMENT_REQUIRED",
+      "finalApproved": false,
+      "blockingReasons": [
+        "FULL_PLANT_ONBOARDING_BLOCKED",
+        "SIZE_AUTHORITY_ENRICHMENT_REQUIRED",
+        "REQUIRED_VISUAL_VARIANTS_MISSING"
+      ],
+      "nextActions": [
+        {
+          "actor": "SYSTEM",
+          "code": "RESEARCH_SIZE_AUTHORITY",
+          "reason": "Build explicit size authority; cultivar/rootstock context may remain context-required but must be explicit."
+        }
+      ],
+      "ownerActions": [],
+      "paidActions": [],
+      "systemActions": [
+        {
+          "actor": "SYSTEM",
+          "code": "RESEARCH_SIZE_AUTHORITY",
+          "reason": "Build explicit size authority; cultivar/rootstock context may remain context-required but must be explicit."
+        }
+      ],
+      "invariants": {
+        "oneCanonicalPlantRecord": true,
+        "endToEndRequired": true,
+        "finalApprovalAuthority": "full-cruvit-plant-approval-v1",
+        "noSilentGuessing": true,
+        "paidActionsRequireExplicitOwnerSpendApproval": true,
+        "productionPromotionRequiresExplicitOwnerApproval": true,
+        "ownerReviewReservedForExceptions": true
+      },
+      "catalogIdentityResolution": {
+        "requestedSlug": "date-palm",
+        "canonicalSlug": "date-palm",
+        "sourceCatalogSlug": "date-palm",
+        "aliasResolved": false,
+        "lookupSlugs": [
+          "date-palm"
+        ]
+      },
+      "packet": null,
+      "fullApprovalStatus": "ENRICHMENT_REQUIRED",
+      "fullApprovalBlockers": [
+        "FULL_PLANT_ONBOARDING_BLOCKED",
+        "SIZE_AUTHORITY_ENRICHMENT_REQUIRED",
+        "REQUIRED_VISUAL_VARIANTS_MISSING"
+      ],
+      "visualTransient": {
+        "requiredPlanReady": false,
+        "missingRequiredCount": 3,
+        "missingGenerationCount": 3,
+        "existingCandidateReuseCount": 0,
+        "qaPendingCount": 0,
+        "ownerVisualReviewCount": 0,
+        "promotionReadyCount": 0,
+        "candidateManifest": null,
+        "routeCounts": {
+          "GENERATE_READY_SCALE_RESEARCH_REQUIRED": 3
+        },
+        "paidGenerationReady": 3,
+        "qaRepairReady": 0
+      }
+    },
+    {
+      "version": "cruvit-plant-intake-engine-v1",
+      "canonicalSlug": "monstera",
+      "stage": "DATA_ENRICHMENT_REQUIRED",
+      "finalApproved": false,
+      "blockingReasons": [
+        "FULL_PLANT_ONBOARDING_BLOCKED",
+        "SIZE_AUTHORITY_ENRICHMENT_REQUIRED",
+        "REQUIRED_VISUAL_VARIANTS_MISSING"
+      ],
+      "nextActions": [
+        {
+          "actor": "SYSTEM",
+          "code": "RESEARCH_SIZE_AUTHORITY",
+          "reason": "Build explicit size authority; cultivar/rootstock context may remain context-required but must be explicit."
+        }
+      ],
+      "ownerActions": [],
+      "paidActions": [],
+      "systemActions": [
+        {
+          "actor": "SYSTEM",
+          "code": "RESEARCH_SIZE_AUTHORITY",
+          "reason": "Build explicit size authority; cultivar/rootstock context may remain context-required but must be explicit."
+        }
+      ],
+      "invariants": {
+        "oneCanonicalPlantRecord": true,
+        "endToEndRequired": true,
+        "finalApprovalAuthority": "full-cruvit-plant-approval-v1",
+        "noSilentGuessing": true,
+        "paidActionsRequireExplicitOwnerSpendApproval": true,
+        "productionPromotionRequiresExplicitOwnerApproval": true,
+        "ownerReviewReservedForExceptions": true
+      },
+      "catalogIdentityResolution": {
+        "requestedSlug": "monstera",
+        "canonicalSlug": "monstera",
+        "sourceCatalogSlug": "monstera",
+        "aliasResolved": false,
+        "lookupSlugs": [
+          "monstera"
+        ]
+      },
+      "packet": null,
+      "fullApprovalStatus": "ENRICHMENT_REQUIRED",
+      "fullApprovalBlockers": [
+        "FULL_PLANT_ONBOARDING_BLOCKED",
+        "SIZE_AUTHORITY_ENRICHMENT_REQUIRED",
+        "REQUIRED_VISUAL_VARIANTS_MISSING"
+      ],
+      "visualTransient": {
+        "requiredPlanReady": false,
+        "missingRequiredCount": 3,
+        "missingGenerationCount": 3,
+        "existingCandidateReuseCount": 0,
+        "qaPendingCount": 0,
+        "ownerVisualReviewCount": 0,
+        "promotionReadyCount": 0,
+        "candidateManifest": null,
+        "routeCounts": {
+          "GENERATE_READY_SCALE_RESEARCH_REQUIRED": 3
+        },
+        "paidGenerationReady": 3,
+        "qaRepairReady": 0
+      }
+    },
+    {
+      "version": "cruvit-plant-intake-engine-v1",
+      "canonicalSlug": "fig",
+      "stage": "VISUAL_GENERATION_REQUIRED",
+      "finalApproved": false,
+      "blockingReasons": [
+        "REQUIRED_VISUAL_VARIANTS_MISSING"
+      ],
+      "nextActions": [
+        {
+          "actor": "SYSTEM_AFTER_OWNER_SPEND_APPROVAL",
+          "code": "GENERATE_MISSING_VISUAL_VARIANTS",
+          "reason": "Generate only missing required variants under a bounded spend approval, zero retries unless separately approved."
+        }
+      ],
+      "ownerActions": [],
+      "paidActions": [
+        {
+          "actor": "SYSTEM_AFTER_OWNER_SPEND_APPROVAL",
+          "code": "GENERATE_MISSING_VISUAL_VARIANTS",
+          "reason": "Generate only missing required variants under a bounded spend approval, zero retries unless separately approved."
+        }
+      ],
+      "systemActions": [],
+      "invariants": {
+        "oneCanonicalPlantRecord": true,
+        "endToEndRequired": true,
+        "finalApprovalAuthority": "full-cruvit-plant-approval-v1",
+        "noSilentGuessing": true,
+        "paidActionsRequireExplicitOwnerSpendApproval": true,
+        "productionPromotionRequiresExplicitOwnerApproval": true,
+        "ownerReviewReservedForExceptions": true
+      },
+      "catalogIdentityResolution": {
+        "requestedSlug": "fig",
+        "canonicalSlug": "fig",
+        "sourceCatalogSlug": "fig",
+        "aliasResolved": false,
+        "lookupSlugs": [
+          "fig",
+          "fig-tree"
+        ]
+      },
+      "packet": null,
+      "fullApprovalStatus": "VISUAL_COMPLETION_REQUIRED",
+      "fullApprovalBlockers": [
+        "REQUIRED_VISUAL_VARIANTS_MISSING"
+      ],
+      "visualTransient": {
+        "requiredPlanReady": true,
+        "missingRequiredCount": 5,
+        "missingGenerationCount": 5,
+        "existingCandidateReuseCount": 0,
+        "qaPendingCount": 0,
+        "ownerVisualReviewCount": 0,
+        "promotionReadyCount": 0,
+        "candidateManifest": null,
+        "routeCounts": {
+          "GENERATE_READY": 5
+        },
+        "paidGenerationReady": 5,
+        "qaRepairReady": 0
+      }
+    },
+    {
+      "version": "cruvit-plant-intake-engine-v1",
+      "canonicalSlug": "lettuce",
+      "stage": "VISUAL_GENERATION_REQUIRED",
+      "finalApproved": false,
+      "blockingReasons": [
+        "REQUIRED_VISUAL_VARIANTS_MISSING"
+      ],
+      "nextActions": [
+        {
+          "actor": "SYSTEM_AFTER_OWNER_SPEND_APPROVAL",
+          "code": "GENERATE_MISSING_VISUAL_VARIANTS",
+          "reason": "Generate only missing required variants under a bounded spend approval, zero retries unless separately approved."
+        }
+      ],
+      "ownerActions": [],
+      "paidActions": [
+        {
+          "actor": "SYSTEM_AFTER_OWNER_SPEND_APPROVAL",
+          "code": "GENERATE_MISSING_VISUAL_VARIANTS",
+          "reason": "Generate only missing required variants under a bounded spend approval, zero retries unless separately approved."
+        }
+      ],
+      "systemActions": [],
+      "invariants": {
+        "oneCanonicalPlantRecord": true,
+        "endToEndRequired": true,
+        "finalApprovalAuthority": "full-cruvit-plant-approval-v1",
+        "noSilentGuessing": true,
+        "paidActionsRequireExplicitOwnerSpendApproval": true,
+        "productionPromotionRequiresExplicitOwnerApproval": true,
+        "ownerReviewReservedForExceptions": true
+      },
+      "catalogIdentityResolution": {
+        "requestedSlug": "lettuce",
+        "canonicalSlug": "lettuce",
+        "sourceCatalogSlug": "lettuce",
+        "aliasResolved": false,
+        "lookupSlugs": [
+          "lettuce"
+        ]
+      },
+      "packet": null,
+      "fullApprovalStatus": "VISUAL_COMPLETION_REQUIRED",
+      "fullApprovalBlockers": [
+        "REQUIRED_VISUAL_VARIANTS_MISSING"
+      ],
+      "visualTransient": {
+        "requiredPlanReady": true,
+        "missingRequiredCount": 1,
+        "missingGenerationCount": 1,
+        "existingCandidateReuseCount": 0,
+        "qaPendingCount": 0,
+        "ownerVisualReviewCount": 0,
+        "promotionReadyCount": 0,
+        "candidateManifest": null,
+        "routeCounts": {
+          "GENERATE_READY": 1
+        },
+        "paidGenerationReady": 1,
+        "qaRepairReady": 0
+      }
+    }
+  ],
+  "paidCallsExecuted": 0,
+  "catalogWritesExecuted": 0,
+  "productionWritesExecuted": 0,
+  "registryWritesExecuted": 0
+}

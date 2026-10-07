@@ -1,0 +1,72 @@
+{
+  "id": "six-plant-data-repair-2026-10-07-v1",
+  "packetValidation": {
+    "ok": true,
+    "errors": [],
+    "warnings": []
+  },
+  "mangoOnboarding": {
+    "version": "full-plant-onboarding-gate-v1",
+    "canonicalSlug": "mango",
+    "scientific": "Mangifera indica",
+    "phenology": "fruiting",
+    "ready": true,
+    "code": "FULL_PLANT_ONBOARDING_READY",
+    "reasons": [],
+    "gates": {
+      "identity": "PASS",
+      "verification": "PASS",
+      "climate": "PASS",
+      "outcome": "PASS",
+      "knowledge": "PASS",
+      "provenance": "PASS"
+    },
+    "climate": {
+      "missingCoreTraits": [],
+      "explicitUnknownCoreTraits": [
+        "heatTolerance",
+        "humidityTolerance",
+        "needsWinterChill"
+      ],
+      "traitStates": {
+        "frostSensitivity": "ASSERTED",
+        "coldTolerance": "ASSERTED",
+        "heatTolerance": "EXPLICIT_UNKNOWN",
+        "humidityTolerance": "EXPLICIT_UNKNOWN",
+        "waterNeeds": "ASSERTED",
+        "sunNeeds": "ASSERTED",
+        "drainageNeeds": "ASSERTED",
+        "needsWinterChill": "EXPLICIT_UNKNOWN"
+      },
+      "needsReview": false
+    },
+    "outcome": {
+      "ok": true,
+      "code": "FRUITING_REQUIREMENTS_READY"
+    },
+    "knowledge": {
+      "ok": true,
+      "code": "PLANT_KNOWLEDGE_READY",
+      "sourceCount": 2,
+      "warningCount": 1
+    },
+    "provenance": {
+      "sourceCount": 2,
+      "sourcePacket": "mango-six-plant-recovery-2026-10-07-v1"
+    }
+  },
+  "originalRegistrySha256": "b096cf72ea1e30983132463e03a307347a082700cdd6c02c37317f27b778fe44",
+  "updatedRegistrySha256": "86447803a6ad2245b8422448edc91e7197481370138a582453b631131e04c90b",
+  "preservedSizeRecords": 115,
+  "addedSizeRecords": 2,
+  "protectedHashes": {
+    "data/plant-identity.registry.json": "bde1ace6d6e2c2733c218443a18845f4c3bae1fdc8205011f831b79cea07a3f0",
+    "data/plants.seed.json": "8dcd67f536fecc9ddc9b22ec790c70a9e108968f51029cac64b7b31448afd1b2",
+    "modules/garden-design/assets/plants/design-asset-registry-v1.json": "0c0c898152ae10ba2c939c3cc2373b193741aad0c0145bbb923317e5fc7649a5"
+  },
+  "existingPlantWinterChillUnchanged": true,
+  "canonicalWritesExecuted": 0,
+  "paidCalls": 0,
+  "productionR2Writes": 0,
+  "visualRegistryWrites": 0
+}

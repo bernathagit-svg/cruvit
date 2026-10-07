@@ -1,0 +1,9 @@
+{
+  "otherRowCount":133,"otherRowsMd5":"1dce46aba0625b297e5503be9db932fa","mangoExistingCount":0,
+  "targetBefore":[
+    {"slug":"date-palm","rowMd5":"4ca6f584f60165518abb9d66c740a02c","provenanceMd5":"75bfa2f1d8d511af9474f3aa30d9f96e","nonDesignClimateMd5":"26fbfe46f4f249a3b3afb61bc5239e35","designMetadata":{"tags":["fruit","edible","palm","tree"],"growth":null,"leafHabit":{"state":"UNKNOWN","evidence":[],"evidenceClass":"UNKNOWN"},"matureSize":null,"sourcePacket":"date-palm-semantic-audit-proposal-v1","contractVersion":"design-metadata-v1","seasonalityResearchRequired":true}},
+    {"slug":"monstera","rowMd5":"bd674667bf4186431674ff72ae16b307","provenanceMd5":"b6436fb58ccf05e656b5c257cd176d2b","nonDesignClimateMd5":"cfd7819c7ae38e13a91cd3337cf80d0b","designMetadata":{"tags":["fruit","edible","houseplant","vine","poisonous","tropical"],"growth":null,"leafHabit":{"state":"UNKNOWN","evidence":[],"evidenceClass":"UNKNOWN"},"matureSize":null,"sourcePacket":"monstera-semantic-audit-proposal-v1","contractVersion":"design-metadata-v1","seasonalityResearchRequired":true}}
+  ],
+  "scope":"Mango create-only; existing rows leafHabit and seasonalityResearchRequired only. All other climate, reproductive, media, provenance and identity fields must remain byte-equivalent as JSONB.",
+  "rollback":"Restore each target's previous designMetadata only with an after-state precondition; Mango removal, if ever needed, requires separate owner authorization."
+}

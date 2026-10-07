@@ -1,0 +1,25 @@
+{
+  "remaining": [
+    {
+      "code": "WINTER_CHILL_STATE_ABSENT",
+      "plants": [
+        "date-palm",
+        "monstera"
+      ],
+      "note": "Existing climate data kept unchanged. Requires scoped review; do not invent a false boolean just to pass onboarding."
+    },
+    {
+      "code": "MANGO_REAL_SUITABILITY_ENRICHMENT_REQUIRED",
+      "note": "New source-derived row is not FULL_CRUVIT_APPROVED; heat/humidity/chill remain explicitly unknown."
+    },
+    {
+      "code": "SIZE_METADATA_NOT_DEPLOYED",
+      "note": "Source-backed context-sensitive records stored canonically only; live endpoint still uses earlier static registry."
+    },
+    {
+      "code": "OPTIMUM_VS_REQUIREMENT_TRANSFORM",
+      "note": "Initial Mango packet prose about favorable dry bloom conditions produced requiresDrySeason=true. Persisted packet avoids this inference and preserves the qualification in an important note. General parser fix remains outside this data-only repair."
+    }
+  ],
+  "nextAction": "Review exact remaining evidence and scope before new canonical climate writes or deployment. No visual generation is authorized by this repair."
+}

@@ -1,0 +1,84 @@
+{
+  "catalogRepair": {
+    "mangoInserted": 1,
+    "existingRowsSeasonalityPatched": 2,
+    "other133RowsPreserved": true,
+    "otherRowsMd5": "1dce46aba0625b297e5503be9db932fa",
+    "datePalmNonDesignClimateMd5": "26fbfe46f4f249a3b3afb61bc5239e35",
+    "monsteraNonDesignClimateMd5": "cfd7819c7ae38e13a91cd3337cf80d0b"
+  },
+  "sizeAuthority": {
+    "addedRecords": 2,
+    "sourceBoundsKeptSeparate": true,
+    "placementScaleHold": true,
+    "productionDeploymentPerformed": false
+  },
+  "verifiedProductionAssets": 4,
+  "paidAiCalls": 0,
+  "imageGenerationCalls": 0,
+  "productionR2Writes": 0,
+  "visualRegistryWrites": 0,
+  "liveIntakeUsesPreviouslyDeployedSizeRegistry": true,
+  "rows": [
+    {
+      "slug": "mango",
+      "stage": "DATA_ENRICHMENT_REQUIRED",
+      "blockers": [
+        "REAL_SUITABILITY_ENRICHMENT_REQUIRED"
+      ],
+      "missingVisuals": null
+    },
+    {
+      "slug": "hydrangea",
+      "stage": "VISUAL_GENERATION_REQUIRED",
+      "blockers": [
+        "REQUIRED_VISUAL_VARIANTS_MISSING"
+      ],
+      "missingVisuals": 3
+    },
+    {
+      "slug": "date-palm",
+      "stage": "DATA_ENRICHMENT_REQUIRED",
+      "blockers": [
+        "FULL_PLANT_ONBOARDING_BLOCKED",
+        "SIZE_AUTHORITY_ENRICHMENT_REQUIRED",
+        "REQUIRED_VISUAL_VARIANTS_MISSING"
+      ],
+      "missingVisuals": 3
+    },
+    {
+      "slug": "monstera",
+      "stage": "DATA_ENRICHMENT_REQUIRED",
+      "blockers": [
+        "FULL_PLANT_ONBOARDING_BLOCKED",
+        "SIZE_AUTHORITY_ENRICHMENT_REQUIRED",
+        "REQUIRED_VISUAL_VARIANTS_MISSING"
+      ],
+      "missingVisuals": 3
+    },
+    {
+      "slug": "fig",
+      "stage": "VISUAL_GENERATION_REQUIRED",
+      "blockers": [
+        "REQUIRED_VISUAL_VARIANTS_MISSING"
+      ],
+      "missingVisuals": 5
+    },
+    {
+      "slug": "lettuce",
+      "stage": "VISUAL_GENERATION_REQUIRED",
+      "blockers": [
+        "REQUIRED_VISUAL_VARIANTS_MISSING"
+      ],
+      "missingVisuals": 1
+    }
+  ],
+  "remainingUnapprovedClimateFields": {
+    "date-palm": [
+      "needsWinterChill"
+    ],
+    "monstera": [
+      "needsWinterChill"
+    ]
+  }
+}
