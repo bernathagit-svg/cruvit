@@ -1,0 +1,156 @@
+name: CRUVIT Canonical Alias Exact SHA Hosted Linux
+run-name: Validate product 844f9fb on hosted Linux (no integration or deploy)
+
+on:
+  push:
+    branches: ['ci/canonical-alias-844f9fb-linux-20261008']
+    paths: ['.github/workflows/canonical-alias-pinned-hosted-20261008.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  exact-product-linux:
+    name: Exact 844f9fb - alias 65, systemic 113, corpus BLOCKED
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      PRODUCT_SHA: '844f9fbc7945db357cf4adc5ba9ecc511490a209'
+      WORKFLOW_CARRIER_SHA: ${{ github.sha }}
+    steps:
+      - name: Checkout approved product commit, not validation branch
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          repository: bernathagit-svg/cruvit
+          ref: '844f9fbc7945db357cf4adc5ba9ecc511490a209'
+          path: product
+          fetch-depth: 1
+          persist-credentials: false
+          submodules: false
+          lfs: false
+
+      - name: Set up Node 22 without package installation or cache
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: '22'
+          package-manager-cache: false
+
+      - name: Run unmodified suites and strict clean-runner proof
+        working-directory: product
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import path from 'node:path';
+          import os from 'node:os';
+          import cp from 'node:child_process';
+          import crypto from 'node:crypto';
+          import assert from 'node:assert/strict';
+          const root = process.cwd();
+          const target = '844f9fbc7945db357cf4adc5ba9ecc511490a209';
+          const out = path.join(process.env.RUNNER_TEMP, 'cruvit-alias-hosted-evidence');
+          fs.mkdirSync(out, { recursive: true });
+          const git = args => cp.execFileSync('git', args, { cwd: root, encoding: 'utf8', timeout: 20000, maxBuffer: 4000000 }).trimEnd();
+          const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
+          assert.equal(os.platform(), 'linux');
+          assert.equal(Number(process.versions.node.split('.')[0]), 22);
+          assert.equal(process.env.PRODUCT_SHA, target);
+          assert.equal(git(['rev-parse', 'HEAD']), target);
+          assert.equal(git(['status', '--porcelain']), '');
+          const tracked = git(['ls-files']).split('\n').filter(Boolean);
+          const fingerprints = Object.fromEntries(tracked.map(file => [file, hash(fs.readFileSync(path.join(root, file)))]));
+          const identity = { testedProductSha: target, checkoutHead: git(['rev-parse', 'HEAD']),
+            checkoutTree: git(['rev-parse', 'HEAD^{tree}']), workflowCarrierSha: process.env.WORKFLOW_CARRIER_SHA,
+            runId: process.env.GITHUB_RUN_ID, attempt: process.env.GITHUB_RUN_ATTEMPT,
+            platform: os.platform(), architecture: os.arch(), node: process.version,
+            hosted: process.env.RUNNER_ENVIRONMENT, startedAt: new Date().toISOString(), trackedFileCount: tracked.length };
+          fs.writeFileSync(path.join(out, 'checkout-identity.json'), JSON.stringify(identity, null, 2) + '\n');
+          console.log('CHECKOUT_IDENTITY=' + JSON.stringify(identity));
+          const audit = path.join(out, 'product-network-attempts.log');
+          fs.writeFileSync(audit, '');
+          const guard = path.join(process.env.RUNNER_TEMP, 'cruvit-alias-offline-guard.cjs');
+          fs.writeFileSync(guard, `const fs=require('node:fs');
+          const deny=()=>{fs.appendFileSync(process.env.CRUVIT_NETWORK_AUDIT,'NETWORK_ATTEMPT\\n');throw new Error('NETWORK_FORBIDDEN_PINNED_PRODUCT_CI');};
+          globalThis.fetch=deny;
+          if(globalThis.WebSocket)globalThis.WebSocket=deny;
+          for(const [name,keys] of [['node:http',['request','get']],['node:https',['request','get']],['node:net',['connect','createConnection']],['node:tls',['connect']]]){const m=require(name);for(const key of keys)m[key]=deny;}
+          require('node:net').Socket.prototype.connect=deny;
+          require('node:module').syncBuiltinESMExports();
+          `);
+          // Product tests receive no repository/service tokens, database credentials or artifact credentials.
+          const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => ['PATH','HOME','TMPDIR','LANG','LC_ALL'].includes(key)));
+          env.NODE_OPTIONS = '--require=' + guard;
+          env.CRUVIT_NETWORK_AUDIT = audit;
+          env.CI = 'true';
+          const results = {};
+          function run(name, args) {
+            const result = cp.spawnSync(process.execPath, args, { cwd: root, env, encoding: 'utf8', timeout: 180000, maxBuffer: 20000000 });
+            const log = (result.stdout || '') + (result.stderr || '');
+            fs.writeFileSync(path.join(out, name + '.log'), log);
+            console.log('::group::' + name);
+            console.log(log);
+            console.log('::endgroup::');
+            return { exitCode: result.status, signal: result.signal, error: result.error?.message || null, log, logSha256: hash(log) };
+          }
+          const projection = run('registry-projection-check', ['scripts/generate-canonical-alias-authority-v1.mjs','--check']);
+          results.projection = { passed: projection.exitCode === 0 && !projection.error, exitCode: projection.exitCode, logSha256: projection.logSha256 };
+          const targeted = ['tests/canonical-alias-authority-drift-v1.test.mjs','tests/smart-rec-garden-intelligence-v1.test.mjs',
+            'tests/catalog-images-v1.test.mjs','tests/licensed-catalog-media-runtime-v1.test.mjs'];
+          const systemic = ['tests/hard-climate-missing-cold-null-v1.test.mjs','tests/reproductive-climate-gate-v1.test.mjs',
+            'tests/reproductive-climate-packet-materialization-v1.test.mjs','tests/specific-plant-suitability-v1-contract.test.mjs',
+            'tests/smart-rec-garden-intelligence-v1.test.mjs','tests/smart-rec-edible-fruiting-eligibility-v1.test.mjs',
+            'tests/weather-refresh-preserves-structural-climate-v1.test.mjs','tests/full-cruvit-plant-approval-v1.test.mjs',
+            'tests/global-climate-deployment-readiness-contract-v1.test.mjs'];
+          const originalWorkflow = fs.readFileSync('.github/workflows/systemic-climate-recommendation-ci.yml','utf8');
+          const originalTestStep = originalWorkflow.split('Run self-contained systemic climate and recommendation suite')[1].split('- name: Prove')[0];
+          assert.deepEqual([...originalTestStep.matchAll(/tests\/[a-z0-9-]+\.test\.mjs/g)].map(x => x[0]), systemic);
+          for (const [name, files, expected] of [['targeted-alias-identity',targeted,65],['exact-systemic-climate',systemic,113]]) {
+            const r = run(name, ['--test','--test-reporter=tap',...files]);
+            const counts = Object.fromEntries(['tests','suites','pass','fail','cancelled','skipped','todo'].map(key => {
+              const match = r.log.match(new RegExp('^# ' + key + ' (\\d+)\\s*$','m'));
+              return [key, match ? Number(match[1]) : null];
+            }));
+            const passed = r.exitCode === 0 && r.signal === null && !r.error && counts.tests === expected && counts.pass === expected
+              && ['fail','cancelled','skipped','todo'].every(key => counts[key] === 0);
+            results[name] = { passed, expected, counts, exitCode: r.exitCode, signal: r.signal, error: r.error,
+              files, failureLines: r.log.split('\n').filter(line => /^not ok\b/.test(line)), logSha256: r.logSha256 };
+            console.log('SUITE_RESULT=' + JSON.stringify({name,...results[name]}));
+          }
+          const proof = run('clean-corpus-plan', ['scripts/coordinate-climate-v2-upload-r2.mjs','plan']);
+          let plan = null;
+          try { plan = JSON.parse(proof.log); } catch { /* invalid JSON is a failure, never an implicit pass */ }
+          results.corpus = { passed: proof.exitCode === 0 && !proof.error && plan?.localCorpusReady === false
+              && plan?.verdict === 'BLOCKED' && plan?.r2?.ready === false,
+            exitCode: proof.exitCode, checks: { localCorpusReadyFalse: plan?.localCorpusReady === false,
+              verdictBlocked: plan?.verdict === 'BLOCKED', noR2CredentialsReady: plan?.r2?.ready === false }, plan, logSha256: proof.logSha256 };
+          const changed = tracked.filter(file => !fs.existsSync(path.join(root,file)) || hash(fs.readFileSync(path.join(root,file))) !== fingerprints[file]);
+          // This unmodified legacy test writes its own result JSON; retain evidence, never rewrite source/tests to pass.
+          const testReport = 'tests/_licensed-catalog-media-runtime-v1-report.json';
+          if (changed.includes(testReport)) fs.copyFileSync(path.join(root,testReport), path.join(out,'legacy-generated-test-report.json'));
+          const networkLog = fs.readFileSync(audit,'utf8');
+          results.preservation = { passed: git(['rev-parse','HEAD']) === target && changed.every(file => file === testReport)
+              && git(['ls-files','--others','--exclude-standard']) === '' && networkLog.length === 0,
+            finalCheckoutHead: git(['rev-parse','HEAD']), changedTrackedFiles: changed,
+            productSourceAndTestsUnchanged: changed.every(file => file === testReport),
+            networkAttempts: networkLog.split('\n').filter(Boolean).length,
+            registryUnchanged: hash(fs.readFileSync('data/plant-identity.registry.json')) === fingerprints['data/plant-identity.registry.json'] };
+          const passed = Object.values(results).every(result => result.passed === true);
+          const summary = { ...identity, finishedAt: new Date().toISOString(), status: passed ? 'PASS' : 'FAIL', results,
+            limits: ['Exact product SHA only; NOT integration validation.', 'No full-corpus claim; absent corpus must be BLOCKED.',
+              '178 test executions include overlap; not 178 unique tests.', 'Only the requested bounded suites run; earlier expanded-suite findings remain separate.'],
+            operations: { merge:0,deploy:0,dbWrites:0,r2Writes:0,registryWrites:0,paidAi:0,imageGeneration:0,integrationBranchCreated:false } };
+          fs.writeFileSync(path.join(out,'hosted-summary.json'),JSON.stringify(summary,null,2)+'\n');
+          console.log('HOSTED_SUMMARY=' + JSON.stringify(summary));
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, '# Exact canonical alias hosted validation\n\nProduct SHA: `' + target + '`\n\nCarrier SHA: `' + identity.workflowCarrierSha + '`\n\nStatus: **' + summary.status + '**\n\n```json\n' + JSON.stringify(results,null,2) + '\n```\n\nSTOP: no integration, merge, or deploy.\n');
+          if (!passed) process.exitCode = 1;
+          NODE
+
+      - name: Upload exact-SHA logs and receipt even on test failure
+        if: ${{ always() }}
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: canonical-alias-844f9fb-linux-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/cruvit-alias-hosted-evidence/
+          if-no-files-found: error
+          retention-days: 14
