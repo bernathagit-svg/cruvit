@@ -1,0 +1,307 @@
+{
+  "schemaVersion": 1,
+  "manifestVersion": "static-runtime-packaging-v1",
+  "baselineSourceSha": "9c36d550a2476a64b4f0013b2599543538afd4fe",
+  "baselineSourceTree": "0fb518baf7f06d7adfa6c37c781137b8c12bf3be",
+  "outputDirectory": "dist-static",
+  "publicSentinels": [
+    "index.html",
+    "app.html",
+    "styles.css",
+    "garden-modes.js",
+    "garden-modes.css",
+    "dashboard-layout.css",
+    "entry-screen.css",
+    "assets/cruvit-logo.svg",
+    "data/plants.seed.json",
+    "scripts/plant-identifier-loader.js",
+    "modules/garden-design/index.html",
+    "modules/plant-doctor/index.html",
+    "modules/smart-recommendations/developer-reviewed-data-live-source-provider.js",
+    "modules/identity/plant-identity-shadow.js",
+    "homepage-v1/index.html",
+    "homepage-v1/styles.css",
+    "store/index.html",
+    "store/styles.css"
+  ],
+  "classifications": [
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "prefixes": [
+        "data/garden-design/plant-intake-e2e-stress-tests/full-visual-state-completion-2026-10-08-v1/",
+        "data/garden-design/plant-intake-e2e-stress-tests/six-plant-climate-supplement-2026-10-07-v1/",
+        "data/garden-design/plant-intake-e2e-stress-tests/six-plant-data-repair-2026-10-07-v1/",
+        "data/garden-design/plant-intake-e2e-stress-tests/six-plant-evidence-followup-2026-10-07-v1/",
+        "data/identity/canonical-alias-authority-drift-20261008/",
+        "data/personal-domain/climate-boolean-unknown-2026-10-08-v1/"
+      ],
+      "reason": "Frozen review/validation evidence; never public runtime."
+    },
+    {
+      "classification": "BUILD_ONLY",
+      "exact": [
+        "data/catalog-expansion/batches/semantic-audit-owner-approved-v1/packets/cycas.packet.json",
+        "data/catalog-expansion/batches/semantic-audit-owner-approved-v1/packets/date-palm.packet.json",
+        "data/catalog-expansion/batches/semantic-audit-owner-approved-v1/packets/monstera.packet.json",
+        "data/catalog/bounded-identity-alias-collapse-audit-v1.json",
+        "data/catalog/enrichment-retrieval/pomegranate-real-enrichment-apply-v1-report.json",
+        "data/catalog/enrichment-worker/clean-replay/retrieval-artifact-restore-report.json",
+        "data/catalog/enrichment-worker/retrieval-coverage-v2-10-dry/retrieval-coverage-v2-10-final-report.json",
+        "data/catalog/enrichment-worker/scale-dry-10-v1/scale-dry-10-final-report.json",
+        "data/catalog/mulberry-row-dedupe-audit-v1.json",
+        "data/catalog/product-proof-v1/product-proof-report.json",
+        "data/catalog/revalidation/broad-identity-semantic-audit-2026-10-02-v1.json",
+        "data/catalog/revalidation/semantic-audit-open-findings-v1.json",
+        "data/catalog/revalidation/semantic-audit-proposals-v1/cycas.proposal.json",
+        "data/catalog/revalidation/semantic-audit-proposals-v1/date-palm.proposal.json",
+        "data/catalog/revalidation/semantic-audit-proposals-v1/monstera.proposal.json",
+        "data/catalog/revalidation/semantic-hard-case-audit-2026-10-02-v1.json",
+        "data/catalog/revalidation/unknown-valid-semantic-audit-2026-10-02-v1.json",
+        "data/garden-design/botanical-size-evidence-pilot-v1/source-audit.json",
+        "data/garden-design/design-asset-quality-planning-integrity-v1/required-variant-quality-integrity-audit.json",
+        "data/garden-design/design-asset-quality-policy-v1/required-variant-quality-audit-proposal.json",
+        "data/garden-design/design-asset-visual-state-integrity-gate-v1/catalog-integrity-audit.json",
+        "data/garden-design/design-asset-visual-states-v1/catalog-state-audit.json",
+        "data/garden-design/generic-tree-physical-scale-v1/tree-catalog-size-audit-v1.json",
+        "data/garden-design/plant-visual-model-qa-reports/cruvit-e2e-batch-a-citrus-model-qa-2026-09-25-v1.json",
+        "data/garden-design/plant-visual-model-qa-reports/cruvit-e2e-batch-b-model-qa-2026-09-25-v1.json",
+        "data/garden-design/plant-visual-model-qa-reports/plant-visual-variant-completion-wave-001-model-qa-2026-09-25-v1.json",
+        "data/garden-design/plant-visual-model-qa-reports/plant-visual-wave-001-model-qa-2026-09-22-v1.json",
+        "data/garden-design/tree-size-evidence-wave-v1/source-audit.json",
+        "data/garden-design/tree-taxonomy-duplicate-gate-v1/taxonomy-audit.json",
+        "data/garden-design/visual-state-calibration-batch-2-prep-v1/batch-2-anchor-audit.json",
+        "data/garden-design/visual-state-calibration-batch-2/batch-2-full-native-detail-state-audit-v1.json"
+      ],
+      "reason": "Explicit non-runtime audit/report/verification material found in prior root publish; excluded from public output."
+    },
+    {
+      "classification": "HISTORICAL_EVIDENCE",
+      "suffixes": [
+        ".log",
+        ".tap"
+      ],
+      "reason": "Historical test/verification logs; never public runtime."
+    },
+    {
+      "classification": "BUILD_ONLY",
+      "suffixes": [
+        ".sql",
+        ".ps1"
+      ],
+      "reason": "Executable repair/migration or local automation source; never public static."
+    },
+    {
+      "classification": "BUILD_ONLY",
+      "exact": [
+        "data/coordinate-climate/v2/coverage/.gitignore"
+      ],
+      "reason": "Coverage build-control ignore file; not public runtime."
+    },
+    {
+      "classification": "BUILD_ONLY",
+      "prefixes": [
+        "data/coordinate-climate/v2/coverage/_benchmark/"
+      ],
+      "reason": "Local coverage benchmarking output; not public runtime."
+    },
+    {
+      "classification": "BUILD_ONLY",
+      "exact": [
+        "data/garden-design/calibration-batch-1/owner-review.html",
+        "data/garden-design/full-catalog-batch1-blue-gum-owner-review/index.html",
+        "data/garden-design/full-catalog-batch1-owner-review/index.html"
+      ],
+      "reason": "Owner review HTML is audit/review material, not public product runtime."
+    },
+    {
+      "classification": "BUILD_ONLY",
+      "exact": [
+        "data/catalog-expansion/packets/six-plant-data-repair-2026-10-07/mango.packet.json"
+      ],
+      "reason": "Historical repair source packet is not resolved by current runtime packet-path authority."
+    },
+    {
+      "classification": "BUILD_ONLY",
+      "prefixes": [
+        ".github/",
+        "config/",
+        "docs/",
+        "supabase/",
+        "tests/",
+        "tools/",
+        "modules/smart-recommendations/adapters/live-source-provider/"
+      ],
+      "reason": "Build, validation, schema/migration or local-provider material."
+    },
+    {
+      "classification": "SERVER_RUNTIME",
+      "prefixes": [
+        "netlify/functions/"
+      ],
+      "reason": "Netlify Functions source/bundle input; excluded from public static output."
+    },
+    {
+      "classification": "BUILD_ONLY",
+      "prefixes": [
+        "netlify/"
+      ],
+      "reason": "Non-function Netlify source/config support; not public static."
+    },
+    {
+      "classification": "PUBLIC_STATIC",
+      "exact": [
+        "index.html",
+        "app.html",
+        "styles.css",
+        "garden-modes.js",
+        "garden-modes.css",
+        "dashboard-layout.css",
+        "entry-screen.css"
+      ],
+      "reason": "Public application entry/runtime files."
+    },
+    {
+      "classification": "BUILD_ONLY",
+      "exact": [
+        ".env.example",
+        ".gitignore",
+        "PROJECT_STATUS.md",
+        "README-BASELINE-V91.md",
+        "README-BOTANICAL-ENGINE-V2-COMMIT-1.md",
+        "README-OPENAI-SUPABASE.md",
+        "index_backup.html",
+        "netlify.toml",
+        "package.json",
+        "package-lock.json"
+      ],
+      "reason": "Repository/build/configuration documentation; not public runtime output."
+    },
+    {
+      "classification": "PUBLIC_STATIC",
+      "prefixes": [
+        "assets/",
+        "homepage-v1/",
+        "privacy/",
+        "store/",
+        "wtp-premium-v1/"
+      ],
+      "reason": "Public site/application assets and pages."
+    },
+    {
+      "classification": "PUBLIC_STATIC",
+      "exact": [
+        "scripts/plant-identifier-loader.js"
+      ],
+      "reason": "Browser-loaded runtime script."
+    },
+    {
+      "classification": "BUILD_ONLY",
+      "prefixes": [
+        "scripts/"
+      ],
+      "reason": "Repository automation/verification scripts."
+    },
+    {
+      "classification": "PUBLIC_STATIC",
+      "prefixes": [
+        "modules/"
+      ],
+      "reason": "Browser/runtime shared modules. Function entrypoints remain separately sourced."
+    },
+    {
+      "classification": "BUILD_ONLY",
+      "prefixes": [
+        "data/catalog-ingestion/",
+        "data/catalog-review-resolutions/"
+      ],
+      "reason": "Ingestion/review control material, not public runtime."
+    },
+    {
+      "classification": "PUBLIC_STATIC",
+      "prefixes": [
+        "data/catalog-expansion/",
+        "data/catalog-media/",
+        "data/catalog/",
+        "data/coordinate-climate/",
+        "data/garden-design/",
+        "data/garden-os/",
+        "data/smart-recommendations-reviewed/"
+      ],
+      "reason": "Static runtime authorities/data used by browser or server runtime paths."
+    },
+    {
+      "classification": "PUBLIC_STATIC",
+      "exact": [
+        "data/growth-outcome-evidence.schema.json",
+        "data/growth-outcome.schema.json",
+        "data/plant-catalog.schema.json",
+        "data/plant-identity.registry.json",
+        "data/plant-identity.schema.json",
+        "data/plants.seed.json"
+      ],
+      "reason": "Static runtime schemas/identity/catalog seed."
+    },
+    {
+      "classification": "PUBLIC_STATIC",
+      "prefixes": [
+        "data/growth-outcome-pilot/"
+      ],
+      "reason": "Runtime growth-outcome pilot data."
+    }
+  ],
+  "forbiddenPublic": [
+    ".git/",
+    ".github/",
+    "tools/",
+    "tests/",
+    "supabase/",
+    "netlify/functions/",
+    "modules/smart-recommendations/adapters/live-source-provider/"
+  ],
+  "forbiddenPublicExtensions": [
+    ".log",
+    ".tap",
+    ".sql",
+    ".ps1",
+    ".pem",
+    ".p12",
+    ".pfx",
+    ".swp"
+  ],
+  "required13ImpactPaths": {
+    "app.html": "PUBLIC_STATIC",
+    "data/catalog-expansion/packets/six-plant-data-repair-2026-10-07/mango.packet.json": "BUILD_ONLY",
+    "data/catalog/botanical-size-authority-v1.json": "PUBLIC_STATIC",
+    "modules/catalog-media/active-canonical-image-coverage-v1.js": "PUBLIC_STATIC",
+    "modules/catalog/cruvit-plant-intake-engine-v1.js": "PUBLIC_STATIC",
+    "modules/catalog/full-cruvit-plant-approval-v1.js": "PUBLIC_STATIC",
+    "modules/identity/canonical-alias-authority-data-v1.js": "PUBLIC_STATIC",
+    "modules/identity/canonical-alias-authority-v1.js": "PUBLIC_STATIC",
+    "modules/personal-domain/pre-scale-suitability-systemic-hardening-v1-contract.js": "PUBLIC_STATIC",
+    "modules/personal-domain/smart-rec-climate-meta-authority-v1.js": "PUBLIC_STATIC",
+    "modules/personal-domain/specific-plant-suitability-contract.js": "PUBLIC_STATIC",
+    "modules/smart-recommendations/smart-rec-garden-intelligence-v1.js": "PUBLIC_STATIC",
+    "netlify/functions/full-cruvit-plant-approval.mjs": "SERVER_RUNTIME"
+  },
+  "functionsImpactMinimum": {
+    "changedSourceDependencies": [
+      "netlify/functions/climate-authority-readiness.mjs",
+      "netlify/functions/coordinate-climate-global-deploy.mjs",
+      "netlify/functions/coordinate-climate-global-diagnostic.mjs",
+      "netlify/functions/coordinate-climate-global-upload-sign.mjs",
+      "netlify/functions/cruvit-plant-intake-engine.mjs",
+      "netlify/functions/full-cruvit-plant-approval.mjs",
+      "netlify/functions/garden-weather.mjs"
+    ],
+    "changedSizeDataConsumers": [
+      "netlify/functions/cruvit-e2e-batch-a-promotion-manifest-builder.mjs",
+      "netlify/functions/cruvit-e2e-in-garden-plan-builder.mjs",
+      "netlify/functions/plant-intake-e2e-final-promotion-manifest-builder.mjs",
+      "netlify/functions/plant-visual-variant-expansion-readiness.mjs"
+    ]
+  },
+  "routeRewrites": {
+    "app": "app.html",
+    "app/": "app.html"
+  }
+}

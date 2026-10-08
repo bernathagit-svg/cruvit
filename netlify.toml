@@ -1,6 +1,6 @@
 [build]
-  publish = "."
-  command = "node tools/deployment/prune-netlify-static-deploy.mjs --netlify-deploy-prune"
+  publish = "dist-static"
+  command = "node tools/deployment/build-static-publish.mjs --out dist-static"
 
 [functions]
   directory = "netlify/functions"
