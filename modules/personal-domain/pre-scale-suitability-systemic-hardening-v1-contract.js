@@ -16,9 +16,10 @@ import {
 } from './coordinate-climate-authority-v2-contract.js';
 import { atmosphericHumidityMismatchForLowTolerancePlant } from './structural-climate-authority-v1.js';
 import { readOptionalNumericThreshold } from '../catalog-expansion/plant-climate-quantitative-evidence-v1-contract.js';
+import { readClimateBooleanTrait } from './smart-rec-climate-meta-authority-v1.js';
 
-export const PRE_SCALE_SUITABILITY_SYSTEMIC_HARDENING_VERSION = '1.0.0';
-export const SPECIFIC_PLANT_EVALUATOR_VERSION = '1.1.0-pre-scale-hardening';
+export const PRE_SCALE_SUITABILITY_SYSTEMIC_HARDENING_VERSION = '1.0.1-boolean-unknown';
+export const SPECIFIC_PLANT_EVALUATOR_VERSION = '1.1.1-boolean-unknown';
 
 /** Explicit product dimensions — do not collapse into one Overall claim. */
 export const SUITABILITY_DIMENSIONS = Object.freeze({
@@ -283,10 +284,9 @@ export function interpretPhenologyCueAgainstClimate(text, climateProfile, lat) {
 }
 
 export function chillConfidenceFromEvidence(meta, climateProfile) {
-  const needs =
-    meta?.needsWinterChill === true ||
-    (Array.isArray(meta?.groupIds) && meta.groupIds.includes('temperate-chill-fruit-tree'));
-  if (!needs) return { required: false, confidence: 'n/a' };
+  const needs = readClimateBooleanTrait(meta, 'needsWinterChill').value;
+  if (needs === null) return { required: null, confidence: 'unknown', enoughForReliableFruit: null };
+  if (needs === false) return { required: false, confidence: 'n/a' };
   const q = meta?.quantitativeEvidence || {};
   const hasNumeric =
     Number.isFinite(Number(q.chill_hours_min)) || Number.isFinite(Number(q.chill_hours_max));
@@ -562,7 +562,7 @@ export function applyPreScaleSystemicDemotions({
 
   const chill = chillConfidenceFromEvidence(meta, climateProfile);
   if (
-    chill.required &&
+    chill.required === true &&
     chill.confidence === 'qualitative-cool-season-only' &&
     (next === 'good' || next === 'excellent')
   ) {

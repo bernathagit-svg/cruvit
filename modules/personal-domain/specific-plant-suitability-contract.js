@@ -38,6 +38,7 @@ import {
   survivalFitIsHardCapped
 } from '../suitability/hard-climate-survival-gate-v1.js';
 import { evaluateReproductiveClimateGate } from '../suitability/reproductive-climate-gate-v1.js';
+import { readClimateBooleanTrait } from './smart-rec-climate-meta-authority-v1.js';
 
 export { atmosphericHumidityMismatchForLowTolerancePlant };
 export {
@@ -376,12 +377,9 @@ export function isFrostFreeGrowingClimate(climateProfile) {
   return isFrostFreeGrowingClimateFromStructural(climateProfile || {});
 }
 
-/** Same chill authority as Smart Recommendations — not a second engine. */
+/** Same three-state chill authority as Smart Recommendations; groups are resolved upstream. */
 export function plantNeedsWinterChill(meta) {
-  if (!meta || typeof meta !== 'object') return false;
-  if (meta.needsWinterChill === true) return true;
-  const groups = Array.isArray(meta.groupIds) ? meta.groupIds : [];
-  return groups.includes('temperate-chill-fruit-tree');
+  return readClimateBooleanTrait(meta, 'needsWinterChill').value;
 }
 
 export function climateLacksWinterChillSignal(env = {}) {
@@ -1338,7 +1336,7 @@ export function deriveSpecificPlantOutcomes({
     isWarmTropicalFrostSensitiveGroup(meta) && humidityTolerance === 'high';
   const fruitFailCtx = hasFruitingFailureContext(meta, plant);
   const chillRequired = plantNeedsWinterChill(meta);
-  const chillDeficit = chillRequired && climateLacksWinterChillSignal(env);
+  const chillDeficit = chillRequired === true && climateLacksWinterChillSignal(env);
   const chillLimitMsg =
     'Reliable flowering and fruiting need winter chill or a clear cool season; always-hot climates without a cool-season signal are a poor match.';
 

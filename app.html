@@ -1234,14 +1234,42 @@ function smartRecUniqueValues(values){
 
 /* Single-authority climate meta: track synthetic merge defaults; preserve structured fields. */
 const SMART_REC_MERGE_CORE_DEFAULT_KEYS=['heatTolerance','coldTolerance','frostSensitivity','humidityTolerance','drainageNeeds'];
+const SMART_REC_CLIMATE_BOOLEAN_FIELDS=['needsWinterChill','needsDrySeason'];
+const SMART_REC_CLIMATE_BOOLEAN_POLICY_VERSION='climate-boolean-unknown-v1.0.0';
+// Strict boolean decisions: missing data is not a negative botanical assertion.
+function smartRecReadClimateBooleanTrait(meta, field) {
+  if (!meta || typeof meta !== 'object' || !SMART_REC_CLIMATE_BOOLEAN_FIELDS.includes(field)) {
+    return { declared: false, value: null };
+  }
+  const owns = (obj) => !!obj && Object.prototype.hasOwnProperty.call(obj, field);
+  const maps = [meta.traitEvidenceClasses, meta.fieldEvidenceClasses, meta.traitProvenance];
+  const evidenceDeclared = maps.some(owns);
+  const provenance = owns(meta.traitProvenance) ? meta.traitProvenance[field] : null;
+  const unknown = [
+    owns(meta.traitEvidenceClasses) ? meta.traitEvidenceClasses[field] : null,
+    owns(meta.fieldEvidenceClasses) ? meta.fieldEvidenceClasses[field] : null,
+    provenance?.evidenceClass,
+    provenance?.status
+  ].some((value) => typeof value === 'string' && value.trim().toUpperCase() === 'UNKNOWN');
+  const synthetic = meta[field] === null
+    && Array.isArray(meta.syntheticDefaultFields)
+    && meta.syntheticDefaultFields.includes(field)
+    && !evidenceDeclared;
+  const declared = (owns(meta) && !synthetic) || evidenceDeclared;
+  return {
+    declared,
+    value: declared && owns(meta) && !unknown && typeof meta[field] === 'boolean' ? meta[field] : null
+  };
+}
 function smartRecMergeClimateMeta(){
   const merged={
     heatTolerance:'medium',
     coldTolerance:'medium',
     frostSensitivity:'medium',
     humidityTolerance:'medium',
-    needsWinterChill:false,
-    needsDrySeason:false,
+    needsWinterChill:null,
+    needsDrySeason:null,
+    booleanTraitPolicyVersion:SMART_REC_CLIMATE_BOOLEAN_POLICY_VERSION,
     drainageNeeds:'medium',
     floweringRequirements:'',
     fruitingRequirements:'',
@@ -1252,6 +1280,7 @@ function smartRecMergeClimateMeta(){
     needsReview:false
   };
   const assertedCore=new Set();
+  const assertedBooleans=new Set();
   [...arguments].filter(Boolean).forEach(meta=>{
     SMART_REC_MERGE_CORE_DEFAULT_KEYS.forEach(key=>{
       if(meta[key]){ merged[key]=meta[key]; assertedCore.add(key); }
@@ -1266,8 +1295,23 @@ function smartRecMergeClimateMeta(){
     ['floweringRequirements','fruitingRequirements','survivalVsThriveNotes'].forEach(key=>{
       if(meta[key]) merged[key]=meta[key];
     });
-    if(meta.needsWinterChill===true) merged.needsWinterChill=true;
-    if(meta.needsDrySeason===true) merged.needsDrySeason=true;
+    SMART_REC_CLIMATE_BOOLEAN_FIELDS.forEach(key=>{
+      const decision=smartRecReadClimateBooleanTrait(meta,key);
+      if(!decision.declared) return;
+      merged[key]=decision.value;
+      assertedBooleans.add(key);
+      // A later decision owns its evidence; never borrow support for an older value.
+      ['traitEvidenceClasses','fieldEvidenceClasses','traitProvenance'].forEach(mapKey=>{
+        const incoming=meta[mapKey];
+        if(incoming&&Object.prototype.hasOwnProperty.call(incoming,key)){
+          merged[mapKey]=Object.assign({},merged[mapKey]||{},{[key]:incoming[key]});
+        }else if(merged[mapKey]&&Object.prototype.hasOwnProperty.call(merged[mapKey],key)){
+          const copy=Object.assign({},merged[mapKey]);
+          delete copy[key];
+          merged[mapKey]=copy;
+        }
+      });
+    });
     if(meta.needsReview===true) merged.needsReview=true;
     if(meta.floweringOutcomeApplicable===false) merged.floweringOutcomeApplicable=false;
     if(meta.fruitingOutcomeApplicable===false) merged.fruitingOutcomeApplicable=false;
@@ -1293,7 +1337,8 @@ function smartRecMergeClimateMeta(){
       merged.quantitativeProvenance=Object.assign({},merged.quantitativeProvenance||{},meta.quantitativeProvenance);
     }
   });
-  merged.syntheticDefaultFields=SMART_REC_MERGE_CORE_DEFAULT_KEYS.filter(k=>!assertedCore.has(k));
+  merged.syntheticDefaultFields=SMART_REC_MERGE_CORE_DEFAULT_KEYS.filter(k=>!assertedCore.has(k))
+    .concat(SMART_REC_CLIMATE_BOOLEAN_FIELDS.filter(k=>!assertedBooleans.has(k)));
   return merged;
 }
 function smartRecStripSyntheticCoreDefaults(meta){
@@ -1306,6 +1351,7 @@ function smartRecStripSyntheticCoreDefaults(meta){
 function smartRecPlantHasCanonicalClimateTraits(p){
   const t=p&&p.climateTraits;
   if(!t||typeof t!=='object') return false;
+  if(SMART_REC_CLIMATE_BOOLEAN_FIELDS.some(k=>Object.prototype.hasOwnProperty.call(t,k)||smartRecReadClimateBooleanTrait(t,k).declared)) return true;
   const keys=SMART_REC_MERGE_CORE_DEFAULT_KEYS.concat([
     'sunNeeds','waterNeeds','floweringRequirements','fruitingRequirements',
     'groupIds','needsWinterChill','traitEvidenceClasses','reproductiveBiology'
@@ -2071,8 +2117,15 @@ function climateMetaFromCatalogTraits(traits,scientific){
   const groupMeta=groupIds.map(groupId=>
     smartRecMergeClimateMeta({groupIds:[groupId]},SMART_REC_CLIMATE_GROUPS[groupId]||null)
   );
-  // Canonical traits last so asserted plant values win over group templates.
-  let merged=smartRecMergeClimateMeta(...groupMeta,traits);
+  // Canonical absence is authoritative UNKNOWN; group templates cannot fill these booleans.
+  const canonicalTraits=Object.assign({},traits);
+  SMART_REC_CLIMATE_BOOLEAN_FIELDS.forEach(key=>{
+    canonicalTraits[key]=smartRecReadClimateBooleanTrait(traits,key).value;
+  });
+  if(Array.isArray(canonicalTraits.syntheticDefaultFields)){
+    canonicalTraits.syntheticDefaultFields=canonicalTraits.syntheticDefaultFields.filter(k=>!SMART_REC_CLIMATE_BOOLEAN_FIELDS.includes(k));
+  }
+  let merged=smartRecMergeClimateMeta(...groupMeta,canonicalTraits);
   // Group templates must not invent plant-level flowering/fruiting requirement prose.
   // Missing plant reproductive fields stay empty → Specific Plant outcomes remain UNKNOWN
   // (do not treat synthetic group defaults as direct reproductive evidence).
@@ -2305,7 +2358,7 @@ function climateSuitabilityV1FromSnapshot(snapshot,options){
       heatCold=Math.min(heatCold,20);
       addWarning('Cold snaps may seriously reduce performance.');
     }
-    if(meta.needsWinterChill&&garden.alwaysHot&&!garden.coolSeasonSignal){
+    if(meta.needsWinterChill===true&&garden.alwaysHot&&!garden.coolSeasonSignal){
       thrive=Math.min(thrive,30);
       addWarning('Reliable fruiting is unlikely without winter chill or a clear cool season.',12);
     }
@@ -2333,7 +2386,7 @@ function climateSuitabilityV1FromSnapshot(snapshot,options){
       heatCold=Math.min(heatCold,55);
       thrive=Math.min(thrive,60);
     }
-    if(metaHasGroup('temperate-chill-fruit-tree')&&garden.alwaysHot&&!garden.coolSeasonSignal){
+    if(metaHasGroup('temperate-chill-fruit-tree')&&meta.needsWinterChill===true&&garden.alwaysHot&&!garden.coolSeasonSignal){
       thrive=Math.min(thrive,30);
       addWarning('Reliable fruiting is unlikely without winter chill or a clear cool season.',12);
     }
@@ -6690,7 +6743,7 @@ function smartRecEvaluateSuitability(p){
     heatColdFit=Math.min(heatColdFit,20);
     addWarning('Cold snaps may seriously reduce performance.');
   }
-  if(smartRecMetaHasGroup(meta,'temperate-chill-fruit-tree')&&climateProfile.alwaysHot&&!climateProfile.coolSeasonSignal){
+  if(smartRecMetaHasGroup(meta,'temperate-chill-fruit-tree')&&meta.needsWinterChill===true&&climateProfile.alwaysHot&&!climateProfile.coolSeasonSignal){
     fruitingFit=Math.min(fruitingFit,10);
     thriveFit=Math.min(thriveFit,30);
     addWarning('Reliable fruiting is unlikely without winter chill or a clear cool season.',18);

@@ -9,7 +9,35 @@
  * 4) synthetic merge defaults are marked and stripped on canonical path
  */
 
-export const SMART_REC_CLIMATE_META_AUTHORITY_VERSION = '1.0.0';
+export const SMART_REC_CLIMATE_META_AUTHORITY_VERSION = '1.1.0';
+export const CLIMATE_BOOLEAN_FIELDS = Object.freeze(['needsWinterChill', 'needsDrySeason']);
+export const CLIMATE_BOOLEAN_POLICY_VERSION = 'climate-boolean-unknown-v1.0.0';
+
+/** Read a three-state decision without turning missing data into false. */
+export function readClimateBooleanTrait(meta, field) {
+  if (!meta || typeof meta !== 'object' || !CLIMATE_BOOLEAN_FIELDS.includes(field)) {
+    return { declared: false, value: null };
+  }
+  const owns = (obj) => !!obj && Object.prototype.hasOwnProperty.call(obj, field);
+  const maps = [meta.traitEvidenceClasses, meta.fieldEvidenceClasses, meta.traitProvenance];
+  const evidenceDeclared = maps.some(owns);
+  const provenance = owns(meta.traitProvenance) ? meta.traitProvenance[field] : null;
+  const unknown = [
+    owns(meta.traitEvidenceClasses) ? meta.traitEvidenceClasses[field] : null,
+    owns(meta.fieldEvidenceClasses) ? meta.fieldEvidenceClasses[field] : null,
+    provenance?.evidenceClass,
+    provenance?.status
+  ].some((value) => typeof value === 'string' && value.trim().toUpperCase() === 'UNKNOWN');
+  const synthetic = meta[field] === null
+    && Array.isArray(meta.syntheticDefaultFields)
+    && meta.syntheticDefaultFields.includes(field)
+    && !evidenceDeclared;
+  const declared = (owns(meta) && !synthetic) || evidenceDeclared;
+  return {
+    declared,
+    value: declared && owns(meta) && !unknown && typeof meta[field] === 'boolean' ? meta[field] : null
+  };
+}
 
 export const MERGE_CORE_DEFAULT_FIELDS = Object.freeze([
   'heatTolerance',
@@ -61,6 +89,7 @@ function presentScalar(v) {
 export function plantHasCanonicalClimateTraits(plant) {
   const t = plant?.climateTraits;
   if (!t || typeof t !== 'object') return false;
+  if (CLIMATE_BOOLEAN_FIELDS.some((key) => hasOwn(t, key) || readClimateBooleanTrait(t, key).declared)) return true;
   const keys = [
     ...MERGE_CORE_DEFAULT_FIELDS,
     'sunNeeds',
@@ -85,8 +114,9 @@ export function mergeSmartRecClimateMeta(...metas) {
     coldTolerance: MERGE_CORE_DEFAULT_VALUES.coldTolerance,
     frostSensitivity: MERGE_CORE_DEFAULT_VALUES.frostSensitivity,
     humidityTolerance: MERGE_CORE_DEFAULT_VALUES.humidityTolerance,
-    needsWinterChill: false,
-    needsDrySeason: false,
+    needsWinterChill: null,
+    needsDrySeason: null,
+    booleanTraitPolicyVersion: CLIMATE_BOOLEAN_POLICY_VERSION,
     drainageNeeds: MERGE_CORE_DEFAULT_VALUES.drainageNeeds,
     floweringRequirements: '',
     fruitingRequirements: '',
@@ -97,6 +127,7 @@ export function mergeSmartRecClimateMeta(...metas) {
     needsReview: false
   };
   const assertedCore = new Set();
+  const assertedBooleans = new Set();
 
   metas.filter(Boolean).forEach((meta) => {
     MERGE_CORE_DEFAULT_FIELDS.forEach((key) => {
@@ -114,8 +145,23 @@ export function mergeSmartRecClimateMeta(...metas) {
     ['floweringRequirements', 'fruitingRequirements', 'survivalVsThriveNotes'].forEach((key) => {
       if (meta[key]) merged[key] = meta[key];
     });
-    if (meta.needsWinterChill === true) merged.needsWinterChill = true;
-    if (meta.needsDrySeason === true) merged.needsDrySeason = true;
+    CLIMATE_BOOLEAN_FIELDS.forEach((key) => {
+      const decision = readClimateBooleanTrait(meta, key);
+      if (!decision.declared) return;
+      merged[key] = decision.value;
+      assertedBooleans.add(key);
+      // A later decision owns its evidence; never borrow support for an older value.
+      ['traitEvidenceClasses', 'fieldEvidenceClasses', 'traitProvenance'].forEach((mapKey) => {
+        const incoming = meta[mapKey];
+        if (incoming && hasOwn(incoming, key)) {
+          merged[mapKey] = { ...(merged[mapKey] || {}), [key]: incoming[key] };
+        } else if (merged[mapKey] && hasOwn(merged[mapKey], key)) {
+          const copy = { ...merged[mapKey] };
+          delete copy[key];
+          merged[mapKey] = copy;
+        }
+      });
+    });
     if (meta.needsReview === true) merged.needsReview = true;
     if (meta.floweringOutcomeApplicable === false) merged.floweringOutcomeApplicable = false;
     if (meta.fruitingOutcomeApplicable === false) merged.fruitingOutcomeApplicable = false;
@@ -158,7 +204,8 @@ export function mergeSmartRecClimateMeta(...metas) {
     }
   });
 
-  merged.syntheticDefaultFields = MERGE_CORE_DEFAULT_FIELDS.filter((k) => !assertedCore.has(k));
+  merged.syntheticDefaultFields = MERGE_CORE_DEFAULT_FIELDS.filter((k) => !assertedCore.has(k))
+    .concat(CLIMATE_BOOLEAN_FIELDS.filter((k) => !assertedBooleans.has(k)));
   return merged;
 }
 
@@ -179,8 +226,17 @@ export function climateMetaFromCatalogTraits(traits, scientific, climateGroups =
   const groupMeta = groupIds.map((groupId) =>
     mergeSmartRecClimateMeta({ groupIds: [groupId] }, climateGroups[groupId] || null)
   );
-  // traits last → canonical asserted values win over group templates
-  let merged = mergeSmartRecClimateMeta(...groupMeta, traits);
+  // Canonical absence is authoritative UNKNOWN; group templates cannot fill these booleans.
+  const canonicalTraits = { ...traits };
+  CLIMATE_BOOLEAN_FIELDS.forEach((key) => {
+    canonicalTraits[key] = readClimateBooleanTrait(traits, key).value;
+  });
+  if (Array.isArray(canonicalTraits.syntheticDefaultFields)) {
+    canonicalTraits.syntheticDefaultFields = canonicalTraits.syntheticDefaultFields.filter(
+      (key) => !CLIMATE_BOOLEAN_FIELDS.includes(key)
+    );
+  }
+  let merged = mergeSmartRecClimateMeta(...groupMeta, canonicalTraits);
   const sci = String(scientific || '');
   if (
     merged.needsReview ||
