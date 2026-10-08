@@ -1501,37 +1501,34 @@
   }
 
   function landingHTML(includeHistory) {
+    const locationLabel = String(getData()?.gardenLocation?.label || '').trim();
+    const compactLocation = locationLabel
+      ? '<span class="pi-entry-location-dot" aria-hidden="true"></span><span>' + esc(locationLabel) + '</span>'
+      : '<span class="pi-entry-location-dot is-muted" aria-hidden="true"></span><span>' + esc(state.lang === 'he' ? 'מיקום הגינה עדיין לא אושר' : 'Garden location not confirmed') + '</span>';
+
     return (
-      '<div data-pi-id="homeOverlay" class="pi-home" role="dialog" aria-modal="true" aria-label="' + esc(t('homeTitle')) + '">' +
-        '<div class="pi-home-scroll">' +
-          '<header class="pi-home-top">' +
-            '<div class="pi-home-pill">' + esc(t('pill')) + '</div>' +
-            '<div class="pi-home-actions">' +
-            '<button type="button" class="pi-home-btn" data-pi-action="home">' + esc(t('homeBtn')) + '</button>' +
-            '<button type="button" class="pi-home-close" data-pi-id="closeHome" aria-label="' + esc(t('closeHome')) + '">×</button>' +
-            '</div>' +
+      '<div data-pi-id="homeOverlay" class="pi-home pi-entry-v210" role="dialog" aria-modal="true" aria-label="' + esc(t('homeTitle')) + '">' +
+        '<div class="pi-entry-bg" aria-hidden="true"></div>' +
+        '<div class="pi-home-scroll pi-entry-scroll">' +
+          '<header class="pi-entry-top">' +
+            '<button type="button" class="pi-entry-back" data-pi-action="home" aria-label="' + esc(t('homeBtn')) + '">‹</button>' +
+            '<div class="pi-entry-brand"><span class="pi-entry-leaf">◆</span><b>CRUVIT</b><small>' + esc(state.lang === 'he' ? 'זיהוי צמחים' : 'Plant Identification') + '</small></div>' +
+            '<span class="pi-entry-top-spacer" aria-hidden="true"></span>' +
           '</header>' +
-          '<section class="pi-hero">' +
-            '<div class="pi-hero-copy">' +
-              '<h1 class="pi-hero-title">' + esc(t('homeTitle')) + '</h1>' +
-              '<p class="pi-hero-sub">' + esc(t('homeSub')) + '</p>' +
-              '<button type="button" class="pi-hero-cta" data-pi-action="open">' + esc(t('identifyCta')) + '</button>' +
-              '<div class="pi-benefits">' +
-                '<div class="pi-benefit"><b>' + esc(t('f1')) + '</b><span>' + esc(t('f1s')) + '</span></div>' +
-                '<div class="pi-benefit"><b>' + esc(t('f2')) + '</b><span>' + esc(t('f2s')) + '</span></div>' +
-                '<div class="pi-benefit"><b>' + esc(t('f3')) + '</b><span>' + esc(t('f3s')) + '</span></div>' +
-              '</div>' +
-            '</div>' +
-            '<div class="pi-preview-card">' +
-              '<button type="button" class="pi-photo-tease" data-pi-action="open">' +
-                '<span class="pi-camera-icon">' + cameraIconSvg() + '</span>' +
-                '<span class="pi-tease-text"><b>' + esc(t('takePhoto')) + '</b><span>' + esc(t('takeSub')) + '</span></span>' +
-              '</button>' +
-              '<p class="pi-primary-line">' + esc(t('flowSub')) + '</p>' +
-            '</div>' +
-          '</section>' +
+          '<main class="pi-entry-main">' +
+            '<div class="pi-entry-kicker">' + esc(state.lang === 'he' ? 'זיהוי חכם' : 'SMART IDENTIFICATION') + '</div>' +
+            '<h1 class="pi-entry-title">' + esc(state.lang === 'he' ? 'מה תרצו לזהות?' : 'What do you want to identify?') + '</h1>' +
+            '<p class="pi-entry-sub">' + esc(state.lang === 'he' ? 'צלמו או בחרו תמונה ברורה אחת. CRUVIT יזהה את הצמח לפני כל בדיקת אקלים או הוספה לגינה.' : 'Take or choose one clear photo. CRUVIT identifies the plant before any climate check or garden action.') + '</p>' +
+            '<button type="button" class="pi-entry-capture" data-pi-action="open">' +
+              '<span class="pi-entry-camera">' + cameraIconSvg() + '</span>' +
+              '<span class="pi-entry-capture-copy"><b>' + esc(state.lang === 'he' ? 'צלמו או בחרו תמונה' : 'Take or choose a photo') + '</b><small>' + esc(state.lang === 'he' ? 'עלה · פרח · צמח מלא' : 'Leaf · flower · whole plant') + '</small></span>' +
+              '<span class="pi-entry-arrow" aria-hidden="true">→</span>' +
+            '</button>' +
+            '<div class="pi-entry-context"><span class="pi-entry-pin" aria-hidden="true">⌖</span>' + compactLocation + '</div>' +
+            '<p class="pi-entry-truth">' + esc(state.lang === 'he' ? 'לא נשמור צמח בגינה בלי אישור מפורש שלך.' : 'Nothing is added to My Garden without your explicit confirmation.') + '</p>' +
+          '</main>' +
           (includeHistory
-            ? '<section class="pi-history pi-history-landing" data-pi-id="historySection"><h2>' + esc(t('recent')) + '</h2><div data-pi-id="history" class="pi-history-grid"></div></section>'
+            ? '<section class="pi-history pi-history-landing pi-entry-history" data-pi-id="historySection"><div class="pi-entry-history-head"><h2>' + esc(t('recent')) + '</h2><span>' + esc(state.lang === 'he' ? 'היסטוריה' : 'History') + '</span></div><div data-pi-id="history" class="pi-history-grid"></div></section>'
             : '') +
         '</div>' +
       '</div>'
@@ -2127,29 +2124,33 @@
       landingHTML(includeHistory !== false) +
       '<input data-pi-id="fileInput" class="pi-file" type="file" accept="image/*">' +
       '<input data-pi-id="camInput" class="pi-file" type="file" accept="image/*" capture="environment">' +
-      '<div data-pi-id="wizardModal" class="pi-modal" role="dialog" aria-modal="true">' +
-        '<div class="pi-wizard">' +
-          '<div class="pi-modal-top">' +
-            '<div><h2>' + esc(t('modalTitle')) + '</h2><p class="pi-muted">' + esc(t('modalSub')) + '</p></div>' +
-            '<button type="button" class="pi-close" data-pi-id="closeModal" aria-label="Close">×</button>' +
-          '</div>' +
-          '<div class="pi-steps"><div class="pi-step on" data-pi-id="s1"></div><div class="pi-step" data-pi-id="s2"></div><div class="pi-step" data-pi-id="s3"></div></div>' +
-          '<div data-pi-id="uploadStep">' +
-            '<div class="pi-drop" data-pi-id="preview">' +
-              '<div><div class="pi-camera-icon">' + cameraIconSvg() + '</div>' +
-              '<b>' + esc(t('uploadTitle')) + '</b><p class="pi-muted">' + esc(t('uploadSub')) + '</p></div>' +
+      '<div data-pi-id="wizardModal" class="pi-modal pi-capture-v210" role="dialog" aria-modal="true">' +
+        '<div class="pi-wizard pi-capture-shell">' +
+          '<div class="pi-capture-bg" aria-hidden="true"></div>' +
+          '<div class="pi-capture-content">' +
+            '<header class="pi-capture-top">' +
+              '<button type="button" class="pi-capture-back" data-pi-id="closeModal" aria-label="Back">‹</button>' +
+              '<div class="pi-capture-brand"><b>CRUVIT</b><small>' + esc(state.lang === 'he' ? 'זיהוי צמחים' : 'Plant Identification') + '</small></div>' +
+              '<span class="pi-capture-step">' + esc(state.lang === 'he' ? 'תמונה' : 'PHOTO') + '</span>' +
+            '</header>' +
+            '<div class="pi-steps pi-capture-steps"><div class="pi-step on" data-pi-id="s1"></div><div class="pi-step" data-pi-id="s2"></div><div class="pi-step" data-pi-id="s3"></div></div>' +
+            '<div data-pi-id="uploadStep" class="pi-capture-upload">' +
+              '<div class="pi-capture-copy"><span>' + esc(state.lang === 'he' ? 'שלב 1' : 'STEP 1') + '</span><h2>' + esc(state.lang === 'he' ? 'הראו לנו את הצמח' : 'Show us the plant') + '</h2><p>' + esc(state.lang === 'he' ? 'תמונה ברורה אחת מספיקה. אפשר לצלם עכשיו או לבחור תמונה קיימת.' : 'One clear photo is enough. Take one now or choose an existing photo.') + '</p></div>' +
+              '<div class="pi-drop pi-capture-preview" data-pi-id="preview">' +
+                '<div><div class="pi-camera-icon">' + cameraIconSvg() + '</div><b>' + esc(state.lang === 'he' ? 'בחרו תמונה ברורה' : 'Choose a clear photo') + '</b><p class="pi-muted">' + esc(state.lang === 'he' ? 'עלה, פרח או הצמח כולו' : 'Leaf, flower or the whole plant') + '</p></div>' +
+              '</div>' +
+              '<div class="pi-upload-btns pi-capture-source-actions">' +
+                '<button type="button" class="pi-btn pi-btn-secondary" data-pi-id="cameraBtn"><span aria-hidden="true">◎</span>' + esc(t('camera')) + '</button>' +
+                '<button type="button" class="pi-btn pi-btn-secondary" data-pi-id="galleryBtn"><span aria-hidden="true">▧</span>' + esc(t('gallery')) + '</button>' +
+              '</div>' +
+              '<div class="pi-capture-consent"><span aria-hidden="true">✓</span><p>' + esc(state.lang === 'he' ? 'בחירת תמונה לא מפעילה זיהוי. CRUVIT ינתח אותה רק לאחר לחיצה על "נתח צמח".' : 'Choosing a photo does not start identification. CRUVIT analyzes it only after you tap “Analyze Plant”.') + '</p></div>' +
+              '<button type="button" class="pi-btn pi-btn-primary pi-capture-analyze" data-pi-id="analyzeBtn">' + esc(t('analyzeBtn')) + '<span aria-hidden="true">→</span></button>' +
+              '<div data-pi-id="error" class="pi-error"></div>' +
             '</div>' +
-            '<div class="pi-upload-btns">' +
-              '<button type="button" class="pi-btn pi-btn-secondary" data-pi-id="galleryBtn">' + esc(t('gallery')) + '</button>' +
-              '<button type="button" class="pi-btn pi-btn-secondary" data-pi-id="cameraBtn">' + esc(t('camera')) + '</button>' +
+            '<div data-pi-id="loadingStep" class="pi-capture-loading" style="display:none">' +
+              '<div class="pi-loader"><div class="pi-loader-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 21c0-6 4-10 9-10-1 6-5 10-9 10Z"/><path d="M12 21c0-6-4-10-9-10 1 6 5 10 9 10Z"/><path d="M12 21V7"/></svg></div>' +
+              '<h2>' + esc(t('loadingT')) + '</h2><div class="pi-loader-lines"><span>' + esc(t('l1')) + '</span><span>' + esc(t('l2')) + '</span><span>' + esc(t('l3')) + '</span></div></div>' +
             '</div>' +
-            '<button type="button" class="pi-btn pi-btn-primary" data-pi-id="analyzeBtn" style="width:100%;margin-top:12px">' + esc(t('analyzeBtn')) + '</button>' +
-            '<div data-pi-id="error" class="pi-error"></div>' +
-          '</div>' +
-          '<div data-pi-id="loadingStep" style="display:none">' +
-            '<div class="pi-loader"><div class="pi-loader-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 21c0-6 4-10 9-10-1 6-5 10-9 10Z"/><path d="M12 21c0-6-4-10-9-10 1 6 5 10 9 10Z"/><path d="M12 21V7"/></svg></div>' +
-            '<h2>' + esc(t('loadingT')) + '</h2>' +
-            '<div class="pi-loader-lines"><span>' + esc(t('l1')) + '</span><span>' + esc(t('l2')) + '</span><span>' + esc(t('l3')) + '</span></div></div>' +
           '</div>' +
         '</div>' +
       '</div>' +
