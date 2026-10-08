@@ -1,0 +1,400 @@
+TAP version 13
+# Subtest: runtime projection exactly derives from unchanged Identity Registry including fingerprint
+ok 1 - runtime projection exactly derives from unchanged Identity Registry including fingerprint
+  ---
+  duration_ms: 1.4344
+  type: 'test'
+  ...
+# Subtest: both consumers export the same immutable alias object, not matching copied tables
+ok 2 - both consumers export the same immutable alias object, not matching copied tables
+  ---
+  duration_ms: 0.0841
+  type: 'test'
+  ...
+# Subtest: spearmint: Registry and both consumers retain a separate exact canonical identity
+ok 3 - spearmint: Registry and both consumers retain a separate exact canonical identity
+  ---
+  duration_ms: 0.3203
+  type: 'test'
+  ...
+# Subtest: spearmint: mixed species/generic catalog remains separate in either insertion order
+ok 4 - spearmint: mixed species/generic catalog remains separate in either insertion order
+  ---
+  duration_ms: 0.1154
+  type: 'test'
+  ...
+# Subtest: spearmint: exact stored licensed image is kept; generic-only lookup is a placeholder
+ok 5 - spearmint: exact stored licensed image is kept; generic-only lookup is a placeholder
+  ---
+  duration_ms: 52.3139
+  type: 'test'
+  ...
+# Subtest: common-jasmine: Registry and both consumers retain a separate exact canonical identity
+ok 6 - common-jasmine: Registry and both consumers retain a separate exact canonical identity
+  ---
+  duration_ms: 0.1001
+  type: 'test'
+  ...
+# Subtest: common-jasmine: mixed species/generic catalog remains separate in either insertion order
+ok 7 - common-jasmine: mixed species/generic catalog remains separate in either insertion order
+  ---
+  duration_ms: 0.0842
+  type: 'test'
+  ...
+# Subtest: common-jasmine: exact stored licensed image is kept; generic-only lookup is a placeholder
+ok 8 - common-jasmine: exact stored licensed image is kept; generic-only lookup is a placeholder
+  ---
+  duration_ms: 37.3971
+  type: 'test'
+  ...
+# Subtest: lesser-bougainvillea: Registry and both consumers retain a separate exact canonical identity
+ok 9 - lesser-bougainvillea: Registry and both consumers retain a separate exact canonical identity
+  ---
+  duration_ms: 0.1045
+  type: 'test'
+  ...
+# Subtest: lesser-bougainvillea: mixed species/generic catalog remains separate in either insertion order
+ok 10 - lesser-bougainvillea: mixed species/generic catalog remains separate in either insertion order
+  ---
+  duration_ms: 0.1091
+  type: 'test'
+  ...
+# Subtest: lesser-bougainvillea: exact stored licensed image is kept; generic-only lookup is a placeholder
+ok 11 - lesser-bougainvillea: exact stored licensed image is kept; generic-only lookup is a placeholder
+  ---
+  duration_ms: 36.2194
+  type: 'test'
+  ...
+# Subtest: all registered canonical keys are stable across both consumers
+ok 12 - all registered canonical keys are stable across both consumers
+  ---
+  duration_ms: 0.175
+  type: 'test'
+  ...
+# Subtest: every accepted alias comes from Registry and both consumers agree with its resolver
+ok 13 - every accepted alias comes from Registry and both consumers agree with its resolver
+  ---
+  duration_ms: 0.1928
+  type: 'test'
+  ...
+# Subtest: unregistered legacy bell-pepper redirect is not manufactured to satisfy old tests
+ok 14 - unregistered legacy bell-pepper redirect is not manufactured to satisfy old tests
+  ---
+  duration_ms: 0.0591
+  type: 'test'
+  ...
+# Subtest: unknown, malformed and prototype keys never become injected aliases
+ok 15 - unknown, malformed and prototype keys never become injected aliases
+  ---
+  duration_ms: 0.0944
+  type: 'test'
+  ...
+# Subtest: canonical/alias collisions and duplicate alias claims fail rather than choose array order
+ok 16 - canonical/alias collisions and duplicate alias claims fail rather than choose array order
+  ---
+  duration_ms: 0.9063
+  type: 'test'
+  ...
+# Subtest: projection does not mutate Registry or convert review status into botanical approval
+ok 17 - projection does not mutate Registry or convert review status into botanical approval
+  ---
+  duration_ms: 0.1974
+  type: 'test'
+  ...
+# Subtest: shared browser dependency contains no filesystem or network imports
+ok 18 - shared browser dependency contains no filesystem or network imports
+  ---
+  duration_ms: 0.4781
+  type: 'test'
+  ...
+# Subtest: paid AI = 0
+ok 19 - paid AI = 0
+  ---
+  duration_ms: 0.5522
+  type: 'test'
+  ...
+# Subtest: every active canonical identity appears exactly once; aliases are not separate authorities
+ok 20 - every active canonical identity appears exactly once; aliases are not separate authorities
+  ---
+  duration_ms: 47.2708
+  type: 'test'
+  ...
+# Subtest: coverage is IMAGE_READY or IMAGE_BLOCKED for every active canonical
+ok 21 - coverage is IMAGE_READY or IMAGE_BLOCKED for every active canonical
+  ---
+  duration_ms: 33.2584
+  type: 'test'
+  ...
+# Subtest: IMAGE_READY license metadata is complete and commercially reusable
+ok 22 - IMAGE_READY license metadata is complete and commercially reusable
+  ---
+  duration_ms: 38.5714
+  type: 'test'
+  ...
+# Subtest: no image attached to the wrong canonical; broad taxa stay broad
+ok 23 - no image attached to the wrong canonical; broad taxa stay broad
+  ---
+  duration_ms: 35.8695
+  type: 'test'
+  ...
+# Subtest: IMAGE_BLOCKED remains honest placeholder; user media never becomes catalog
+ok 24 - IMAGE_BLOCKED remains honest placeholder; user media never becomes catalog
+  ---
+  duration_ms: 0.1827
+  type: 'test'
+  ...
+# Subtest: no network image sourcing during normal render
+ok 25 - no network image sourcing during normal render
+  ---
+  duration_ms: 35.1964
+  type: 'test'
+  ...
+# Subtest: My Garden automatically resolves catalog image via canonical overlay
+ok 26 - My Garden automatically resolves catalog image via canonical overlay
+  ---
+  duration_ms: 3.7433
+  type: 'test'
+  ...
+# Subtest: Mango / Pineapple / Banana and Wave 1 resolve safely
+ok 27 - Mango / Pineapple / Banana and Wave 1 resolve safely
+  ---
+  duration_ms: 33.9361
+  type: 'test'
+  ...
+# Subtest: broken catalog image falls back safely; app overlay wiring present
+ok 28 - broken catalog image falls back safely; app overlay wiring present
+  ---
+  duration_ms: 2.1877
+  type: 'test'
+  ...
+# Subtest: coverage manifest matches unique active set
+ok 29 - coverage manifest matches unique active set
+  ---
+  duration_ms: 28.2596
+  type: 'test'
+  ...
+# Subtest: acceptance plants: IMAGE_READY → catalog URL + provenance + attribution
+ok 30 - acceptance plants: IMAGE_READY → catalog URL + provenance + attribution
+  ---
+  duration_ms: 5.3612
+  type: 'test'
+  ...
+# Subtest: IMAGE_PENDING / IMAGE_BLOCKED plant → placeholder, no search URL
+ok 31 - IMAGE_PENDING / IMAGE_BLOCKED plant → placeholder, no search URL
+  ---
+  duration_ms: 0.1027
+  type: 'test'
+  ...
+# Subtest: unknown / NC / incomplete license media never renders as catalog
+ok 32 - unknown / NC / incomplete license media never renders as catalog
+  ---
+  duration_ms: 0.1063
+  type: 'test'
+  ...
+# Subtest: explicit personal cover overrides catalog; local photoUrl does not
+ok 33 - explicit personal cover overrides catalog; local photoUrl does not
+  ---
+  duration_ms: 4.1114
+  type: 'test'
+  ...
+# Subtest: broken approved URL does not invent replacement search — placeholder helper only
+ok 34 - broken approved URL does not invent replacement search — placeholder helper only
+  ---
+  duration_ms: 0.2019
+  type: 'test'
+  ...
+# Subtest: wrong-species candidate never approved without identity/status contract
+ok 35 - wrong-species candidate never approved without identity/status contract
+  ---
+  duration_ms: 0.1162
+  type: 'test'
+  ...
+# Subtest: runtime app.html has no live Wikipedia/Commons/Bing search path
+ok 36 - runtime app.html has no live Wikipedia/Commons/Bing search path
+  ---
+  duration_ms: 2.6966
+  type: 'test'
+  ...
+# Subtest: media lookup performance: 100 and 500 lookups (no network)
+ok 37 - media lookup performance: 100 and 500 lookups (no network)
+  ---
+  duration_ms: 35.8323
+  type: 'test'
+  ...
+# Subtest: species-level catalog identities are not collapsed onto legacy generic media canonicals
+ok 38 - species-level catalog identities are not collapsed onto legacy generic media canonicals
+  ---
+  duration_ms: 1.9105
+  type: 'test'
+  ...
+# Subtest: coverage generator promotes resolved registry species only with exact licensed cache media
+ok 39 - coverage generator promotes resolved registry species only with exact licensed cache media
+  ---
+  duration_ms: 46.9332
+  type: 'test'
+  ...
+# Subtest: coverage generator promotes approved packet identities with exact licensed cache media
+ok 40 - coverage generator promotes approved packet identities with exact licensed cache media
+  ---
+  duration_ms: 33.503
+  type: 'test'
+  ...
+# Subtest: stored READY media is rejected when source title names another species in the same genus
+ok 41 - stored READY media is rejected when source title names another species in the same genus
+  ---
+  duration_ms: 0.1516
+  type: 'test'
+  ...
+# Subtest: paid AI automated tests = 0
+ok 42 - paid AI automated tests = 0
+  ---
+  duration_ms: 0.5177
+  type: 'test'
+  ...
+# Subtest: species aliases match Catalog Images (not a second image authority)
+ok 43 - species aliases match Catalog Images (not a second image authority)
+  ---
+  duration_ms: 0.3874
+  type: 'test'
+  ...
+# Subtest: every IMAGE_READY recommendation renders its catalog image
+ok 44 - every IMAGE_READY recommendation renders its catalog image
+  ---
+  duration_ms: 602.1886
+  type: 'test'
+  ...
+# Subtest: IMAGE_BLOCKED recommendation falls back honestly
+ok 45 - IMAGE_BLOCKED recommendation falls back honestly
+  ---
+  duration_ms: 559.3325
+  type: 'test'
+  ...
+# Subtest: alias recommendation resolves canonical image
+ok 46 - alias recommendation resolves canonical image
+  ---
+  duration_ms: 552.2802
+  type: 'test'
+  ...
+# Subtest: no render-time image search and no user media as catalog image
+ok 47 - no render-time image search and no user media as catalog image
+  ---
+  duration_ms: 524.9435
+  type: 'test'
+  ...
+# Subtest: recommendation Add to My Garden preserves canonical identity
+ok 48 - recommendation Add to My Garden preserves canonical identity
+  ---
+  duration_ms: 1.4613
+  type: 'test'
+  ...
+# Subtest: Mango / Pineapple / Banana images resolve correctly
+ok 49 - Mango / Pineapple / Banana images resolve correctly
+  ---
+  duration_ms: 528.9507
+  type: 'test'
+  ...
+# Subtest: Wave 1 plants resolve correctly
+ok 50 - Wave 1 plants resolve correctly
+  ---
+  duration_ms: 723.3475
+  type: 'test'
+  ...
+# Subtest: suitability outputs stay four-dimensional; UNKNOWN remains valid
+ok 51 - suitability outputs stay four-dimensional; UNKNOWN remains valid
+  ---
+  duration_ms: 1.0427
+  type: 'test'
+  ...
+# Subtest: Garden Area overlay fills missing answers without turning generic container into balcony
+ok 52 - Garden Area overlay fills missing answers without turning generic container into balcony
+  ---
+  duration_ms: 0.3493
+  type: 'test'
+  ...
+# Subtest: app wiring: catalog intelligence module, no Design start, no Identifier rewrite
+ok 53 - app wiring: catalog intelligence module, no Design start, no Identifier rewrite
+  ---
+  duration_ms: 2.9248
+  type: 'test'
+  ...
+# Subtest: paid network remains 0 after Smart Rec Garden Intelligence proofs
+ok 54 - paid network remains 0 after Smart Rec Garden Intelligence proofs
+  ---
+  duration_ms: 0.2986
+  type: 'test'
+  ...
+# Subtest: explicit positiveRecommendationEligible=false is authoritative for ranking eligibility
+ok 55 - explicit positiveRecommendationEligible=false is authoritative for ranking eligibility
+  ---
+  duration_ms: 0.1353
+  type: 'test'
+  ...
+# Subtest: positive eligibility remains allowed when explicit flag is true and survival is viable
+ok 56 - positive eligibility remains allowed when explicit flag is true and survival is viable
+  ---
+  duration_ms: 0.4312
+  type: 'test'
+  ...
+# Subtest: validated borderline outcome cannot remain a positive recommendation
+ok 57 - validated borderline outcome cannot remain a positive recommendation
+  ---
+  duration_ms: 0.9461
+  type: 'test'
+  ...
+# Subtest: explicitly ineligible plant ranks behind otherwise-equal eligible plant
+ok 58 - explicitly ineligible plant ranks behind otherwise-equal eligible plant
+  ---
+  duration_ms: 0.1344
+  type: 'test'
+  ...
+# Subtest: Garden Area supportType maps to Smart Rec support context without privacy heuristic
+ok 59 - Garden Area supportType maps to Smart Rec support context without privacy heuristic
+  ---
+  duration_ms: 0.2468
+  type: 'test'
+  ...
+# Subtest: generic Garden Area container does not masquerade as balcony or compact container
+ok 60 - generic Garden Area container does not masquerade as balcony or compact container
+  ---
+  duration_ms: 0.1119
+  type: 'test'
+  ...
+# Subtest: Garden Area planting modes map to matching Smart Rec context without greenhouse aliasing
+ok 61 - Garden Area planting modes map to matching Smart Rec context without greenhouse aliasing
+  ---
+  duration_ms: 0.1057
+  type: 'test'
+  ...
+# Subtest: Garden Area part_sun maps to partial-sun without overriding explicit user answer
+ok 62 - Garden Area part_sun maps to partial-sun without overriding explicit user answer
+  ---
+  duration_ms: 0.0882
+  type: 'test'
+  ...
+# Subtest: Smart Rec requires explicit Garden Area selection when multiple Areas exist
+ok 63 - Smart Rec requires explicit Garden Area selection when multiple Areas exist
+  ---
+  duration_ms: 2.7965
+  type: 'test'
+  ...
+# Subtest: Smart Rec consumes only trusted normalized selected Garden Area context
+ok 64 - Smart Rec consumes only trusted normalized selected Garden Area context
+  ---
+  duration_ms: 2.6782
+  type: 'test'
+  ...
+# Subtest: q9 shade goal requires shade-provider structure, not generic shade preference text
+ok 65 - q9 shade goal requires shade-provider structure, not generic shade preference text
+  ---
+  duration_ms: 2.1362
+  type: 'test'
+  ...
+1..65
+# tests 65
+# suites 0
+# pass 65
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5407.0642

@@ -13,15 +13,16 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { IMAGE_READY as RUNTIME_IMAGE_READY, isApprovedCatalogMediaRecord } from './licensed-catalog-media-runtime-v1.js';
 
-export const CATALOG_IMAGES_COVERAGE_VERSION = '1.0.0';
+import {
+  SPECIES_ALIAS_TO_CANONICAL, CANONICAL_ALIAS_AUTHORITY,
+  deriveCanonicalAliasAuthority, resolveCanonicalAliasSlug
+} from '../identity/canonical-alias-authority-v1.js';
+
+export const CATALOG_IMAGES_COVERAGE_VERSION = '1.0.1-canonical-alias-authority';
 export const IMAGE_BLOCKED = 'IMAGE_BLOCKED';
 
-/** Wave 1 species packets collapsed onto existing canonicals — never separate image authority. */
-export const SPECIES_ALIAS_ONTO_CANONICAL = Object.freeze({
-  'english-lavender': 'lavender',
-  'bigleaf-hydrangea': 'hydrangea',
-  'bell-pepper': 'sweet-pepper'
-});
+/** Same Registry-derived object as Smart Rec; no separate alias table. */
+export const SPECIES_ALIAS_ONTO_CANONICAL = SPECIES_ALIAS_TO_CANONICAL;
 
 export const WAVE1_NEW_SEED_SLUGS = Object.freeze([
   'strawberry',
@@ -116,31 +117,9 @@ export function parseBootstrapAliasRemaps(appHtml) {
   return out;
 }
 
-function registryAliasMap(registry) {
-  const aliasToCanonical = {};
-  const canonicalSet = new Set();
-  for (const entry of registry.canonicalIdentities || []) {
-    const canon = String(entry.canonicalSlug || '').trim();
-    if (!canon) continue;
-    canonicalSet.add(canon);
-    for (const a of entry.aliasSlugs || []) {
-      const alias = String(a || '').trim();
-      if (alias && alias !== canon) aliasToCanonical[alias] = canon;
-    }
-  }
-  return { aliasToCanonical, canonicalSet };
-}
-
-/**
- * Resolve a raw Add Plant slug to canonical image-authority slug.
- */
-export function resolveCanonicalImageSlug(rawSlug, maps) {
-  const key = String(rawSlug || '').trim().toLowerCase();
-  if (!key) return key;
-  if (SPECIES_ALIAS_ONTO_CANONICAL[key]) return SPECIES_ALIAS_ONTO_CANONICAL[key];
-  if (maps.bootstrapAliases[key]) return maps.bootstrapAliases[key];
-  if (maps.registryAliases[key]) return maps.registryAliases[key];
-  return key;
+/** Caller bootstrap/registry maps cannot invent or override Registry decisions. */
+export function resolveCanonicalImageSlug(rawSlug, maps = {}) {
+  return resolveCanonicalAliasSlug(rawSlug, maps.identityAuthority || CANONICAL_ALIAS_AUTHORITY);
 }
 
 function exactLicensedCacheMedia(root, { slug, scientific } = {}) {
@@ -262,9 +241,7 @@ export function buildActiveCanonicalImageCoverage(repoRoot = DEFAULT_ROOT) {
   const seedDoc = readJson(path.join(root, 'data', 'plants.seed.json'));
   const registry = readJson(path.join(root, 'data', 'plant-identity.registry.json'));
   const library = parsePlantLibraryIdentities(appHtml);
-  const bootstrapAliases = parseBootstrapAliasRemaps(appHtml);
-  const { aliasToCanonical: registryAliases } = registryAliasMap(registry);
-  const maps = { bootstrapAliases, registryAliases };
+  const maps = { identityAuthority: deriveCanonicalAliasAuthority(registry) };
 
   const seedPlants = Array.isArray(seedDoc.plants) ? seedDoc.plants : [];
   const seedBySlug = new Map(seedPlants.map((p) => [p.slug, p]));
