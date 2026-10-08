@@ -13,6 +13,10 @@ import {
 } from '../catalog-media/licensed-catalog-media-runtime-v1.js';
 
 import {
+  SPECIES_ALIAS_TO_CANONICAL, BOOTSTRAP_ALIAS_TO_CANONICAL, resolveCanonicalAliasSlug
+} from '../identity/canonical-alias-authority-v1.js';
+
+import {
   applyPurposePolicyToSuitability,
   purposeRankBand
 } from './smart-rec-purpose-policy-v1.js';
@@ -25,27 +29,11 @@ export {
   resolveSmartRecPurpose
 } from './smart-rec-purpose-policy-v1.js';
 
-export const SMART_REC_GARDEN_INTELLIGENCE_VERSION = '1.2.0-purpose-aware';
+export const SMART_REC_GARDEN_INTELLIGENCE_VERSION = '1.2.1-canonical-alias-authority';
 
-/** Same collapse table as Catalog Images V1 — not a second identity registry. */
-export const SMART_REC_SPECIES_ALIAS_ONTO_CANONICAL = Object.freeze({
-  'english-lavender': 'lavender',
-  spearmint: 'mint',
-  'common-jasmine': 'jasmine',
-  'bigleaf-hydrangea': 'hydrangea',
-  'lesser-bougainvillea': 'bougainvillea',
-  'bell-pepper': 'sweet-pepper'
-});
-
-export const SMART_REC_BOOTSTRAP_ALIAS_TO_CANONICAL = Object.freeze({
-  'apple-tree': 'apple',
-  'pear-tree': 'pear',
-  'peach-tree': 'peach',
-  'plum-tree': 'plum',
-  'fig-tree': 'fig',
-  'grape-vine': 'grapevine',
-  'passion-fruit': 'passionfruit'
-});
+/** Compatibility exports are shared Registry-derived views, not authored tables. */
+export const SMART_REC_SPECIES_ALIAS_ONTO_CANONICAL = SPECIES_ALIAS_TO_CANONICAL;
+export const SMART_REC_BOOTSTRAP_ALIAS_TO_CANONICAL = BOOTSTRAP_ALIAS_TO_CANONICAL;
 
 const OUTCOME_KEYS = Object.freeze(['survival', 'growth', 'flowering', 'fruiting']);
 
@@ -57,17 +45,9 @@ function slugKey(value) {
   return asText(value).toLowerCase();
 }
 
+/** extraMaps retained for call compatibility; unregistered redirects are not authority. */
 export function resolveSmartRecCanonicalSlug(slug, extraMaps = {}) {
-  const key = slugKey(slug);
-  if (!key) return '';
-  const maps = Object.assign(
-    {},
-    SMART_REC_BOOTSTRAP_ALIAS_TO_CANONICAL,
-    SMART_REC_SPECIES_ALIAS_ONTO_CANONICAL,
-    extraMaps && typeof extraMaps === 'object' ? extraMaps : {}
-  );
-  const hop = maps[key] || key;
-  return maps[hop] || hop;
+  return resolveCanonicalAliasSlug(slug);
 }
 
 export function buildSmartRecCatalogBySlug(plantIndex) {

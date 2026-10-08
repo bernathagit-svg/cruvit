@@ -1,0 +1,688 @@
+TAP version 13
+# Subtest: live full approval hydrates approved-packet design metadata before variant planning
+ok 1 - live full approval hydrates approved-packet design metadata before variant planning
+  ---
+  duration_ms: 0.747
+  type: 'test'
+  ...
+# Subtest: full approval fails closed when visual production coverage is missing
+ok 2 - full approval fails closed when visual production coverage is missing
+  ---
+  duration_ms: 3.9161
+  type: 'test'
+  ...
+# Subtest: explicit UNKNOWN humidity stays unknown but does not manufacture a suitability blocker
+ok 3 - explicit UNKNOWN humidity stays unknown but does not manufacture a suitability blocker
+  ---
+  duration_ms: 0.6165
+  type: 'test'
+  ...
+# Subtest: visual factory readiness alone never equals full CRUVIT approval
+ok 4 - visual factory readiness alone never equals full CRUVIT approval
+  ---
+  duration_ms: 0.4107
+  type: 'test'
+  ...
+# Subtest: shop remains outside botanical approval
+ok 5 - shop remains outside botanical approval
+  ---
+  duration_ms: 0.3946
+  type: 'test'
+  ...
+# Subtest: fruit-oriented recommendation readiness requires structured reproductive climate
+ok 6 - fruit-oriented recommendation readiness requires structured reproductive climate
+  ---
+  duration_ms: 0.3904
+  type: 'test'
+  ...
+# Subtest: fruit-oriented recommendation readiness accepts structured provenance-backed climate
+ok 7 - fruit-oriented recommendation readiness accepts structured provenance-backed climate
+  ---
+  duration_ms: 0.8039
+  type: 'test'
+  ...
+# Subtest: ornamental fruit/seed description does not require fruit-production climate
+ok 8 - ornamental fruit/seed description does not require fruit-production climate
+  ---
+  duration_ms: 0.1699
+  type: 'test'
+  ...
+# Subtest: source-backed legacy fruit purpose remains applicable when structural group is missing
+ok 9 - source-backed legacy fruit purpose remains applicable when structural group is missing
+  ---
+  duration_ms: 0.1543
+  type: 'test'
+  ...
+# Subtest: source-backed edible/ripening fruit wording can recover legacy fruit purpose
+ok 10 - source-backed edible/ripening fruit wording can recover legacy fruit purpose
+  ---
+  duration_ms: 0.335
+  type: 'test'
+  ...
+# Subtest: edible non-fruit crop wording does not manufacture a fruit-production requirement
+ok 11 - edible non-fruit crop wording does not manufacture a fruit-production requirement
+  ---
+  duration_ms: 0.0731
+  type: 'test'
+  ...
+# Subtest: legacy fruit group cannot override explicit leafy/root/flower-bud harvest purpose
+ok 12 - legacy fruit group cannot override explicit leafy/root/flower-bud harvest purpose
+  ---
+  duration_ms: 0.1244
+  type: 'test'
+  ...
+# Subtest: legume/cucurbit/melon yield remains reproductive-climate applicable
+ok 13 - legume/cucurbit/melon yield remains reproductive-climate applicable
+  ---
+  duration_ms: 0.0907
+  type: 'test'
+  ...
+# Subtest: source-backed researched-unquantified reproductive state closes research blocker without claiming supported fruiting
+ok 14 - source-backed researched-unquantified reproductive state closes research blocker without claiming supported fruiting
+  ---
+  duration_ms: 0.3021
+  type: 'test'
+  ...
+# Subtest: researched reproductive state without source lineage is still blocked
+ok 15 - researched reproductive state without source lineage is still blocked
+  ---
+  duration_ms: 0.3072
+  type: 'test'
+  ...
+# Subtest: context-dependent reproductive state with source lineage is research-complete
+ok 16 - context-dependent reproductive state with source lineage is research-complete
+  ---
+  duration_ms: 0.3206
+  type: 'test'
+  ...
+# Subtest: reproductive source id must resolve to botanical provenance
+ok 17 - reproductive source id must resolve to botanical provenance
+  ---
+  duration_ms: 0.7684
+  type: 'test'
+  ...
+# Subtest: verified catalog identity provenance is accepted when registry entry is absent
+ok 18 - verified catalog identity provenance is accepted when registry entry is absent
+  ---
+  duration_ms: 0.2898
+  type: 'test'
+  ...
+# Subtest: explicit registry needsReview blocks catalog fallback even with verified provenance
+ok 19 - explicit registry needsReview blocks catalog fallback even with verified provenance
+  ---
+  duration_ms: 0.2091
+  type: 'test'
+  ...
+# Subtest: full R2 uploader is executable rather than checkpoint stub
+ok 20 - full R2 uploader is executable rather than checkpoint stub
+  ---
+  duration_ms: 0.4508
+  type: 'test'
+  ...
+# Subtest: GLOBAL_READY requires the authoritative full bake, not a self-declared partial manifest
+ok 21 - GLOBAL_READY requires the authoritative full bake, not a self-declared partial manifest
+  ---
+  duration_ms: 0.269
+  type: 'test'
+  ...
+# Subtest: object storage supports checksum metadata, full listing, and deployment manifest key
+ok 22 - object storage supports checksum metadata, full listing, and deployment manifest key
+  ---
+  duration_ms: 0.0896
+  type: 'test'
+  ...
+# Subtest: missing coldest-month value is UNKNOWN, never coerced to 0C
+ok 23 - missing coldest-month value is UNKNOWN, never coerced to 0C
+  ---
+  duration_ms: 0.4527
+  type: 'test'
+  ...
+# Subtest: hard-frost-sensitive plant is not hard-blocked solely because cold evidence is missing
+ok 24 - hard-frost-sensitive plant is not hard-blocked solely because cold evidence is missing
+  ---
+  duration_ms: 0.2322
+  type: 'test'
+  ...
+# Subtest: actual 0C remains high freezing risk
+ok 25 - actual 0C remains high freezing risk
+  ---
+  duration_ms: 0.0842
+  type: 'test'
+  ...
+# Subtest: high-latitude missing climate stays UNKNOWN and cannot hard-block
+ok 26 - high-latitude missing climate stays UNKNOWN and cannot hard-block
+  ---
+  duration_ms: 0.0739
+  type: 'test'
+  ...
+# Subtest: hot summer + frost-free supports structured reproductive climate
+ok 27 - hot summer + frost-free supports structured reproductive climate
+  ---
+  duration_ms: 1.279
+  type: 'test'
+  ...
+# Subtest: cool summer constrains fruiting without changing survival
+ok 28 - cool summer constrains fruiting without changing survival
+  ---
+  duration_ms: 0.1452
+  type: 'test'
+  ...
+# Subtest: missing summer evidence remains UNKNOWN, never silently passes
+ok 29 - missing summer evidence remains UNKNOWN, never silently passes
+  ---
+  duration_ms: 0.3916
+  type: 'test'
+  ...
+# Subtest: greenhouse removes frost limiter but not summer heat requirement
+ok 30 - greenhouse removes frost limiter but not summer heat requirement
+  ---
+  duration_ms: 0.0986
+  type: 'test'
+  ...
+# Subtest: source-supported numeric summer minimum can mark severe deficit unreliable
+ok 31 - source-supported numeric summer minimum can mark severe deficit unreliable
+  ---
+  duration_ms: 0.0903
+  type: 'test'
+  ...
+# Subtest: researched unquantified evidence remains UNKNOWN rather than becoming supported
+ok 32 - researched unquantified evidence remains UNKNOWN rather than becoming supported
+  ---
+  duration_ms: 0.0837
+  type: 'test'
+  ...
+# Subtest: context-dependent reproductive evidence remains UNKNOWN and exposes missing context
+ok 33 - context-dependent reproductive evidence remains UNKNOWN and exposes missing context
+  ---
+  duration_ms: 0.1045
+  type: 'test'
+  ...
+# Subtest: cool-or-dry induction is supported by either climate signal
+ok 34 - cool-or-dry induction is supported by either climate signal
+  ---
+  duration_ms: 0.1124
+  type: 'test'
+  ...
+# Subtest: heuristic cool-season-only proxy is necessary-not-sufficient and cannot positively support fruiting
+ok 35 - heuristic cool-season-only proxy is necessary-not-sufficient and cannot positively support fruiting
+  ---
+  duration_ms: 0.0825
+  type: 'test'
+  ...
+# Subtest: explicit reproductive dry-season requirement constrains a humid non-dry site
+ok 36 - explicit reproductive dry-season requirement constrains a humid non-dry site
+  ---
+  duration_ms: 0.1266
+  type: 'test'
+  ...
+# Subtest: heat plus reproductive dry-season requirement supports matching hot dry site
+ok 37 - heat plus reproductive dry-season requirement supports matching hot dry site
+  ---
+  duration_ms: 0.0864
+  type: 'test'
+  ...
+# Subtest: explicit humidity-sensitive fruiting is constrained in borderline humid atmosphere
+ok 38 - explicit humidity-sensitive fruiting is constrained in borderline humid atmosphere
+  ---
+  duration_ms: 0.0888
+  type: 'test'
+  ...
+# Subtest: humidity-sensitive fruiting may pass when atmosphere is low humidity and heat matches
+ok 39 - humidity-sensitive fruiting may pass when atmosphere is low humidity and heat matches
+  ---
+  duration_ms: 0.0557
+  type: 'test'
+  ...
+# Subtest: heuristic dry-season-only proxy is necessary-not-sufficient
+ok 40 - heuristic dry-season-only proxy is necessary-not-sufficient
+  ---
+  duration_ms: 0.0424
+  type: 'test'
+  ...
+# Subtest: cool-or-dry induction stays UNKNOWN when dry-season signal is missing
+ok 41 - cool-or-dry induction stays UNKNOWN when dry-season signal is missing
+  ---
+  duration_ms: 0.0775
+  type: 'test'
+  ...
+# Subtest: reproductive cold-event threshold does not misuse monthly mean minimum
+ok 42 - reproductive cold-event threshold does not misuse monthly mean minimum
+  ---
+  duration_ms: 0.0893
+  type: 'test'
+  ...
+# Subtest: pomegranate packet materializes structured reproductive climate
+ok 43 - pomegranate packet materializes structured reproductive climate
+  ---
+  duration_ms: 3.4514
+  type: 'test'
+  ...
+# Subtest: invalid reproductive climate band is rejected
+ok 44 - invalid reproductive climate band is rejected
+  ---
+  duration_ms: 0.2324
+  type: 'test'
+  ...
+# Subtest: reproductive climate claim requires evidence class
+ok 45 - reproductive climate claim requires evidence class
+  ---
+  duration_ms: 0.1364
+  type: 'test'
+  ...
+# Subtest: legacy source-backed packet gets deterministic frost-free materialization
+ok 46 - legacy source-backed packet gets deterministic frost-free materialization
+  ---
+  duration_ms: 1.1355
+  type: 'test'
+  ...
+# Subtest: legacy cool-season crop gets deterministic fruiting cool-season materialization
+ok 47 - legacy cool-season crop gets deterministic fruiting cool-season materialization
+  ---
+  duration_ms: 0.5232
+  type: 'test'
+  ...
+# Subtest: legacy strictly tropical fruit-production packet gets conservative warm band
+ok 48 - legacy strictly tropical fruit-production packet gets conservative warm band
+  ---
+  duration_ms: 0.4119
+  type: 'test'
+  ...
+# Subtest: insufficient fruiting climate evidence remains unmaterialized when no researched state is asserted
+ok 49 - insufficient fruiting climate evidence remains unmaterialized when no researched state is asserted
+  ---
+  duration_ms: 0.8818
+  type: 'test'
+  ...
+# Subtest: eight researched reproductive packets validate and materialize without invented support
+ok 50 - eight researched reproductive packets validate and materialize without invented support
+  ---
+  duration_ms: 2.7568
+  type: 'test'
+  ...
+# Subtest: researched evidence state alone never manufactures a positive climate requirement
+ok 51 - researched evidence state alone never manufactures a positive climate requirement
+  ---
+  duration_ms: 0.4134
+  type: 'test'
+  ...
+# Subtest: edible-first recommendation requires supported structured fruiting climate
+ok 52 - edible-first recommendation requires supported structured fruiting climate
+  ---
+  duration_ms: 0.6726
+  type: 'test'
+  ...
+# Subtest: catalog fruit identity alone does not disable a general climate recommendation
+ok 53 - catalog fruit identity alone does not disable a general climate recommendation
+  ---
+  duration_ms: 0.2315
+  type: 'test'
+  ...
+# Subtest: reproductive warnings do not penalize general fit without matching user purpose
+ok 54 - reproductive warnings do not penalize general fit without matching user purpose
+  ---
+  duration_ms: 0.1761
+  type: 'test'
+  ...
+# Subtest: specific plant check does not itself create edible intent
+ok 55 - specific plant check does not itself create edible intent
+  ---
+  duration_ms: 0.199
+  type: 'test'
+  ...
+# Subtest: ripe-fruit-only edible plants always surface an explicit edible-intent warning
+ok 56 - ripe-fruit-only edible plants always surface an explicit edible-intent warning
+  ---
+  duration_ms: 0.292
+  type: 'test'
+  ...
+# Subtest: paid AI automated tests = 0
+ok 57 - paid AI automated tests = 0
+  ---
+  duration_ms: 0.5776
+  type: 'test'
+  ...
+# Subtest: species aliases match Catalog Images (not a second image authority)
+ok 58 - species aliases match Catalog Images (not a second image authority)
+  ---
+  duration_ms: 0.3919
+  type: 'test'
+  ...
+# Subtest: every IMAGE_READY recommendation renders its catalog image
+ok 59 - every IMAGE_READY recommendation renders its catalog image
+  ---
+  duration_ms: 587.088
+  type: 'test'
+  ...
+# Subtest: IMAGE_BLOCKED recommendation falls back honestly
+ok 60 - IMAGE_BLOCKED recommendation falls back honestly
+  ---
+  duration_ms: 557.0718
+  type: 'test'
+  ...
+# Subtest: alias recommendation resolves canonical image
+ok 61 - alias recommendation resolves canonical image
+  ---
+  duration_ms: 529.8632
+  type: 'test'
+  ...
+# Subtest: no render-time image search and no user media as catalog image
+ok 62 - no render-time image search and no user media as catalog image
+  ---
+  duration_ms: 503.854
+  type: 'test'
+  ...
+# Subtest: recommendation Add to My Garden preserves canonical identity
+ok 63 - recommendation Add to My Garden preserves canonical identity
+  ---
+  duration_ms: 1.3122
+  type: 'test'
+  ...
+# Subtest: Mango / Pineapple / Banana images resolve correctly
+ok 64 - Mango / Pineapple / Banana images resolve correctly
+  ---
+  duration_ms: 501.677
+  type: 'test'
+  ...
+# Subtest: Wave 1 plants resolve correctly
+ok 65 - Wave 1 plants resolve correctly
+  ---
+  duration_ms: 620.4796
+  type: 'test'
+  ...
+# Subtest: suitability outputs stay four-dimensional; UNKNOWN remains valid
+ok 66 - suitability outputs stay four-dimensional; UNKNOWN remains valid
+  ---
+  duration_ms: 0.9963
+  type: 'test'
+  ...
+# Subtest: Garden Area overlay fills missing answers without turning generic container into balcony
+ok 67 - Garden Area overlay fills missing answers without turning generic container into balcony
+  ---
+  duration_ms: 0.3362
+  type: 'test'
+  ...
+# Subtest: app wiring: catalog intelligence module, no Design start, no Identifier rewrite
+ok 68 - app wiring: catalog intelligence module, no Design start, no Identifier rewrite
+  ---
+  duration_ms: 3.3119
+  type: 'test'
+  ...
+# Subtest: paid network remains 0 after Smart Rec Garden Intelligence proofs
+ok 69 - paid network remains 0 after Smart Rec Garden Intelligence proofs
+  ---
+  duration_ms: 0.3091
+  type: 'test'
+  ...
+# Subtest: explicit positiveRecommendationEligible=false is authoritative for ranking eligibility
+ok 70 - explicit positiveRecommendationEligible=false is authoritative for ranking eligibility
+  ---
+  duration_ms: 0.1395
+  type: 'test'
+  ...
+# Subtest: positive eligibility remains allowed when explicit flag is true and survival is viable
+ok 71 - positive eligibility remains allowed when explicit flag is true and survival is viable
+  ---
+  duration_ms: 0.4172
+  type: 'test'
+  ...
+# Subtest: validated borderline outcome cannot remain a positive recommendation
+ok 72 - validated borderline outcome cannot remain a positive recommendation
+  ---
+  duration_ms: 0.9105
+  type: 'test'
+  ...
+# Subtest: explicitly ineligible plant ranks behind otherwise-equal eligible plant
+ok 73 - explicitly ineligible plant ranks behind otherwise-equal eligible plant
+  ---
+  duration_ms: 0.1297
+  type: 'test'
+  ...
+# Subtest: Garden Area supportType maps to Smart Rec support context without privacy heuristic
+ok 74 - Garden Area supportType maps to Smart Rec support context without privacy heuristic
+  ---
+  duration_ms: 0.2295
+  type: 'test'
+  ...
+# Subtest: generic Garden Area container does not masquerade as balcony or compact container
+ok 75 - generic Garden Area container does not masquerade as balcony or compact container
+  ---
+  duration_ms: 0.1088
+  type: 'test'
+  ...
+# Subtest: Garden Area planting modes map to matching Smart Rec context without greenhouse aliasing
+ok 76 - Garden Area planting modes map to matching Smart Rec context without greenhouse aliasing
+  ---
+  duration_ms: 0.118
+  type: 'test'
+  ...
+# Subtest: Garden Area part_sun maps to partial-sun without overriding explicit user answer
+ok 77 - Garden Area part_sun maps to partial-sun without overriding explicit user answer
+  ---
+  duration_ms: 0.0865
+  type: 'test'
+  ...
+# Subtest: Smart Rec requires explicit Garden Area selection when multiple Areas exist
+ok 78 - Smart Rec requires explicit Garden Area selection when multiple Areas exist
+  ---
+  duration_ms: 2.7816
+  type: 'test'
+  ...
+# Subtest: Smart Rec consumes only trusted normalized selected Garden Area context
+ok 79 - Smart Rec consumes only trusted normalized selected Garden Area context
+  ---
+  duration_ms: 2.7394
+  type: 'test'
+  ...
+# Subtest: q9 shade goal requires shade-provider structure, not generic shade preference text
+ok 80 - q9 shade goal requires shade-provider structure, not generic shade preference text
+  ---
+  duration_ms: 2.2997
+  type: 'test'
+  ...
+# Subtest: 0. explicit climate authority booleans preserve false instead of being re-inferred
+ok 81 - 0. explicit climate authority booleans preserve false instead of being re-inferred
+  ---
+  duration_ms: 0.9756
+  type: 'test'
+  ...
+# Subtest: 1. high frost-sensitive tropical + non-frost-free Garden is NOT overall Borderline
+ok 82 - 1. high frost-sensitive tropical + non-frost-free Garden is NOT overall Borderline
+  ---
+  duration_ms: 7.731
+  type: 'test'
+  ...
+# Subtest: 1b. tropical fruit in 5-10C mean-low band with low freeze risk is constrained, not hard-blocked
+ok 83 - 1b. tropical fruit in 5-10C mean-low band with low freeze risk is constrained, not hard-blocked
+  ---
+  duration_ms: 0.4211
+  type: 'test'
+  ...
+# Subtest: 2. reliable survival failure always forces NOT RECOMMENDED
+ok 84 - 2. reliable survival failure always forces NOT RECOMMENDED
+  ---
+  duration_ms: 0.0903
+  type: 'test'
+  ...
+# Subtest: 3. survival can be YES while fruiting is UNRELIABLE
+ok 85 - 3. survival can be YES while fruiting is UNRELIABLE
+  ---
+  duration_ms: 0.3817
+  type: 'test'
+  ...
+# Subtest: 4. growth viable while flowering remains UNKNOWN
+ok 86 - 4. growth viable while flowering remains UNKNOWN
+  ---
+  duration_ms: 0.2869
+  type: 'test'
+  ...
+# Subtest: 5. fruiting cannot be inferred when metadata is absent
+ok 87 - 5. fruiting cannot be inferred when metadata is absent
+  ---
+  duration_ms: 0.8286
+  type: 'test'
+  ...
+# Subtest: 6. colder Garden is equal or worse survival for frost-sensitive tropical
+ok 88 - 6. colder Garden is equal or worse survival for frost-sensitive tropical
+  ---
+  duration_ms: 4.2447
+  type: 'test'
+  ...
+# Subtest: 7. Garden switch recomputes all four outcomes (hydrate comparator)
+ok 89 - 7. Garden switch recomputes all four outcomes (hydrate comparator)
+  ---
+  duration_ms: 4.9384
+  type: 'test'
+  ...
+# Subtest: 7b. low freezing risk + mild structural winter is not a manufactured frost failure
+ok 90 - 7b. low freezing risk + mild structural winter is not a manufactured frost failure
+  ---
+  duration_ms: 0.5694
+  type: 'test'
+  ...
+# Subtest: 8. Smart Rec browse path unchanged; specific check clears prefs
+ok 91 - 8. Smart Rec browse path unchanged; specific check clears prefs
+  ---
+  duration_ms: 1.9388
+  type: 'test'
+  ...
+# Subtest: 9. UNKNOWN remains conservative for missing climate meta
+ok 92 - 9. UNKNOWN remains conservative for missing climate meta
+  ---
+  duration_ms: 0.176
+  type: 'test'
+  ...
+# Subtest: 10. no plant-specific hardcoded exceptions in outcome module
+ok 93 - 10. no plant-specific hardcoded exceptions in outcome module
+  ---
+  duration_ms: 0.4721
+  type: 'test'
+  ...
+# Subtest: Coconut / Yehiam four-outcome result (quality gate)
+ok 94 - Coconut / Yehiam four-outcome result (quality gate)
+  ---
+  duration_ms: 8.1092
+  type: 'test'
+  ...
+# Subtest: Coconut / London four-outcome result (quality gate)
+ok 95 - Coconut / London four-outcome result (quality gate)
+  ---
+  duration_ms: 4.0008
+  type: 'test'
+  ...
+# Subtest: Cacao is present after Catalog Expansion V1 ingest; Coconut still searchable
+ok 96 - Cacao is present after Catalog Expansion V1 ingest; Coconut still searchable
+  ---
+  duration_ms: 4.4457
+  type: 'test'
+  ...
+# Subtest: view model surfaces four outcomes with prominent overall
+ok 97 - view model surfaces four outcomes with prominent overall
+  ---
+  duration_ms: 3.9381
+  type: 'test'
+  ...
+# Subtest: UI + wiring expose four-outcome block; Yehiam alias supported
+ok 98 - UI + wiring expose four-outcome block; Yehiam alias supported
+  ---
+  duration_ms: 1.5966
+  type: 'test'
+  ...
+# Subtest: protected growing may keep high-frost plant from outdoor survival fail
+ok 99 - protected growing may keep high-frost plant from outdoor survival fail
+  ---
+  duration_ms: 4.0439
+  type: 'test'
+  ...
+# Subtest: null optional plant metadata does not crash finalize path
+ok 100 - null optional plant metadata does not crash finalize path
+  ---
+  duration_ms: 0.096
+  type: 'test'
+  ...
+# Subtest: Pineapple × Ljubljana — multidimensional outdoor frost case (no invented reproductive facts)
+ok 101 - Pineapple × Ljubljana — multidimensional outdoor frost case (no invented reproductive facts)
+  ---
+  duration_ms: 4.2432
+  type: 'test'
+  ...
+# Subtest: group-template reproductive prose without plant-asserted fields must not authorize Unlikely/Unreliable
+ok 102 - group-template reproductive prose without plant-asserted fields must not authorize Unlikely/Unreliable
+  ---
+  duration_ms: 4.0933
+  type: 'test'
+  ...
+# Subtest: partial metadata plant stays UNKNOWN on reproductive dimensions
+ok 103 - partial metadata plant stays UNKNOWN on reproductive dimensions
+  ---
+  duration_ms: 0.1676
+  type: 'test'
+  ...
+# Subtest: hyper-arid + medium water + unknown irrigation constrains growth instead of strong Good
+ok 104 - hyper-arid + medium water + unknown irrigation constrains growth instead of strong Good
+  ---
+  duration_ms: 0.2972
+  type: 'test'
+  ...
+# Subtest: hyper-arid does not penalize low-water plant when irrigation is unknown
+ok 105 - hyper-arid does not penalize low-water plant when irrigation is unknown
+  ---
+  duration_ms: 0.1088
+  type: 'test'
+  ...
+# Subtest: source-supported low heat tolerance is constrained in year-round-warm climate
+ok 106 - source-supported low heat tolerance is constrained in year-round-warm climate
+  ---
+  duration_ms: 0.1386
+  type: 'test'
+  ...
+# Subtest: heuristic low heat tolerance alone does not trigger year-round-warm constraint
+ok 107 - heuristic low heat tolerance alone does not trigger year-round-warm constraint
+  ---
+  duration_ms: 0.1171
+  type: 'test'
+  ...
+# Subtest: arid + medium water only constrains when irrigation is explicitly unavailable
+ok 108 - arid + medium water only constrains when irrigation is explicitly unavailable
+  ---
+  duration_ms: 0.3998
+  type: 'test'
+  ...
+# Subtest: semi-arid + explicit no irrigation constrains source-supported medium water, not heuristic-only water need
+ok 109 - semi-arid + explicit no irrigation constrains source-supported medium water, not heuristic-only water need
+  ---
+  duration_ms: 0.2006
+  type: 'test'
+  ...
+# Subtest: explicit dry Garden site constrains source-supported medium/high water need without reliable irrigation
+ok 110 - explicit dry Garden site constrains source-supported medium/high water need without reliable irrigation
+  ---
+  duration_ms: 0.2267
+  type: 'test'
+  ...
+# Subtest: frost-free greenhouse protects survival but does not imply tropical warmth for Growth
+ok 111 - frost-free greenhouse protects survival but does not imply tropical warmth for Growth
+  ---
+  duration_ms: 0.3292
+  type: 'test'
+  ...
+# Subtest: weather refresh preserves existing structural climate when forecast omits it
+ok 112 - weather refresh preserves existing structural climate when forecast omits it
+  ---
+  duration_ms: 0.7202
+  type: 'test'
+  ...
+# Subtest: known structural climate outranks unknown forecast structural payload
+ok 113 - known structural climate outranks unknown forecast structural payload
+  ---
+  duration_ms: 0.1922
+  type: 'test'
+  ...
+1..113
+# tests 113
+# suites 0
+# pass 113
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6525.3892

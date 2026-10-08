@@ -1,0 +1,465 @@
+{
+  "id": "CRUVIT-FOUR-COMMIT-REVIEW-STACK-20261008",
+  "verifiedAt": "2026-10-08T10:17:39.774Z",
+  "base": "bbc7f1b0f03c1eaff8d7f83e9e0599f086d67033",
+  "head": "97d839085d6dc20d588d81e8b29fd8ab141c954d",
+  "graphStatus": "PASS_EXACT_FOUR_LINEAR_COMMITS",
+  "commitCount": 4,
+  "mergeCommitCount": 0,
+  "uniqueTouchedPaths": 43,
+  "rows": [
+    {
+      "order": 1,
+      "sha": "278ab87150fe60377c3a3e56f82dfdf0182c6f67",
+      "parent": "bbc7f1b0f03c1eaff8d7f83e9e0599f086d67033",
+      "tree": "399fed56912e507a99e1bde4b3ca95479ffc88f7",
+      "subject": "Review six-plant evidence gaps and all-state accounting [skip ci] [skip netlify]",
+      "scope": "4 new proposal/test evidence files",
+      "counts": {
+        "files": 4,
+        "addedFiles": 4,
+        "modifiedFiles": 0,
+        "addedLines": 454,
+        "deletedLines": 0
+      },
+      "files": [
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-evidence-followup-2026-10-07-v1/README.md",
+          "added": 46,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "24386681c606e6bbdd1e169fd4d311d246627ab1"
+        },
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-evidence-followup-2026-10-07-v1/proposal.json",
+          "added": 27,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "11c4ebd5a62004fa6f2311205fd08cd3ff0903de"
+        },
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-evidence-followup-2026-10-07-v1/test-results.tap",
+          "added": 334,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "46ae95a5b645de55a3f5c201f5613c9de90a2173"
+        },
+        {
+          "path": "tests/six-plant-evidence-followup-v1.test.mjs",
+          "added": 47,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "7284f92cf84af19f6756e1349e910e74bef5349f"
+        }
+      ],
+      "approval": {
+        "review": "DATA_PROPOSAL_SCOPE_APPROVED",
+        "evidence": "The immutable approval-and-scope.json in eee0ab34 explicitly names this proposal commit/path/SHA-256 and records the owner approval. This approves the bounded proposal, not a merge.",
+        "dataExecution": "PROPOSAL_ONLY_AT_THIS_COMMIT; execution documented in child eee0ab34",
+        "publicPublication": "REACHABLE_AS_ANCESTOR_OF_APPROVED_PUSH; no separate explicit whole-commit publication approval located",
+        "merge": false,
+        "deploy": false,
+        "integrationSelection": "PENDING_SUPERVISOR_COMMIT_SELECTION"
+      },
+      "hostedLinuxCi": "NOT_RUN_BY_THIS_TASK; previous local tests are not hosted CI",
+      "commitUrl": "https://github.com/bernathagit-svg/cruvit/commit/278ab87150fe60377c3a3e56f82dfdf0182c6f67"
+    },
+    {
+      "order": 2,
+      "sha": "eee0ab34c909ca0323fef32e8f65ddd2dc9eae95",
+      "parent": "278ab87150fe60377c3a3e56f82dfdf0182c6f67",
+      "tree": "1d55278ccca15f839e9c8b0fd6e1b382d6fb9b39",
+      "subject": "Apply approved supplemental climate data repair [skip ci] [skip netlify]",
+      "scope": "13 new data-repair/evidence files",
+      "counts": {
+        "files": 13,
+        "addedFiles": 13,
+        "modifiedFiles": 0,
+        "addedLines": 10766,
+        "deletedLines": 0
+      },
+      "files": [
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-climate-supplement-2026-10-07-v1/apply-approved-patches.sql",
+          "added": 46,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "036b9bdd2ee13f0ebae8c63d13a86f42746e0192"
+        },
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-climate-supplement-2026-10-07-v1/approval-and-scope.json",
+          "added": 22,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "298cf7931447899b582b9fa5067d4f4b39470c76"
+        },
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-climate-supplement-2026-10-07-v1/catalog-after.json",
+          "added": 3183,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "5075f8e71cb97529cc64beded36b6f94b1a3d134"
+        },
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-climate-supplement-2026-10-07-v1/catalog-before.json",
+          "added": 3050,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "6799fe5b61f1031901023c4e83de0cd1db87e4ba"
+        },
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-climate-supplement-2026-10-07-v1/catalog-patches.json",
+          "added": 1839,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "d2d27b3350115b4909b4a0a782a779c3a62ebb7d"
+        },
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-climate-supplement-2026-10-07-v1/execution-summary.json",
+          "added": 608,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "999f44d899dd53db0fba4379c47076d37b0712d7"
+        },
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-climate-supplement-2026-10-07-v1/live-intake-readback.json",
+          "added": 386,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "52f1d940c15b80304dbe340534e54773530c3a28"
+        },
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-climate-supplement-2026-10-07-v1/preflight.json",
+          "added": 811,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "07283a1ce419502dfd53cd02b5d8ba894f14b5d0"
+        },
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-climate-supplement-2026-10-07-v1/regression-tests.log",
+          "added": 95,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "f5210ecb6a845507930bb8310d5dfb98f07196bb"
+        },
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-climate-supplement-2026-10-07-v1/source-verification.json",
+          "added": 68,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "387ab9782bdc5eb887a64bd2b25c1a24c631e1ce"
+        },
+        {
+          "path": "scripts/prepare-six-plant-climate-supplement-20261007.mjs",
+          "added": 252,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "edf4d9977d6d6b0a8946859e288c642ffb3aac57"
+        },
+        {
+          "path": "scripts/verify-six-plant-climate-supplement-20261007.mjs",
+          "added": 88,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "dcc46981c6b2dc256934c98d5a3593e4d2607548"
+        },
+        {
+          "path": "tests/six-plant-climate-supplement-execution-v1.test.mjs",
+          "added": 318,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "20ba5a05070f99c3615b291164de5936aec12f6f"
+        }
+      ],
+      "approval": {
+        "review": "BOUNDED_DATA_REPAIR_APPROVED",
+        "evidence": "Owner approved the exact Mango/Date Palm/Monstera supplemental climate repair and separately approved public publication of its 13 files to the work branch.",
+        "dataExecution": "PREVIOUSLY_EXECUTED_AND_RECORDED; NOT_AUTHORIZED_TO_REPLAY",
+        "publicPublication": "EXACT_COMMIT_PUSH_APPROVED_AND_PREVIOUSLY_VERIFIED",
+        "merge": false,
+        "deploy": false,
+        "integrationSelection": "PENDING_SUPERVISOR_COMMIT_SELECTION"
+      },
+      "hostedLinuxCi": "NOT_RUN_BY_THIS_TASK; previous local tests are not hosted CI",
+      "commitUrl": "https://github.com/bernathagit-svg/cruvit/commit/eee0ab34c909ca0323fef32e8f65ddd2dc9eae95"
+    },
+    {
+      "order": 3,
+      "sha": "0ca252313fbed6593fce0a754a804e0d352f6aca",
+      "parent": "eee0ab34c909ca0323fef32e8f65ddd2dc9eae95",
+      "tree": "bb441587c8d7a5ec663605f9d50f026dcc730371",
+      "subject": "Require resolved visual states for full approval [skip ci] [skip netlify]",
+      "scope": "3 runtime files + 2 existing tests modified; 9 new verification artifacts",
+      "counts": {
+        "files": 14,
+        "addedFiles": 9,
+        "modifiedFiles": 5,
+        "addedLines": 24011,
+        "deletedLines": 5
+      },
+      "files": [
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/full-visual-state-completion-2026-10-08-v1/README.md",
+          "added": 122,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "bbb1c18bd592d8d65f5b3b70032a3d40a903d064"
+        },
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/full-visual-state-completion-2026-10-08-v1/guard-regression-tests.log",
+          "added": 33,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "35889c3f0cf8c6271b435699052215140121f76b"
+        },
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/full-visual-state-completion-2026-10-08-v1/location-regression.log",
+          "added": 60,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "f32ba9ecbc5335931a732512167450f1f0e64ec7"
+        },
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/full-visual-state-completion-2026-10-08-v1/regression-tests.log",
+          "added": 96,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "92a24f576fa413c3218b568a7d82ca34bbd65609"
+        },
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/full-visual-state-completion-2026-10-08-v1/verification.json",
+          "added": 471,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "9180778c5d750cd5f97320b9ad58bcb13b9e3887"
+        },
+        {
+          "path": "modules/catalog/cruvit-plant-intake-engine-v1.js",
+          "added": 31,
+          "deleted": 2,
+          "status": "M",
+          "gitBlob": "fb5222a804b33686935f79bf0fe9dfc86c36f545"
+        },
+        {
+          "path": "modules/catalog/full-cruvit-plant-approval-v1.js",
+          "added": 15,
+          "deleted": 0,
+          "status": "M",
+          "gitBlob": "788d0c097628d5de629f8e75af7d63a2c37fd671"
+        },
+        {
+          "path": "netlify/functions/full-cruvit-plant-approval.mjs",
+          "added": 5,
+          "deleted": 0,
+          "status": "M",
+          "gitBlob": "b818d8b5b3ac47551ce4baa5cb2f1439bb02519c"
+        },
+        {
+          "path": "scripts/verify-full-visual-state-completion-20261008.mjs",
+          "added": 179,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "9e69d7b971265977ff2a53cdfed6707947c1477a"
+        },
+        {
+          "path": "scripts/verify-six-plant-location-regression-20261008.mjs",
+          "added": 504,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "65d247a902e21a9a90dd78903d0a839b2e4d2c55"
+        },
+        {
+          "path": "tests/_six-plant-location-regression-20261008-report.json",
+          "added": 22189,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "e48e0b46930e05da78ddc3c2b39fce419497a468"
+        },
+        {
+          "path": "tests/cruvit-plant-intake-engine-v1.test.mjs",
+          "added": 3,
+          "deleted": 2,
+          "status": "M",
+          "gitBlob": "2ebbfeffd81b11e538117f679ca8d962adf77394"
+        },
+        {
+          "path": "tests/full-visual-state-completion-v1.test.mjs",
+          "added": 302,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "3ad0f203025127212fb40545a04f149a5ad70d40"
+        },
+        {
+          "path": "tests/six-plant-evidence-followup-v1.test.mjs",
+          "added": 1,
+          "deleted": 1,
+          "status": "M",
+          "gitBlob": "83fc3f6e4e47ef22396b0ce45d64f714b441c22d"
+        }
+      ],
+      "approval": {
+        "review": "OWNER_APPROVED_EXACT_REVIEW_BRANCH_PUBLICATION",
+        "evidence": "Owner answered approval to publishing exact 0ca2523, 14 files, review branch only. No separate Supervisor merge clearance is present.",
+        "dataExecution": "NO_DB_WRITE_IN_THIS_CODE_CHANGE",
+        "publicPublication": "EXACT_COMMIT_PUSH_APPROVED_AND_PREVIOUSLY_VERIFIED",
+        "merge": false,
+        "deploy": false,
+        "integrationSelection": "PENDING_SUPERVISOR_COMMIT_SELECTION"
+      },
+      "hostedLinuxCi": "NOT_RUN_BY_THIS_TASK; previous local tests are not hosted CI",
+      "commitUrl": "https://github.com/bernathagit-svg/cruvit/commit/0ca252313fbed6593fce0a754a804e0d352f6aca"
+    },
+    {
+      "order": 4,
+      "sha": "97d839085d6dc20d588d81e8b29fd8ab141c954d",
+      "parent": "0ca252313fbed6593fce0a754a804e0d352f6aca",
+      "tree": "cc996dff39f97a492d03c7d0f2401825c532f9df",
+      "subject": "Preserve unknown climate boolean metadata [skip ci] [skip netlify]",
+      "scope": "4 runtime files modified; 9 new test/evidence files",
+      "counts": {
+        "files": 13,
+        "addedFiles": 9,
+        "modifiedFiles": 4,
+        "addedLines": 26515,
+        "deletedLines": 31
+      },
+      "files": [
+        {
+          "path": "app.html",
+          "added": 63,
+          "deleted": 10,
+          "status": "M",
+          "gitBlob": "7a05f8e0b2f6fc7edf59b651a0abd9b8521f2eb4"
+        },
+        {
+          "path": "data/personal-domain/climate-boolean-unknown-2026-10-08-v1/README.md",
+          "added": 47,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "240003660ca9adb1528b512b7da706fdd17d0f93"
+        },
+        {
+          "path": "data/personal-domain/climate-boolean-unknown-2026-10-08-v1/existing-regression-tests.log",
+          "added": 65,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "15cea6697fea3a38ef4a4db9b9ccab99ee386a0d"
+        },
+        {
+          "path": "data/personal-domain/climate-boolean-unknown-2026-10-08-v1/independent-tests.log",
+          "added": 26,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "65550300f3c3701d99563cd7f7a932b071a28ed6"
+        },
+        {
+          "path": "data/personal-domain/climate-boolean-unknown-2026-10-08-v1/location-comparison.json",
+          "added": 24558,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "e161ea5bb6b175b23a6e1e80446b6dfbe95727e0"
+        },
+        {
+          "path": "data/personal-domain/climate-boolean-unknown-2026-10-08-v1/location-comparison.log",
+          "added": 72,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "cea0925e70d3c16dcaf05a105210b722eec04920"
+        },
+        {
+          "path": "data/personal-domain/climate-boolean-unknown-2026-10-08-v1/scope-verification.json",
+          "added": 410,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "2becb2ab144a365cff05be997e6146bb05a7a04e"
+        },
+        {
+          "path": "modules/personal-domain/pre-scale-suitability-systemic-hardening-v1-contract.js",
+          "added": 7,
+          "deleted": 7,
+          "status": "M",
+          "gitBlob": "04561ccde03b9a73b1f08f49008b1992506a4682"
+        },
+        {
+          "path": "modules/personal-domain/smart-rec-climate-meta-authority-v1.js",
+          "added": 64,
+          "deleted": 8,
+          "status": "M",
+          "gitBlob": "4963027a2f11c953fb54bbec409447bea6eca50d"
+        },
+        {
+          "path": "modules/personal-domain/specific-plant-suitability-contract.js",
+          "added": 4,
+          "deleted": 6,
+          "status": "M",
+          "gitBlob": "41b741f66b9bd241bbd4cbf2a635016b8fd71689"
+        },
+        {
+          "path": "scripts/verify-climate-boolean-scope-20261008.mjs",
+          "added": 112,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "498c3df98185245d57631ffdcd350e1f8aa85b2d"
+        },
+        {
+          "path": "scripts/verify-climate-boolean-unknown-20261008.mjs",
+          "added": 762,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "ce7bb34c60334d45352de4d6bdc4f29a538e92ad"
+        },
+        {
+          "path": "tests/climate-boolean-unknown-v1.test.mjs",
+          "added": 325,
+          "deleted": 0,
+          "status": "A",
+          "gitBlob": "cef74e671df75f303757b25a20cbcc67c9799701"
+        }
+      ],
+      "approval": {
+        "review": "SUPERVISOR_POSITIVE_REVIEW_WITH_HOLD",
+        "evidence": "Current instruction explicitly says UNKNOWN repair passed positive review while merge/deploy HOLD remains; previous owner instruction explicitly authorized exact 97d8390 branch push.",
+        "dataExecution": "NO_DB_WRITE_IN_THIS_CODE_CHANGE",
+        "publicPublication": "EXACT_COMMIT_PUSH_APPROVED_AND_PREVIOUSLY_VERIFIED",
+        "merge": false,
+        "deploy": false,
+        "integrationSelection": "PENDING_SUPERVISOR_COMMIT_SELECTION"
+      },
+      "hostedLinuxCi": "NOT_RUN_BY_THIS_TASK; previous local tests are not hosted CI",
+      "commitUrl": "https://github.com/bernathagit-svg/cruvit/commit/97d839085d6dc20d588d81e8b29fd8ab141c954d"
+    }
+  ],
+  "approvedProposalLineage": {
+    "approvalPath": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-climate-supplement-2026-10-07-v1/approval-and-scope.json",
+    "proposalPath": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-evidence-followup-2026-10-07-v1/proposal.json",
+    "proposalSha256": "76ccbadccb92fafed23e14f4b12c9920b97033435a739cb9786a3fb74181fd52",
+    "approvedAt": "2026-10-07T19:34:24Z",
+    "approvalText": "מאשרת את תיקון נתוני האקלים המשלים ל־Mango, Date Palm ו־Monstera לפי הטיוטה, תוך שמירת UNKNOWN והערכות מסומנות במפורש, ללא paid AI, ללא יצירת תמונות, ללא פריסת Production וללא שינוי Registry ויזואלי."
+  },
+  "approvalPolicy": "Proposal approval, data execution authorization, review, public push and integration/merge/deploy are distinct. Publication never implies merge permission.",
+  "overallGate": "HOLD_NO_MERGE_NO_DEPLOY",
+  "nextIntegration": {
+    "created": false,
+    "base": "bbc7f1b0f03c1eaff8d7f83e9e0599f086d67033",
+    "requires": "Supervisor explicit selection of approved commits, clean branch, no replay of executed data SQL, hosted Linux CI on the resulting HEAD before merge.",
+    "historicalEvidence": "Pinned historical runners and reports must stay unchanged. Use fresh integration evidence rather than weakening their source fingerprints."
+  },
+  "frozenUnknownBranch": {
+    "name": "work/climate-unknown-metadata-20261008",
+    "head": "97d839085d6dc20d588d81e8b29fd8ab141c954d",
+    "modifiedByThisTask": false
+  },
+  "separateAliasTask": {
+    "base": "bbc7f1b0f03c1eaff8d7f83e9e0599f086d67033",
+    "branch": "work/canonical-alias-authority-drift-20261008",
+    "notPartOfFourCommitStack": true
+  },
+  "boundaries": {
+    "merge": 0,
+    "deploy": 0,
+    "paidAi": 0,
+    "imageGeneration": 0,
+    "databaseWrites": 0,
+    "registryWrites": 0
+  }
+}

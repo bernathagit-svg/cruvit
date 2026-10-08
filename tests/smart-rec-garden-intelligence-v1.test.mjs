@@ -124,9 +124,11 @@ test('IMAGE_BLOCKED recommendation falls back honestly', () => {
 test('alias recommendation resolves canonical image', () => {
   const { catalogBySlug, plantIndex } = catalogIndexFromCoverage();
   assert.equal(resolveSmartRecCanonicalSlug('english-lavender'), 'lavender');
-  assert.equal(resolveSmartRecCanonicalSlug('spearmint'), 'mint');
-  assert.equal(resolveSmartRecCanonicalSlug('common-jasmine'), 'jasmine');
-  assert.equal(resolveSmartRecCanonicalSlug('bell-pepper'), 'sweet-pepper');
+  assert.equal(resolveSmartRecCanonicalSlug('spearmint'), 'spearmint');
+  assert.equal(resolveSmartRecCanonicalSlug('common-jasmine'), 'common-jasmine');
+  assert.equal(resolveSmartRecCanonicalSlug('lesser-bougainvillea'), 'lesser-bougainvillea');
+  // Unregistered legacy alias: keep the input, never invent a Registry edge.
+  assert.equal(resolveSmartRecCanonicalSlug('bell-pepper'), 'bell-pepper');
   const aliasPlant = { slug: 'english-lavender', name: 'English lavender', scientific: 'Lavandula angustifolia' };
   const attached = attachSmartRecCatalogImage(aliasPlant, catalogBySlug);
   assert.equal(attached.slug, 'lavender');
