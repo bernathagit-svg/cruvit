@@ -1,0 +1,72 @@
+name: Disposable climate-alias candidate - exact SHA Linux validation
+run-name: Validate exact disposable candidate 9c36d55 (no merge or deploy)
+on:
+  push:
+    branches: [ci/climate-alias-integration-20261008]
+    paths:
+      - '.github/workflows/climate-alias-integration-validation-20261008.yml'
+      - '.github/validation/climate-alias-20261008/**'
+permissions:
+  contents: read
+jobs:
+  validate-exact-integration:
+    name: Exact 9c36d55 - all required suites and documented baseline comparison
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PRODUCT_SHA: 9c36d550a2476a64b4f0013b2599543538afd4fe
+      WORKFLOW_CARRIER_SHA: ${{ github.sha }}
+    steps:
+      - name: Checkout validation tooling separately
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          repository: bernathagit-svg/cruvit
+          ref: ${{ github.sha }}
+          path: validation
+          fetch-depth: 1
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Checkout exact frozen product candidate (not validation branch)
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          repository: bernathagit-svg/cruvit
+          ref: 9c36d550a2476a64b4f0013b2599543538afd4fe
+          path: product
+          fetch-depth: 6
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Checkout documented alias baseline for matched Linux comparison
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          repository: bernathagit-svg/cruvit
+          ref: 844f9fbc7945db357cf4adc5ba9ecc511490a209
+          path: baseline
+          fetch-depth: 2
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Set up Node 22 with no dependency installation or package cache
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - name: Enforce exact Linux SHA and run validation without product credentials or network
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C product rev-parse HEAD)" = "$PRODUCT_SHA"
+          node -e "const a=require('node:assert/strict');a.equal(process.platform,'linux');a.equal(process.versions.node.split('.')[0],'22');"
+          node "$GITHUB_WORKSPACE/validation/.github/validation/climate-alias-20261008/run-integration.mjs" \
+            "$GITHUB_WORKSPACE/product" "$GITHUB_WORKSPACE/baseline" \
+            "$RUNNER_TEMP/cruvit-integration-evidence"
+      - name: Upload all exact-SHA logs and HOLD reasons even on failure
+        if: always()
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
+        with:
+          name: climate-alias-9c36d55-linux-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/cruvit-integration-evidence/
+          if-no-files-found: error
+          retention-days: 14
+          overwrite: false

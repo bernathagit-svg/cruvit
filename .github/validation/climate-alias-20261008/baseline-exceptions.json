@@ -1,0 +1,112 @@
+{
+  "closed": true,
+  "documentedAt": "2026-10-08T11:48:51.471Z",
+  "sourceCommit": "844f9fbc7945db357cf4adc5ba9ecc511490a209",
+  "sourceReport": "data/identity/canonical-alias-authority-drift-20261008/relevant-latest.json",
+  "sourceReportSha256": "6abe0d3b47ce5280eee344c4b282863a5038f6aa38011a217a3229889d73a9d0",
+  "sourceLog": "data/identity/canonical-alias-authority-drift-20261008/relevant-1791454611286.tap",
+  "sourceLogSha256": "b260edf33b1735646ca3561af578dcb68c074b89464b5b22672936bfb2406544",
+  "failures": [
+    {
+      "file": "tests/bounded-identity-alias-collapse-v1.test.mjs",
+      "name": "SAFE payload still excludes unlocked six + plum; unlocked payload covers six only",
+      "actual": true,
+      "expected": false,
+      "operator": "strictEqual",
+      "code": "ERR_ASSERTION",
+      "reason": "inline library must not embed climateTraits: apple",
+      "line": 132,
+      "environment": "Existing main bootstrap already embeds climateTraits; not a new integration expectation."
+    },
+    {
+      "file": "tests/bounded-identity-alias-collapse-v1.test.mjs",
+      "name": "readiness: identity dedupe only; no Class A inflation",
+      "actual": 21,
+      "expected": 0,
+      "operator": "strictEqual",
+      "code": "ERR_ASSERTION",
+      "reason": "21 !== 0",
+      "line": 165,
+      "environment": "Historical Class-A assertion predates existing data; fixture and assertion unchanged."
+    },
+    {
+      "file": "tests/smart-rec-hero-answer-wiring-v1.test.mjs",
+      "name": "TRUSTED REAL CASE — NYC global climate + coconut blocked authority → Hero E_BLOCKED",
+      "actual": false,
+      "expected": true,
+      "operator": "strictEqual",
+      "code": "ERR_ASSERTION",
+      "reason": "false !== true",
+      "line": 224,
+      "environment": "Missing local global tile corpus; resolved.ok is false before Hero result is tested."
+    },
+    {
+      "file": "tests/smart-rec-hero-answer-wiring-v1.test.mjs",
+      "name": "PRODUCT PROOF — Mojstrana global-tile climate + pineapple → Hero shows four outcomes incl UNKNOWN",
+      "actual": false,
+      "expected": true,
+      "operator": "strictEqual",
+      "code": "ERR_ASSERTION",
+      "reason": "false !== true",
+      "line": 309,
+      "environment": "Missing local global tile corpus; resolved.ok is false before Hero result is tested."
+    }
+  ],
+  "skips": [
+    {
+      "file": "tests/hard-climate-survival-gate-v1.test.mjs",
+      "name": "Mojstrana structural climate is hard freeze; lemon-class and mango-class both cap",
+      "reason": "requires local global-v1 tile corpus (~17GB); remote/deployed climate stress covers the authority path",
+      "environment": "Requires unavailable local global-v1 tile corpus; unchanged existing skip condition."
+    },
+    {
+      "file": "tests/hard-climate-survival-gate-v1.test.mjs",
+      "name": "real catalog lemon × Mojstrana outdoor cannot display Survival Reliable",
+      "reason": "requires local global-v1 tile corpus (~17GB); remote/deployed climate stress covers the authority path",
+      "environment": "Requires unavailable local global-v1 tile corpus; unchanged existing skip condition."
+    },
+    {
+      "file": "tests/reproductive-climate-false-warm-v1.test.mjs",
+      "name": "missing reproductive evidence stays UNKNOWN, not a manufactured warm mismatch",
+      "reason": "requires local global-v1 tile corpus (~17GB); remote/deployed climate stress covers the authority path",
+      "environment": "Requires unavailable local global-v1 tile corpus; unchanged existing skip condition."
+    },
+    {
+      "file": "tests/reproductive-climate-false-warm-v1.test.mjs",
+      "name": "real catalog: walnut / gooseberry / peony × Mojstrana are not false-warm",
+      "reason": "requires local global-v1 tile corpus (~17GB); remote/deployed climate stress covers the authority path",
+      "environment": "Requires unavailable local global-v1 tile corpus; unchanged existing skip condition."
+    },
+    {
+      "file": "tests/reproductive-climate-false-warm-v1.test.mjs",
+      "name": "positive tropical controls remain warm-authorized; cold mismatch still blocks",
+      "reason": "requires local global-v1 tile corpus (~17GB); remote/deployed climate stress covers the authority path",
+      "environment": "Requires unavailable local global-v1 tile corpus; unchanged existing skip condition."
+    },
+    {
+      "file": "tests/smart-rec-live-render-v1.test.mjs",
+      "name": "Mojstrana has eligible positive-control plants; tropicals stay excluded",
+      "reason": "requires local global-v1 tile corpus (~17GB); remote canary covers the R2 path",
+      "environment": "Requires unavailable local global-v1 tile corpus; unchanged existing skip condition."
+    },
+    {
+      "file": "tests/smart-rec-live-render-v1.test.mjs",
+      "name": "eligible result list reaches renderer and creates visible cards",
+      "reason": "requires local global-v1 tile corpus (~17GB); remote canary covers the R2 path",
+      "environment": "Requires unavailable local global-v1 tile corpus; unchanged existing skip condition."
+    },
+    {
+      "file": "tests/smart-rec-suitability-authority-v1.test.mjs",
+      "name": "Mojstrana outdoor: lemon / mango / pineapple cannot rank as positive recommendations",
+      "reason": "requires local global-v1 tile corpus (~17GB); remote canary covers the R2 path",
+      "environment": "Requires unavailable local global-v1 tile corpus; unchanged existing skip condition."
+    },
+    {
+      "file": "tests/smart-rec-suitability-authority-v1.test.mjs",
+      "name": "Mojstrana outdoor: lavender remains recommendable and ranks above hard-blocked plants",
+      "reason": "requires local global-v1 tile corpus (~17GB); remote canary covers the R2 path",
+      "environment": "Requires unavailable local global-v1 tile corpus; unchanged existing skip condition."
+    }
+  ],
+  "policy": "No additions during execution; same-environment fresh baseline must match these identities/reasons. Passing formerly failing tests is allowed; different reasons, new skips or missing tests HOLD."
+}

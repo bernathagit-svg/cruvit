@@ -1,0 +1,63 @@
+{
+  "originalRunner": "scripts/verify-climate-boolean-unknown-20261008.mjs",
+  "originalRunnerBlob": "ce7bb34c60334d45352de4d6bdc4f29a538e92ad",
+  "originalRunnerSha256": "f9a283c3d511fd4eeb2d5391cf895a92e2b6345ad6444f551068491d842dbf95",
+  "integrationRunnerSha256": "eb4e5a783b0adfdb865696aa73e567061e1ca14f39519b830575200bdb11d354",
+  "changes": [
+    {
+      "label": "external pinned product root",
+      "before": "const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');",
+      "after": "const ROOT = path.resolve(process.env.CRUVIT_PRODUCT_ROOT);"
+    },
+    {
+      "label": "fresh nonhistorical output name",
+      "before": "const REPORT_REL = 'data/personal-domain/climate-boolean-unknown-2026-10-08-v1/location-comparison.json';",
+      "after": "const REPORT_REL = 'integration-42-cases.json';"
+    },
+    {
+      "label": "fresh evidence output outside product",
+      "before": "const REPORT_PATH = path.join(ROOT, REPORT_REL);",
+      "after": "const REPORT_PATH = path.join(process.env.CRUVIT_EVIDENCE_DIR, REPORT_REL);"
+    },
+    {
+      "label": "reviewed alias module exact source identity",
+      "before": "\"modules/smart-recommendations/smart-rec-garden-intelligence-v1.js\": \"9fbc5afa31c6d21aa44b23354392578feb4afc51\"",
+      "after": "\"modules/smart-recommendations/smart-rec-garden-intelligence-v1.js\": \"b0ceccd32bc092e13a4982dbc7df8cd434abf276\""
+    },
+    {
+      "label": "new shared dependencies and unchanged approved UNKNOWN baseline",
+      "before": "const PINNED_INPUTS = {",
+      "after": "const PINNED_INPUTS = {\n  \"modules/identity/canonical-alias-authority-v1.js\": \"734297749b98ae4e846564e2ac65d62c69534d23\",\n  \"modules/identity/canonical-alias-authority-data-v1.js\": \"3fa8bf1ec6c438110ee960fba6830db479c8a7d6\",\n  \"data/personal-domain/climate-boolean-unknown-2026-10-08-v1/location-comparison.json\": \"e161ea5bb6b175b23a6e1e80446b6dfbe95727e0\","
+    },
+    {
+      "label": "full tuple and diagnostic comparison to latest approved UNKNOWN output",
+      "before": "  failures.push(...comparison.failures);",
+      "after": "  failures.push(...comparison.failures);\n  const approvedUnknown = JSON.parse(inputs.get('data/personal-domain/climate-boolean-unknown-2026-10-08-v1/location-comparison.json').text);\n  assert.equal(approvedUnknown.status, 'PASS');\n  const integratedFullComparison = {\n    baselineCommit: '97d839085d6dc20d588d81e8b29fd8ab141c954d', baselineReport: 'data/personal-domain/climate-boolean-unknown-2026-10-08-v1/location-comparison.json',\n    expectedSemanticDifferences: [],\n    pairDiffs: jsonDiff(approvedUnknown.pairs, matrix.pairs),\n    plantEvidenceDiffs: jsonDiff(approvedUnknown.plantEvidence, matrix.plantEvidence),\n    locationDiffs: jsonDiff(approvedUnknown.locations, matrix.locations)\n  };\n  integratedFullComparison.passed = ['pairDiffs','plantEvidenceDiffs','locationDiffs']\n    .every(key => integratedFullComparison[key].length === 0);\n  if (!integratedFullComparison.passed) failures.push('integrated-output-differs-from-approved-UNKNOWN-baseline');\n"
+    },
+    {
+      "label": "explicit candidate identity and added comparison report",
+      "before": "    kind: 'climate-boolean-unknown-comparison-20261008',",
+      "after": "    kind: 'disposable-integration-42-cases-20261008',\n    testedProductSha: '9c36d550a2476a64b4f0013b2599543538afd4fe',\n    integratedFullComparison,"
+    },
+    {
+      "label": "accurate evidence label",
+      "before": "    sourceState: 'Reviewed candidate working tree; exact source identities recorded below.',",
+      "after": "    sourceState: 'Frozen integration candidate; separate validator, unchanged fixtures and historical behavior checks.',"
+    },
+    {
+      "label": "Copied integration module header: remove displaced shebang; historical file unchanged",
+      "before": "New comment followed by historical shebang at line 2",
+      "after": "Integration comment followed by normal JavaScript comments"
+    }
+  ],
+  "invariantFunctionNames": [
+    "initializeSandbox",
+    "runMatrixInSandbox",
+    "jsonDiff",
+    "compareMatrix"
+  ],
+  "originalBehaviorFunctionsByteIdentical": true,
+  "historicalFilesEdited": false,
+  "expectedSemanticDifferencesFrom97": [],
+  "notes": "The historical comparison to pre-UNKNOWN baseline remains unchanged. A second complete comparison to 97d8390 requires no semantic or diagnostic changes from alias integration."
+}
