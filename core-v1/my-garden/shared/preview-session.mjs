@@ -6,14 +6,19 @@ export const GARDEN_ID='a2b4080d-3858-4f71-b5ac-23847aa17e1d';
 export const ROUTES=Object.freeze({home:'/core-v1/',garden:'/core-v1/my-garden/',plants:'/core-v1/my-garden/plants/',acceptance:'/core-v1/my-garden/_acceptance/'});
 const KEY='cruvit-core-v1-preview-auth-v1';
 export function isPreviewOrigin(origin){try{const u=new URL(origin);return u.protocol==='https:'&&(u.hostname==='cruvit-core-v1-e2e-preview.netlify.app'||u.hostname==='commit4-integration--cruvit-core-v1-e2e-preview.netlify.app'||/^[a-f0-9]{24}--cruvit-core-v1-e2e-preview\.netlify\.app$/.test(u.hostname))}catch{return false}}
-export function createPreviewClient({isolated=false,label='primary'}={}){
+export function createPreviewClient({isolated=false,label='primary',atomicSave=false}={}){
  if(!isPreviewOrigin(location.origin))throw Error('This runtime is restricted to the isolated Core V1 Preview.');
  if(!globalThis.supabase?.createClient)throw Error('Supabase public client failed to load.');
- const totals={authRequests:0,databaseReads:0,storageSignRequests:0,blockedRequests:0,externalProviderCalls:0,paidAICalls:0};
+ const totals={authRequests:0,databaseReads:0,rpcCalls:0,supabaseWrites:0,storageSignRequests:0,blockedRequests:0,externalProviderCalls:0,paidAICalls:0};
  const countedFetch=async(input,init)=>{
   const u=new URL(typeof input==='string'?input:input.url),method=(init?.method??input?.method??'GET').toUpperCase();
   if(u.origin!==PREVIEW_URL){totals.blockedRequests++;throw Error('Foreign Supabase project blocked.');}
-  if(u.pathname.startsWith('/rest/v1/')&&['GET','HEAD'].includes(method))totals.databaseReads++;
+  if(atomicSave&&u.pathname==='/rest/v1/rpc/add_garden_plant_once_v1'&&method==='POST'){
+   const args=JSON.parse(init?.body??'null');
+   if(!args||args.p_garden_profile_id!==GARDEN_ID||args.p_client_instance_id!=='identifier:core-v1-commit5-20261008-monstera-01'||args.p_mode!=='scan'||args.p_profile_slug!=='monstera'||args.p_scientific!=='Monstera deliciosa'||args.p_display_name!=='Monstera'||args.p_garden_area_id!==null||Object.keys(args).length!==7){totals.blockedRequests++;throw Error('Unapproved atomic save payload');}
+   totals.rpcCalls++;totals.supabaseWrites++;
+  }
+  else if(u.pathname.startsWith('/rest/v1/')&&['GET','HEAD'].includes(method))totals.databaseReads++;
   else if(u.pathname.startsWith('/auth/v1/')&&((method==='GET'&&(u.pathname==='/auth/v1/user'||u.pathname.endsWith('/jwks.json')))||(method==='POST'&&['/auth/v1/token','/auth/v1/logout'].includes(u.pathname))))totals.authRequests++;
   else if(u.pathname.startsWith('/storage/v1/object/sign/user-garden-media')&&method==='POST')totals.storageSignRequests++;
   else{totals.blockedRequests++;throw Error('Operation outside Commit 4 read/Auth scope.');}

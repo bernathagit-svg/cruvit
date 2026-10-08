@@ -23,7 +23,7 @@ function action(name,value){
  say('Read-only Preview',name==='FILTER'?'Category counts are unknown; search uses the actual records returned from Preview.':'This action is not enabled in Commit 4. No data was changed.');
 }
 function publish(model,render,measured){
- const receipt={screen,route:location.pathname,sourceMode:'live-authenticated',liveAuthProof:true,gardenId:data.GARDEN_ID,readAt:model.readAt,measuredRequests:measured,declaredLoadCounts:model.counts,externalProviderCalls:0,paidAICalls:0};
+ const receipt={screen,route:location.pathname,navigationType:performance.getEntriesByType('navigation')[0]?.type??'unknown',sourceMode:'live-authenticated',liveAuthProof:true,gardenId:data.GARDEN_ID,readAt:model.readAt,measuredRequests:measured,declaredLoadCounts:model.counts,externalProviderCalls:0,paidAICalls:0};
  if(isPlants){receipt.plants=model.cards.map(p=>({id:p.id,profileSlug:p.profileSlug,name:p.name,scientificName:p.scientificName,status:p.status,areaName:p.areaName,imageKind:p.image.kind,coverMediaId:p.personal?.id??null,catalogSourceAssetId:p.systemImage.sourceAssetId,catalogAuthorityUrl:p.systemImage.url}));receipt.render={visibleIds:render.visibleIds,visibleNames:render.visibleNames,images:[...$('stage').querySelectorAll('.plant-image')].map(im=>({id:im.dataset.plantId,complete:im.complete&&im.naturalWidth>0,sourceKind:im.dataset.sourceKind}))};}
  else{receipt.summary={plantCount:model.plantCount,upcomingCount:model.upcomingCount,attentionCount:model.attentionCount,unreadCount:model.notificationUnreadCount,description:model.description};receipt.plants=model.plants;}
  window.__CRUVIT_CORE_V1=receipt;saveSafeEvidence(screen,receipt);

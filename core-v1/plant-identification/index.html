@@ -63,11 +63,12 @@ const hotspots={
 4:[{x:18,y:28,w:20,h:9,to:5,label:"Care"}],
 5:[{x:5,y:5,w:90,h:84,to:6,label:"Continue to suitability"}],
 6:[{x:5,y:80,w:90,h:13,to:7,label:"Save to My Garden"}],
-7:[{x:5,y:76,w:90,h:15,to:0,label:"Done"}]
+7:[{x:5,y:76,w:90,h:15,to:0,label:"Save to My Garden"}]
 };
-let index=0;
+let index=0,saveAction=null,saving=false;
 const stage=document.getElementById("stage"),img=document.getElementById("screen");
-function go(i){index=Math.max(0,Math.min(screens.length-1,i));render()}
+stage.addEventListener('cruvit-pi-save-bind',event=>{if(typeof event.detail?.save==='function')saveAction=event.detail.save;});
+function go(i){if(saving)return;index=Math.max(0,Math.min(screens.length-1,i));render()}
 function render(){
  stage.querySelectorAll(".hot").forEach(x=>x.remove());
  img.src=screens[index];
@@ -77,7 +78,13 @@ function render(){
   const b=document.createElement("button");
   b.className="hot";b.type="button";b.setAttribute("aria-label",h.label);
   b.style.left=h.x+"%";b.style.top=h.y+"%";b.style.width=h.w+"%";b.style.height=h.h+"%";
-  b.onclick=e=>{e.stopPropagation();go(h.to)};stage.appendChild(b);
+  b.onclick=async e=>{e.stopPropagation();if(index!==7){go(h.to);return;}if(saving)return;
+   if(!saveAction){alert('Preview save is not ready. No data was saved.');return;}
+   saving=true;b.disabled=true;stage.setAttribute('aria-busy','true');
+   try{await saveAction();location.assign('/core-v1/my-garden/');}
+   catch(error){alert('Save not completed: '+error.message+' No second save was attempted automatically.');}
+   finally{saving=false;b.disabled=false;stage.removeAttribute('aria-busy');}
+  };stage.appendChild(b);
  }
 }
 img.addEventListener("click",()=>{if(index<screens.length-1)go(index+1)});
@@ -95,5 +102,7 @@ document.addEventListener("keydown",e=>{
 });
 render();
 </script>
+<script src="../my-garden/assets/supabase.js"></script>
+<script type="module" src="./atomic/boot.mjs"></script>
 </body>
 </html>
