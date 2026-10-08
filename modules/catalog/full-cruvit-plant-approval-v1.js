@@ -4,6 +4,9 @@
  * A plant is not "approved" merely because it is ready for Garden Design.
  * FULL_CRUVIT_APPROVED means the same canonical plant record is ready to
  * safely support CRUVIT's plant-facing modules without silent guessing.
+ * Required visual coverage is an intermediate result: final approval also needs
+ * every visual-state applicability decision resolved. OPTIONAL states need no
+ * asset for minimum coverage, and UNKNOWN never means NOT_REQUIRED.
  *
  * Pure/local. No network, no paid calls, no writes.
  */
@@ -18,6 +21,7 @@ import {
 } from '../garden-design/asset-factory-v1/plant-size-authority-readiness-v1.js';
 
 export const FULL_CRUVIT_PLANT_APPROVAL_VERSION = 'full-cruvit-plant-approval-v1';
+export const FULL_CRUVIT_PLANT_APPROVAL_POLICY_VERSION = 'full-cruvit-plant-approval-policy-v1.1.0';
 
 export const FULL_CRUVIT_PLANT_STATUS = Object.freeze({
   APPROVED:'FULL_CRUVIT_APPROVED',
@@ -271,6 +275,7 @@ export function evaluateFullCruvitPlantApproval({
   if(!runtimePlant || !slug){
     return Object.freeze({
       version:FULL_CRUVIT_PLANT_APPROVAL_VERSION,
+      policyVersion:FULL_CRUVIT_PLANT_APPROVAL_POLICY_VERSION,
       canonicalSlug:slug,
       status:FULL_CRUVIT_PLANT_STATUS.BLOCKED,
       approved:false,
@@ -315,6 +320,8 @@ export function evaluateFullCruvitPlantApproval({
     variantPlan.generationAllowed===true
     && visualGaps.requiredVariantCount>0
     && visualGaps.missingRequiredCount===0;
+  const visualStateApplicabilityResolved=visualGaps.unknownStates.length===0;
+  const allRequiredVisualStatesComplete=visualsReady && visualStateApplicabilityResolved;
 
   const size=sizeState(sizeAuthorityRegistry,variantPlan);
   const identificationReady=identityReady && media.ready;
@@ -365,6 +372,9 @@ export function evaluateFullCruvitPlantApproval({
     plantDoctor:doctor,
     gardenDesign:{
       ready:gardenDesignReady,
+      minimumVisualCoverageReady:visualsReady,
+      visualStateApplicabilityResolved,
+      allRequiredVisualStatesComplete,
       fullOnboardingReady:onboarding.ready===true,
       variantPlanReady:variantPlan.ready===true,
       requiredVariantCount:visualGaps.requiredVariantCount,
@@ -389,6 +399,7 @@ export function evaluateFullCruvitPlantApproval({
   if(!knowledge.ready) blockers.push('PLANT_KNOWLEDGE_NOT_READY');
   if(!media.ready) blockers.push('CATALOG_DISPLAY_MEDIA_NOT_READY');
   if(variantPlan.seasonalityResearchRequired) blockers.push('SEASONALITY_RESEARCH_REQUIRED');
+  if(!visualStateApplicabilityResolved) blockers.push('VISUAL_STATE_APPLICABILITY_UNRESOLVED');
   if(!size.ready) blockers.push('SIZE_AUTHORITY_ENRICHMENT_REQUIRED');
   if(visualGaps.missingRequiredCount>0) blockers.push('REQUIRED_VISUAL_VARIANTS_MISSING');
   if(!doctor.ready) blockers.push('PLANT_DOCTOR_CONTEXT_NOT_READY');
@@ -408,6 +419,7 @@ export function evaluateFullCruvitPlantApproval({
         'REPRODUCTIVE_CLIMATE_EVIDENCE_REQUIRED',
         'PLANT_KNOWLEDGE_NOT_READY',
         'SEASONALITY_RESEARCH_REQUIRED',
+        'VISUAL_STATE_APPLICABILITY_UNRESOLVED',
         'SIZE_AUTHORITY_ENRICHMENT_REQUIRED',
         'CANONICAL_IDENTITY_NOT_READY'
       ].includes(x))
@@ -421,6 +433,7 @@ export function evaluateFullCruvitPlantApproval({
 
   return Object.freeze({
     version:FULL_CRUVIT_PLANT_APPROVAL_VERSION,
+    policyVersion:FULL_CRUVIT_PLANT_APPROVAL_POLICY_VERSION,
     canonicalSlug:slug,
     scientific,
     status,
@@ -443,6 +456,7 @@ export function evaluateFullCruvitPlantApproval({
       endToEndRequired:true,
       visualFactoryAloneNeverApproves:true,
       unknownNeverSilentlyGuessed:true,
+      unresolvedVisualStatesBlockFinalApproval:true,
       smartRecommendationsRequiresClassA:true,
       fruitRecommendationsRequireStructuredReproductiveClimate:true,
       plantDoctorUsesRuntimeDiagnosis:true,
@@ -457,6 +471,7 @@ export function summarizeFullCruvitPlantApproval(evaluations=[]){
   for(const row of rows) byStatus[row.status]=(byStatus[row.status]||0)+1;
   return Object.freeze({
     version:FULL_CRUVIT_PLANT_APPROVAL_VERSION,
+    policyVersion:FULL_CRUVIT_PLANT_APPROVAL_POLICY_VERSION,
     total:rows.length,
     approved:rows.filter(x=>x.approved).length,
     blocked:rows.filter(x=>!x.approved).length,

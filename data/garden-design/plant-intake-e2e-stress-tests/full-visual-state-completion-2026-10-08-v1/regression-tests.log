@@ -1,0 +1,96 @@
+✔ missing catalog and packet routes to evidence packet (0.7723ms)
+✔ validated but unapproved packet requires owner ingest approval (0.101ms)
+✔ catalog plant with Class A gap routes enrichment before visuals (0.0873ms)
+✔ visual generation requires bounded owner spend approval action (0.1073ms)
+✔ full approval with explicit visual-state completion is the only final approved state (0.0962ms)
+✔ identity lookup normalizes alias and canonical Hydrangea slugs to one canonical identity (0.6932ms)
+✔ identity lookup leaves an unrelated canonical slug stable (0.0958ms)
+✔ size authority follows a proven identity alias without duplicating botanical evidence (0.1437ms)
+✔ size authority alias propagation fails closed when identity slugs point to conflicting taxa (0.1061ms)
+✖ integrity gate uses four-way states and does not convert UNKNOWN to NOT_REQUIRED (33.4005ms)
+✔ visual-state contract separates axes and does not cartesian-explode (32.0861ms)
+✔ context-dependent seasonality makes dormancy optional rather than a blocker (0.2389ms)
+✔ live full approval hydrates approved-packet design metadata before variant planning (0.8126ms)
+✔ full approval fails closed when visual production coverage is missing (4.1234ms)
+✔ explicit UNKNOWN humidity stays unknown but does not manufacture a suitability blocker (0.6766ms)
+✔ visual factory readiness alone never equals full CRUVIT approval (0.4046ms)
+✔ shop remains outside botanical approval (0.3631ms)
+✔ fruit-oriented recommendation readiness requires structured reproductive climate (0.3884ms)
+✔ fruit-oriented recommendation readiness accepts structured provenance-backed climate (0.4017ms)
+✔ ornamental fruit/seed description does not require fruit-production climate (0.1417ms)
+✔ source-backed legacy fruit purpose remains applicable when structural group is missing (0.1526ms)
+✔ source-backed edible/ripening fruit wording can recover legacy fruit purpose (0.3091ms)
+✔ edible non-fruit crop wording does not manufacture a fruit-production requirement (0.0825ms)
+✔ legacy fruit group cannot override explicit leafy/root/flower-bud harvest purpose (0.1076ms)
+✔ legume/cucurbit/melon yield remains reproductive-climate applicable (0.101ms)
+✔ source-backed researched-unquantified reproductive state closes research blocker without claiming supported fruiting (0.5392ms)
+✔ researched reproductive state without source lineage is still blocked (0.831ms)
+✔ context-dependent reproductive state with source lineage is research-complete (0.3492ms)
+✔ reproductive source id must resolve to botanical provenance (0.9311ms)
+✔ verified catalog identity provenance is accepted when registry entry is absent (0.3746ms)
+✔ explicit registry needsReview blocks catalog fallback even with verified provenance (0.1794ms)
+✔ saved mango: unresolved states block final approval while Class A and coverage stay intact (11.4138ms)
+✔ saved date-palm: unresolved states block final approval while Class A and coverage stay intact (4.5586ms)
+✔ saved monstera: unresolved states block final approval while Class A and coverage stay intact (4.1595ms)
+✔ saved bigleaf-hydrangea: unresolved states block final approval while Class A and coverage stay intact (4.1384ms)
+✔ saved fig: unresolved states block final approval while Class A and coverage stay intact (3.7837ms)
+✔ saved lettuce: unresolved states block final approval while Class A and coverage stay intact (4.4174ms)
+✔ saved Mango remains usable for minimum Garden Design coverage without an all-states claim (1.9609ms)
+✔ intake cannot bypass any known UNKNOWN with contradictory positive flags and an empty blocker list (0.2563ms)
+✔ legacy approval without a positive completion receipt requests the current gate without inventing botanical UNKNOWN (0.1357ms)
+✔ a false completion receipt with no detailed blocker requests recomputation instead of approval (0.1371ms)
+✔ explicit gate blockers override contradictory approved/status and positive completion receipt (0.109ms)
+✔ SYNTHETIC resolved OPTIONAL flowering is compatible with full approval and requires no generation (1.8255ms)
+✔ SYNTHETIC resolved NOT_REQUIRED flowering is compatible with full approval and requires no generation (1.6644ms)
+✔ SYNTHETIC resolved REQUIRED flowering still needs its missing exact asset before full approval (2.1878ms)
+✔ completion evaluation leaves historical catalog artifacts and all existing authorities byte-identical (12.7765ms)
+✔ execution is bound to the exact immutable reviewed proposal and exactly three fresh target rows (1.3315ms)
+✔ saved patches preserve every row field outside the exact climate and provenance scope (0.9686ms)
+✔ Mango cold evidence uses the approved zone transform without changing cold or frost values (0.3451ms)
+✔ Mango heat stays an explicitly approved heuristic and preserves the distinct source temperatures (0.5671ms)
+✔ Mango preserves UNKNOWN and outcome context while adding only the two approved biological facts (0.1569ms)
+✔ actual Date Palm and Monstera rows pass identity-aware fruiting onboarding with null reviewed UNKNOWN (0.5097ms)
+✔ actual readiness improves without using gate defaults or disguising remaining uncertainty (1.2489ms)
+✔ active source claims are consistent and every unrelated source and claim remains unchanged (0.6804ms)
+✔ control results and protected files stay unchanged; unresolved flowering is never all-states complete (10.2126ms)
+✔ reproduces Mango current Class C from its exact persisted recovery artifact (1.1237ms)
+✔ existing approved zone transform produces cold evidence without manufacturing frost evidence (0.1778ms)
+✔ heat damage and optimum temperature are kept distinct; ordinal remains explicitly heuristic (0.075ms)
+✔ cold evidence alone does not conceal missing heat evidence (0.1876ms)
+✔ reviewed data draft moves Mango to Class A without changing readiness rules (0.2867ms)
+✔ humidity and chill remain explicit unknown, not invented numeric or boolean defaults (0.1927ms)
+✔ flowering weather preference never becomes a mandatory dry season in the draft (0.1905ms)
+✔ UNKNOWN records satisfy the existing intake contract while staying unknown: contract fixture, not a live write (0.6365ms)
+✔ both approved size records resolve offline but retain placement hold and no personal-meter claim (0.2719ms)
+✔ minimum coverage with unresolved flowering no longer grants full approval (5.9395ms)
+✔ draft cannot authorize data writes, paid calls, image changes or deployment (0.0905ms)
+✔ simulation does not mutate the base row or its approved sources (0.2384ms)
+ℹ tests 67
+ℹ suites 0
+ℹ pass 66
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3354.2041
+
+✖ failing tests:
+
+test at tests\design-asset-visual-state-integrity-gate-v1.test.mjs:28:1
+✖ integrity gate uses four-way states and does not convert UNKNOWN to NOT_REQUIRED (33.4005ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  125 !== 122
+  
+      at TestContext.<anonymous> (file:///C:/Temp/cruvit-full-state-approval-20261008-wt/tests/design-asset-visual-state-integrity-gate-v1.test.mjs:48:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.start (node:internal/test_runner/test:1191:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 125,
+    expected: 122,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,471 @@
+{
+  "id": "full-visual-state-completion-2026-10-08-v1",
+  "status": "LOCAL_DRAFT_VERIFIED_NOT_DEPLOYED",
+  "verifiedAt": "2026-10-08T04:25:58.162Z",
+  "baseCommit": "eee0ab34c909ca0323fef32e8f65ddd2dc9eae95",
+  "approvalPolicyVersion": "full-cruvit-plant-approval-policy-v1.1.0",
+  "intakePolicyVersion": "cruvit-plant-intake-policy-v1.1.0",
+  "evidenceScope": "Exact saved post-repair six-record catalog snapshot with unchanged local authorities, before/after pure approval and intake. This is not a fresh database read, a deployment, or a location-suitability assessment.",
+  "beforeApproved": 1,
+  "afterApproved": 0,
+  "evaluations": [
+    {
+      "sourceCatalogSlug": "date-palm",
+      "canonicalSlug": "date-palm",
+      "scientificName": "Phoenix dactylifera",
+      "savedDatabaseRowMd5": "2106324a3727873347c7d8b3c264f8b2",
+      "catalogRowSha256": "f1211fc9d71c5ed5c928e47609b3256543a1294c41002dd65d7f421568b00880",
+      "dataReadinessClass": "A",
+      "dataGate": "PASS",
+      "onboardingReady": true,
+      "requiredVariantCount": 3,
+      "coveredRequiredCount": 0,
+      "missingRequiredCount": 3,
+      "unknownVisualStates": [
+        "flowering"
+      ],
+      "minimumVisualCoverageReady": false,
+      "visualStateApplicabilityResolved": false,
+      "allRequiredVisualStatesComplete": false,
+      "unchangedModuleOutputs": [
+        "canonicalIdentity",
+        "climateAndSuitability",
+        "myGarden",
+        "smartRecommendations",
+        "plantIdentification",
+        "plantDoctor",
+        "shop"
+      ],
+      "existingGardenDesignOutputsUnchanged": true,
+      "before": {
+        "fullApproval": false,
+        "fullApprovalStatus": "VISUAL_COMPLETION_REQUIRED",
+        "intakeStage": "VISUAL_GENERATION_REQUIRED",
+        "blockingReasons": [
+          "REQUIRED_VISUAL_VARIANTS_MISSING"
+        ]
+      },
+      "after": {
+        "fullApproval": false,
+        "fullApprovalStatus": "ENRICHMENT_REQUIRED",
+        "intakeStage": "DATA_ENRICHMENT_REQUIRED",
+        "blockingReasons": [
+          "VISUAL_STATE_APPLICABILITY_UNRESOLVED",
+          "REQUIRED_VISUAL_VARIANTS_MISSING"
+        ],
+        "systemActionCodes": [
+          "RESEARCH_VISUAL_STATE_APPLICABILITY"
+        ],
+        "paidActionCount": 0,
+        "ownerActionCount": 0
+      }
+    },
+    {
+      "sourceCatalogSlug": "mango",
+      "canonicalSlug": "mango",
+      "scientificName": "Mangifera indica",
+      "savedDatabaseRowMd5": "ff345a8888c45e607b737ff1c5c2cd79",
+      "catalogRowSha256": "20309cc17c5a79e2c6637630555ed873bd209832990cfc362b88e533cdeb9853",
+      "dataReadinessClass": "A",
+      "dataGate": "PASS",
+      "onboardingReady": true,
+      "requiredVariantCount": 3,
+      "coveredRequiredCount": 3,
+      "missingRequiredCount": 0,
+      "unknownVisualStates": [
+        "flowering"
+      ],
+      "minimumVisualCoverageReady": true,
+      "visualStateApplicabilityResolved": false,
+      "allRequiredVisualStatesComplete": false,
+      "unchangedModuleOutputs": [
+        "canonicalIdentity",
+        "climateAndSuitability",
+        "myGarden",
+        "smartRecommendations",
+        "plantIdentification",
+        "plantDoctor",
+        "shop"
+      ],
+      "existingGardenDesignOutputsUnchanged": true,
+      "before": {
+        "fullApproval": true,
+        "fullApprovalStatus": "FULL_CRUVIT_APPROVED",
+        "intakeStage": "FULL_CRUVIT_APPROVED",
+        "blockingReasons": []
+      },
+      "after": {
+        "fullApproval": false,
+        "fullApprovalStatus": "ENRICHMENT_REQUIRED",
+        "intakeStage": "DATA_ENRICHMENT_REQUIRED",
+        "blockingReasons": [
+          "VISUAL_STATE_APPLICABILITY_UNRESOLVED"
+        ],
+        "systemActionCodes": [
+          "RESEARCH_VISUAL_STATE_APPLICABILITY"
+        ],
+        "paidActionCount": 0,
+        "ownerActionCount": 0
+      }
+    },
+    {
+      "sourceCatalogSlug": "monstera",
+      "canonicalSlug": "monstera",
+      "scientificName": "Monstera deliciosa",
+      "savedDatabaseRowMd5": "c5ff3578ea10353fe795048ab6ef93ea",
+      "catalogRowSha256": "8e5b550a27a1db7f14ac7074fffa3ca78e84975434451fae2cec955964855881",
+      "dataReadinessClass": "A",
+      "dataGate": "PASS",
+      "onboardingReady": true,
+      "requiredVariantCount": 3,
+      "coveredRequiredCount": 0,
+      "missingRequiredCount": 3,
+      "unknownVisualStates": [
+        "flowering"
+      ],
+      "minimumVisualCoverageReady": false,
+      "visualStateApplicabilityResolved": false,
+      "allRequiredVisualStatesComplete": false,
+      "unchangedModuleOutputs": [
+        "canonicalIdentity",
+        "climateAndSuitability",
+        "myGarden",
+        "smartRecommendations",
+        "plantIdentification",
+        "plantDoctor",
+        "shop"
+      ],
+      "existingGardenDesignOutputsUnchanged": true,
+      "before": {
+        "fullApproval": false,
+        "fullApprovalStatus": "VISUAL_COMPLETION_REQUIRED",
+        "intakeStage": "VISUAL_GENERATION_REQUIRED",
+        "blockingReasons": [
+          "REQUIRED_VISUAL_VARIANTS_MISSING"
+        ]
+      },
+      "after": {
+        "fullApproval": false,
+        "fullApprovalStatus": "ENRICHMENT_REQUIRED",
+        "intakeStage": "DATA_ENRICHMENT_REQUIRED",
+        "blockingReasons": [
+          "VISUAL_STATE_APPLICABILITY_UNRESOLVED",
+          "REQUIRED_VISUAL_VARIANTS_MISSING"
+        ],
+        "systemActionCodes": [
+          "RESEARCH_VISUAL_STATE_APPLICABILITY"
+        ],
+        "paidActionCount": 0,
+        "ownerActionCount": 0
+      }
+    },
+    {
+      "sourceCatalogSlug": "bigleaf-hydrangea",
+      "canonicalSlug": "hydrangea",
+      "scientificName": "Hydrangea macrophylla",
+      "savedDatabaseRowMd5": "c058087788fb7a29fe235f89570b09fc",
+      "catalogRowSha256": "61ec0b28bc070f3494f154e497f72cc0be1f2313aab9c7246d8899a1d92883ad",
+      "dataReadinessClass": "A",
+      "dataGate": "PASS",
+      "onboardingReady": true,
+      "requiredVariantCount": 3,
+      "coveredRequiredCount": 0,
+      "missingRequiredCount": 3,
+      "unknownVisualStates": [
+        "fruiting"
+      ],
+      "minimumVisualCoverageReady": false,
+      "visualStateApplicabilityResolved": false,
+      "allRequiredVisualStatesComplete": false,
+      "unchangedModuleOutputs": [
+        "canonicalIdentity",
+        "climateAndSuitability",
+        "myGarden",
+        "smartRecommendations",
+        "plantIdentification",
+        "plantDoctor",
+        "shop"
+      ],
+      "existingGardenDesignOutputsUnchanged": true,
+      "before": {
+        "fullApproval": false,
+        "fullApprovalStatus": "VISUAL_COMPLETION_REQUIRED",
+        "intakeStage": "VISUAL_GENERATION_REQUIRED",
+        "blockingReasons": [
+          "REQUIRED_VISUAL_VARIANTS_MISSING"
+        ]
+      },
+      "after": {
+        "fullApproval": false,
+        "fullApprovalStatus": "ENRICHMENT_REQUIRED",
+        "intakeStage": "DATA_ENRICHMENT_REQUIRED",
+        "blockingReasons": [
+          "VISUAL_STATE_APPLICABILITY_UNRESOLVED",
+          "REQUIRED_VISUAL_VARIANTS_MISSING"
+        ],
+        "systemActionCodes": [
+          "RESEARCH_VISUAL_STATE_APPLICABILITY"
+        ],
+        "paidActionCount": 0,
+        "ownerActionCount": 0
+      }
+    },
+    {
+      "sourceCatalogSlug": "fig",
+      "canonicalSlug": "fig",
+      "scientificName": "Ficus carica",
+      "savedDatabaseRowMd5": "226f465d558f73a78e2086d98c4d1807",
+      "catalogRowSha256": "d56a85e42e684d46f76980d04752ac87989686a36bad16a58fdc6617482641f1",
+      "dataReadinessClass": "A",
+      "dataGate": "PASS",
+      "onboardingReady": true,
+      "requiredVariantCount": 5,
+      "coveredRequiredCount": 0,
+      "missingRequiredCount": 5,
+      "unknownVisualStates": [
+        "flowering"
+      ],
+      "minimumVisualCoverageReady": false,
+      "visualStateApplicabilityResolved": false,
+      "allRequiredVisualStatesComplete": false,
+      "unchangedModuleOutputs": [
+        "canonicalIdentity",
+        "climateAndSuitability",
+        "myGarden",
+        "smartRecommendations",
+        "plantIdentification",
+        "plantDoctor",
+        "shop"
+      ],
+      "existingGardenDesignOutputsUnchanged": true,
+      "before": {
+        "fullApproval": false,
+        "fullApprovalStatus": "VISUAL_COMPLETION_REQUIRED",
+        "intakeStage": "VISUAL_GENERATION_REQUIRED",
+        "blockingReasons": [
+          "REQUIRED_VISUAL_VARIANTS_MISSING"
+        ]
+      },
+      "after": {
+        "fullApproval": false,
+        "fullApprovalStatus": "ENRICHMENT_REQUIRED",
+        "intakeStage": "DATA_ENRICHMENT_REQUIRED",
+        "blockingReasons": [
+          "VISUAL_STATE_APPLICABILITY_UNRESOLVED",
+          "REQUIRED_VISUAL_VARIANTS_MISSING"
+        ],
+        "systemActionCodes": [
+          "RESEARCH_VISUAL_STATE_APPLICABILITY"
+        ],
+        "paidActionCount": 0,
+        "ownerActionCount": 0
+      }
+    },
+    {
+      "sourceCatalogSlug": "lettuce",
+      "canonicalSlug": "lettuce",
+      "scientificName": "Lactuca sativa",
+      "savedDatabaseRowMd5": "300f24b4ab8969593140c62c3fddbf47",
+      "catalogRowSha256": "7dcbee0906f805da23ba186b94eb1cec4bee0d882b7d868ff2555732b68852ee",
+      "dataReadinessClass": "A",
+      "dataGate": "PASS",
+      "onboardingReady": true,
+      "requiredVariantCount": 1,
+      "coveredRequiredCount": 0,
+      "missingRequiredCount": 1,
+      "unknownVisualStates": [
+        "flowering",
+        "fruiting"
+      ],
+      "minimumVisualCoverageReady": false,
+      "visualStateApplicabilityResolved": false,
+      "allRequiredVisualStatesComplete": false,
+      "unchangedModuleOutputs": [
+        "canonicalIdentity",
+        "climateAndSuitability",
+        "myGarden",
+        "smartRecommendations",
+        "plantIdentification",
+        "plantDoctor",
+        "shop"
+      ],
+      "existingGardenDesignOutputsUnchanged": true,
+      "before": {
+        "fullApproval": false,
+        "fullApprovalStatus": "VISUAL_COMPLETION_REQUIRED",
+        "intakeStage": "VISUAL_GENERATION_REQUIRED",
+        "blockingReasons": [
+          "REQUIRED_VISUAL_VARIANTS_MISSING"
+        ]
+      },
+      "after": {
+        "fullApproval": false,
+        "fullApprovalStatus": "ENRICHMENT_REQUIRED",
+        "intakeStage": "DATA_ENRICHMENT_REQUIRED",
+        "blockingReasons": [
+          "VISUAL_STATE_APPLICABILITY_UNRESOLVED",
+          "REQUIRED_VISUAL_VARIANTS_MISSING"
+        ],
+        "systemActionCodes": [
+          "RESEARCH_VISUAL_STATE_APPLICABILITY"
+        ],
+        "paidActionCount": 0,
+        "ownerActionCount": 0
+      }
+    }
+  ],
+  "protectedFiles": [
+    {
+      "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-climate-supplement-2026-10-07-v1/catalog-before.json",
+      "sha256": "1c3aa5dc8e3ffefb0750d59c7afa06e4822d468eeced4d84733f6903755453e9",
+      "unchanged": true
+    },
+    {
+      "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-climate-supplement-2026-10-07-v1/catalog-after.json",
+      "sha256": "81ba4dbe25bf9952976b14ec9dcc2af1d8d6c8be95898f9c40dc0ded47985e03",
+      "unchanged": true
+    },
+    {
+      "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-climate-supplement-2026-10-07-v1/preflight.json",
+      "sha256": "246726da582bbf370a3e014126cb951d75837e98373dc386cfdce4b9b3030647",
+      "unchanged": true
+    },
+    {
+      "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-climate-supplement-2026-10-07-v1/execution-summary.json",
+      "sha256": "d4912639dd9e0ecbb537ccce1c8a51690aabde64806b2467578e158175a48f32",
+      "unchanged": true
+    },
+    {
+      "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-climate-supplement-2026-10-07-v1/live-intake-readback.json",
+      "sha256": "4b78454347904bdfa965a6531568416b54d9f14668e26904e14bf1d96e3e78d3",
+      "unchanged": true
+    },
+    {
+      "path": "data/plant-identity.registry.json",
+      "sha256": "bde1ace6d6e2c2733c218443a18845f4c3bae1fdc8205011f831b79cea07a3f0",
+      "unchanged": true
+    },
+    {
+      "path": "data/catalog/botanical-size-authority-v1.json",
+      "sha256": "86447803a6ad2245b8422448edc91e7197481370138a582453b631131e04c90b",
+      "unchanged": true
+    },
+    {
+      "path": "data/catalog-media/active-canonical-image-coverage-v1.json",
+      "sha256": "b9cb07b2589b7c1a996a61712b991fa71724026b6f94263f9ca2e8d1c51ddf16",
+      "unchanged": true
+    },
+    {
+      "path": "modules/garden-design/assets/plants/design-asset-registry-v1.json",
+      "sha256": "0c0c898152ae10ba2c939c3cc2373b193741aad0c0145bbb923317e5fc7649a5",
+      "unchanged": true
+    },
+    {
+      "path": "modules/garden-design/asset-factory-v1/design-asset-visual-states-v1.js",
+      "sha256": "d46656c713d8783bd663dffd46ea19ab1ac4a2376e9860187739cc9ab0997fa7",
+      "unchanged": true
+    },
+    {
+      "path": "modules/garden-design/asset-factory-v1/plant-visual-variant-plan-v1.js",
+      "sha256": "fee73764b2b2fdd074714f8a360d25ca6b57770fd776e03c60904bda2d17eb42",
+      "unchanged": true
+    },
+    {
+      "path": "modules/garden-design/asset-factory-v1/plant-visual-variant-gap-plan-v1.js",
+      "sha256": "98d2f0bd9b03468d38989f5307aafa3839c5e7e584d0537801b0119f7b56af72",
+      "unchanged": true
+    },
+    {
+      "path": "data/garden-design/design-asset-visual-state-integrity-gate-v1/baseline-validation.json",
+      "sha256": "8f4f5bc12fa7fdc5c9adaf95f785b93525c7941fda7dec44368c0cbbc24cdbeb",
+      "unchanged": true
+    },
+    {
+      "path": "data/garden-design/design-asset-visual-state-integrity-gate-v1/catalog-integrity-audit.json",
+      "sha256": "3b587c68bfe6b032529e13e00570953957d4824dd03cbe598f19969b4c65edee",
+      "unchanged": true
+    },
+    {
+      "path": "data/garden-design/design-asset-visual-state-integrity-gate-v1/integrity-summary.json",
+      "sha256": "0a3849a12a371d6c53436d9d6f631187a484da6bd6c3bd31da51659392a4cfbc",
+      "unchanged": true
+    },
+    {
+      "path": "data/garden-design/design-asset-visual-states-v1/catalog-state-audit.json",
+      "sha256": "721dc7d7bffa20735efde2bc34b511e330d1475164607b61a096f68b5e8800b3",
+      "unchanged": true
+    },
+    {
+      "path": "data/garden-design/design-asset-visual-states-v1/visual-states-summary.json",
+      "sha256": "62162d5884d4736baa30ea41f0bf12890c6abd963d9fabdd2cb7f10825efaf1b",
+      "unchanged": true
+    },
+    {
+      "path": "app.html",
+      "sha256": "202f26587ed71aa57eac046285067db92337617485980847ee5a391ce97c20b1",
+      "unchanged": true
+    },
+    {
+      "path": "netlify.toml",
+      "sha256": "55f092d2f7fc7b6a386bf201dd85adf99d58c47e369c6ec05eeeb9fe9ae119c2",
+      "unchanged": true
+    }
+  ],
+  "changedTrackedFiles": [
+    "modules/catalog/cruvit-plant-intake-engine-v1.js",
+    "modules/catalog/full-cruvit-plant-approval-v1.js",
+    "netlify/functions/full-cruvit-plant-approval.mjs",
+    "tests/cruvit-plant-intake-engine-v1.test.mjs",
+    "tests/six-plant-evidence-followup-v1.test.mjs"
+  ],
+  "verification": {
+    "broadTests": {
+      "log": "regression-tests.log",
+      "total": 67,
+      "passed": 66,
+      "failed": 1,
+      "skipped": 0
+    },
+    "finalTargetedGuardTests": {
+      "log": "guard-regression-tests.log",
+      "total": 25,
+      "passed": 25,
+      "failed": 0,
+      "skipped": 0
+    },
+    "newIndependentCases": 16,
+    "knownPreexistingFailure": {
+      "test": "tests/design-asset-visual-state-integrity-gate-v1.test.mjs",
+      "expectedCanonicalPlants": 122,
+      "baselineCanonicalPlants": 125,
+      "draftCanonicalPlants": 125,
+      "baselineArchitectureCount": 130,
+      "pureBuilderIdenticalBeforeAfter": true,
+      "legacyTestUnchanged": true,
+      "explanation": "The existing catalog contains 125 identities. The historical test still expects 122; the same failing assertion is reproduced from the unchanged baseline pure builder. No expectation was weakened.",
+      "testGeneratedHistoricalReportsRestored": true
+    }
+  },
+  "scope": {
+    "catalogWrites": 0,
+    "paidAiCalls": 0,
+    "imageGenerationCalls": 0,
+    "visualRegistryWrites": 0,
+    "productionDeploys": 0,
+    "networkAttempts": 0,
+    "outputWrites": "New draft verification report only"
+  },
+  "compatibility": {
+    "existingMinimumVisualCoveragePreserved": true,
+    "unknownNeverConvertedToNotRequired": true,
+    "optionalImagesNotRequiredForMinimumCompletion": true,
+    "legacyApprovalRequiresCurrentGateResult": true,
+    "policyFieldAddedWithoutRenamingExistingVersion": true,
+    "compactResponseIncludesCompletionFields": true
+  },
+  "publication": {
+    "publicPushAuthorized": false,
+    "publicPushExecuted": false,
+    "productionDeploymentAuthorized": false
+  }
+}

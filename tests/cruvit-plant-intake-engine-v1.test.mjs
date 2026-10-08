@@ -62,7 +62,7 @@ test('visual generation requires bounded owner spend approval action',()=>{
   assert.equal(r.paidActions.length,1);
 });
 
-test('full approval is the only final approved state',()=>{
+test('full approval with explicit visual-state completion is the only final approved state',()=>{
   const r=resolveCruvitPlantIntakeStage({
     request:{canonicalSlug:'x'},
     catalogExists:true,
@@ -70,7 +70,8 @@ test('full approval is the only final approved state',()=>{
       canonicalSlug:'x',
       approved:true,
       status:'FULL_CRUVIT_APPROVED',
-      blockingReasons:[]
+      blockingReasons:[],
+      modules:{gardenDesign:{unknownStates:[],allRequiredVisualStatesComplete:true}}
     }
   });
   assert.equal(r.stage,INTAKE_STAGE.FULL_CRUVIT_APPROVED);

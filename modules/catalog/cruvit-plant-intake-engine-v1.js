@@ -10,6 +10,7 @@
  * are intermediate states and never final approval.
  */
 export const CRUVIT_PLANT_INTAKE_ENGINE_VERSION='cruvit-plant-intake-engine-v1';
+export const CRUVIT_PLANT_INTAKE_ENGINE_POLICY_VERSION='cruvit-plant-intake-policy-v1.1.0';
 
 export const INTAKE_STAGE=Object.freeze({
   REQUESTED:'REQUESTED',
@@ -55,6 +56,7 @@ export function resolveCruvitPlantIntakeStage({
 
   const base={
     version:CRUVIT_PLANT_INTAKE_ENGINE_VERSION,
+    policyVersion:CRUVIT_PLANT_INTAKE_ENGINE_POLICY_VERSION,
     canonicalSlug:slug,
     stage:INTAKE_STAGE.REQUESTED,
     finalApproved:false,
@@ -68,6 +70,7 @@ export function resolveCruvitPlantIntakeStage({
       endToEndRequired:true,
       finalApprovalAuthority:'full-cruvit-plant-approval-v1',
       noSilentGuessing:true,
+      finalApprovalRequiresResolvedVisualStates:true,
       paidActionsRequireExplicitOwnerSpendApproval:true,
       productionPromotionRequiresExplicitOwnerApproval:true,
       ownerReviewReservedForExceptions:true
@@ -136,7 +139,29 @@ export function resolveCruvitPlantIntakeStage({
     });
   }
 
-  if(fullApproval.approved===true && fullApproval.status==='FULL_CRUVIT_APPROVED'){
+  // Normalize explicit evidence before accepting even an old or contradictory
+  // approval result. Intake verifies the gate's result; it does not decide botany.
+  const blockers=new Set(fullApproval.blockingReasons||[]);
+  const visualCompletion=fullApproval.modules?.gardenDesign;
+  if(Array.isArray(visualCompletion?.unknownStates) && visualCompletion.unknownStates.length>0){
+    blockers.add('VISUAL_STATE_APPLICABILITY_UNRESOLVED');
+  }
+
+  if(fullApproval.approved===true && fullApproval.status==='FULL_CRUVIT_APPROVED' && blockers.size===0){
+    if(
+      visualCompletion?.allRequiredVisualStatesComplete!==true
+      || visualCompletion?.visualStateApplicabilityResolved===false
+      || visualCompletion?.minimumVisualCoverageReady===false
+    ){
+      const a=autoAction('RUN_FULL_CRUVIT_APPROVAL','Refresh the full approval result with explicit required-visual-state completion; a missing result is not a botanical UNKNOWN decision.');
+      return Object.freeze({
+        ...base,
+        stage:INTAKE_STAGE.BLOCKED,
+        blockingReasons:['VISUAL_STATE_COMPLETION_RESULT_REQUIRED'],
+        nextActions:[a],
+        systemActions:[a]
+      });
+    }
     return Object.freeze({
       ...base,
       stage:INTAKE_STAGE.FULL_CRUVIT_APPROVED,
@@ -155,7 +180,6 @@ export function resolveCruvitPlantIntakeStage({
     });
   }
 
-  const blockers=new Set(fullApproval.blockingReasons||[]);
   const ownerReview =
     fullApproval.status==='OWNER_REVIEW_REQUIRED'
     || blockers.has('CANONICAL_IDENTITY_NOT_READY');
@@ -182,6 +206,7 @@ export function resolveCruvitPlantIntakeStage({
     'REAL_SUITABILITY_ENRICHMENT_REQUIRED',
     'PLANT_KNOWLEDGE_NOT_READY',
     'SEASONALITY_RESEARCH_REQUIRED',
+    'VISUAL_STATE_APPLICABILITY_UNRESOLVED',
     'SIZE_AUTHORITY_ENRICHMENT_REQUIRED'
   ].filter(x=>blockers.has(x));
 
@@ -195,6 +220,9 @@ export function resolveCruvitPlantIntakeStage({
     }
     if(blockers.has('SEASONALITY_RESEARCH_REQUIRED')){
       actions.push(autoAction('RESEARCH_SEASONALITY','Resolve evergreen/deciduous/lifecycle evidence for correct variant planning.'));
+    }
+    if(blockers.has('VISUAL_STATE_APPLICABILITY_UNRESOLVED')){
+      actions.push(autoAction('RESEARCH_VISUAL_STATE_APPLICABILITY','Resolve source-backed REQUIRED, OPTIONAL or NOT_REQUIRED decisions for unresolved visual states. Preserve UNKNOWN until evidence resolves it; this action does not generate images.'));
     }
     if(blockers.has('SIZE_AUTHORITY_ENRICHMENT_REQUIRED')){
       actions.push(autoAction('RESEARCH_SIZE_AUTHORITY','Build explicit size authority; cultivar/rootstock context may remain context-required but must be explicit.'));
@@ -303,6 +331,7 @@ export function summarizeCruvitPlantIntake(rows=[]){
   for(const row of list) byStage[row.stage]=(byStage[row.stage]||0)+1;
   return Object.freeze({
     version:CRUVIT_PLANT_INTAKE_ENGINE_VERSION,
+    policyVersion:CRUVIT_PLANT_INTAKE_ENGINE_POLICY_VERSION,
     total:list.length,
     fullCruvitApproved:list.filter(x=>x.finalApproved).length,
     pending:list.filter(x=>!x.finalApproved).length,

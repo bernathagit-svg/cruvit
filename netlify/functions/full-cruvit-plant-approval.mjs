@@ -88,6 +88,7 @@ export default async(req)=>{
     return json(200,{
       ok:true,
       version:summary.version,
+      policyVersion:summary.policyVersion,
       total:summary.total,
       approved:summary.approved,
       blocked:summary.blocked,
@@ -104,6 +105,10 @@ export default async(req)=>{
         mediaReady:row.modules?.myGarden?.catalogMedia?.ready===true,
         doctorReady:row.modules?.plantDoctor?.ready===true,
         gardenDesignReady:row.modules?.gardenDesign?.ready===true,
+        minimumVisualCoverageReady:row.modules?.gardenDesign?.minimumVisualCoverageReady===true,
+        visualStateApplicabilityResolved:row.modules?.gardenDesign?.visualStateApplicabilityResolved===true,
+        allRequiredVisualStatesComplete:row.modules?.gardenDesign?.allRequiredVisualStatesComplete===true,
+        unknownVisualStates:row.modules?.gardenDesign?.unknownStates||[],
         missingVisualVariants:row.modules?.gardenDesign?.missingRequiredCount??null,
         sizeStates:row.modules?.gardenDesign?.sizeAuthority?.states||[]
       }))
