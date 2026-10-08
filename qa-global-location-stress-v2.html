@@ -1,0 +1,75 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CRUVIT Global Location Stress Harness V2</title>
+<style>
+body{font:14px system-ui;margin:20px;background:#111;color:#eee} pre{white-space:pre-wrap;background:#1b1b1b;padding:12px;border-radius:8px}
+iframe{width:1px;height:1px;border:0;position:absolute;left:-9999px}
+.pass{color:#8fe3a1}.fail{color:#ff9c9c}
+</style>
+<h1>CRUVIT Global Location Stress Harness V2</h1>
+<p id="status">Running…</p><pre id="out"></pre><div id="host"></div>
+<script>
+const SITES=[
+{id:'tromso',label:'Tromsø, Norway',lat:69.6492,lon:18.9553,class:'subarctic'},
+{id:'reykjavik',label:'Reykjavík, Iceland',lat:64.1466,lon:-21.9426,class:'subpolar-oceanic'},
+{id:'helsinki',label:'Helsinki, Finland',lat:60.1699,lon:24.9384,class:'cold-temperate'},
+{id:'london',label:'London, United Kingdom',lat:51.5074,lon:-0.1278,class:'oceanic-temperate'},
+{id:'denver',label:'Denver, Colorado, USA',lat:39.7392,lon:-104.9903,class:'continental-highland'},
+{id:'tel-aviv',label:'Tel Aviv, Israel',lat:32.0853,lon:34.7818,class:'mediterranean'},
+{id:'malaga',label:'Málaga, Spain',lat:36.7213,lon:-4.4214,class:'mediterranean-warm'},
+{id:'cairo',label:'Cairo, Egypt',lat:30.0444,lon:31.2357,class:'hot-desert'},
+{id:'dubai',label:'Dubai, UAE',lat:25.2048,lon:55.2708,class:'hot-desert-coastal'},
+{id:'riyadh',label:'Riyadh, Saudi Arabia',lat:24.7136,lon:46.6753,class:'hot-desert-continental'},
+{id:'singapore',label:'Singapore',lat:1.2897,lon:103.8501,class:'equatorial'},
+{id:'kochi',label:'Kochi, India',lat:9.9312,lon:76.2673,class:'humid-tropical'},
+{id:'bangkok',label:'Bangkok, Thailand',lat:13.7563,lon:100.5018,class:'tropical-monsoon'},
+{id:'miami',label:'Miami, Florida, USA',lat:25.7617,lon:-80.1918,class:'humid-subtropical'},
+{id:'phoenix',label:'Phoenix, Arizona, USA',lat:33.4484,lon:-112.074,class:'hot-desert'},
+{id:'quito',label:'Quito, Ecuador',lat:-0.1807,lon:-78.4678,class:'equatorial-highland'},
+{id:'nairobi',label:'Nairobi, Kenya',lat:-1.2921,lon:36.8219,class:'tropical-highland'},
+{id:'cape-town',label:'Cape Town, South Africa',lat:-33.9249,lon:18.4241,class:'southern-mediterranean'},
+{id:'johannesburg',label:'Johannesburg, South Africa',lat:-26.2041,lon:28.0473,class:'subtropical-highland'},
+{id:'sydney',label:'Sydney, Australia',lat:-33.8688,lon:151.2093,class:'humid-subtropical'},
+{id:'melbourne',label:'Melbourne, Australia',lat:-37.8136,lon:144.9631,class:'oceanic'},
+{id:'auckland',label:'Auckland, New Zealand',lat:-36.8509,lon:174.7645,class:'oceanic-mild'},
+{id:'santiago',label:'Santiago, Chile',lat:-33.4489,lon:-70.6693,class:'mediterranean-continental'},
+{id:'ushuaia',label:'Ushuaia, Argentina',lat:-54.8019,lon:-68.303,class:'subpolar-oceanic'}
+];
+const PLANTS=['mango','apple','pomegranate','lemon','lavender','hydrangea'];
+const REQUIRE_GLOBAL_READY=new URLSearchParams(location.search).get('requireGlobalReady')==='1';
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function waitFor(fn,ms=30000){const t=Date.now();while(Date.now()-t<ms){try{if(fn())return true}catch{}await sleep(100)}return false}
+function near(a,b,eps=.0002){return Number.isFinite(+a)&&Number.isFinite(+b)&&Math.abs(+a-+b)<=eps}
+(async()=>{
+ const iframe=document.createElement('iframe'); iframe.src='../app.html?globalStressV2='+Date.now(); document.getElementById('host').appendChild(iframe);
+ await new Promise((res,rej)=>{iframe.onload=res;iframe.onerror=rej});
+ const cw=iframe.contentWindow;
+ const ready=await waitFor(()=>cw&&typeof cw.setAppLocation==='function'&&typeof cw.getAppClimateProfile==='function'&&cw.cruvitSpecificPlantSuitability&&typeof cw.smartRecDeriveValidatedOutcomes==='function');
+ if(!ready)throw new Error('CRUVIT runtime APIs not ready');
+ const rows=[];const failures=[];
+ for(const site of SITES){
+  await cw.setAppLocation({label:site.label,resolvedCity:site.label.split(',')[0],lat:site.lat,lon:site.lon,source:'manual'},{skipServerPersist:true});
+  await sleep(500);
+  const loc=cw.getAppLocation(), cp=cw.getAppClimateProfile();
+  const known=cp?.structuralClimateStatus==='known'&&cp?.structuralClimate?.status==='known';
+  const prov=cp?.structuralClimate?.provenance||{};
+  if(known&&(!near(prov.lat,site.lat)||!near(prov.lon,site.lon))) failures.push({site:site.id,code:'STRUCTURAL_COORDINATE_LEAK',provenance:{lat:prov.lat,lon:prov.lon},expected:{lat:site.lat,lon:site.lon}});
+  if(REQUIRE_GLOBAL_READY&&!known) failures.push({site:site.id,code:'GLOBAL_AUTHORITY_MISSING',reason:prov.reason||null});
+  const plantResults={};
+  for(const slug of PLANTS){
+   const p=cw.eval('PLANT_LIBRARY.find(x=>x.slug==='+JSON.stringify(slug)+')');
+   if(!p){failures.push({site:site.id,plant:slug,code:'PLANT_NOT_FOUND'});continue}
+   const fit=cw.cruvitSpecificPlantSuitability.evaluate(p);
+   const out=cw.smartRecDeriveValidatedOutcomes(p,fit);
+   if(!known&&(fit.positiveRecommendationEligible===true||['good','excellent'].includes(String(fit.recommendationLevel)))) failures.push({site:site.id,plant:slug,code:'POSITIVE_WITHOUT_CLIMATE_AUTHORITY',level:fit.recommendationLevel});
+   plantResults[slug]={level:fit.recommendationLevel,score:fit.suitabilityScore,positiveEligible:fit.positiveRecommendationEligible!==false,survival:out?.survival,growth:out?.growth,flowering:out?.flowering,fruiting:out?.fruiting,overall:out?.overall};
+  }
+  rows.push({site:site.id,class:site.class,storedClimate:loc?.climate||'',structuralStatus:cp?.structuralClimateStatus||null,reason:prov.reason||null,broad:cp?.broadClimate||null,freezing:cp?.freezingRisk||null,coldMin:cp?.coldestMonthMeanMinC??null,thermal:cp?.thermalRegime||null,plants:plantResults});
+ }
+ const summary={contract:'cruvit-global-location-stress-v2',requireGlobalReady:REQUIRE_GLOBAL_READY,locationCount:SITES.length,plantCount:PLANTS.length,evaluationCount:SITES.length*PLANTS.length,knownLocations:rows.filter(r=>r.structuralStatus==='known').length,unknownLocations:rows.filter(r=>r.structuralStatus!=='known').length,failureCount:failures.length,failures,rows};
+ window.CruvitGlobalLocationStressV2=summary;
+ document.getElementById('out').textContent=JSON.stringify(summary,null,2);
+ const st=document.getElementById('status');st.textContent=failures.length?'FAIL '+failures.length:'PASS';st.className=failures.length?'fail':'pass';
+ if(failures.length) console.error('CRUVIT_GLOBAL_LOCATION_STRESS_V2_FAIL',summary); else console.log('CRUVIT_GLOBAL_LOCATION_STRESS_V2_PASS',summary);
+})().catch(err=>{document.getElementById('status').textContent='HARNESS ERROR';document.getElementById('status').className='fail';document.getElementById('out').textContent=String(err?.stack||err);console.error(err)});
+</script>
