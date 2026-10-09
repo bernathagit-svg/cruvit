@@ -52,7 +52,7 @@ body{display:grid;place-items:start center;font-family:Arial,sans-serif;overflow
 
 <script>
 const screens=Array.from({length:8},(_,i)=>(window.__PI?.[i]||[]).join(""));
-const expected=[2310742,3406426,1606922,2249934,2302594,2456618,2020150,2405466];
+const expected=[2310742,3406426,1606922,2113598,2302594,2456618,2020150,2405466];
 if(screens.some((s,i)=>s.length!==expected[i])) throw new Error("Approved asset integrity check failed");
 const titles=["Identify","Camera","Analyzing","Result","Plant Profile","Care","Suitability","Save to My Garden"];
 const hotspots={
