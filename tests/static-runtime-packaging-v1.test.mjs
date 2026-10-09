@@ -132,7 +132,7 @@ test('two independent static builds remain deterministic and artifact-stable',()
   assert.equal(ra.publicFileCount,1842);
   assert.equal(ra.serverRuntimeFileCount,75);
   // WTP-R1 changes only wtp-premium-v1/index.html in the public artifact.
-  assert.equal(ra.outputManifestSha256,'260f9999081a16923f12a9cba88d1cf9b0d2e73e705acc4bf372f722459321db');
+  assert.equal(ra.outputManifestSha256,'2ed2f2c441ca055feaaa7df0b942d22d0180fd50ae9c1cfa35d2eb0d41483dc9');
   assert.equal(ra.outputManifestSha256,rb.outputManifestSha256);
   assert.deepEqual(ra.publicManifest,rb.publicManifest);
   assert.equal(ra.secretFindings.length,0);
