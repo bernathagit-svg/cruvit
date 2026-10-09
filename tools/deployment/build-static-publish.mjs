@@ -9,22 +9,88 @@ const here=path.dirname(fileURLToPath(import.meta.url));
 const repoRoot=path.resolve(here,'..','..');
 const manifestPath=path.join(repoRoot,'config','packaging','static-runtime-manifest-v1.json');
 const dormantPath=path.join(repoRoot,'config','packaging','dormant-reference-garden-design-pc-wand-v1.json');
+const sourceLockPath=path.join(repoRoot,'config','packaging','static-runtime-source-lock-v1.json');
 const manifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));
 const dormant=JSON.parse(fs.readFileSync(dormantPath,'utf8'));
+const sourceLock=JSON.parse(fs.readFileSync(sourceLockPath,'utf8'));
+const ALLOWED_CLASSIFICATIONS=new Set(['PUBLIC_STATIC','SERVER_RUNTIME','BUILD_ONLY','HISTORICAL_EVIDENCE']);
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 const posix=p=>p.split(path.sep).join('/');
 const git=(args)=>cp.execFileSync('git',args,{cwd:repoRoot,encoding:'utf8',maxBuffer:16_000_000}).trimEnd();
 
-export function classifyPath(rel, doc=manifest){
+function ruleMatches(rel,rule){
+  return (rule.exact||[]).includes(rel)
+    || (rule.prefixes||[]).some(p=>rel.startsWith(p))
+    || (rule.suffixes||[]).some(x=>rel.endsWith(x));
+}
+export function proposalMatches(rel,doc=manifest){
   const matches=[];
-  for(const rule of doc.classifications){
-    if((rule.exact||[]).includes(rel) || (rule.prefixes||[]).some(p=>rel.startsWith(p)) || (rule.suffixes||[]).some(x=>rel.endsWith(x))){
-      matches.push({classification:rule.classification,reason:rule.reason});
-    }
+  for(let i=0;i<doc.classifications.length;i++){
+    const rule=doc.classifications[i];
+    if(ruleMatches(rel,rule)) matches.push({ruleIndex:i,classification:rule.classification,reason:rule.reason});
   }
+  return matches;
+}
+export function classifyPath(rel,doc=manifest){
+  const matches=proposalMatches(rel,doc);
   if(!matches.length) throw new Error('UNCLASSIFIED_SOURCE_PATH:'+rel);
   return matches[0];
 }
+function uniqueSorted(values){return [...new Set(values)].sort();}
+function tracked(){
+  return git(['ls-files','-z']).split('\0').filter(Boolean).sort();
+}
+export function validateSourceLock({trackedPaths=null,lock=sourceLock,proposalDoc=manifest,checkFilesystem=trackedPaths===null}={}){
+  const actual=(trackedPaths?[...trackedPaths]:tracked()).sort();
+  const errors=[];
+  const rows=Array.isArray(lock?.paths)?lock.paths:[];
+  const seen=new Map();
+  for(const row of rows){
+    if(!row||typeof row.path!=='string'){errors.push({code:'LOCK_ROW_INVALID'});continue;}
+    if(seen.has(row.path)){errors.push({code:'LOCK_DUPLICATE_PATH',path:row.path});continue;}
+    seen.set(row.path,row);
+    if(!ALLOWED_CLASSIFICATIONS.has(row.classification)) errors.push({code:'LOCK_CLASSIFICATION_INVALID',path:row.path,classification:row.classification});
+  }
+  if(lock?.pathCount!==rows.length) errors.push({code:'LOCK_PATH_COUNT_METADATA_MISMATCH',declared:lock?.pathCount,actual:rows.length});
+  const actualSet=new Set(actual);
+  for(const rel of actual) if(!seen.has(rel)) errors.push({code:'TRACKED_PATH_NOT_LOCKED',path:rel});
+  for(const rel of seen.keys()) if(!actualSet.has(rel)) errors.push({code:'LOCKED_PATH_DISAPPEARED',path:rel});
+  if(checkFilesystem){
+    for(const rel of actual){
+      const abs=path.join(repoRoot,...rel.split('/'));
+      if(!fs.existsSync(abs)) errors.push({code:'TRACKED_PATH_MISSING_ON_DISK',path:rel});
+    }
+  }
+  const counts={};
+  for(const rel of actual){
+    const row=seen.get(rel);
+    if(!row) continue;
+    counts[row.classification]=(counts[row.classification]||0)+1;
+    const current=uniqueSorted(proposalMatches(rel,proposalDoc).map(x=>x.classification));
+    const locked=uniqueSorted(row.proposalClassifications||[]);
+    if(JSON.stringify(current)!==JSON.stringify(locked)){
+      errors.push({code:'PROPOSAL_CLASSIFICATION_DRIFT',path:rel,locked,current});
+      continue;
+    }
+    if(!current.length){
+      errors.push({code:'PROPOSAL_CLASSIFICATION_MISSING',path:rel});
+    } else if(current.length===1){
+      if(current[0]!==row.classification) errors.push({code:'LOCK_CLASSIFICATION_MISMATCH',path:rel,locked:row.classification,proposed:current[0]});
+      if(row.reviewedConflictResolution) errors.push({code:'STALE_CONFLICT_RESOLUTION',path:rel});
+    } else {
+      if(!current.includes(row.classification)) errors.push({code:'LOCK_CLASSIFICATION_NOT_IN_PROPOSALS',path:rel,locked:row.classification,current});
+      if(row.reviewedConflictResolution!==row.classification) errors.push({code:'CONFLICTING_PROPOSALS_UNRESOLVED',path:rel,current});
+    }
+  }
+  if(lock?.classificationCounts){
+    const expected=lock.classificationCounts;
+    for(const key of new Set([...Object.keys(expected),...Object.keys(counts)])){
+      if((expected[key]||0)!==(counts[key]||0)) errors.push({code:'LOCK_CLASSIFICATION_COUNT_MISMATCH',classification:key,declared:expected[key]||0,actual:counts[key]||0});
+    }
+  }
+  return {ok:errors.length===0,errors,trackedPathCount:actual.length,lockedPathCount:rows.length,classificationCounts:counts,ruleConflictCount:rows.filter(r=>(r.proposalClassifications||[]).length>1).length};
+}
+function sourceLockMap(){return new Map(sourceLock.paths.map(row=>[row.path,row]));}
 
 export function validateDormantReference({sourceFile=path.join(repoRoot,dormant.sourcePath),record=dormant}={}){
   const b=fs.readFileSync(sourceFile), s=b.toString('utf8');
@@ -50,7 +116,6 @@ export function validateDormantReference({sourceFile=path.join(repoRoot,dormant.
   if(withoutCss.includes('pc-wand-btn')) failures.push('JAVASCRIPT_OR_TEMPLATE_CONSUMER_FOUND');
   return {ok:failures.length===0,failures,actual};
 }
-
 function parseArgs(argv){
   const out={out:manifest.outputDirectory,receipt:'.netlify/static-packaging-receipt.json'};
   for(let i=0;i<argv.length;i++){
@@ -65,9 +130,6 @@ function safeOutput(abs){
   if(out===root || !out.startsWith(root+path.sep)) throw new Error('OUTPUT_MUST_BE_SEPARATE_SUBDIRECTORY');
   if(out.includes(path.sep+'.git'+path.sep)) throw new Error('OUTPUT_INSIDE_GIT_FORBIDDEN');
   return out;
-}
-function tracked(){
-  return git(['ls-files','-z']).split('\0').filter(Boolean).sort();
 }
 function copyFile(rel,outRoot){
   const src=path.join(repoRoot,...rel.split('/')), dst=path.join(outRoot,...rel.split('/'));
@@ -149,24 +211,29 @@ export function buildStatic({out,receipt}){
   fs.mkdirSync(output,{recursive:true});
   const dormantCheck=validateDormantReference();
   if(!dormantCheck.ok) throw new Error('DORMANT_REFERENCE_INVALID:'+dormantCheck.failures.join(','));
-  const sourceFiles=tracked(), publicRows=[], excludedRows=[], serverRows=[];
+  const sourceFiles=tracked();
+  const lockCheck=validateSourceLock({trackedPaths:sourceFiles,lock:sourceLock,proposalDoc:manifest,checkFilesystem:true});
+  if(!lockCheck.ok) throw new Error('SOURCE_LOCK_INVALID:'+JSON.stringify(lockCheck.errors.slice(0,12)));
+  const lockMap=sourceLockMap(), publicRows=[], excludedRows=[], serverRows=[];
   for(const rel of sourceFiles){
-    const cls=classifyPath(rel);
+    const row=lockMap.get(rel);
+    if(!row) throw new Error('SOURCE_LOCK_MISSING_AT_BUILD:'+rel);
+    const cls={classification:row.classification,reason:row.reason};
     if(cls.classification==='PUBLIC_STATIC'){
       const why=forbiddenPublic(rel);
       if(why) throw new Error('FORBIDDEN_PUBLIC_PATH:'+rel+':'+why);
       const b=copyFile(rel,output);
       publicRows.push({path:rel,bytes:b.length,sha256:hash(b),classification:cls.classification,reason:cls.reason});
     } else {
-      const row={path:rel,classification:cls.classification,reason:cls.reason};
-      excludedRows.push(row);
-      if(cls.classification==='SERVER_RUNTIME') serverRows.push(row);
+      const excluded={path:rel,classification:cls.classification,reason:cls.reason};
+      excludedRows.push(excluded);
+      if(cls.classification==='SERVER_RUNTIME') serverRows.push(excluded);
     }
   }
   const publicSet=new Set(publicRows.map(x=>x.path));
   for(const s of manifest.publicSentinels) if(!publicSet.has(s)) throw new Error('MISSING_PUBLIC_SENTINEL:'+s);
   for(const [p,expected] of Object.entries(manifest.required13ImpactPaths)){
-    const got=classifyPath(p).classification;
+    const got=lockMap.get(p)?.classification;
     if(got!==expected) throw new Error('IMPACT13_CLASSIFICATION_MISMATCH:'+p+':'+got);
   }
   const refCheck=checkLiteralReferences(output,publicSet);
@@ -182,6 +249,7 @@ export function buildStatic({out,receipt}){
     schemaVersion:1,
     sourceBaseline:manifest.baselineSourceSha,
     sourceTree:manifest.baselineSourceTree,
+    sourceLock:{path:posix(path.relative(repoRoot,sourceLockPath)),sha256:hash(fs.readFileSync(sourceLockPath)),pathCount:lockCheck.lockedPathCount,classificationCounts:lockCheck.classificationCounts,ruleConflictCount:lockCheck.ruleConflictCount},
     outputDirectory:posix(path.relative(repoRoot,output)),
     publicFileCount:publicRows.length,
     excludedFileCount:excludedRows.length,
@@ -211,6 +279,8 @@ if(isMain()){
       outputManifestSha256:r.outputManifestSha256,
       excludedFileCount:r.excludedFileCount,
       serverRuntimeFileCount:r.serverRuntimeFileCount,
+      sourceLockPathCount:r.sourceLock.pathCount,
+      sourceLockSha256:r.sourceLock.sha256,
       localReferenceCount:r.localReferenceCount
     },null,2));
   } catch(e){
