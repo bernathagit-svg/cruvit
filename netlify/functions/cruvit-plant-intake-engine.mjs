@@ -11,7 +11,7 @@ import {
   resolveCruvitPlantIntakeStage,
   summarizeCruvitPlantIntake
 } from '../../modules/catalog/cruvit-plant-intake-engine-v1.js';
-import { fetchCanonicalCatalogRow } from './_plant-full-onboarding-gate-v1.mjs';
+import { fetchCanonicalCatalogRow } from '../function-helpers/plant-full-onboarding-gate-v1.mjs';
 
 function json(status,body){
   return new Response(JSON.stringify(body),{

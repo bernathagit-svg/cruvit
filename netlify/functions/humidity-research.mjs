@@ -1,4 +1,4 @@
-import { fetchCanonicalCatalogRow } from './_plant-full-onboarding-gate-v1.mjs';
+import { fetchCanonicalCatalogRow } from '../function-helpers/plant-full-onboarding-gate-v1.mjs';
 import { extractHumidityEvidence, deriveHumidityTrait } from '../../modules/catalog/humidity-evidence-gate-v1.js';
 import { normalizeCatalogSourceType } from '../../modules/personal-domain/catalog-source-policy-v1.js';
 

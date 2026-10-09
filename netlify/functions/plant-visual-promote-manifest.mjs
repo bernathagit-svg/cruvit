@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { evaluateLiveFullPlantOnboarding } from './_plant-full-onboarding-gate-v1.mjs';
+import { evaluateLiveFullPlantOnboarding } from '../function-helpers/plant-full-onboarding-gate-v1.mjs';
 import {
   S3Client,
   GetObjectCommand,

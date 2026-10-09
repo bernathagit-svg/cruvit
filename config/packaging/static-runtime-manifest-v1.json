@@ -138,7 +138,11 @@
       "prefixes": [
         "netlify/functions/"
       ],
-      "reason": "Netlify Functions source/bundle input; excluded from public static output."
+      "reason": "Netlify Functions source/bundle input; excluded from public static output.",
+      "exact": [
+        "netlify/function-helpers/catalog-design-metadata-v1.mjs",
+        "netlify/function-helpers/plant-full-onboarding-gate-v1.mjs"
+      ]
     },
     {
       "classification": "BUILD_ONLY",

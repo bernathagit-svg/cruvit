@@ -20,7 +20,7 @@ import {
 import {
   actualSpendUsdFromUsage
 } from '../../modules/garden-design/asset-factory-v1/total-api-cost-v1.js';
-import { evaluateLiveFullPlantOnboarding } from './_plant-full-onboarding-gate-v1.mjs';
+import { evaluateLiveFullPlantOnboarding } from '../function-helpers/plant-full-onboarding-gate-v1.mjs';
 
 const MANIFEST_CONTRACT = 'plant-visual-production-wave-execution-manifest-v1';
 const APPROVAL_CONTRACT = 'plant-visual-production-wave-spend-approval-v1';

@@ -1,5 +1,5 @@
-import { fetchCanonicalCatalogRow } from './_plant-full-onboarding-gate-v1.mjs';
-import { hydrateDesignMetadataFromApprovedPacket } from './_catalog-design-metadata-v1.mjs';
+import { fetchCanonicalCatalogRow } from '../function-helpers/plant-full-onboarding-gate-v1.mjs';
+import { hydrateDesignMetadataFromApprovedPacket } from '../function-helpers/catalog-design-metadata-v1.mjs';
 import { evaluateFullPlantOnboarding } from '../../modules/catalog/full-plant-onboarding-gate-v1.js';
 import { buildPlantVisualVariantPlan } from '../../modules/garden-design/asset-factory-v1/plant-visual-variant-plan-v1.js';
 import { buildPlantVisualVariantGapPlan } from '../../modules/garden-design/asset-factory-v1/plant-visual-variant-gap-plan-v1.js';

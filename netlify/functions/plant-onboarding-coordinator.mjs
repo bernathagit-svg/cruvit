@@ -1,6 +1,6 @@
 import { evaluateFullPlantOnboarding } from '../../modules/catalog/full-plant-onboarding-gate-v1.js';
 import { coordinatePlantOnboarding } from '../../modules/catalog/plant-onboarding-coordinator-v1.js';
-import { fetchCanonicalCatalogRow } from './_plant-full-onboarding-gate-v1.mjs';
+import { fetchCanonicalCatalogRow } from '../function-helpers/plant-full-onboarding-gate-v1.mjs';
 
 function json(status, body) {
   return new Response(JSON.stringify(body), {

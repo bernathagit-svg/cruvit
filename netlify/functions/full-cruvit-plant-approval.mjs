@@ -2,8 +2,8 @@ import {
   evaluateFullCruvitPlantApproval,
   summarizeFullCruvitPlantApproval
 } from '../../modules/catalog/full-cruvit-plant-approval-v1.js';
-import { fetchCanonicalCatalogRow } from './_plant-full-onboarding-gate-v1.mjs';
-import { hydrateDesignMetadataFromApprovedPacket } from './_catalog-design-metadata-v1.mjs';
+import { fetchCanonicalCatalogRow } from '../function-helpers/plant-full-onboarding-gate-v1.mjs';
+import { hydrateDesignMetadataFromApprovedPacket } from '../function-helpers/catalog-design-metadata-v1.mjs';
 
 function json(status,body){
   return new Response(JSON.stringify(body),{

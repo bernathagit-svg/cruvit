@@ -1,4 +1,4 @@
-import { fetchCanonicalCatalogRow } from './_plant-full-onboarding-gate-v1.mjs';
+import { fetchCanonicalCatalogRow } from '../function-helpers/plant-full-onboarding-gate-v1.mjs';
 import { extractExplicitLifecycle, combineLifecycleEvidence } from '../../modules/catalog/lifecycle-evidence-gate-v1.js';
 import { evaluateSourceSupportedEligibility, normalizeCatalogSourceType } from '../../modules/personal-domain/catalog-source-policy-v1.js';
 

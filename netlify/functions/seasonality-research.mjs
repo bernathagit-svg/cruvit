@@ -1,4 +1,4 @@
-import { fetchCanonicalCatalogRow } from './_plant-full-onboarding-gate-v1.mjs';
+import { fetchCanonicalCatalogRow } from '../function-helpers/plant-full-onboarding-gate-v1.mjs';
 import {
   extractExplicitLeafHabit,
   combineLeafHabitEvidence
