@@ -1,0 +1,60 @@
+name: Disposable static-packaging candidate - exact SHA Linux validation
+run-name: Validate exact packaging candidate 5aafb7b (no merge or deploy)
+on:
+  push:
+    branches: [ci/static-packaging-hosted-validation-20261009]
+    paths:
+      - '.github/workflows/static-packaging-hosted-validation-20261009.yml'
+      - '.github/validation/static-packaging-20261009/**'
+permissions:
+  contents: read
+jobs:
+  validate-exact-packaging:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PRODUCT_SHA: 5aafb7bcaafda8d55d3684ff557aaf9f0a457834
+      PRODUCT_TREE: 8d42b0fda9e0d4c99a0b845f46459a780c581d66
+      SOURCE_LOCK_SHA256: fe1ae38c94c5b50b164607842e3fafce099f6d802965687477f826617c6b1d8c
+      OUTPUT_MANIFEST_SHA256: 5f0873ee503e51ce1d1647cf5b0fa7e25aabcc8a2e6a5a9628f8f6b215e87aec
+      WORKFLOW_CARRIER_SHA: ${{ github.sha }}
+    steps:
+      - name: Checkout validation tooling separately
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          repository: bernathagit-svg/cruvit
+          ref: ${{ github.sha }}
+          path: validation
+          fetch-depth: 1
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Checkout exact frozen product candidate
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          repository: bernathagit-svg/cruvit
+          ref: 5aafb7bcaafda8d55d3684ff557aaf9f0a457834
+          path: product
+          fetch-depth: 2
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Set up Node 22 with no dependency installation or package cache
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - name: Run exact-SHA hosted packaging validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          node "$GITHUB_WORKSPACE/validation/.github/validation/static-packaging-20261009/run-validation.mjs" "$GITHUB_WORKSPACE/product" "$RUNNER_TEMP/cruvit-static-packaging-evidence"
+      - name: Upload hosted packaging evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
+        with:
+          name: static-packaging-5aafb7b-linux-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/cruvit-static-packaging-evidence/
+          if-no-files-found: error
+          retention-days: 14
+          overwrite: false
