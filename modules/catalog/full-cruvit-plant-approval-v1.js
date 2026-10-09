@@ -9,6 +9,7 @@
  */
 import { evaluateFullPlantOnboarding } from './full-plant-onboarding-gate-v1.js';
 import { catalogRowToRuntimePlant } from './canonical-catalog-persistence-contract-v1.js';
+import { evaluateCatalogIdentityAuthority } from './catalog-identity-authority-v1.js';
 import { classifyPlantDataReadiness } from '../personal-domain/plant-data-contract-v1.js';
 import { buildPlantVisualVariantPlan } from '../garden-design/asset-factory-v1/plant-visual-variant-plan-v1.js';
 import { buildPlantVisualVariantGapPlan } from '../garden-design/asset-factory-v1/plant-visual-variant-gap-plan-v1.js';
@@ -36,37 +37,6 @@ function identityRecord(registry, slug){
     norm(row?.canonicalSlug)===key
     || (row?.aliasSlugs||[]).some(a=>norm(a)===key)
   )||null;
-}
-
-function verifiedCatalogIdentityProvenance(catalogRow, runtimePlant){
-  const slug=norm(runtimePlant?.canonicalSlug || catalogRow?.slug);
-  const scientific=norm(runtimePlant?.scientific || catalogRow?.scientific_name);
-  if(!slug || !scientific) return {ready:false,reason:'IDENTITY_FIELDS_MISSING'};
-  if(catalogRow?.needs_review===true || norm(catalogRow?.verification_state)!=='verified'){
-    return {ready:false,reason:'CATALOG_IDENTITY_NOT_VERIFIED'};
-  }
-  if(/\bspp\.?\b/i.test(scientific) || /^various\b/i.test(scientific)){
-    return {ready:false,reason:'SCIENTIFIC_IDENTITY_AMBIGUOUS'};
-  }
-  const provenance=Array.isArray(catalogRow?.provenance)?catalogRow.provenance:[];
-  const source=provenance.find(row=>{
-    const pi=row?.plantIdentity||{};
-    const claims=Array.isArray(row?.assertedClaims)?row.assertedClaims:[];
-    return Boolean(
-      text(row?.sourceId)
-      && norm(pi.canonicalSlug)===slug
-      && norm(pi.acceptedScientificName)===scientific
-      && claims.some(c=>norm(c?.field)==='scientific' && norm(c?.status)==='asserted')
-    );
-  })||null;
-  return {
-    ready:Boolean(source),
-    reason:source?null:'SOURCE_BACKED_IDENTITY_PROVENANCE_REQUIRED',
-    authority:source?'VERIFIED_CATALOG_IDENTITY_PROVENANCE':null,
-    sourceId:source?.sourceId||null,
-    canonicalSlug:source?.plantIdentity?.canonicalSlug||null,
-    acceptedScientificName:source?.plantIdentity?.acceptedScientificName||null
-  };
 }
 
 function catalogMediaReady(row={}, coverageRecord=null){
@@ -290,7 +260,7 @@ export function evaluateFullCruvitPlantApproval({
   // Catalog fallback is allowed only when no registry record exists and the verified
   // canonical catalog row carries source-backed slug + scientific identity provenance.
   const catalogIdentity=!identity
-    ?verifiedCatalogIdentityProvenance(catalogRow,runtimePlant)
+    ?evaluateCatalogIdentityAuthority(catalogRow,{canonicalSlug:runtimePlant?.canonicalSlug || catalogRow?.slug, scientific:runtimePlant?.scientific || catalogRow?.scientific_name})
     :{ready:false,reason:'REGISTRY_ENTRY_PRESENT'};
   const identityReady=registryIdentityReady || catalogIdentity.ready===true;
 
