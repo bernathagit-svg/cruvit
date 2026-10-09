@@ -1,0 +1,14 @@
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),crypto=require('node:crypto'),cp=require('node:child_process');
+const repo=path.resolve(__dirname,'../..');
+const base='9b5635c93b3873e3680ba520e4ff0fe8896c8c06';
+const mockSha='7dfd2e9bfa4c6f981c86d046ccca4125afa19c7ab5381daaca53567ed00be166';
+const expected=['c7f5e042079b0739a8a161283da51d94a81a21b7ff017d5c283d7f3817f881e9','5d4b74d17ebb12cf29e069c0c2a02d685b05554b2267cccadd45f29e67593dd0','13bba1f5b4258a3e97f3034ab01d01b69b069d102809682fc3ed00d4bbc0e906','02a7680806e81ff436c747fef013c878ae1a1f49a961917963d60c069e19f4cd','4b0e6ca479a27c9bf7df1ce0601d78dc00683b956a410267c438aa9bdc7e7917','2594f7c4ac4c5ad6f3ad6910d36c9e29f3d06e485ebee32f129d8de9cf5d67e1','1f871a902534f996e01a2ba91cddde69a76c09440c196d18a8b2f493154e6cd6'];
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+function screen(i){const d=path.join(repo,'core-v1/plant-identification/assets');const names=fs.readdirSync(d).filter(n=>new RegExp('^s'+(i+1)+'-\\d+\\.js$').test(n)).sort();const ctx={window:{}};vm.createContext(ctx);for(const n of names)vm.runInContext(fs.readFileSync(path.join(d,n),'utf8'),ctx);const data=ctx.window.__PI[i].join('');const raw=Buffer.from(data.replace(/^data:image\/png;base64,/,'').replace(/\s+$/,''),'base64');return {data,raw};}
+test('PI-01 through PI-07 stay byte-identical',()=>{for(let i=0;i<7;i++)assert.equal(sha(screen(i).raw),expected[i]);});
+test('PI-08 decodes byte-for-byte to approved DA-02 mockup',()=>{const s=screen(7);assert.equal(s.raw.length,1552730);assert.equal(sha(s.raw),mockSha);assert.equal(s.data.length,2405466);});
+test('DA-01 hotspot and PI HTML behavior are unchanged',()=>{const b=fs.readFileSync(path.join(repo,'core-v1/plant-identification/index.html'));assert.equal(sha(b),'3b0c5c1f379a1f932c508d8e3afcc7b51e3082c5804048daeb74ec378a50e35b');assert.match(b.toString(),/7:\[\{x:10,y:78,w:80,h:5,to:0,label:"Save to My Garden"\}\]/);});
+test('save controller, atomic contract/repository and preview domain are unchanged',()=>{for(const p of ['core-v1/plant-identification/atomic/save-controller.mjs','core-v1/plant-identification/atomic/add-plant-contract.js','core-v1/plant-identification/atomic/add-plant-write-repository.js','core-v1/plant-identification/atomic/preview-domain.mjs']){const a=cp.execFileSync('git',['-C',repo,'show',base+':'+p]);assert.deepEqual(fs.readFileSync(path.join(repo,p)),a,p);}});
+test('all other Core files remain equal to accepted baseline',()=>{const changed=cp.execFileSync('git',['-C',repo,'diff','--name-only',base,'--','core-v1'],{encoding:'utf8'}).trim().split('\n').filter(Boolean).sort();assert.deepEqual(changed,['core-v1/plant-identification/assets/s8-00.js','core-v1/plant-identification/assets/s8-01.js','core-v1/plant-identification/assets/s8-02.js','core-v1/plant-identification/assets/s8-03.js']);});
