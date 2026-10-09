@@ -12,8 +12,7 @@ import {
   PHYSICAL_SCALE_RENDERING_INVARIANTS,
   computePhysicalSceneScale
 } from './physical-scale-foundation-v1.js';
-import { RANGE_BANDS } from './physical-scale-evidence-v1.js';
-import { mangoDimensionLeak } from './generic-tree-physical-scale-v1.js';
+import { RANGE_BANDS, mangoDimensionLeak } from './physical-scale-evidence-v1.js';
 
 export const GARDEN_DESIGN_SIZE_AUTHORITY_INTEGRATION_VERSION = 'garden-design-size-authority-integration-v1';
 export const TREE_SIZE_AUTHORITY_GLOBAL_ACTIVATION_GATE_VERSION = 'tree-size-authority-global-activation-gate-v1';

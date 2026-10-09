@@ -10,9 +10,9 @@ import {
   computePhysicalSceneScale
 } from './physical-scale-foundation-v1.js';
 import {
-  CALIBRATION_BOTANICAL_SIZE_EVIDENCE,
   RANGE_BANDS,
   SIZE_SCENARIOS,
+  mangoDimensionLeak,
   resolvePhysicalScaleEvidence
 } from './physical-scale-evidence-v1.js';
 import { mayUseTreePhysicalScale } from './multi-form-plant-architecture-v1.js';
@@ -20,6 +20,8 @@ import {
   BOTANICAL_SIZE_EVIDENCE_PRECEDENCE,
   classifyBotanicalSizePrecedence
 } from './botanical-size-evidence-contract-v2.js';
+
+export { mangoDimensionLeak };
 
 export const GENERIC_TREE_PHYSICAL_SCALE_VERSION = 'generic-tree-physical-scale-v1';
 export const OWNER_SIZE_PREFERENCE_STORAGE_KEY = 'cruvit:garden-design-owner-size-preference-v1';
@@ -76,18 +78,6 @@ export const MANGO_ASSET_STATUS = Object.freeze({
 
 function asText(value) {
   return String(value == null ? '' : value).trim();
-}
-
-function sameRange(a, b) {
-  if (!a || !b) return false;
-  return Number(a.min) === Number(b.min) && Number(a.max) === Number(b.max);
-}
-
-export function mangoDimensionLeak(canonicalSlug, evidence = {}) {
-  const slug = asText(canonicalSlug).toLowerCase();
-  if (slug === 'mango') return false;
-  const mango = CALIBRATION_BOTANICAL_SIZE_EVIDENCE.mango;
-  return sameRange(evidence.heightM, mango.heightM) || sameRange(evidence.spreadM, mango.spreadM);
 }
 
 export function classifyTreeSizePrecedence(evidence = {}) {

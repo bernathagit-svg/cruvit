@@ -89,6 +89,18 @@ function asText(value) {
   return String(value == null ? '' : value).trim();
 }
 
+function sameRange(a, b) {
+  if (!a || !b) return false;
+  return Number(a.min) === Number(b.min) && Number(a.max) === Number(b.max);
+}
+
+export function mangoDimensionLeak(canonicalSlug, evidence = {}) {
+  const slug = asText(canonicalSlug).toLowerCase();
+  if (slug === 'mango') return false;
+  const mango = CALIBRATION_BOTANICAL_SIZE_EVIDENCE.mango;
+  return sameRange(evidence.heightM, mango.heightM) || sameRange(evidence.spreadM, mango.spreadM);
+}
+
 export function pickRangeValue(range, band) {
   if (!range || !Number.isFinite(range.min) || !Number.isFinite(range.max)) return null;
   const id = RANGE_BANDS[band] || RANGE_BANDS.MID;
