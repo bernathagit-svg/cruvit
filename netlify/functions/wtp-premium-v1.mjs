@@ -59,8 +59,10 @@ function normalizeEmail(email) {
 }
 
 function isInternal(event, headers, query) {
-  const source = String(event.source || "").toLowerCase();
-  if (["internal_test", "dev", "localhost_dev"].includes(source)) return true;
+  const sources = [event.source, query.source, query.utm_source];
+  if (sources.some((source) =>
+    ["internal_test", "dev", "localhost_dev"].includes(String(source || "").toLowerCase())
+  )) return true;
   if (query.internal === "1" || query.internal === "true") return true;
   if (headers["x-wtp-internal"] === "1" || headers["x-wtp-internal"] === "true")
     return true;
@@ -68,6 +70,20 @@ function isInternal(event, headers, query) {
   if (ua.includes("wtp-internal-test")) return true;
   if (event.internalTraffic === true) return true;
   return false;
+}
+
+// Only server environment values grant authority. Request markers can only deny it.
+export function persistenceAuthority(env, body = {}, headers = {}, query = {}) {
+  return env?.WTP_PERSISTENCE_ENABLED === "true"
+    && env?.SITE_ID === "66d2b5a1-eee3-47c7-b201-4ccbed5410e3"
+    && !isInternal(body, headers, query)
+    && body.syntheticTestOnly !== true
+    && query.syntheticTestOnly !== "true"
+    && query.syntheticTestOnly !== "1";
+}
+
+function persistenceDisabled(ok, status = 200) {
+  return json(status, { ok, persisted: false, code: "WTP_PERSISTENCE_DISABLED" });
 }
 
 async function readLines(store, key) {
@@ -209,32 +225,31 @@ function emailLeak(s) {
 }
 
 export async function handler(event) {
-  // Functions v1 (Lambda compatibility): required for Netlify Blobs context.
-  connectLambda(event);
-
   if (event.httpMethod === "OPTIONS") {
     return json(204, {});
   }
 
-  const store = getStore(STORE_NAME);
-  const headers = event.headers || {};
+  const headers = Object.fromEntries(
+    Object.entries(event.headers || {}).map(([key, value]) => [key.toLowerCase(), value]),
+  );
   const query = event.queryStringParameters || {};
 
-  if (event.httpMethod === "GET" && query.view === "summary") {
+  if (event.httpMethod === "GET" && ["summary", "summary.json"].includes(query.view)) {
+    if (!persistenceAuthority(process.env, {}, headers, query)) {
+      return persistenceDisabled(false, 403);
+    }
+    // Guard all summary reads before connecting to or acquiring a Blob store.
+    connectLambda(event);
+    const store = getStore(STORE_NAME);
     const events = await readLines(store, EVENTS_KEY);
     const agg = aggregate(events);
     const classified = classify(agg);
     const result = { aggregate: agg, ...classified };
-    const body = formatSummary(result);
-    if (emailLeak(body)) return text(500, "WTP_SUMMARY_MUST_NOT_CONTAIN_EMAIL");
-    return text(200, body);
-  }
-
-  if (event.httpMethod === "GET" && query.view === "summary.json") {
-    const events = await readLines(store, EVENTS_KEY);
-    const agg = aggregate(events);
-    const classified = classify(agg);
-    const result = { aggregate: agg, ...classified };
+    if (query.view === "summary") {
+      const body = formatSummary(result);
+      if (emailLeak(body)) return text(500, "WTP_SUMMARY_MUST_NOT_CONTAIN_EMAIL");
+      return text(200, body);
+    }
     const raw = JSON.stringify(result);
     if (emailLeak(raw)) return json(500, { ok: false, reason: "email_leak_blocked" });
     return json(200, result);
@@ -251,14 +266,17 @@ export async function handler(event) {
     return json(400, { ok: false, reason: "invalid_json" });
   }
 
-  if (body.syntheticTestOnly === true) {
-    return json(400, {
-      ok: false,
-      reason: "synthetic_events_must_not_persist_as_real_user_evidence",
-    });
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return json(400, { ok: false, reason: "invalid_json" });
   }
 
   const action = String(body.action || "");
+  if (!["event", "early-access"].includes(action)) {
+    return json(400, { ok: false, reason: "invalid_action" });
+  }
+  if (!persistenceAuthority(process.env, body, headers, query)) {
+    return persistenceDisabled(action === "event", action === "event" ? 200 : 403);
+  }
 
   if (action === "event") {
     const eventType = body.eventType;
@@ -283,6 +301,9 @@ export async function handler(event) {
       priceShownUsd: PRICE,
       internalTraffic: isInternal(body, headers, query),
     };
+    // Functions v1 (Lambda compatibility): connect only after authority/validation.
+    connectLambda(event);
+    const store = getStore(STORE_NAME);
     await appendLine(store, EVENTS_KEY, row);
     return json(200, {
       ok: true,
@@ -304,6 +325,8 @@ export async function handler(event) {
     const campaign = body.campaign ? String(body.campaign) : null;
     const internal = isInternal(body, headers, query);
     const ts = new Date().toISOString();
+    connectLambda(event);
+    const store = getStore(STORE_NAME);
     await appendLine(store, EVENTS_KEY, {
       eventType: "earlyAccessCompletion",
       timestamp: ts,
