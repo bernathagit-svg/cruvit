@@ -1,0 +1,133 @@
+{
+  "contract": "canonical-size-authority-unreproducible-stages-v1",
+  "reproducibilityDecision": "CURRENT_117_REGISTRY_NOT_REPRODUCIBLE",
+  "decisionScope": "Available checked-in composition inputs and transforms; historical output bytes and creation provenance can still be known.",
+  "stageCount": 7,
+  "stages": [
+    {
+      "stage": 2,
+      "name": "Non-tree Wave 1",
+      "status": "HISTORICAL_TRANSFORM_NOT_RECONSTRUCTABLE_FROM_CHECKED_IN_INPUTS",
+      "creationProvenanceMayBeKnown": true,
+      "sourceCommit": "1297cedeb0b320d20725629a0cb67c6b94e219c8",
+      "sourceArtifacts": [
+        {
+          "path": "data/garden-design/non-tree-size-evidence-wave-v1/evidence-records.json",
+          "revision": "1297cedeb0b320d20725629a0cb67c6b94e219c8",
+          "sha256": "3b0d4a0ffc201e9b27acfec65da36a844949628c179067aa38619c176e826ddc",
+          "source": "historical stage snapshot",
+          "contract": "non-tree-size-evidence-wave-v1"
+        },
+        {
+          "path": "data/garden-design/non-tree-size-evidence-wave-v1/readiness.json",
+          "revision": "1297cedeb0b320d20725629a0cb67c6b94e219c8",
+          "sha256": "35cb4ba2086f0d4397e5b777ff9465a32f2648714af687236bef5892a96d7adb",
+          "source": "historical stage snapshot",
+          "contract": "non-tree-size-evidence-wave-v1-readiness"
+        }
+      ],
+      "missingInputs": "No tracked seed-to-non-tree promotion transform for the five records, note, provenanceOverlays and accounting; commit changes only target registry. Evidence/readiness exists, but does not itself specify all target-field/default/ordering rules."
+    },
+    {
+      "stage": 4,
+      "name": "Full-catalog 34",
+      "status": "HISTORICAL_TRANSFORM_NOT_RECONSTRUCTABLE_FROM_CHECKED_IN_INPUTS",
+      "creationProvenanceMayBeKnown": true,
+      "sourceCommit": "a48e88e2f7487e49d92bcfe8535b7a5d0b9d0067",
+      "sourceArtifacts": [
+        {
+          "path": "data/catalog/full-catalog/morphology-size-64/size-authority-promotion-v1.json",
+          "revision": "a48e88e2f7487e49d92bcfe8535b7a5d0b9d0067",
+          "sha256": "e73200e243bedb33393b172b4023928f7a8027ef0f2f3086dd7a6caa6a92b63d",
+          "source": "historical stage snapshot",
+          "contract": "cruvit-full-catalog-size-authority-promotion-34-v1"
+        }
+      ],
+      "missingInputs": "34-record evidence audit exists; no tracked writer reproduces its full64 evidence-ID/template recipe. Generic later full-catalog writer uses a different evidence-ID template and was introduced at stage 5."
+    },
+    {
+      "stage": 11,
+      "name": "Soursop",
+      "status": "HISTORICAL_TRANSFORM_NOT_RECONSTRUCTABLE_FROM_CHECKED_IN_INPUTS",
+      "creationProvenanceMayBeKnown": true,
+      "sourceCommit": "3ce1d0865e6de7b364c0b0b426c3c13ab07b112d",
+      "sourceArtifacts": [
+        {
+          "path": "data/catalog/full-catalog/size-authority-promotion-2026-09-27-soursop.json",
+          "revision": "3ce1d0865e6de7b364c0b0b426c3c13ab07b112d",
+          "sha256": "de94289d46b0ca7de3d6fb234af5cbf30615de8e363e708c5495674454a3e7a0",
+          "source": "historical stage snapshot",
+          "contract": "full-catalog-source-backed-size-promotion-v1"
+        }
+      ],
+      "missingInputs": "Soursop canonical normalizedRange contains heightM/spreadM PLUS ready:true and evidenceClass:SOURCE_SUPPORTED. The tracked generic writer constructs only heightM/spreadM; no tracked source step reproduces these additional nested keys. Evidence exists, exact record-assembly recipe is missing."
+    },
+    {
+      "stage": 12,
+      "name": "Partial Wave 4",
+      "status": "HISTORICAL_TRANSFORM_NOT_RECONSTRUCTABLE_FROM_CHECKED_IN_INPUTS",
+      "creationProvenanceMayBeKnown": true,
+      "sourceCommit": "7a44528a9aac07b59eb8ab4d08a728dcbd88395e",
+      "sourceArtifacts": [
+        {
+          "path": "data/catalog/full-catalog/size-authority-partial-promotion-2026-09-27-wave4.json",
+          "revision": "7a44528a9aac07b59eb8ab4d08a728dcbd88395e",
+          "sha256": "b980d9599d7165d8db8b9b3a1a287e2d7890bf444aa1006fbc071fd3e8df5d31",
+          "source": "historical stage snapshot",
+          "contract": "full-catalog-source-backed-size-partial-promotion-v1"
+        }
+      ],
+      "missingInputs": "Partial-promotion audit contains height/source decisions but no tracked transform specifies exact existing-row field replacements and preserved fields."
+    },
+    {
+      "stage": 13,
+      "name": "Blackberry context",
+      "status": "HISTORICAL_TRANSFORM_NOT_RECONSTRUCTABLE_FROM_CHECKED_IN_INPUTS",
+      "creationProvenanceMayBeKnown": true,
+      "sourceCommit": "f914016336910f4678bfe7b06bf32406536c3c09",
+      "sourceArtifacts": [
+        {
+          "path": "data/catalog/full-catalog/blackberry-size-context-evidence-2026-09-27.json",
+          "revision": "f914016336910f4678bfe7b06bf32406536c3c09",
+          "sha256": "06d79393290e53b6ae6304871aa706f1dfbdeb6fe22a4e293dce0a10c52baadc",
+          "source": "historical stage snapshot",
+          "contract": "blackberry-size-context-evidence-v1"
+        }
+      ],
+      "missingInputs": "Blackberry evidence/context policy exists but no tracked canonical-record construction/merge transform."
+    },
+    {
+      "stage": 15,
+      "name": "October 5 direct additions",
+      "status": "HISTORICAL_TRANSFORM_NOT_RECONSTRUCTABLE_FROM_CHECKED_IN_INPUTS",
+      "creationProvenanceMayBeKnown": true,
+      "sourceCommit": "92fd517e55df1d309512d56d2f89b5d9aa7f5b45",
+      "sourceArtifacts": [],
+      "missingInputs": "Commit adds only target registry: three new canonical rows with source URLs and manually specified ranges/sensitivity/partial-anchor shape, plus accounting. No independent size promotion input/transform found for these exact rows."
+    },
+    {
+      "stage": 16,
+      "name": "October 7 six-plant repair",
+      "status": "HISTORICAL_TRANSFORM_NOT_RECONSTRUCTABLE_FROM_CHECKED_IN_INPUTS",
+      "creationProvenanceMayBeKnown": true,
+      "sourceCommit": null,
+      "sourceArtifacts": [
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-data-repair-2026-10-07-v1/sources-and-size-evidence.json",
+          "revision": "a7318e741e8de07fda76bc8b2e456cd1fb4d6e28",
+          "sha256": "5e0e6102d5e9f95e7c1b0c7d0b8bbc987c750269a2745948e2bdb5e7007f7895",
+          "source": "accepted baseline artifact",
+          "contract": "six-plant-data-repair-2026-10-07-v1"
+        },
+        {
+          "path": "data/garden-design/plant-intake-e2e-stress-tests/six-plant-data-repair-2026-10-07-v1/execution-summary.json",
+          "revision": "a7318e741e8de07fda76bc8b2e456cd1fb4d6e28",
+          "sha256": "563082f7987a6838862a7c25fcb4bb122107190847e5ca71bd3c1f8bf7d42172",
+          "source": "accepted baseline artifact",
+          "contract": null
+        }
+      ],
+      "missingInputs": "The two new rows exactly match checked-in repair records, but exact mutation commit, checked-in application step, record-order/lookup insertion and accounting update recipe are unavailable. Evidence identifies creation, not a complete accepted executable composition step."
+    }
+  ]
+}

@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
   "lockVersion": "static-runtime-source-lock-v1",
-  "reviewedAgainstParentSha": "b6aa6f31b455ad1afdaee4586d85204bb2a82c7a",
+  "reviewedAgainstParentSha": "a7318e741e8de07fda76bc8b2e456cd1fb4d6e28",
   "baselineProductSha": "9c36d550a2476a64b4f0013b2599543538afd4fe",
-  "pathCount": 2579,
+  "pathCount": 2586,
   "classificationCounts": {
-    "BUILD_ONLY": 615,
+    "BUILD_ONLY": 616,
     "PUBLIC_STATIC": 1842,
-    "HISTORICAL_EVIDENCE": 47,
+    "HISTORICAL_EVIDENCE": 53,
     "SERVER_RUNTIME": 75
   },
-  "ruleConflictCount": 153,
+  "ruleConflictCount": 159,
   "publicationAuthority": "EXACT_PATH_LOCK",
   "paths": [
     {
@@ -22816,6 +22816,74 @@
       "reason": "Public site/application assets and pages.",
       "proposalClassifications": [
         "PUBLIC_STATIC"
+      ]
+    },
+    {
+      "path": "data/catalog/canonical-size-authority-freeze-v1/freeze-manifest.json",
+      "classification": "HISTORICAL_EVIDENCE",
+      "reason": "Frozen canonical baseline, fingerprints, provenance and historical composition evidence. Never public runtime.",
+      "proposalClassifications": [
+        "HISTORICAL_EVIDENCE",
+        "PUBLIC_STATIC"
+      ],
+      "reviewedConflictResolution": "HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "data/catalog/canonical-size-authority-freeze-v1/record-fingerprints.json",
+      "classification": "HISTORICAL_EVIDENCE",
+      "reason": "Frozen canonical baseline, fingerprints, provenance and historical composition evidence. Never public runtime.",
+      "proposalClassifications": [
+        "HISTORICAL_EVIDENCE",
+        "PUBLIC_STATIC"
+      ],
+      "reviewedConflictResolution": "HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "data/catalog/canonical-size-authority-freeze-v1/lookup-fingerprints.json",
+      "classification": "HISTORICAL_EVIDENCE",
+      "reason": "Frozen canonical baseline, fingerprints, provenance and historical composition evidence. Never public runtime.",
+      "proposalClassifications": [
+        "HISTORICAL_EVIDENCE",
+        "PUBLIC_STATIC"
+      ],
+      "reviewedConflictResolution": "HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "data/catalog/canonical-size-authority-freeze-v1/historical-provenance-index.json",
+      "classification": "HISTORICAL_EVIDENCE",
+      "reason": "Frozen canonical baseline, fingerprints, provenance and historical composition evidence. Never public runtime.",
+      "proposalClassifications": [
+        "HISTORICAL_EVIDENCE",
+        "PUBLIC_STATIC"
+      ],
+      "reviewedConflictResolution": "HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "data/catalog/canonical-size-authority-freeze-v1/composition-stages.json",
+      "classification": "HISTORICAL_EVIDENCE",
+      "reason": "Frozen canonical baseline, fingerprints, provenance and historical composition evidence. Never public runtime.",
+      "proposalClassifications": [
+        "HISTORICAL_EVIDENCE",
+        "PUBLIC_STATIC"
+      ],
+      "reviewedConflictResolution": "HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "data/catalog/canonical-size-authority-freeze-v1/unreproducible-stages.json",
+      "classification": "HISTORICAL_EVIDENCE",
+      "reason": "Frozen canonical baseline, fingerprints, provenance and historical composition evidence. Never public runtime.",
+      "proposalClassifications": [
+        "HISTORICAL_EVIDENCE",
+        "PUBLIC_STATIC"
+      ],
+      "reviewedConflictResolution": "HISTORICAL_EVIDENCE"
+    },
+    {
+      "path": "scripts/verify-canonical-size-authority-freeze-v1.mjs",
+      "classification": "BUILD_ONLY",
+      "reason": "Repository verification/build-control script. Never public runtime.",
+      "proposalClassifications": [
+        "BUILD_ONLY"
       ]
     }
   ]

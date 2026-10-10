@@ -1,0 +1,138 @@
+{
+  "contract": "canonical-size-authority-freeze-v1",
+  "schemaVersion": 1,
+  "freezeVersion": 1,
+  "canonicalPath": "data/catalog/botanical-size-authority-v1.json",
+  "canonicalSha256": "86447803a6ad2245b8422448edc91e7197481370138a582453b631131e04c90b",
+  "canonicalByteLength": 179665,
+  "recordCount": 117,
+  "lookupCount": 119,
+  "accounting": {
+    "RUNTIME_AUTHORITY_READY": 79,
+    "RUNTIME_AUTHORITY_PARTIAL": 16,
+    "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED": 16,
+    "RUNTIME_AUTHORITY_CONFLICT_HOLD": 2,
+    "RUNTIME_AUTHORITY_EVIDENCE_GAP": 4,
+    "TOTAL": 117
+  },
+  "frozenAt": "2026-10-10T00:00:00+03:00",
+  "frozenAtPolicy": "Explicitly fixed gate-date marker in Asia/Jerusalem; not a wall-clock execution timestamp.",
+  "acceptedBaselineCommit": "a7318e741e8de07fda76bc8b2e456cd1fb4d6e28",
+  "canonicalAuthorityVersion": "botanical-size-authority-v1",
+  "acceptance": "These exact bytes are the accepted historical canonical baseline from which all future versioned repairs must descend.",
+  "botanicalApproval": false,
+  "preservesKnownDefects": true,
+  "limitation": "This freeze preserves historical accepted bytes including known defects. It is NOT botanical approval and does not resolve composition reproducibility or runtime safety.",
+  "futureCanonicalMutationsRequireVersionedDeltaProvenance": true,
+  "mutationPolicy": "Do not regenerate or silently replace this v1 package. Future canonical mutations require separately versioned delta provenance descending from the recorded canonical SHA, with explicit approval and before/after fingerprints.",
+  "fingerprintEncoding": "sorted-json-v1",
+  "fingerprintEncodingDefinition": "SHA-256 of UTF-8 JSON with recursively sorted object keys (JavaScript UTF-16 lexicographic order), original array order, JSON scalar encoding, no whitespace or trailing newline. Complete file hashes cover raw bytes, including formatting.",
+  "recordOrderSha256": "b6efbf4c3b9cdcdd688a117aa916b29cd034856848490abf8c3bd6ea5c056c6f",
+  "blockerStatus": {
+    "GD-SIZE-CANONICAL-REGISTRY-COMPOSITION-REPRODUCIBILITY": "OPEN",
+    "GD-SIZE-JABOTICABA-CONTEXT-STATE": "OPEN",
+    "GD-SIZE-NULL-RANGE-FAIL-CLOSED": "OPEN",
+    "GD-SIZE-R1.3": "HOLD",
+    "GD-SIZE-TRUTH-METADATA-PROPAGATION": "OPEN",
+    "GD-SIZE-HEURISTIC-RESIZE": "OPEN",
+    "GD-SIZE-UNKNOWN-STAGE-PRESERVATION": "OPEN"
+  },
+  "productionStatus": "HOLD",
+  "knownDefects": [
+    {
+      "id": "GD-SIZE-CANONICAL-REGISTRY-COMPOSITION-REPRODUCIBILITY",
+      "status": "OPEN",
+      "description": "Historical source-to-registry composition is incomplete for seven stages.",
+      "stages": [
+        2,
+        4,
+        11,
+        12,
+        13,
+        15,
+        16
+      ]
+    },
+    {
+      "id": "GD-SIZE-JABOTICABA-CONTEXT-STATE",
+      "status": "OPEN",
+      "truth": "CONTEXT_SEPARABLE",
+      "contextEvidence": [
+        {
+          "context": "Florida landscape",
+          "approximateHeightFt": 20
+        },
+        {
+          "context": "unpruned ultimate",
+          "approximateHeightFt": 30
+        }
+      ],
+      "averagingAllowed": false,
+      "selectedRuntimeRange": null,
+      "currentCanonicalHeightReadyStateKnownInvalid": true,
+      "description": "No selected universal runtime range. Current canonical PARTIAL / HEIGHT_SCALE_READY=true with missing range is known invalid; preserved without repair."
+    },
+    {
+      "id": "GD-SIZE-NULL-RANGE-FAIL-CLOSED",
+      "status": "OPEN",
+      "description": "The runtime adapter can currently convert missing null endpoints to numeric zero. No repair in this gate.",
+      "futureInvariantScope": "READY/PARTIAL runtime claims only; held-state flags remain evidence completeness."
+    }
+  ],
+  "historicalBuilder": {
+    "path": "modules/garden-design/asset-factory-v1/botanical-size-authority-v1-build.js",
+    "status": "HISTORICAL_SEED_BUILDER_ONLY",
+    "authorization": "NOT_AUTHORIZED_TO_OVERWRITE_CURRENT_CANONICAL_REGISTRY",
+    "description": "Rebuilds the historical 41-record seed. This metadata restriction is not an implemented write guard; builder unchanged."
+  },
+  "unsafeHistoricalWriterTest": {
+    "path": "tests/botanical-size-authority-v1.test.mjs",
+    "safeReadOnlyValidation": false,
+    "description": "Currently invokes the historical registry writer against repository ROOT; not safe read-only validation of the current 117-record registry. Unchanged and not run."
+  },
+  "provenanceDiagnosis": {
+    "gate": "GD-SIZE-R1.4B0",
+    "decision": "CURRENT_117_REGISTRY_NOT_REPRODUCIBLE",
+    "sourceArtifactHashes": [
+      {
+        "name": "composition-history.json",
+        "sha256": "f4883c728aa9072c4383711c3d7bcc1d606cef5509f4bdca0df18a18145a7353"
+      },
+      {
+        "name": "record-provenance.json",
+        "sha256": "6f6d67d1c8c053d3ce6a4af2989928044d24d6b2435cc60b83b7eac955ab778d"
+      },
+      {
+        "name": "lookup-provenance.json",
+        "sha256": "9efec1addf76dfec5e631aecff1dea34de2fb808cb7a13dd1cc06bb37a462e0d"
+      },
+      {
+        "name": "writer-and-replay-assessment.json",
+        "sha256": "d221a4d3057fbdfe86557dd331f69a6b6f56e8bf470464a56762e5fbed1fc3e3"
+      }
+    ],
+    "sourceArtifactLocation": "Accepted R1.4B0 local review package; not a runtime dependency or missing-transform recipe."
+  },
+  "artifacts": [
+    {
+      "path": "record-fingerprints.json",
+      "sha256": "047b191c68926d5f9d269546e2ba707076290dd51e6dbe3604b37cf70b0ec313"
+    },
+    {
+      "path": "lookup-fingerprints.json",
+      "sha256": "5d8cc8ddee6822c130ae67c083d811a2ecdb813481e72d9fc347fb890391f2ca"
+    },
+    {
+      "path": "historical-provenance-index.json",
+      "sha256": "80e3a79a8b4ebc74cb4ac86c7bffcf8bd68c04f821b44cff49aa49cc5bfb44e9"
+    },
+    {
+      "path": "composition-stages.json",
+      "sha256": "491b41f08a204c5d53b8a5ba1bcf929e0290b1cc832b5d980f2f77c7a29f9825"
+    },
+    {
+      "path": "unreproducible-stages.json",
+      "sha256": "02f57c1caa789d4de2ffc43e246c916a00596d257cb7f4b80a548e57749965f4"
+    }
+  ]
+}
