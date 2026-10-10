@@ -264,6 +264,35 @@ function makeCandidates(result) {
     .slice(0, 4);
 }
 
+export function decideTaxonomyVerifiedCandidates(rawCandidates = [], verifiedCandidates = []) {
+  const raw = Array.isArray(rawCandidates) ? rawCandidates.filter(Boolean) : [];
+  const verified = Array.isArray(verifiedCandidates)
+    ? verifiedCandidates.filter(candidate => candidate && candidate.gbifVerified === true)
+    : [];
+
+  if (raw.length === 0) {
+    return Object.freeze({
+      ok: false,
+      code: 'NO_PROVIDER_CANDIDATES',
+      candidates: Object.freeze([])
+    });
+  }
+
+  if (verified.length === 0) {
+    return Object.freeze({
+      ok: false,
+      code: 'TAXONOMY_VERIFICATION_FAILED',
+      candidates: Object.freeze([])
+    });
+  }
+
+  return Object.freeze({
+    ok: true,
+    code: null,
+    candidates: Object.freeze(verified.slice())
+  });
+}
+
 async function verifyCandidatesWithGbif(candidates) {
   const { resolveGbifTaxon } = await import('./botanical-engine-v2/providers/gbif.mjs');
   const verified = [];
@@ -1169,7 +1198,19 @@ export default async function handler(request) {
       }
 
       const verified = await verifyCandidatesWithGbif(candidates);
-      if (verified.length) candidates = verified;
+      const taxonomyDecision = decideTaxonomyVerifiedCandidates(candidates, verified);
+      if (!taxonomyDecision.ok) {
+        return json(422, {
+          error:
+            taxonomyDecision.code === 'TAXONOMY_VERIFICATION_FAILED'
+              ? 'Taxonomy verification failed.'
+              : 'The AI response did not contain a plant identification.',
+          code: taxonomyDecision.code,
+          taxonomyVerified: false,
+          candidates: []
+        });
+      }
+      candidates = taxonomyDecision.candidates.slice();
 
       candidates = collapseSameGenusCandidates(candidates);
 

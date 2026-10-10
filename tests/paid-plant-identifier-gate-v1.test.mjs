@@ -13,6 +13,9 @@ import {
   clientCannotOverridePaidPlantIdentifierGate,
   PAID_PLANT_IDENTIFIER_ENV_FLAG
 } from '../modules/runtime-guards/paid-plant-identifier-gate-v1.js';
+import {
+  decideTaxonomyVerifiedCandidates
+} from '../netlify/functions/plant-identify.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..');
@@ -148,4 +151,156 @@ test('plant-identify.mjs wires server gate before Anthropic', () => {
   const gateIdx = src.indexOf('isPaidPlantIdentifierAllowed');
   const anthropicIdx = src.indexOf('api.anthropic.com');
   assert.ok(gateIdx > 0 && anthropicIdx > gateIdx);
+});
+
+function rawCandidate(overrides = {}) {
+  return {
+    name: 'Provider guess',
+    commonName: 'Provider guess',
+    scientificName: 'Ficticia plantus',
+    confidence: 'medium',
+    ...overrides
+  };
+}
+
+function verifiedCandidate(overrides = {}) {
+  return {
+    name: 'Verified plant',
+    commonName: 'Verified plant',
+    scientificName: 'Verifica plantus',
+    confidence: 'medium',
+    gbifVerified: true,
+    gbifKey: '123',
+    ...overrides
+  };
+}
+
+test('taxonomy boundary: zero raw candidates -> no successful continuation', () => {
+  const out = decideTaxonomyVerifiedCandidates([], []);
+  assert.equal(out.ok, false);
+  assert.equal(out.code, 'NO_PROVIDER_CANDIDATES');
+  assert.deepEqual(out.candidates, []);
+});
+
+test('taxonomy boundary: raw candidates + zero verified -> fail closed', () => {
+  const out = decideTaxonomyVerifiedCandidates([rawCandidate()], []);
+  assert.equal(out.ok, false);
+  assert.equal(out.code, 'TAXONOMY_VERIFICATION_FAILED');
+  assert.deepEqual(out.candidates, []);
+  assert.equal('commonName' in out, false);
+  assert.equal('scientificName' in out, false);
+});
+
+test('taxonomy boundary: high-confidence raw candidate cannot promote when unverified', () => {
+  const out = decideTaxonomyVerifiedCandidates(
+    [rawCandidate({ confidence: 'high', commonName: 'Monstera', scientificName: 'Monstera deliciosa' })],
+    []
+  );
+  assert.equal(out.ok, false);
+  assert.equal(out.code, 'TAXONOMY_VERIFICATION_FAILED');
+  assert.deepEqual(out.candidates, []);
+});
+
+test('taxonomy boundary: plausible raw scientific name still blocked when unverified', () => {
+  const out = decideTaxonomyVerifiedCandidates(
+    [rawCandidate({ scientificName: 'Rosa canina', confidence: 'high' })],
+    []
+  );
+  assert.equal(out.ok, false);
+  assert.equal(out.code, 'TAXONOMY_VERIFICATION_FAILED');
+  assert.deepEqual(out.candidates, []);
+});
+
+test('taxonomy boundary: multiple raw candidates + zero verified -> all blocked', () => {
+  const out = decideTaxonomyVerifiedCandidates(
+    [
+      rawCandidate({ scientificName: 'Rosa canina' }),
+      rawCandidate({ scientificName: 'Rosa gallica', confidence: 'high' })
+    ],
+    []
+  );
+  assert.equal(out.ok, false);
+  assert.equal(out.code, 'TAXONOMY_VERIFICATION_FAILED');
+  assert.deepEqual(out.candidates, []);
+});
+
+test('taxonomy boundary: exactly one verified candidate -> only verified candidate continues', () => {
+  const verified = verifiedCandidate({ scientificName: 'Monstera deliciosa', commonName: 'Monstera' });
+  const out = decideTaxonomyVerifiedCandidates(
+    [
+      rawCandidate({ scientificName: 'Wrongus one' }),
+      rawCandidate({ scientificName: 'Monstera deliciosa' })
+    ],
+    [verified]
+  );
+  assert.equal(out.ok, true);
+  assert.equal(out.code, null);
+  assert.deepEqual(out.candidates, [verified]);
+  assert.equal(out.candidates[0].gbifVerified, true);
+});
+
+test('taxonomy boundary: verified subset only; unverified raw candidates are discarded', () => {
+  const verifiedA = verifiedCandidate({ scientificName: 'Rosa canina', gbifKey: 'a' });
+  const verifiedB = verifiedCandidate({ scientificName: 'Rosa gallica', gbifKey: 'b' });
+  const raw = [
+    rawCandidate({ scientificName: 'Wrongus alpha', confidence: 'high' }),
+    rawCandidate({ scientificName: 'Rosa canina' }),
+    rawCandidate({ scientificName: 'Wrongus beta' }),
+    rawCandidate({ scientificName: 'Rosa gallica' })
+  ];
+  const out = decideTaxonomyVerifiedCandidates(raw, [verifiedA, verifiedB]);
+  assert.equal(out.ok, true);
+  assert.deepEqual(out.candidates, [verifiedA, verifiedB]);
+  assert.ok(out.candidates.every(candidate => candidate.gbifVerified === true));
+  assert.ok(out.candidates.every(candidate => !candidate.scientificName.startsWith('Wrongus')));
+});
+
+test('taxonomy boundary: confidence never changes zero-verified outcome', () => {
+  for (const confidence of ['low', 'medium', 'high', 'HIGH', '', null]) {
+    const out = decideTaxonomyVerifiedCandidates(
+      [rawCandidate({ confidence, scientificName: 'Monstera deliciosa' })],
+      []
+    );
+    assert.equal(out.ok, false);
+    assert.equal(out.code, 'TAXONOMY_VERIFICATION_FAILED');
+    assert.deepEqual(out.candidates, []);
+  }
+});
+
+test('handler source returns non-2xx taxonomy failure without successful identity fields', () => {
+  const src = fs.readFileSync(FN, 'utf8');
+  assert.match(src, /return json\(422,\s*\{/);
+  assert.match(src, /TAXONOMY_VERIFICATION_FAILED/);
+  assert.match(src, /taxonomyVerified:\s*false/);
+  assert.match(src, /candidates:\s*\[\]/);
+  const zeroVerifiedBlock = src.match(/const taxonomyDecision[\s\S]*?candidates = taxonomyDecision\.candidates\.slice\(\);/)?.[0] || '';
+  assert.doesNotMatch(zeroVerifiedBlock, /commonName\s*:/);
+  assert.doesNotMatch(zeroVerifiedBlock, /scientificName\s*:/);
+  assert.doesNotMatch(zeroVerifiedBlock, /confidence\s*:/);
+});
+
+test('legacy consumer cannot treat taxonomy failure response as successful identification', () => {
+  const legacy = fs.readFileSync(path.join(ROOT, 'modules', 'plant-identifier', 'plant-identifier.js'), 'utf8');
+  assert.match(legacy, /if \(!res\.ok\) \{\s*throw new Error/);
+  assert.match(legacy, /if \(out\.error && !\(out\.candidates \|\| \[\]\)\.length\) \{\s*throw new Error/);
+});
+
+test('all provider recovery paths converge before the single final taxonomy boundary', () => {
+  const src = fs.readFileSync(FN, 'utf8');
+  const handlerStart = src.indexOf('export default async function handler');
+  const handlerBody = src.slice(handlerStart);
+  const invalidRecovery = handlerBody.indexOf('recoverInvalidDodonaeaIdentification(');
+  const weakRecovery = handlerBody.indexOf('recoverWeakIdentification(');
+  const makeCandidates = handlerBody.indexOf('makeCandidates(recovered)');
+  const taxonomyVerify = handlerBody.indexOf('verifyCandidatesWithGbif(candidates)');
+  const taxonomyDecision = handlerBody.indexOf('decideTaxonomyVerifiedCandidates(candidates, verified)');
+  const successReturn = handlerBody.indexOf('return json(200, {', taxonomyDecision);
+
+  assert.ok(handlerStart >= 0);
+  assert.ok(invalidRecovery >= 0 && invalidRecovery < makeCandidates);
+  assert.ok(weakRecovery >= 0 && weakRecovery < makeCandidates);
+  assert.ok(makeCandidates >= 0 && makeCandidates < taxonomyVerify);
+  assert.ok(taxonomyVerify >= 0 && taxonomyVerify < taxonomyDecision);
+  assert.ok(taxonomyDecision >= 0 && taxonomyDecision < successReturn);
+  assert.equal((handlerBody.match(/verifyCandidatesWithGbif\(candidates\)/g) || []).length, 1);
 });
