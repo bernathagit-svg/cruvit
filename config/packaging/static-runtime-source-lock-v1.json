@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "lockVersion": "static-runtime-source-lock-v1",
-  "reviewedAgainstParentSha": "51aeb7b08c974ec95c84d904354dcdc39d892814",
+  "reviewedAgainstParentSha": "5592285c200113c0ef62c14e03fd9f7f37832b66",
   "baselineProductSha": "9c36d550a2476a64b4f0013b2599543538afd4fe",
-  "pathCount": 2591,
+  "pathCount": 2592,
   "classificationCounts": {
     "BUILD_ONLY": 621,
     "PUBLIC_STATIC": 1842,
-    "HISTORICAL_EVIDENCE": 53,
+    "HISTORICAL_EVIDENCE": 54,
     "SERVER_RUNTIME": 75
   },
   "ruleConflictCount": 159,
@@ -22924,6 +22924,14 @@
       "reason": "Focused execution-chain authority and preservation tests; never public runtime.",
       "proposalClassifications": [
         "BUILD_ONLY"
+      ]
+    },
+    {
+      "path": "data/size-authority-delta-receipts-v1/000001-jaboticaba-context-state-v1.json",
+      "classification": "HISTORICAL_EVIDENCE",
+      "reason": "Immutable accepted local A-to-B canonical execution receipt with exact qualification and approval provenance; never public runtime.",
+      "proposalClassifications": [
+        "HISTORICAL_EVIDENCE"
       ]
     }
   ]

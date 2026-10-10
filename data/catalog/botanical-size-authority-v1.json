@@ -130,8 +130,8 @@
   },
   "expectedAccounting": {
     "RUNTIME_AUTHORITY_READY": 79,
-    "RUNTIME_AUTHORITY_PARTIAL": 16,
-    "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED": 16,
+    "RUNTIME_AUTHORITY_PARTIAL": 15,
+    "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED": 17,
     "RUNTIME_AUTHORITY_CONFLICT_HOLD": 2,
     "RUNTIME_AUTHORITY_EVIDENCE_GAP": 4,
     "TOTAL": 117
@@ -3724,28 +3724,19 @@
       "scientificName": "Plinia cauliflora",
       "architectureMode": "tree",
       "growthStage": "mature",
-      "runtimeAuthority": "RUNTIME_AUTHORITY_PARTIAL",
-      "defaultPreviewScenario": "LANDSCAPE_MATURE",
-      "selectedHeightEvidenceRef": "jaboticaba__uf-ifas-mg373__florida",
+      "runtimeAuthority": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "defaultPreviewScenario": null,
+      "selectedHeightEvidenceRef": null,
       "selectedSpreadEvidenceRef": null,
       "selectedSource": null,
-      "normalizedRange": {
-        "heightM": {
-          "min": null,
-          "max": null
-        },
-        "spreadM": {
-          "min": null,
-          "max": null
-        }
-      },
+      "normalizedRange": null,
       "provenanceEvidenceIds": [
         "jaboticaba__uf-ifas-mg373__florida"
       ],
       "conflictingEvidenceIds": null,
-      "partialAnchor": "HEIGHT_ANCHORED_ESTIMATE",
+      "partialAnchor": null,
       "spreadSourceSupported": false,
-      "HEIGHT_SCALE_READY": true,
+      "HEIGHT_SCALE_READY": false,
       "SPREAD_SCALE_READY": false,
       "unknownFields": [
         "spread"
@@ -3755,7 +3746,7 @@
         "rootstockSensitive": false,
         "cultivarVariable": false,
         "maintainedForm": false,
-        "notFinalPersonalGardenSize": false,
+        "notFinalPersonalGardenSize": true,
         "reasons": []
       },
       "gardenDesignFallback": "Estimated size + tree form heuristic + manual resize",
