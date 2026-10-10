@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "lockVersion": "static-runtime-source-lock-v1",
-  "reviewedAgainstParentSha": "2214c3686a4efaa1f4997507b4439d029f72a3c9",
+  "reviewedAgainstParentSha": "6c0ffa23ad33ce1c04a526086af82282687b8a5d",
   "baselineProductSha": "9c36d550a2476a64b4f0013b2599543538afd4fe",
-  "pathCount": 2588,
+  "pathCount": 2589,
   "classificationCounts": {
-    "BUILD_ONLY": 618,
+    "BUILD_ONLY": 619,
     "PUBLIC_STATIC": 1842,
     "HISTORICAL_EVIDENCE": 53,
     "SERVER_RUNTIME": 75
@@ -22898,6 +22898,14 @@
       "path": "tests/size-authority-canonical-delta-v1.test.mjs",
       "classification": "BUILD_ONLY",
       "reason": "Focused synthetic canonical-delta qualification tests; never public runtime.",
+      "proposalClassifications": [
+        "BUILD_ONLY"
+      ]
+    },
+    {
+      "path": "config/size-authority/canonical-deltas/000001-jaboticaba-context-state-v1.json",
+      "classification": "BUILD_ONLY",
+      "reason": "Versioned canonical-delta manifest for offline preparation, sealed review and replay control; never public runtime.",
       "proposalClassifications": [
         "BUILD_ONLY"
       ]

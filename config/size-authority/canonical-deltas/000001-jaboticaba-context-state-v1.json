@@ -1,0 +1,202 @@
+{
+  "contract": "size-authority-canonical-delta-v1",
+  "schemaVersion": 1,
+  "deltaId": "000001-jaboticaba-context-state-v1",
+  "genesis": {
+    "freezeCommit": "92cb4282970a6aac75e0ab88d13b2a110bbd393d",
+    "canonicalSha256": "86447803a6ad2245b8422448edc91e7197481370138a582453b631131e04c90b"
+  },
+  "parent": {
+    "canonicalSha256": "86447803a6ad2245b8422448edc91e7197481370138a582453b631131e04c90b",
+    "acceptedDelta": null
+  },
+  "profile": {
+    "recordFingerprint": "sorted-json-v1",
+    "canonicalBytes": "json-pretty-2-lf-preserve-order-v1"
+  },
+  "scope": {
+    "taxa": [
+      "taxon:plinia-cauliflora"
+    ],
+    "recordFields": {
+      "taxon:plinia-cauliflora": [
+        "/runtimeAuthority",
+        "/defaultPreviewScenario",
+        "/selectedHeightEvidenceRef",
+        "/normalizedRange",
+        "/partialAnchor",
+        "/HEIGHT_SCALE_READY",
+        "/sensitivity/notFinalPersonalGardenSize"
+      ]
+    },
+    "lookupKeys": [],
+    "metadataFields": [
+      "/expectedAccounting/RUNTIME_AUTHORITY_PARTIAL",
+      "/expectedAccounting/RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED"
+    ],
+    "recordOrderChange": false
+  },
+  "records": [
+    {
+      "botanicalTaxonId": "taxon:plinia-cauliflora",
+      "beforeRecordSha256": "6039ea35931fff9eaed33d0b05745b32af696d37d573bf97a3a26f949b85f407",
+      "afterRecordSha256": "adea051a4c82c2adc59f62a00f65de516c3616f0f760caac91624307304f10af",
+      "replacements": [
+        {
+          "path": "/runtimeAuthority",
+          "before": {
+            "present": true,
+            "value": "RUNTIME_AUTHORITY_PARTIAL"
+          },
+          "after": {
+            "present": true,
+            "value": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED"
+          }
+        },
+        {
+          "path": "/defaultPreviewScenario",
+          "before": {
+            "present": true,
+            "value": "LANDSCAPE_MATURE"
+          },
+          "after": {
+            "present": true,
+            "value": null
+          }
+        },
+        {
+          "path": "/selectedHeightEvidenceRef",
+          "before": {
+            "present": true,
+            "value": "jaboticaba__uf-ifas-mg373__florida"
+          },
+          "after": {
+            "present": true,
+            "value": null
+          }
+        },
+        {
+          "path": "/normalizedRange",
+          "before": {
+            "present": true,
+            "value": {
+              "heightM": {
+                "min": null,
+                "max": null
+              },
+              "spreadM": {
+                "min": null,
+                "max": null
+              }
+            }
+          },
+          "after": {
+            "present": true,
+            "value": null
+          }
+        },
+        {
+          "path": "/partialAnchor",
+          "before": {
+            "present": true,
+            "value": "HEIGHT_ANCHORED_ESTIMATE"
+          },
+          "after": {
+            "present": true,
+            "value": null
+          }
+        },
+        {
+          "path": "/HEIGHT_SCALE_READY",
+          "before": {
+            "present": true,
+            "value": true
+          },
+          "after": {
+            "present": true,
+            "value": false
+          }
+        },
+        {
+          "path": "/sensitivity/notFinalPersonalGardenSize",
+          "before": {
+            "present": true,
+            "value": false
+          },
+          "after": {
+            "present": true,
+            "value": true
+          }
+        }
+      ]
+    }
+  ],
+  "lookups": [],
+  "metadata": [
+    {
+      "path": "/expectedAccounting/RUNTIME_AUTHORITY_PARTIAL",
+      "before": {
+        "present": true,
+        "value": 16
+      },
+      "after": {
+        "present": true,
+        "value": 15
+      }
+    },
+    {
+      "path": "/expectedAccounting/RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "before": {
+        "present": true,
+        "value": 16
+      },
+      "after": {
+        "present": true,
+        "value": 17
+      }
+    }
+  ],
+  "result": {
+    "canonicalSha256": "e59a63abad28a269e2ac9e1c12e72a0eb12b680cd89222c586bdf9f63c5864b6",
+    "recordCount": 117,
+    "lookupCount": 119
+  },
+  "provenance": {
+    "sourceEvidence": [
+      {
+        "refId": "jaboticaba__uf-ifas-mg373__florida",
+        "artifact": {
+          "repoPath": "data/garden-design/tree-size-evidence-wave-v1/evidence-records.json",
+          "revision": "6c0ffa23ad33ce1c04a526086af82282687b8a5d",
+          "sha256": "dd0f51c84423f2f6730b3f351b631695ffa954d16ac392d0269c911735b93b05"
+        },
+        "entryPointer": "/records/40",
+        "entrySha256": "7988bc6774aa34c5177ae4a8061403ddcd93dcafbb90824cd4e336be91cf7ac7",
+        "taxon": "taxon:plinia-cauliflora",
+        "dimension": "height",
+        "context": "Prose: seldom exceeds 20 feet in Florida. Table 1 ultimate size M, ~30 ft if not pruned. Spread UNKNOWN. Do not average 20 vs ~30."
+      }
+    ],
+    "decision": {
+      "gateId": "GD-SIZE-R1.4B4A",
+      "ownerApprovalId": "attachment:bc1a084d-66fb-4e67-bc87-8ccca77bd118:Owner:GD-SIZE-R1.4B4A",
+      "supervisorApprovalId": "attachment:bc1a084d-66fb-4e67-bc87-8ccca77bd118:Supervisor:GD-SIZE-R1.4B4A",
+      "record": {
+        "reference": "outputs/gd-size-r1-4b4a/decision-record.txt",
+        "text": "GD-SIZE-R1.4B4A — Owner + Supervisor preparation decision for Delta 001.\nAuthority: user-provided attachment bc1a084d-66fb-4e67-bc87-8ccca77bd118, Pasted text.txt, accepted in this gate.\nOwner + Supervisor authorize Jaboticaba context-required delta PREPARATION and SEALED SCRATCH REVIEW only, using accepted mechanism commit 6c0ffa23ad33ce1c04a526086af82282687b8a5d.\nTarget: taxon:plinia-cauliflora (Plinia cauliflora; jaboticaba), Delta ID 000001-jaboticaba-context-state-v1.\nAuthorize exactly seven existing-record replacements: runtimeAuthority PARTIAL to USER_CONTEXT_REQUIRED; defaultPreviewScenario to null; selectedHeightEvidenceRef to null; normalizedRange to null; partialAnchor to null; HEIGHT_SCALE_READY true to false; sensitivity.notFinalPersonalGardenSize false to true.\nAuthorize exactly two accounting replacements: RUNTIME_AUTHORITY_PARTIAL 16 to 15; RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED 16 to 17. All 116 other records, all 119 lookups, ordering, aliases, provenance and every unlisted field remain unchanged.\nThe source prose seldom-exceeds-20-feet Florida context and table approximately-30-feet-if-unpruned context remain separate evidence. Height is context-required; spread is unknown. No averaging, no universal 6.096 m or 9.144 m selection, no invented spread.\nNO canonical write authorization. NO Production authorization, including metadata requests. NO R1.3 authorization. No live promotion, tracked acceptance receipt, push, hosted build or deployment is authorized.\nA successful sealed scratch receipt is evidence for a later Owner + Supervisor execution review only. Actual canonical replacement requires a separate explicit execution gate.\n",
+        "sha256": "ad1a3c8e7e7a06ec6e4ea220a1e6d4d9a17122903c6b5b2a6a765c361ac3fda2"
+      }
+    },
+    "rule": {
+      "id": "context-required-demotion-v1",
+      "version": 1,
+      "engineSha256": "271b47482c5e12b37fa1de509a97aff92d81fa711f138fce69f8d43ec6e3299d",
+      "rangeValidatorSourceSha256": "974f86687c4606782dd50a41bdccd193ef015cf468747c1d842722397dad0b04"
+    },
+    "reason": "Owner + Supervisor authorize preparation and sealed scratch review only: preserve the distinct Florida 20 ft and unpruned approximately 30 ft contexts as evidence, remove universal runtime meter authority, and keep spread unknown. No canonical replacement authorization.",
+    "valueStatus": {
+      "height": "context-required",
+      "spread": "unknown"
+    }
+  }
+}
