@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "lockVersion": "static-runtime-source-lock-v1",
-  "reviewedAgainstParentSha": "6c0ffa23ad33ce1c04a526086af82282687b8a5d",
+  "reviewedAgainstParentSha": "51aeb7b08c974ec95c84d904354dcdc39d892814",
   "baselineProductSha": "9c36d550a2476a64b4f0013b2599543538afd4fe",
-  "pathCount": 2589,
+  "pathCount": 2591,
   "classificationCounts": {
-    "BUILD_ONLY": 619,
+    "BUILD_ONLY": 621,
     "PUBLIC_STATIC": 1842,
     "HISTORICAL_EVIDENCE": 53,
     "SERVER_RUNTIME": 75
@@ -22906,6 +22906,22 @@
       "path": "config/size-authority/canonical-deltas/000001-jaboticaba-context-state-v1.json",
       "classification": "BUILD_ONLY",
       "reason": "Versioned canonical-delta manifest for offline preparation, sealed review and replay control; never public runtime.",
+      "proposalClassifications": [
+        "BUILD_ONLY"
+      ]
+    },
+    {
+      "path": "tools/size-authority/canonical-execution-chain-v1.mjs",
+      "classification": "BUILD_ONLY",
+      "reason": "Offline execution-chain authority verifier; no public consumer or live writer.",
+      "proposalClassifications": [
+        "BUILD_ONLY"
+      ]
+    },
+    {
+      "path": "tests/size-authority-canonical-execution-chain-v1.test.mjs",
+      "classification": "BUILD_ONLY",
+      "reason": "Focused execution-chain authority and preservation tests; never public runtime.",
       "proposalClassifications": [
         "BUILD_ONLY"
       ]
