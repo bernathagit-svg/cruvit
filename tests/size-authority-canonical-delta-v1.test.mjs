@@ -11,7 +11,13 @@ import {CONTRACT,GENESIS,sha256,fingerprint,sortedJson,canonicalBytes,parseProfi
 const root=fileURLToPath(new URL('../',import.meta.url));
 const tool=path.join(root,'tools/size-authority/canonical-delta-v1.mjs');
 const canonicalPath=path.join(root,'data/catalog/botanical-size-authority-v1.json');
-const realBytes=fs.readFileSync(canonicalPath), real=parseProfile(realBytes);
+const currentCanonicalBefore=fs.readFileSync(canonicalPath), currentRegistry=parseProfile(currentCanonicalBefore);
+// Genesis is immutable history, not whichever canonical is currently tracked.
+// Fail closed on missing local history; never fetch or fall back to current.
+const realBytes=cp.execFileSync('git',['cat-file','blob','92cb4282970a6aac75e0ab88d13b2a110bbd393d:data/catalog/botanical-size-authority-v1.json'],{
+  cwd:root,env:{...process.env,GIT_NO_LAZY_FETCH:'1',GIT_TERMINAL_PROMPT:'0'}
+});
+assert.equal(sha256(realBytes),'86447803a6ad2245b8422448edc91e7197481370138a582453b631131e04c90b');
 const P='RUNTIME_AUTHORITY_', states=['READY','PARTIAL','USER_CONTEXT_REQUIRED','CONFLICT_HOLD','EVIDENCE_GAP'].map(s=>P+s);
 const revision='1'.repeat(40), evidencePath='data/synthetic-evidence.json';
 const clone=structuredClone;
@@ -58,6 +64,19 @@ test('real APIs reject synthetic genesis and never produce a real repaired regis
   const f=fixture(),m=draft(f);assert.throws(()=>prepareDelta({inputBytes:f.bytes,manifestBytes:canonicalBytes(m)}),/INPUT_NOT_ACCEPTED_CHAIN_TIP/);
   assert.throws(()=>syntheticHarness(realBytes,new Map()),/SYNTHETIC_TAXA_ONLY/);
   assert.throws(()=>verifyDelta({inputBytes:realBytes,manifestBytes:canonicalBytes(m)}),/REVIEWED_MANIFEST_SHA_REQUIRED/);
+});
+
+test('qualified scratch B passes forward semantics but never becomes genesis',()=>{
+  const manifestBytes=fs.readFileSync(path.join(root,'config/size-authority/canonical-deltas/000001-jaboticaba-context-state-v1.json'));
+  const result=verifyDelta({inputBytes:realBytes,manifestBytes,expectedManifestSha256:'3e7e109af3758db5e0dcd14635a3141f557c63b97fa8f446496b767af0725810'});
+  assert.equal(sha256(result.receiptBytes),'10e969fbcc1cfde3b920b45bf3249f9d0104367247c74bf0a4e42e9e3ecb0d27');
+  assert.equal(sha256(result.outputBytes),'e59a63abad28a269e2ac9e1c12e72a0eb12b680cd89222c586bdf9f63c5864b6');
+  const inspection=inspectRegistry(parseProfile(result.outputBytes));
+  assert.equal(inspection.ok,true);assert.deepEqual(inspection.errors,[]);
+  assert.equal(inspection.recordCount,117);assert.equal(inspection.lookupCount,119);
+  assert.deepEqual(inspection.accounting,{RUNTIME_AUTHORITY_READY:79,RUNTIME_AUTHORITY_PARTIAL:15,RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED:17,RUNTIME_AUTHORITY_CONFLICT_HOLD:2,RUNTIME_AUTHORITY_EVIDENCE_GAP:4,TOTAL:117});
+  assert.throws(()=>inspectGenesis(result.outputBytes),/GENESIS_SHA/);
+  assert.ok(fs.readFileSync(canonicalPath).equals(currentCanonicalBefore));
 });
 test('equivalent synthetic invalid claim removed by demotion; exact unrelated bytes preserved',()=>{
   const f=fixture(),m=draft(f),before=canonicalBytes(m),r=prepare(f,m),next=parseProfile(r.outputBytes);
@@ -192,6 +211,7 @@ test('held readiness flags are evidence completeness and never runtime meters',(
   r.selectedHeightEvidenceRef='forbidden';assert.ok(inspectRegistry(f.registry).errors.some(e=>e.code==='HELD_SELECTION'));
 });
 test('all observed PARTIAL variants and descriptive held source variants remain unchanged',()=>{
+  const real=currentRegistry;
   const inspection=inspectRegistry(real);const taxa=['taxon:malpighia-emarginata','taxon:phoenix-dactylifera','taxon:monstera-deliciosa','taxon:strelitzia-reginae','taxon:hibiscus-rosa-sinensis','taxon:cyclamen-persicum'];
   for(const id of taxa)assert.equal(inspection.errors.some(e=>e.taxon===id),false,id);
   assert.deepEqual([...new Set(real.records.filter(r=>r.runtimeAuthority===P+'PARTIAL').map(r=>r.partialAnchor))].sort(),['HEIGHT_ANCHORED_ESTIMATE','HEIGHT_ANCHORED_SPREAD_MAX_ONLY','HEIGHT_AND_SPREAD_SOURCE_SUPPORTED'].sort());
@@ -267,4 +287,4 @@ test('complete native ESM import graph has no historical writer, network or prov
   });
   assert.equal(entry.status,'linked');assert.ok(cache.size>=4);assert.equal([...cache.keys()].some(p=>p.includes('botanical-size-authority-v1-build')),false);assert.equal([...builtins].some(s=>/https?|net|dns/.test(s)),false);
 });
-test('real canonical bytes remain unchanged after all read-only references',()=>assert.ok(fs.readFileSync(canonicalPath).equals(realBytes)));
+test('current canonical bytes remain unchanged after all read-only references',()=>assert.ok(fs.readFileSync(canonicalPath).equals(currentCanonicalBefore)));

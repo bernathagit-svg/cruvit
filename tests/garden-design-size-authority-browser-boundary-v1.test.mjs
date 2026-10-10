@@ -6,6 +6,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import cp from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SourceTextModule, createContext } from 'node:vm';
@@ -14,13 +15,40 @@ import {
   mangoDimensionLeak
 } from '../modules/garden-design/asset-factory-v1/physical-scale-evidence-v1.js';
 import { mangoDimensionLeak as genericTreeGuard } from '../modules/garden-design/asset-factory-v1/generic-tree-physical-scale-v1.js';
+import { sha256, fingerprint, verifyDelta } from '../tools/size-authority/canonical-delta-v1.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const pagePath = 'modules/garden-design/index.html';
 const adapterPath = 'modules/garden-design/asset-factory-v1/garden-design-size-authority-adapter-v1.js';
 const origin = 'https://garden-size.invalid';
 const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8');
-const registry = JSON.parse(read('data/catalog/botanical-size-authority-v1.json'));
+const canonicalPath='data/catalog/botanical-size-authority-v1.json';
+const currentCanonicalBefore=fs.readFileSync(path.join(root,canonicalPath));
+const registry=JSON.parse(currentCanonicalBefore);
+// Test-host history access stays outside the browser module graph. No network,
+// fetch, reconstruction or fallback is allowed when the local object is absent.
+const genesisBytes=cp.execFileSync('git',['cat-file','blob','92cb4282970a6aac75e0ab88d13b2a110bbd393d:'+canonicalPath],{
+  cwd:root,env:{...process.env,GIT_NO_LAZY_FETCH:'1',GIT_TERMINAL_PROMPT:'0'}
+});
+assert.equal(sha256(genesisBytes),'86447803a6ad2245b8422448edc91e7197481370138a582453b631131e04c90b');
+const qualification=verifyDelta({inputBytes:genesisBytes,
+  manifestBytes:fs.readFileSync(path.join(root,'config/size-authority/canonical-deltas/000001-jaboticaba-context-state-v1.json')),
+  expectedManifestSha256:'3e7e109af3758db5e0dcd14635a3141f557c63b97fa8f446496b767af0725810'});
+assert.equal(sha256(qualification.receiptBytes),'10e969fbcc1cfde3b920b45bf3249f9d0104367247c74bf0a4e42e9e3ecb0d27');
+assert.equal(sha256(qualification.outputBytes),'e59a63abad28a269e2ac9e1c12e72a0eb12b680cd89222c586bdf9f63c5864b6');
+const historicalRegistry=JSON.parse(genesisBytes),qualifiedRegistry=JSON.parse(qualification.outputBytes);
+const registryCases=[['current canonical',registry],['historical A',historicalRegistry],['qualified scratch B',qualifiedRegistry]];
+function jaboticabaContract(inputRegistry) {
+  const record=inputRegistry.records.find(r=>r.botanicalTaxonId==='taxon:plinia-cauliflora');
+  assert.ok(record,'Jaboticaba record required');
+  switch(fingerprint(record)) {
+    case '6039ea35931fff9eaed33d0b05745b32af696d37d573bf97a3a26f949b85f407':
+      return {runtimeAuthority:'RUNTIME_AUTHORITY_PARTIAL',invalidHeight:true,heightScaleReady:true,fallbackReason:'INVALID_AUTHORITATIVE_HEIGHT_RANGE',readinessState:'SIZE_AUTHORITY_PARTIAL'};
+    case 'adea051a4c82c2adc59f62a00f65de516c3616f0f760caac91624307304f10af':
+      return {runtimeAuthority:'RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED',invalidHeight:false,heightScaleReady:false,fallbackReason:'PERSONAL_CONTEXT_REQUIRED',readinessState:'SIZE_AUTHORITY_CONTEXT_REQUIRED'};
+    default: assert.fail('UNEXPECTED_JABOTICABA_STATE');
+  }
+}
 const preferences = JSON.parse(read('data/garden-design/garden-design-size-preference-registry-v1.json'));
 const expectedWindowKeys = [
   'GARDEN_SIZE_AUTHORITY_ACTIVATION', 'getAuthorityRecordBySlug',
@@ -29,13 +57,13 @@ const expectedWindowKeys = [
   'scaleFromGardenSizeAuthority', 'registry', 'preferenceRegistry'
 ].sort();
 
-function browserLoader() {
+function browserLoader(inputRegistry=registry) {
   const modules = new Map();
   const edges = [];
   const fetches = [];
   const messages = [];
   const responses = new Map([
-    [new URL('/data/catalog/botanical-size-authority-v1.json', origin).href, registry],
+    [new URL('/data/catalog/botanical-size-authority-v1.json', origin).href, inputRegistry],
     [new URL('/data/garden-design/garden-design-size-preference-registry-v1.json', origin).href, preferences]
   ]);
   const sandbox = {
@@ -96,17 +124,19 @@ test('active adapter links and evaluates without Node builtins or Node globals',
   assert.equal(loader.messages.length, 0);
 });
 
-test('unchanged index bootstrap installs the complete Size Authority global with local JSON only', async () => {
+for(const [label,inputRegistry] of registryCases) {
+test(label+': unchanged index bootstrap installs the complete Size Authority global with local JSON only', async () => {
+  const expected=jaboticabaContract(inputRegistry);
   const scripts = [...read(pagePath).matchAll(/<script\s+type="module">([\s\S]*?)<\/script>/g)];
   const bootstrap = scripts.filter((match) => match[1].includes('window.CruvitGardenSizeAuthority ='));
   assert.equal(bootstrap.length, 1);
-  const loader = browserLoader();
+  const loader = browserLoader(inputRegistry);
   await loader.evaluate(pagePath, bootstrap[0][1]);
   // Flush the two local async JSON bootstrap chains without timers or network.
   for (let i = 0; i < 8; i++) await Promise.resolve();
   const api = loader.sandbox.CruvitGardenSizeAuthority;
   assert.deepEqual(Object.keys(api).sort(), expectedWindowKeys);
-  assert.equal(api.registry.records.length, registry.records.length);
+  assert.equal(api.registry.records.length, inputRegistry.records.length);
   assert.equal(api.preferenceRegistry.records.length, preferences.records.length);
   assert.equal(api.ownerPreferredRangePosition('mango', api.preferenceRegistry), 'LOW');
   assert.equal(api.ownerPreferredRangePosition('olive', api.preferenceRegistry), null);
@@ -116,10 +146,14 @@ test('unchanged index bootstrap installs the complete Size Authority global with
   const jaboticaba = api.resolveGardenSizeAuthority(api.registry, { canonicalSlug: 'jaboticaba', growthStage: 'mature' });
   assert.equal(jaboticaba.usedAuthoritativeMeters, false);
   assert.equal(jaboticaba.heightRangeM, null);
-  assert.equal(jaboticaba.fallbackReason, 'INVALID_AUTHORITATIVE_HEIGHT_RANGE');
+  assert.equal(jaboticaba.runtimeAuthorityState,expected.runtimeAuthority);
+  assert.equal(jaboticaba.fallbackReason,expected.fallbackReason);
+  assert.equal(jaboticaba.spreadRangeM,null);
+  assert.equal(jaboticaba.previewScenario,null);
   const estimated = api.scaleFromGardenSizeAuthority(jaboticaba, { visualForm: 'tree' });
   assert.equal(estimated.scale.botanicalEvidenceClass, 'UNKNOWN');
   assert.equal(estimated.scale.heightRangeM, null);
+  assert.equal(estimated.scale.botanicalHeightM,null);
   assert.ok(estimated.scale.imgHeightPct > 0);
   assert.equal(JSON.stringify(api.registry), before);
   assert.equal(JSON.stringify(api.registry).includes('ownerPreferredRangePosition'), false);
@@ -129,14 +163,31 @@ test('unchanged index bootstrap installs the complete Size Authority global with
   assert.equal(loader.edges.some(({ specifier }) => specifier.startsWith('node:')), false);
 });
 
-test('readiness uses the strict validator without adding reachable Node builtins', async () => {
-  const loader = browserLoader();
+test(label+': readiness uses the strict validator without adding reachable Node builtins', async () => {
+  const expected=jaboticabaContract(inputRegistry);
+  const loader = browserLoader(inputRegistry);
   const entry = await loader.evaluate('modules/garden-design/asset-factory-v1/plant-size-authority-readiness-v1.js');
-  const readiness = entry.namespace.resolvePlantSizeAuthorityReadiness(registry, { canonicalSlug: 'jaboticaba' });
-  assert.equal(readiness.heightScaleReady, true);
+  const readiness = entry.namespace.resolvePlantSizeAuthorityReadiness(inputRegistry, { canonicalSlug: 'jaboticaba' });
+  assert.equal(readiness.state,expected.readinessState);
+  assert.equal(readiness.runtimeAuthority,expected.runtimeAuthority);
+  assert.equal(readiness.heightScaleReady,expected.heightScaleReady);
   assert.equal(readiness.authoritativeMetersAvailable, false);
+  assert.equal(readiness.reasonCodes.includes('INVALID_AUTHORITATIVE_HEIGHT_RANGE'),expected.invalidHeight);
   assert.equal(loader.edges.filter(({ specifier }) => specifier.startsWith('node:')).length, 0);
   assert.equal(loader.fetches.length, 0);
+});
+}
+
+test('browser semantic contract rejects unexpected Jaboticaba states and universal meters',()=>{
+  for(const edit of [r=>r.runtimeAuthority='RUNTIME_AUTHORITY_EVIDENCE_GAP',r=>r.HEIGHT_SCALE_READY=true,
+    r=>r.selectedHeightEvidenceRef='unreviewed',...[6.096,9.144,(6.096+9.144)/2].map(value=>r=>{r.normalizedRange={heightM:{min:value,max:value},spreadM:null};})]) {
+    const inputRegistry=structuredClone(qualifiedRegistry);edit(inputRegistry.records.find(r=>r.botanicalTaxonId==='taxon:plinia-cauliflora'));
+    assert.throws(()=>jaboticabaContract(inputRegistry),/UNEXPECTED_JABOTICABA_STATE/);
+  }
+});
+
+test('browser fixtures never substitute or mutate the current tracked canonical',()=>{
+  assert.ok(fs.readFileSync(path.join(root,canonicalPath)).equals(currentCanonicalBefore));
 });
 
 test('generic tree callers reuse the single guard and retain its exact-match rule', () => {

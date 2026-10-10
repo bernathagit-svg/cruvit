@@ -14,7 +14,14 @@ const manifestPath='config/size-authority/canonical-deltas/000001-jaboticaba-con
 const M1='3e7e109af3758db5e0dcd14635a3141f557c63b97fa8f446496b767af0725810';
 const Q1='10e969fbcc1cfde3b920b45bf3249f9d0104367247c74bf0a4e42e9e3ecb0d27';
 const B='e59a63abad28a269e2ac9e1c12e72a0eb12b680cd89222c586bdf9f63c5864b6';
-const realA=fs.readFileSync(path.join(root,'data/catalog/botanical-size-authority-v1.json'));
+const canonicalPath='data/catalog/botanical-size-authority-v1.json';
+const currentCanonicalBefore=fs.readFileSync(path.join(root,canonicalPath));
+// Historical authority comes only from the pinned local Git object. Missing
+// history is an error: no fetch, reconstruction, or fallback to current bytes.
+const realA=cp.execFileSync('git',['cat-file','blob','92cb4282970a6aac75e0ab88d13b2a110bbd393d:'+canonicalPath],{
+  cwd:root,env:{...process.env,GIT_NO_LAZY_FETCH:'1',GIT_TERMINAL_PROMPT:'0'}
+});
+assert.equal(sha256(realA),'86447803a6ad2245b8422448edc91e7197481370138a582453b631131e04c90b');
 const realManifest=fs.readFileSync(path.join(root,manifestPath));
 const hashObject=x=>sha256(canonicalBytes(x));
 const clone=structuredClone;
@@ -77,6 +84,15 @@ test('exact genesis requires no execution receipt and cannot stand in for a post
   assert.equal(execution.verifyExecutionChain(input).status,'EXACT_GENESIS_EXECUTION_STATE');
   assert.throws(()=>execution.verifyExecutionChain({...input,currentCanonicalBytes:Buffer.from('different')}),/CURRENT_CANONICAL_READBACK_MISMATCH/);
   assert.throws(()=>execution.verifyExecutionChain({...input,acceptedExecutionTipSha256:Q1}),/GENESIS_EXECUTION_TIP_MUST_BE_NULL/);
+});
+
+test('qualified scratch B is post-genesis and cannot be accepted without execution authority',()=>{
+  const q=verifyDelta({inputBytes:realA,manifestBytes:realManifest,expectedManifestSha256:M1});
+  assert.equal(sha256(q.outputBytes),B);assert.equal(sha256(q.receiptBytes),Q1);
+  assert.notEqual(sha256(q.outputBytes),GENESIS.canonicalSha256);
+  assert.throws(()=>execution.verifyExecutionChain({chain:[],acceptedExecutionTipSha256:null,acceptedApprovals:[],currentCanonicalBytes:q.outputBytes}),/CURRENT_CANONICAL_READBACK_MISMATCH/);
+  assert.throws(()=>execution.verifyExecutionChain({chain:[{manifestRepoPath:manifestPath,manifestBytes:realManifest,qualificationReceiptBytes:q.receiptBytes}],acceptedExecutionTipSha256:Q1,acceptedApprovals:[],currentCanonicalBytes:q.outputBytes}),/EXECUTION_RECEIPT_REQUIRED/);
+  assert.ok(fs.readFileSync(path.join(root,canonicalPath)).equals(currentCanonicalBefore));
 });
 test('valid synthetic E1 passes with independent approval, exact Q bytes and simulated readback',()=>{
   const f=fixture(),a=accepted(f),r=f.authority.verifyExecutionChain(request(a));
@@ -235,6 +251,6 @@ test('complete import graph has no network, provider, DB or historical writer de
   });assert.equal(entry.status,'linked');
   const source=fs.readFileSync(tool,'utf8');assert.doesNotMatch(source,/\b(?:runScratch|prepareDelta|writeFile|writeSync|openSync|execFile|spawn|fetch)\s*\(/);assert.doesNotMatch(source,/from ['"]node:(?:fs|child_process|http|https|net|dns)/);
 });
-test('real canonical, M1 and frozen engine remain byte-identical after qualification',()=>{
-  assert.ok(fs.readFileSync(path.join(root,'data/catalog/botanical-size-authority-v1.json')).equals(realA));assert.ok(fs.readFileSync(path.join(root,manifestPath)).equals(realManifest));assert.deepEqual(toolIdentity(),execution.QUALIFICATION_IDENTITY);
+test('current canonical, M1 and frozen engine remain byte-identical after historical qualification',()=>{
+  assert.ok(fs.readFileSync(path.join(root,canonicalPath)).equals(currentCanonicalBefore));assert.ok(fs.readFileSync(path.join(root,manifestPath)).equals(realManifest));assert.deepEqual(toolIdentity(),execution.QUALIFICATION_IDENTITY);
 });
