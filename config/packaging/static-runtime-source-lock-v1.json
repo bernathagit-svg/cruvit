@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "lockVersion": "static-runtime-source-lock-v1",
-  "reviewedAgainstParentSha": "a7318e741e8de07fda76bc8b2e456cd1fb4d6e28",
+  "reviewedAgainstParentSha": "2214c3686a4efaa1f4997507b4439d029f72a3c9",
   "baselineProductSha": "9c36d550a2476a64b4f0013b2599543538afd4fe",
-  "pathCount": 2586,
+  "pathCount": 2588,
   "classificationCounts": {
-    "BUILD_ONLY": 616,
+    "BUILD_ONLY": 618,
     "PUBLIC_STATIC": 1842,
     "HISTORICAL_EVIDENCE": 53,
     "SERVER_RUNTIME": 75
@@ -22882,6 +22882,22 @@
       "path": "scripts/verify-canonical-size-authority-freeze-v1.mjs",
       "classification": "BUILD_ONLY",
       "reason": "Repository verification/build-control script. Never public runtime.",
+      "proposalClassifications": [
+        "BUILD_ONLY"
+      ]
+    },
+    {
+      "path": "tools/size-authority/canonical-delta-v1.mjs",
+      "classification": "BUILD_ONLY",
+      "reason": "Offline canonical-delta scratch qualification tool; no public or runtime consumer.",
+      "proposalClassifications": [
+        "BUILD_ONLY"
+      ]
+    },
+    {
+      "path": "tests/size-authority-canonical-delta-v1.test.mjs",
+      "classification": "BUILD_ONLY",
+      "reason": "Focused synthetic canonical-delta qualification tests; never public runtime.",
       "proposalClassifications": [
         "BUILD_ONLY"
       ]
