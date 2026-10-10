@@ -270,9 +270,40 @@ test('synthetic scratch writes succeed twice per mode with identical bytes and n
   for(const name of ['NUL.json','con','file:stream','bad.'])assert.throws(()=>validateScratchPaths({inputPath,manifestPath,scratchRoot:scratch,outputPath:path.join(scratch,name)}),/UNSAFE_PATH_COMPONENT/);
   fs.rmSync(scratch,{recursive:true,force:true});
 });
-test('failed real scratch attempt creates neither output nor qualification receipt',()=>{
-  const scratch=fs.mkdtempSync(path.join(os.tmpdir(),'canonical-delta-refusal-')),f=fixture(),manifestPath=path.join(scratch,'manifest.json'),outputPath=path.join(scratch,'out.json');fs.writeFileSync(manifestPath,canonicalBytes(draft(f)));
-  assert.throws(()=>runScratch({mode:'prepare',inputPath:canonicalPath,manifestPath,outputPath,scratchRoot:scratch}),/GENESIS_IDENTITY/);assert.equal(fs.existsSync(outputPath),false);assert.equal(fs.existsSync(outputPath+'.qualification.json'),false);fs.rmSync(scratch,{recursive:true,force:true});
+test('failed real scratch attempt with pinned genesis A creates neither output nor qualification receipt',()=>{
+  const tempRoot=fs.realpathSync(os.tmpdir()),scratch=fs.mkdtempSync(path.join(tempRoot,'canonical-delta-refusal-A-'));
+  try{
+    const inputPath=path.join(scratch,'genesis-A.json'),manifestPath=path.join(scratch,'manifest.json'),outputPath=path.join(scratch,'out.json');
+    assert.equal(sha256(realBytes),'86447803a6ad2245b8422448edc91e7197481370138a582453b631131e04c90b');
+    fs.writeFileSync(inputPath,realBytes);fs.writeFileSync(manifestPath,canonicalBytes(draft(fixture())));
+    assert.ok(fs.readFileSync(inputPath).equals(realBytes));
+    // Real context accepts A as its parent, then rejects the synthetic manifest.
+    assert.throws(()=>runScratch({mode:'prepare',inputPath,manifestPath,outputPath,scratchRoot:scratch,chain:[],acceptedTipReceiptSha256:null}),{name:'Error',message:'GENESIS_IDENTITY'});
+    assert.equal(fs.existsSync(outputPath),false);assert.equal(fs.existsSync(outputPath+'.qualification.json'),false);
+    assert.ok(fs.readFileSync(inputPath).equals(realBytes));assert.ok(fs.readFileSync(canonicalPath).equals(currentCanonicalBefore));
+  }finally{
+    assert.equal(path.dirname(fs.realpathSync(scratch)),tempRoot);fs.rmSync(scratch,{recursive:true,force:true});
+  }
+});
+test('failed real scratch attempt with qualified B and no accepted chain creates neither output nor qualification receipt',()=>{
+  const manifestBytes=fs.readFileSync(path.join(root,'config/size-authority/canonical-deltas/000001-jaboticaba-context-state-v1.json'));
+  const manifestSha256='3e7e109af3758db5e0dcd14635a3141f557c63b97fa8f446496b767af0725810';
+  assert.equal(sha256(manifestBytes),manifestSha256);
+  const qualified=verifyDelta({inputBytes:realBytes,manifestBytes,expectedManifestSha256:manifestSha256});
+  assert.equal(sha256(qualified.receiptBytes),'10e969fbcc1cfde3b920b45bf3249f9d0104367247c74bf0a4e42e9e3ecb0d27');
+  assert.equal(sha256(qualified.outputBytes),'e59a63abad28a269e2ac9e1c12e72a0eb12b680cd89222c586bdf9f63c5864b6');
+  const tempRoot=fs.realpathSync(os.tmpdir()),scratch=fs.mkdtempSync(path.join(tempRoot,'canonical-delta-refusal-B-'));
+  try{
+    const inputPath=path.join(scratch,'qualified-B.json'),manifestPath=path.join(scratch,'manifest.json'),outputPath=path.join(scratch,'out.json');
+    fs.writeFileSync(inputPath,qualified.outputBytes);fs.writeFileSync(manifestPath,canonicalBytes(draft(fixture())));
+    assert.ok(fs.readFileSync(inputPath).equals(qualified.outputBytes));
+    // Without its accepted chain, exact B must fail before manifest validation.
+    assert.throws(()=>runScratch({mode:'prepare',inputPath,manifestPath,outputPath,scratchRoot:scratch,chain:[],acceptedTipReceiptSha256:null}),{name:'Error',message:'INPUT_NOT_ACCEPTED_CHAIN_TIP'});
+    assert.equal(fs.existsSync(outputPath),false);assert.equal(fs.existsSync(outputPath+'.qualification.json'),false);
+    assert.ok(fs.readFileSync(inputPath).equals(qualified.outputBytes));assert.ok(fs.readFileSync(canonicalPath).equals(currentCanonicalBefore));
+  }finally{
+    assert.equal(path.dirname(fs.realpathSync(scratch)),tempRoot);fs.rmSync(scratch,{recursive:true,force:true});
+  }
 });
 test('complete native ESM import graph has no historical writer, network or provider dependency',async()=>{
   const context=createContext({}),cache=new Map(),builtins=new Set();
