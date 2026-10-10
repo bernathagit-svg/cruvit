@@ -113,12 +113,30 @@ test('unchanged index bootstrap installs the complete Size Authority global with
   const before = JSON.stringify(api.registry);
   const authority = api.resolveGardenSizeAuthority(api.registry, { canonicalSlug: 'mango', growthStage: 'mature' });
   assert.equal(authority.runtimeAuthorityState, 'RUNTIME_AUTHORITY_READY');
+  const jaboticaba = api.resolveGardenSizeAuthority(api.registry, { canonicalSlug: 'jaboticaba', growthStage: 'mature' });
+  assert.equal(jaboticaba.usedAuthoritativeMeters, false);
+  assert.equal(jaboticaba.heightRangeM, null);
+  assert.equal(jaboticaba.fallbackReason, 'INVALID_AUTHORITATIVE_HEIGHT_RANGE');
+  const estimated = api.scaleFromGardenSizeAuthority(jaboticaba, { visualForm: 'tree' });
+  assert.equal(estimated.scale.botanicalEvidenceClass, 'UNKNOWN');
+  assert.equal(estimated.scale.heightRangeM, null);
+  assert.ok(estimated.scale.imgHeightPct > 0);
   assert.equal(JSON.stringify(api.registry), before);
   assert.equal(JSON.stringify(api.registry).includes('ownerPreferredRangePosition'), false);
   assert.equal(loader.fetches.length, 2);
   assert.equal(loader.messages.length, 1);
   assert.equal(loader.messages[0].message.type, 'cruvit:garden-design-ready');
   assert.equal(loader.edges.some(({ specifier }) => specifier.startsWith('node:')), false);
+});
+
+test('readiness uses the strict validator without adding reachable Node builtins', async () => {
+  const loader = browserLoader();
+  const entry = await loader.evaluate('modules/garden-design/asset-factory-v1/plant-size-authority-readiness-v1.js');
+  const readiness = entry.namespace.resolvePlantSizeAuthorityReadiness(registry, { canonicalSlug: 'jaboticaba' });
+  assert.equal(readiness.heightScaleReady, true);
+  assert.equal(readiness.authoritativeMetersAvailable, false);
+  assert.equal(loader.edges.filter(({ specifier }) => specifier.startsWith('node:')).length, 0);
+  assert.equal(loader.fetches.length, 0);
 });
 
 test('generic tree callers reuse the single guard and retain its exact-match rule', () => {

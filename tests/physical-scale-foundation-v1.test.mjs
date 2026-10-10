@@ -32,7 +32,9 @@ import {
   interpolatePixelsPerMeter,
   mayDrivePhysicalMeterPreview,
   resolveGrowthStageDimensions,
-  resolvePhotoScaleChoice
+  resolvePhotoScaleChoice,
+  validateBotanicalRange,
+  suggestedHeightMFromRange
 } from '../modules/garden-design/asset-factory-v1/physical-scale-foundation-v1.js';
 import {
   lookupCalibrationSizeEvidence,
@@ -68,6 +70,107 @@ function calibratedDoor(sceneWidth = 480, sceneHeight = 360, depthBand = 'near')
   assert.equal(added.ok, true, added.code);
   return added.calibration;
 }
+
+const botanicalRangeCases = [
+  ['null', null, false], ['undefined', undefined, false], ['empty object', {}, false],
+  ['null endpoints', { min: null, max: null }, false],
+  ['missing min', { min: null, max: 5 }, false], ['missing max', { min: 5, max: null }, false],
+  ['zero', { min: 0, max: 0 }, false], ['negative', { min: -1, max: 5 }, false],
+  ['reversed', { min: 5, max: 1 }, false], ['string min', { min: '5', max: 10 }, false],
+  ['string max', { min: 5, max: '10' }, false], ['true', { min: true, max: 10 }, false],
+  ['false', { min: false, max: 10 }, false], ['NaN', { min: NaN, max: 10 }, false],
+  ['Infinity', { min: 5, max: Infinity }, false],
+  ['ordered', { min: 5, max: 10 }, true], ['equal', { min: 5, max: 5 }, true],
+  ['negative Infinity', { min: -Infinity, max: 10 }, false],
+  ['empty string', { min: '', max: 10 }, false], ['zero string', { min: '0', max: 10 }, false],
+  ['absent max', { min: 5 }, false], ['absent min', { max: 5 }, false],
+  ['inherited endpoints', Object.create({ min: 5, max: 10 }), false]
+];
+
+for (const [name, range, valid] of botanicalRangeCases) {
+  test(`strict botanical authority: ${name}`, () => {
+    const result = validateBotanicalRange(range);
+    assert.equal(result.valid, valid);
+    assert.deepEqual(result.range, valid ? range : null);
+    if (!valid) assert.equal(suggestedHeightMFromRange(range), null);
+    const raw = {
+      evidenceClass: DIMENSION_EVIDENCE.SOURCE_SUPPORTED_RANGE, growthStage: 'mature',
+      heightM: range, spreadM: range, mayDrivePhysicalMeterPreview: true
+    };
+    for (const entry of ['catalogEvidence', 'resolvedEvidence']) {
+      const input = { growthStage: 'mature', visualForm: 'tree', [entry]: raw };
+      const resolved = resolveGrowthStageDimensions(input);
+      assert.equal(resolved.mayDrivePhysicalMeterPreview, valid);
+      assert.deepEqual(resolved.heightM, valid ? range : null);
+      assert.equal(resolved.evidenceClass, valid ? DIMENSION_EVIDENCE.SOURCE_SUPPORTED_RANGE : DIMENSION_EVIDENCE.UNKNOWN);
+      const scale = computePhysicalSceneScale({ ...input, photoCalibration: calibratedDoor(), bbox: MANGO_BBOX });
+      assert.equal(scale.scaleMode, valid ? PHOTO_SCALE_MODE.CALIBRATED : PHOTO_SCALE_MODE.ESTIMATED);
+      assert.deepEqual(scale.heightRangeM, valid ? range : null);
+      assert.equal(scale.gardenDesignBlocked, false);
+      const manual = computePhysicalSceneScale({
+        ...input, photoCalibration: calibratedDoor(), bbox: MANGO_BBOX, userOverride: { kind: 'heightM', value: 3 }
+      });
+      assert.equal(manual.displayHeightM, 3);
+      assert.equal(manual.displaySource, 'USER_OVERRIDE');
+      assert.deepEqual(manual.botanicalTruth.heightRangeM, valid ? range : null);
+      assert.deepEqual(manual.botanicalTruth.spreadRangeM, valid ? range : null);
+      assert.equal(manual.botanicalTruth.evidenceClass, resolved.evidenceClass);
+    }
+    // Catalog fields are deliberately distinct from resolved evidence: no scalar fallback.
+    const catalog = classifyCatalogDimensionEvidence({
+      matureHeightMMin: range?.min, matureHeightMMax: range?.max,
+      matureSpreadMMin: range?.min, matureSpreadMMax: range?.max,
+      climateTraits: { traitEvidenceClasses: { matureHeightM: 'SOURCE_SUPPORTED' } }
+    });
+    // Inherited endpoints become explicit only at this separate catalog field boundary.
+    if (name !== 'inherited endpoints') {
+      assert.equal(catalog.mayDrivePhysicalMeterPreview, valid);
+      assert.deepEqual(catalog.heightM, valid ? range : null);
+      assert.deepEqual(catalog.spreadM, valid ? range : null);
+    }
+  });
+}
+
+test('missing and zero diagnostics differ; labels and flags cannot invent botanical authority', () => {
+  assert.equal(validateBotanicalRange({ min: null, max: null }).reason, 'ENDPOINT_MISSING');
+  assert.equal(validateBotanicalRange({ min: 0, max: 0 }).reason, 'ENDPOINT_NOT_POSITIVE');
+  for (const evidenceClass of [DIMENSION_EVIDENCE.UNKNOWN, DIMENSION_EVIDENCE.HEURISTIC_RANGE]) {
+    const evidence = { evidenceClass, growthStage: 'mature', heightM: { min: 5, max: 10 }, mayDrivePhysicalMeterPreview: true };
+    assert.equal(resolveGrowthStageDimensions({ resolvedEvidence: evidence }).mayDrivePhysicalMeterPreview, false);
+  }
+  for (const plant of [
+    { matureHeightM: 5 },
+    { matureHeightMMin: 5, matureHeightM: 5 },
+    { matureHeightMMin: 5, matureHeightMMax: 10, gardenCompatibility: { spacing: { matureHeightMMin: null, matureHeightMMax: null } } }
+  ]) {
+    const result = classifyCatalogDimensionEvidence(plant, { evidenceClass: 'SOURCE_SUPPORTED' });
+    assert.equal(result.mayDrivePhysicalMeterPreview, false);
+    assert.equal(result.heightM, null);
+  }
+  const estimatedManual = computePhysicalSceneScale({
+    visualForm: 'tree', resolvedEvidence: { evidenceClass: 'SOURCE_SUPPORTED_RANGE', growthStage: 'mature',
+      heightM: { min: null, max: null }, mayDrivePhysicalMeterPreview: true }, userOverride: { kind: 'heightM', value: 3 }
+  });
+  assert.equal(estimatedManual.botanicalHeightM, null);
+  assert.equal(estimatedManual.heightRangeM, null);
+  assert.equal(estimatedManual.displaySource, 'USER_OVERRIDE');
+  assert.ok(estimatedManual.imgHeightPct > 0);
+});
+
+test('invalid spread cannot survive calibrated botanicalTruth when height is valid', () => {
+  for (const [, spreadM, valid] of botanicalRangeCases) {
+    const scale = computePhysicalSceneScale({
+      photoCalibration: calibratedDoor(), bbox: MANGO_BBOX,
+      resolvedEvidence: { evidenceClass: 'SOURCE_SUPPORTED_RANGE', growthStage: 'mature',
+        heightM: { min: 5, max: 10 }, spreadM, mayDrivePhysicalMeterPreview: true }
+    });
+    assert.equal(scale.scaleMode, PHOTO_SCALE_MODE.CALIBRATED);
+    assert.deepEqual(scale.botanicalTruth.heightRangeM, { min: 5, max: 10 });
+    assert.deepEqual(scale.botanicalTruth.spreadRangeM, valid ? spreadM : null);
+    assert.deepEqual(scale.spreadRangeM, valid ? spreadM : null);
+    if (!valid) assert.equal(scale.architectureClass, 'UNKNOWN');
+  }
+});
 
 test('catalog mango cannot drive labelled meters and does not invent them', () => {
   const appHtml = read('app.html');

@@ -5,6 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 
 import {
@@ -116,8 +117,20 @@ test('tree engine rejects other forms and mango dimension leaks', () => {
   assert.equal(leak.code, 'MANGO_DIMENSION_LEAK');
 });
 
-test('catalog tree audit does not invent dimensions or copy mango', () => {
-  const written = writeGenericTreePhysicalScaleReports(ROOT);
+test('catalog tree audit does not invent dimensions or copy mango', (t) => {
+  // Exercise the report writer without overwriting repository evidence or preferences.
+  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'cruvit-tree-scale-'));
+  t.after(() => {
+    assert.equal(path.dirname(path.resolve(fixture)), path.resolve(os.tmpdir()));
+    assert.ok(path.basename(fixture).startsWith('cruvit-tree-scale-'));
+    fs.rmSync(fixture, { recursive: true, force: true });
+  });
+  for (const relative of ['data/plant-identity.registry.json', 'data/plants.seed.json', 'app.html']) {
+    const target = path.join(fixture, relative);
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.copyFileSync(path.join(ROOT, relative), target);
+  }
+  const written = writeGenericTreePhysicalScaleReports(fixture);
   const audit = JSON.parse(fs.readFileSync(written.auditPath, 'utf8'));
   const preference = JSON.parse(fs.readFileSync(written.preferencePath, 'utf8'));
   const live = auditCatalogTrees(ROOT);

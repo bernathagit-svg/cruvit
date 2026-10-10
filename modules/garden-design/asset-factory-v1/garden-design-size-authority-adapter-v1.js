@@ -10,7 +10,8 @@ import {
   PHOTO_SCALE_PRODUCT_CONTRACT,
   PHOTO_SCALE_STATE,
   PHYSICAL_SCALE_RENDERING_INVARIANTS,
-  computePhysicalSceneScale
+  computePhysicalSceneScale,
+  validateBotanicalRange
 } from './physical-scale-foundation-v1.js';
 import { RANGE_BANDS, mangoDimensionLeak } from './physical-scale-evidence-v1.js';
 
@@ -75,14 +76,6 @@ export function authorityRuntimeActive(input = {}) {
     GARDEN_SIZE_AUTHORITY_ACTIVATION.canaryAuthorityRuntimeEnabled
       && (input.canaryContext === true || input.activationGateContext === true)
   );
-}
-
-function finiteRange(range) {
-  if (!range) return null;
-  const min = Number(range.min);
-  const max = Number(range.max);
-  if (!Number.isFinite(min) && !Number.isFinite(max)) return null;
-  return { min: Number.isFinite(min) ? min : null, max: Number.isFinite(max) ? max : null };
 }
 
 export function resolveGardenSizeAuthority(registry, input = {}) {
@@ -185,8 +178,23 @@ export function resolveGardenSizeAuthority(registry, input = {}) {
     note = 'No meters. Estimated size + tree heuristic + manual resize.';
   }
 
-  const heightRange = stageSupported && usedAuthoritativeMeters ? finiteRange(record.normalizedRange?.heightM) : null;
-  const spreadRange = stageSupported && state === 'RUNTIME_AUTHORITY_READY' ? finiteRange(record.normalizedRange?.spreadM) : null;
+  const height = validateBotanicalRange(record.normalizedRange?.heightM);
+  const spread = validateBotanicalRange(record.normalizedRange?.spreadM);
+  if (usedAuthoritativeMeters && !height.valid) {
+    usedAuthoritativeMeters = false;
+    heightAuthority = HEIGHT_SPREAD_AUTHORITY.UNKNOWN;
+    behavior = RUNTIME_SCALE_BEHAVIOR.ESTIMATED_HEURISTIC;
+    fallbackReason = 'INVALID_AUTHORITATIVE_HEIGHT_RANGE';
+    note = 'No usable authoritative height range. Estimated size and manual resize remain available.';
+  }
+  if (stageSupported && state === 'RUNTIME_AUTHORITY_READY' && !spread.valid) {
+    spreadAuthority = HEIGHT_SPREAD_AUTHORITY.ESTIMATED;
+    if (usedAuthoritativeMeters) behavior = RUNTIME_SCALE_BEHAVIOR.HEIGHT_ANCHORED_ESTIMATE;
+    fallbackReason ||= 'INVALID_AUTHORITATIVE_SPREAD_RANGE';
+    note += ' No usable authoritative spread range; spread is estimated.';
+  }
+  const heightRange = stageSupported && usedAuthoritativeMeters ? height.range : null;
+  const spreadRange = stageSupported && state === 'RUNTIME_AUTHORITY_READY' ? spread.range : null;
 
   return Object.freeze({
     ...base,
@@ -202,6 +210,8 @@ export function resolveGardenSizeAuthority(registry, input = {}) {
     usedAuthoritativeMeters: Boolean(usedAuthoritativeMeters && heightRange),
     heightRangeM: heightRange,
     spreadRangeM: spreadRange,
+    heightRangeReason: height.reason,
+    spreadRangeReason: spread.reason,
     spreadSourceSupported: Boolean(stageSupported && state === 'RUNTIME_AUTHORITY_READY' && spreadRange),
     applied: true,
     fallbackReason,
@@ -224,16 +234,18 @@ export function scaleFromGardenSizeAuthority(authorityResult, sceneInput = {}) {
     || authorityResult?.architectureMode
     || 'unknown'
   ).toLowerCase();
-  const useMeters = Boolean(authorityResult?.usedAuthoritativeMeters && authorityResult.heightRangeM);
-  const spreadOk = authorityResult?.runtimeAuthorityState === 'RUNTIME_AUTHORITY_READY' && authorityResult.spreadRangeM;
+  const height = validateBotanicalRange(authorityResult?.heightRangeM);
+  const spread = validateBotanicalRange(authorityResult?.spreadRangeM);
+  const useMeters = authorityResult?.usedAuthoritativeMeters === true && height.valid;
+  const spreadOk = useMeters && authorityResult?.runtimeAuthorityState === 'RUNTIME_AUTHORITY_READY' && spread.valid;
   const rangeBand = asText(sceneInput.rangeBand || authorityResult?.designState?.ownerPreferredRangePosition || RANGE_BANDS.MID).toUpperCase();
   const resolvedEvidence = useMeters
     ? {
       evidenceClass: DIMENSION_EVIDENCE.SOURCE_SUPPORTED_RANGE,
       growthStage: sceneInput.growthStage || 'mature',
       visualForm,
-      heightM: authorityResult.heightRangeM,
-      spreadM: spreadOk ? authorityResult.spreadRangeM : null,
+      heightM: height.range,
+      spreadM: spreadOk ? spread.range : null,
       mayDrivePhysicalMeterPreview: true,
       sizeScenario: authorityResult.previewScenario || null
     }

@@ -5,6 +5,8 @@
  * plant/state. Morphology fallback is never promoted to botanical truth.
  */
 
+import { validateBotanicalRange } from './physical-scale-foundation-v1.js';
+
 export const PLANT_SIZE_AUTHORITY_READINESS_VERSION = 'plant-size-authority-readiness-v1';
 
 export const SIZE_AUTHORITY_STATE = Object.freeze({
@@ -76,17 +78,19 @@ export function resolvePlantSizeAuthorityReadiness(registry, input = {}, options
   let explicitEstimateOnly = true;
   let ownerReviewRequired = false;
   const reasonCodes = [];
+  const height = validateBotanicalRange(record.normalizedRange?.heightM);
+  const spread = validateBotanicalRange(record.normalizedRange?.spreadM);
 
   if (!stageSupported) {
     state = SIZE_AUTHORITY_STATE.PARTIAL;
     reasonCodes.push('GROWTH_STAGE_AUTHORITY_NOT_SUPPORTED');
   } else if (runtime === 'RUNTIME_AUTHORITY_READY') {
-    state = SIZE_AUTHORITY_STATE.READY;
-    authoritativeMetersAvailable = true;
-    explicitEstimateOnly = false;
+    state = height.valid && spread.valid ? SIZE_AUTHORITY_STATE.READY : SIZE_AUTHORITY_STATE.PARTIAL;
+    authoritativeMetersAvailable = height.valid;
+    explicitEstimateOnly = !authoritativeMetersAvailable;
   } else if (runtime === 'RUNTIME_AUTHORITY_PARTIAL') {
     state = SIZE_AUTHORITY_STATE.PARTIAL;
-    authoritativeMetersAvailable = Boolean(record.HEIGHT_SCALE_READY);
+    authoritativeMetersAvailable = record.HEIGHT_SCALE_READY === true && height.valid;
     explicitEstimateOnly = !authoritativeMetersAvailable;
     reasonCodes.push('PARTIAL_DIMENSION_AUTHORITY');
   } else if (runtime === 'RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED') {
@@ -103,6 +107,15 @@ export function resolvePlantSizeAuthorityReadiness(registry, input = {}, options
     reasonCodes.push('SIZE_EVIDENCE_GAP');
   }
 
+  if (stageSupported && (runtime === 'RUNTIME_AUTHORITY_READY' || runtime === 'RUNTIME_AUTHORITY_PARTIAL')) {
+    if ((runtime === 'RUNTIME_AUTHORITY_READY' || record.HEIGHT_SCALE_READY === true) && !height.valid) {
+      reasonCodes.push('INVALID_AUTHORITATIVE_HEIGHT_RANGE');
+    }
+    if ((runtime === 'RUNTIME_AUTHORITY_READY' || record.SPREAD_SCALE_READY === true) && !spread.valid) {
+      reasonCodes.push('INVALID_AUTHORITATIVE_SPREAD_RANGE');
+    }
+  }
+
   const placementScaleHold =
     state === SIZE_AUTHORITY_STATE.CONTEXT_REQUIRED
     && options.contextResolved !== true;
@@ -117,6 +130,8 @@ export function resolvePlantSizeAuthorityReadiness(registry, input = {}, options
     state,
     runtimeAuthority: runtime || null,
     authoritativeMetersAvailable,
+    heightRangeReason: height.reason,
+    spreadRangeReason: spread.reason,
     heightScaleReady: record.HEIGHT_SCALE_READY === true,
     spreadScaleReady: record.SPREAD_SCALE_READY === true,
     normalizedRange: record.normalizedRange || null,

@@ -93,6 +93,44 @@ function finitePositive(value) {
   return Number.isFinite(n) && n > 0 ? n : null;
 }
 
+/** Botanical authority requires two explicit numeric endpoints; never coerce or fill them. */
+export function validateBotanicalRange(range) {
+  const deny = (reason) => ({ valid: false, range: null, reason });
+  if (!range || typeof range !== 'object' || Array.isArray(range)) return deny('RANGE_MISSING_OR_INVALID');
+  for (const key of ['min', 'max']) {
+    if (!Object.prototype.hasOwnProperty.call(range, key) || range[key] == null) return deny('ENDPOINT_MISSING');
+    if (typeof range[key] !== 'number') return deny('ENDPOINT_NOT_NUMBER');
+    if (!Number.isFinite(range[key])) return deny('ENDPOINT_NOT_FINITE');
+    if (range[key] <= 0) return deny('ENDPOINT_NOT_POSITIVE');
+  }
+  if (range.min > range.max) return deny('RANGE_REVERSED');
+  return { valid: true, range: { min: range.min, max: range.max }, reason: null };
+}
+
+function validatedDimensionEvidence(evidence) {
+  const height = validateBotanicalRange(evidence.heightM);
+  const spread = validateBotanicalRange(evidence.spreadM);
+  const eligible = mayDrivePhysicalMeterPreview(evidence.evidenceClass);
+  return {
+    ...evidence,
+    evidenceClass: eligible && height.valid ? evidence.evidenceClass : DIMENSION_EVIDENCE.UNKNOWN,
+    heightM: eligible ? height.range : null,
+    spreadM: eligible ? spread.range : null,
+    mayDrivePhysicalMeterPreview: eligible && height.valid && evidence.mayDrivePhysicalMeterPreview === true,
+    heightRangeReason: height.reason,
+    spreadRangeReason: spread.reason
+  };
+}
+
+function explicitCatalogRange(spacing, plant, dimension) {
+  const minKey = `${dimension}Min`;
+  const maxKey = `${dimension}Max`;
+  // A malformed selected pair cannot fall through to a different pair or a scalar.
+  const source = Object.prototype.hasOwnProperty.call(spacing, minKey)
+    || Object.prototype.hasOwnProperty.call(spacing, maxKey) ? spacing : plant;
+  return validateBotanicalRange({ min: source[minKey], max: source[maxKey] });
+}
+
 export const PHYSICAL_SCALE_RENDERING_INVARIANTS = Object.freeze({
   visibleAlphaBboxOnly: true,
   transparentMarginAffectsBotanicalScale: false,
@@ -405,23 +443,26 @@ export function classifyCatalogDimensionEvidence(plant = {}, options = {}) {
   const classText = asText(
     classes.matureHeightM || classes.matureSpreadM || classes.matureSize || classes.size || options.evidenceClass
   );
+  if (classText === 'SOURCE_SUPPORTED' || classText === 'SOURCE_SUPPORTED_RANGE') {
+    const height = explicitCatalogRange(spacing, plant, 'matureHeightM');
+    const spread = explicitCatalogRange(spacing, plant, 'matureSpreadM');
+    return {
+      evidenceClass: height.valid ? DIMENSION_EVIDENCE.SOURCE_SUPPORTED_RANGE : DIMENSION_EVIDENCE.UNKNOWN,
+      growthStage: asText(options.growthStage || plant.growthStage) || 'mature',
+      visualForm: asText(options.visualForm || plant.visualForm || plant.growthForm) || null,
+      heightM: height.range,
+      spreadM: spread.range,
+      mayDrivePhysicalMeterPreview: height.valid,
+      heightRangeReason: height.reason,
+      spreadRangeReason: spread.reason,
+      usedUnprovenancedCopy: false
+    };
+  }
   const min = finitePositive(spacing.matureHeightMMin ?? plant.matureHeightMMin ?? spacing.matureHeightM ?? plant.matureHeightM);
   const max = finitePositive(spacing.matureHeightMMax ?? plant.matureHeightMMax ?? spacing.matureHeightM ?? plant.matureHeightM);
   const spreadMin = finitePositive(spacing.matureSpreadMMin ?? plant.matureSpreadMMin ?? spacing.matureSpreadM ?? plant.matureSpreadM);
   const spreadMax = finitePositive(spacing.matureSpreadMMax ?? plant.matureSpreadMMax ?? spacing.matureSpreadM ?? plant.matureSpreadM);
   const unprovenanced = asText(options.librarySizeCopy || plant.care?.size || plant.size || spacing.matureSize);
-
-  if (min && max && (classText === 'SOURCE_SUPPORTED' || classText === 'SOURCE_SUPPORTED_RANGE')) {
-    return {
-      evidenceClass: DIMENSION_EVIDENCE.SOURCE_SUPPORTED_RANGE,
-      growthStage: asText(options.growthStage || plant.growthStage) || 'mature',
-      visualForm: asText(options.visualForm || plant.visualForm || plant.growthForm) || null,
-      heightM: { min, max },
-      spreadM: spreadMin && spreadMax ? { min: spreadMin, max: spreadMax } : null,
-      mayDrivePhysicalMeterPreview: true,
-      usedUnprovenancedCopy: false
-    };
-  }
 
   if (min && max && (classText === 'HEURISTIC_ASSERTION' || classText === 'LEGACY_ASSERTED_METADATA' || classText === 'HEURISTIC_RANGE')) {
     return {
@@ -484,10 +525,12 @@ export function resolveGrowthStageDimensions(input = {}) {
     input.resolvedEvidence.growthStage === stage &&
     typeof input.resolvedEvidence.mayDrivePhysicalMeterPreview === 'boolean'
   ) {
-    return { ...input.resolvedEvidence, derivedFromOtherStage: false };
+    return { ...validatedDimensionEvidence(input.resolvedEvidence), derivedFromOtherStage: false };
   }
-  const catalog = input.catalogEvidence && input.catalogEvidence.growthStage === stage ? input.catalogEvidence : null;
-  const user = input.userConfirmed && input.userConfirmed.growthStage === stage ? input.userConfirmed : null;
+  const catalog = input.catalogEvidence && input.catalogEvidence.growthStage === stage
+    ? validatedDimensionEvidence(input.catalogEvidence) : null;
+  const user = input.userConfirmed && input.userConfirmed.growthStage === stage
+    ? validatedDimensionEvidence(input.userConfirmed) : null;
   if (scenario !== 'USER_OVERRIDE' && catalog && catalog.mayDrivePhysicalMeterPreview) {
     return { ...catalog, resolvedFrom: catalog.evidenceClass, derivedFromOtherStage: false };
   }
@@ -505,6 +548,8 @@ export function resolveGrowthStageDimensions(input = {}) {
     growthStage: stage,
     visualForm: asText(input.visualForm) || null,
     heightM: null,
+    spreadM: null,
+    heightRangeReason: catalog?.heightRangeReason || user?.heightRangeReason || null,
     mayDrivePhysicalMeterPreview: false,
     derivedFromOtherStage: false,
     otherStageEvidenceIgnored: otherStageEvidence.map((row) => row.growthStage),
@@ -513,11 +558,11 @@ export function resolveGrowthStageDimensions(input = {}) {
 }
 
 export function suggestedHeightMFromRange(range, band = 'MID') {
-  if (!range || !finitePositive(range.min) || !finitePositive(range.max)) return null;
+  if (!validateBotanicalRange(range).valid) return null;
   const id = String(band || 'MID').toUpperCase();
   if (id === 'LOW') return range.min;
   if (id === 'HIGH') return range.max;
-  return (range.min + range.max) / 2;
+  return range.min + (range.max - range.min) / 2;
 }
 
 export function computePhysicalSceneScale(input = {}) {
@@ -624,9 +669,12 @@ export function computePhysicalSceneScale(input = {}) {
       usedCanvasAspect: false,
       visibleBboxAudit: audit,
       estimatedViewportSpanM,
-      displaySource: displayHeightM ? 'estimated-source-supported-not-fit-to-frame' : 'estimated-form-relative',
+      displaySource: displaySource === 'USER_OVERRIDE' ? 'USER_OVERRIDE'
+        : displayHeightM ? 'estimated-source-supported-not-fit-to-frame' : 'estimated-form-relative',
       botanicalEvidenceClass: stageDims.evidenceClass,
-      botanicalHeightM: displayHeightM,
+      botanicalHeightM: stageDims.mayDrivePhysicalMeterPreview ? displayHeightM : null,
+      heightRangeM: stageDims.heightM || null,
+      heightRangeReason: stageDims.heightRangeReason || null,
       displayHeightM: null,
       impliedSpreadM,
       stretchedPng: false,
@@ -644,7 +692,7 @@ export function computePhysicalSceneScale(input = {}) {
       usedInventedMeters: false,
       userOverrideSeparateFromBotanicalTruth: displaySource === 'USER_OVERRIDE',
       accuracy: 'visual-aid-not-centimeter',
-      note: displayHeightM
+      note: stageDims.mayDrivePhysicalMeterPreview
         ? `${estimatedLabel}. Botanical range known. Render is not meter-accurate until the photo is calibrated. Clipping is valid. Not fit-to-frame.`
         : `${estimatedLabel}. Botanical meters UNKNOWN. Do not invent meters. Garden Design stays usable. Manual resize always available.`
     };
@@ -653,7 +701,7 @@ export function computePhysicalSceneScale(input = {}) {
   const imgHeightPx = visibleHeightPx / fill;
   const widthOverHeight = audit.visibleAspect;
   const impliedSpreadM = widthOverHeight && displayHeightM ? displayHeightM * widthOverHeight : null;
-  const spreadRange = stageDims.spreadM || null;
+  const spreadRange = validateBotanicalRange(stageDims.spreadM).range;
   let architectureClass = ARCHITECTURE_CLASSES.UNKNOWN;
   let architectureNote = 'No supported spread range to compare against the PNG aspect.';
   if (impliedSpreadM && spreadRange && finitePositive(spreadRange.min) && finitePositive(spreadRange.max)) {
@@ -696,6 +744,7 @@ export function computePhysicalSceneScale(input = {}) {
     suggestedHeightM: suggestedHeightMFromRange(stageDims.heightM, rangeBand),
     displayHeightM,
     heightRangeM: stageDims.heightM,
+    heightRangeReason: stageDims.heightRangeReason || null,
     spreadRangeM: spreadRange,
     impliedSpreadM,
     stretchedPng: false,
