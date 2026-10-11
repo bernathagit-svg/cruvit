@@ -6,17 +6,63 @@
  */
 
 export const PAID_PLANT_IDENTIFIER_ENV_FLAG = 'CRUVIT_ALLOW_PAID_PLANT_IDENTIFIER';
+export const PAID_NATURAL_BLEND_ENV_FLAG = 'CRUVIT_ALLOW_PAID_NATURAL_BLEND';
+export const PAID_ADMIN_RUNTIME_ENV_FLAG = 'CRUVIT_ALLOW_PAID_ADMIN_RUNTIME';
+export const PAID_ADMIN_RUNTIME_ACTIVATION = 'HOLD';
+
+function explicitlyEnabled(value) {
+  return typeof value === 'string' && value.trim().toLowerCase() === 'true';
+}
 
 /**
  * @param {NodeJS.ProcessEnv | Record<string, string | undefined>} [env]
  * @returns {boolean}
  */
 export function isPaidPlantIdentifierAllowed(env = process.env) {
-  const raw = String(env?.[PAID_PLANT_IDENTIFIER_ENV_FLAG] ?? '')
-    .trim()
-    .toLowerCase();
-  // Only the exact string "true" enables paid Anthropic. "1"/"yes"/true-boolean-env-coercion do not.
-  return raw === 'true';
+  return explicitlyEnabled(env?.[PAID_PLANT_IDENTIFIER_ENV_FLAG]);
+}
+
+// Legacy proxies have no runtime enablement authority, including the PI flag.
+export function isPaidLegacyRuntimeAllowed() {
+  return false;
+}
+
+export function paidLegacyRuntimeDisabledResponse() {
+  return {
+    status: 403,
+    body: { error: 'This paid AI route is disabled.', code: 'PAID_LEGACY_RUNTIME_DISABLED', enabled: false }
+  };
+}
+
+// A separate server-owned feature decision; callers must pass server env only.
+export function isPaidNaturalBlendAllowed(env = process.env) {
+  return explicitlyEnabled(env?.[PAID_NATURAL_BLEND_ENV_FLAG]);
+}
+
+export function paidNaturalBlendDisabledResponse() {
+  return {
+    status: 403,
+    body: { ok: false, error: 'Natural Blend AI is disabled.', code: 'PAID_NATURAL_BLEND_DISABLED', enabled: false }
+  };
+}
+
+/**
+ * Exercise preserved job contracts in an isolated offline test context only.
+ * This is NOT authenticated operator authority. Hosted activation remains HOLD;
+ * a future HTTP admission decision must independently authenticate the operator.
+ * No request body/header/query is an input to this predicate.
+ */
+export function isPaidAdminRuntimeAllowed(env = process.env) {
+  return env?.NODE_ENV === 'test'
+    && !['NETLIFY', 'SITE_ID', 'DEPLOY_ID', 'CONTEXT'].some(key => env?.[key])
+    && explicitlyEnabled(env?.[PAID_ADMIN_RUNTIME_ENV_FLAG]);
+}
+
+export function paidAdminRuntimeHeldResponse() {
+  return {
+    status: 403,
+    body: { ok: false, error: 'Paid administrative execution is on hold.', code: 'PAID_ADMIN_RUNTIME_HOLD', enabled: false, activation: PAID_ADMIN_RUNTIME_ACTIVATION }
+  };
 }
 
 /**

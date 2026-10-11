@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import { isPaidAdminRuntimeAllowed, paidAdminRuntimeHeldResponse } from '../../modules/runtime-guards/paid-plant-identifier-gate-v1.js';
 import { S3Client, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 
 const PLAN_CONTRACT='plant-visual-natural-blend-plan-v1';
@@ -106,6 +107,11 @@ function decodeBase64(s,maxBytes,label){
 
 export default async(req)=>{
   if(req.method!=='POST')return json(405,{ok:false,code:'METHOD_NOT_ALLOWED'});
+
+  if (!isPaidAdminRuntimeAllowed(process.env)) {
+    const held = paidAdminRuntimeHeldResponse();
+    return json(held.status, held.body);
+  }
 
   let body={};
   try{body=await req.json();}catch{return json(400,{ok:false,code:'JSON_BODY_REQUIRED'});}

@@ -1,3 +1,5 @@
+import { isPaidLegacyRuntimeAllowed, paidLegacyRuntimeDisabledResponse } from '../../modules/runtime-guards/paid-plant-identifier-gate-v1.js';
+
 export async function handler(event) {
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -8,6 +10,15 @@ export async function handler(event) {
         'Access-Control-Allow-Methods': 'POST, OPTIONS'
       },
       body: ''
+    };
+  }
+
+  if (!isPaidLegacyRuntimeAllowed()) {
+    const disabled = paidLegacyRuntimeDisabledResponse();
+    return {
+      statusCode: disabled.status,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify(disabled.body)
     };
   }
 

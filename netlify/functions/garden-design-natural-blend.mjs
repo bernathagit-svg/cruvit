@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import { isPaidNaturalBlendAllowed, paidNaturalBlendDisabledResponse } from '../../modules/runtime-guards/paid-plant-identifier-gate-v1.js';
 
 const FEATURE='natural_blend';
 const MODEL='gpt-image-2.5-sunburst-2026-09-08';
@@ -292,6 +293,10 @@ function fixedPrompt(placement){
 
 export default async(req)=>{
   if(req.method!=='POST') return reply(405,{ok:false,code:'METHOD_NOT_ALLOWED'});
+  if(!isPaidNaturalBlendAllowed(process.env)){
+    const disabled=paidNaturalBlendDisabledResponse();
+    return reply(disabled.status,disabled.body);
+  }
 
   const token=bearer(req);
   if(!token) return reply(401,{ok:false,code:'AUTH_REQUIRED'});

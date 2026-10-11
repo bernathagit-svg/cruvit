@@ -1,3 +1,5 @@
+import { isPaidLegacyRuntimeAllowed, paidLegacyRuntimeDisabledResponse } from '../../modules/runtime-guards/paid-plant-identifier-gate-v1.js';
+
 export async function handler(event) {
   // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {
@@ -14,6 +16,15 @@ export async function handler(event) {
 
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
+  }
+
+  if (!isPaidLegacyRuntimeAllowed()) {
+    const disabled = paidLegacyRuntimeDisabledResponse();
+    return {
+      statusCode: disabled.status,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify(disabled.body)
+    };
   }
 
   const apiKey =

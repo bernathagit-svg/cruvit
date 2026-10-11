@@ -958,261 +958,144 @@ export default async function handler(request) {
     return json(405, { error: 'Method not allowed' });
   }
 
-  // Owner policy: paid Anthropic Identifier DISABLED by default.
-  // Missing / false env → block BEFORE any Anthropic call. Client cannot override.
+  // Server authority only. Ordinary traffic cannot open the paid path.
   if (!isPaidPlantIdentifierAllowed(process.env)) {
     const disabled = paidPlantIdentifierDisabledResponse();
     return json(disabled.status, disabled.body);
   }
 
-  const key =
-    process.env.ANTHROPIC_KEY ||
-    process.env.ANTHROPIC_API_KEY ||
-    process.env.CLAUDE_API_KEY;
-
-  if (!key) {
-    return json(503, {
-      error: 'Anthropic API key is missing in Netlify environment variables.'
-    });
-  }
-
   let body;
-
   try {
     body = await request.json();
   } catch {
     return json(400, { error: 'Invalid JSON body.' });
   }
 
-  // Explicitly ignore client override attempts (gate already decided from server env).
   clientCannotOverridePaidPlantIdentifierGate(body, Object.fromEntries(request.headers || []));
 
-  const mode = cleanText(body?.mode).toLowerCase();
-  const preferred = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
-
-  if (mode === 'localcare' || mode === 'local-care') {
-    const models = [
-      ...new Set([preferred, 'claude-sonnet-4-6', 'claude-sonnet-4-5-20250929', 'claude-haiku-4-5-20251001'].filter(Boolean))
-    ];
-    let lastError = 'Local care request failed.';
-    for (const model of models) {
-      const result = await requestLocalCareProfile(body, key, model);
-      if (result.ok) {
-        return json(200, {
-          mode: 'localCare',
-          climate_fit: result.climate_fit,
-          climate_summary: result.climate_summary,
-          care: result.care
-        });
-      }
-      lastError = result.error || lastError;
-      if (!/model|not found|invalid/i.test(String(lastError))) break;
-    }
-    return json(502, { error: lastError });
+  // Implicit scans, legacy care refreshes and aliases cannot initiate paid work.
+  if (body?.mode !== 'identify') {
+    return json(403, {
+      error: 'This Plant Identifier operation is disabled.',
+      code: 'PAID_PLANT_IDENTIFIER_MODE_DISABLED'
+    });
   }
 
-  if (mode === 'speciescare' || mode === 'species-care') {
-    const models = [
-      ...new Set([preferred, 'claude-sonnet-4-6', 'claude-sonnet-4-5-20250929', 'claude-haiku-4-5-20251001'].filter(Boolean))
-    ];
-    let lastError = 'Species care request failed.';
-    for (const model of models) {
-      const result = await requestSpeciesCareProfile(body, key, model);
-      if (result.ok) {
-        return json(200, {
-          mode: 'speciesCare',
-          sun: result.sun,
-          water: result.water,
-          soil: result.soil,
-          growth: result.growth,
-          size: result.size,
-          climate: result.climate,
-          season: result.season,
-          pruning: result.pruning,
-          fertilizer: result.fertilizer,
-          guide: result.guide,
-          care: {
-            light: result.sun,
-            water: result.water,
-            soil: result.soil,
-            season: result.season,
-            pruning: result.pruning,
-            fertilizer: result.fertilizer
-          }
-        });
-      }
-      lastError = result.error || lastError;
-      if (!/model|not found|invalid/i.test(String(lastError))) break;
-    }
-    return json(502, { error: lastError });
+  const key =
+    process.env.ANTHROPIC_KEY ||
+    process.env.ANTHROPIC_API_KEY ||
+    process.env.CLAUDE_API_KEY;
+  if (!key) {
+    return json(503, { error: 'Plant Identifier is not configured.' });
   }
 
-  const image = parseImageInput(body);
-  if (image?.error) {
-    return json(400, { error: image.error });
+  let image;
+  let prompt;
+  let userHint;
+  try {
+    image = parseImageInput(body);
+    if (image?.error) return json(400, { error: image.error });
+    const location = cleanText(body?.location);
+    const climate = cleanText(body?.climate);
+    const scanContext = cleanText(body?.scanContext);
+    userHint = cleanText(body?.hint || body?.userQuery || body?.userHint || body?.plantName);
+    const scanId = cleanText(body?.scanId || body?.scan_id);
+    prompt = buildIdentifyPrompt(location, climate, userHint, scanContext, scanId);
+  } catch {
+    return json(400, { error: 'Invalid identification request.' });
   }
 
-  const location = cleanText(body?.location);
-  const climate = cleanText(body?.climate);
-  const scanContext = cleanText(body?.scanContext);
-  const userHint = cleanText(body?.hint || body?.userQuery || body?.userHint || body?.plantName);
-  const scanId = cleanText(body?.scanId || body?.scan_id);
+  const model = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 28000);
+  const failed = () => json(502, {
+    error: 'The plant could not be identified.',
+    code: 'PAID_PLANT_IDENTIFIER_FAILED'
+  });
 
-  const prompt = buildIdentifyPrompt(location, climate, userHint, scanContext, scanId);
-
-  const models = [
-    ...new Set(
-      [
-        preferred,
-        'claude-sonnet-4-6',
-        'claude-sonnet-4-5-20250929',
-        'claude-haiku-4-5-20251001'
-      ].filter(Boolean)
-    )
-  ];
-
-  let lastError = null;
-
-  for (const model of models) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 28000);
-
-    try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': key,
-          'anthropic-version': '2023-06-01'
-        },
-        body: JSON.stringify({
-          model,
-          max_tokens: 1500,
-          messages: [
-            {
-              role: 'user',
-              content: [
-                {
-                  type: 'image',
-                  source: {
-                    type: 'base64',
-                    media_type: image.mediaType,
-                    data: image.data
-                  }
-                },
-                { type: 'text', text: prompt }
-              ]
-            }
-          ]
-        }),
-        signal: controller.signal
-      });
-
-      clearTimeout(timer);
-
-      const payload = await response.json().catch(() => ({}));
-
-      if (!response.ok || payload?.error) {
-        lastError = payload?.error || { message: 'Identification request failed.' };
-
-        const message = errorMessage(lastError).toLowerCase();
-        const modelProblem =
-          message.includes('model') ||
-          message.includes('not found') ||
-          message.includes('invalid');
-
-        if (modelProblem) continue;
-        break;
-      }
-
-      const text = (payload?.content || [])
-        .filter(part => part?.type === 'text')
-        .map(part => part.text)
-        .join('\n');
-
-      const result = extractJson(text);
-      const corrected = applyIdentificationCorrections(result, userHint);
-      let recovered = await recoverInvalidDodonaeaIdentification(
-        image,
-        corrected,
-        key,
+  try {
+    // Exactly one paid dispatch. No model fallback, recovery, redirect or retry.
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      redirect: 'error',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
         model,
-        userHint,
-        { location, climate }
-      );
+        max_tokens: 1500,
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'image',
+                source: {
+                  type: 'base64',
+                  media_type: image.mediaType,
+                  data: image.data
+                }
+              },
+              { type: 'text', text: prompt }
+            ]
+          }
+        ]
+      }),
+      signal: controller.signal
+    });
 
-      if (recovered) {
-        recovered = calibrateConfidence(recovered);
-        recovered = await recoverWeakIdentification(image, recovered, key, model, {
-          userHint,
-          location,
-          climate
-        });
-        recovered = calibrateConfidence(recovered);
-      }
+    const payload = await response.json();
+    if (!response.ok || payload?.error) return failed();
 
-      if (!recovered || isBlockedScanIdentification(recovered, userHint)) {
-        lastError = {
-          message:
-            'Could not confidently identify this plant from the photo. Try a clearer photo of the plant only, without app buttons or text in the frame.'
-        };
-        break;
-      }
+    const text = (payload?.content || [])
+      .filter(part => part?.type === 'text')
+      .map(part => part.text)
+      .join('\n');
+    const result = extractJson(text);
+    const corrected = applyIdentificationCorrections(result, userHint);
+    const recovered = calibrateConfidence(corrected);
+    if (!recovered || isBlockedScanIdentification(recovered, userHint)) return failed();
 
-      let candidates = makeCandidates(recovered);
+    let candidates = makeCandidates(recovered);
+    if (candidates.length === 0) return failed();
 
-      if (!recovered || candidates.length === 0) {
-        lastError = {
-          message: 'The AI response did not contain a plant identification.'
-        };
-        break;
-      }
+    // Taxonomy verification is free research, not another paid model call.
+    const verified = await verifyCandidatesWithGbif(candidates);
+    if (verified.length) candidates = verified;
+    candidates = collapseSameGenusCandidates(candidates);
 
-      const verified = await verifyCandidatesWithGbif(candidates);
-      if (verified.length) candidates = verified;
+    const top = candidates[0] || {};
+    const topConfidence = normalizeConfidence(top.confidence || result?.confidence);
+    candidates = candidates.slice(0, topConfidence === 'high' ? 1 : 2);
+    const commonName = cleanCommonName(
+      top.commonName || result?.common_name || result?.commonName,
+      top.scientificName || result?.scientific_name || result?.scientificName
+    );
+    const scientificName = cleanScientificName(
+      top.scientificName || result?.scientific_name || result?.scientificName
+    );
 
-      candidates = collapseSameGenusCandidates(candidates);
-
-      const top = candidates[0] || {};
-      const topConfidence = normalizeConfidence(top.confidence || result?.confidence);
-      if (topConfidence === 'high') {
-        candidates = candidates.slice(0, 1);
-      } else {
-        candidates = candidates.slice(0, 2);
-      }
-
-      const commonName = cleanCommonName(
-        top.commonName || result?.common_name || result?.commonName,
-        top.scientificName || result?.scientific_name || result?.scientificName
-      );
-      const scientificName = cleanScientificName(
-        top.scientificName || result?.scientific_name || result?.scientificName
-      );
-
-      return json(200, {
-        candidates,
-        identification: recovered,
-        visualAnalysis: recovered?.visual_analysis || recovered?.visualAnalysis || null,
-        corrected: recovered?._corrected || '',
-        commonName,
-        scientificName,
-        common_name: commonName,
-        scientific_name: scientificName,
-        confidence: topConfidence,
-        gbifVerified: Boolean(top.gbifVerified),
-        care: recovered?.care || null
-      });
-    } catch (error) {
-      clearTimeout(timer);
-      lastError = error;
-
-      if (error?.name === 'AbortError') break;
-    }
+    return json(200, {
+      candidates,
+      identification: recovered,
+      visualAnalysis: recovered?.visual_analysis || recovered?.visualAnalysis || null,
+      corrected: recovered?._corrected || '',
+      commonName,
+      scientificName,
+      common_name: commonName,
+      scientific_name: scientificName,
+      confidence: topConfidence,
+      gbifVerified: Boolean(top.gbifVerified),
+      care: recovered?.care || null
+    });
+  } catch {
+    // Provider/network/parse/downstream failures never trigger a second call or leak diagnostics.
+    return failed();
+  } finally {
+    clearTimeout(timer);
   }
-
-  const message = errorMessage(lastError) || 'The plant could not be identified.';
-
-  return json(502, { error: message });
 }
 
 export const config = {

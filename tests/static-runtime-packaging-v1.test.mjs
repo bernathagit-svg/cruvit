@@ -22,7 +22,7 @@ const lockedPaths=()=>sourceLock.paths.map(x=>x.path).sort();
 test('packaging manifest binds exact approved baseline and classifies all tracked source paths',()=>{
   assert.equal(manifest.baselineSourceSha,'9c36d550a2476a64b4f0013b2599543538afd4fe');
   assert.equal(manifest.baselineSourceTree,'0fb518baf7f06d7adfa6c37c781137b8c12bf3be');
-  assert.equal(sourceLock.reviewedAgainstParentSha,'15d42b41a51b986c2d9015a2e7b589a362108fb7');
+  assert.equal(sourceLock.reviewedAgainstParentSha,'8cc1ff4abdc0d13898583040b04fc22760fa0737');
   assert.equal(manifest.releaseHygieneHolds.MY_GARDEN_ACCEPTANCE_PUBLIC_ROUTE,'RELEASE_HYGIENE_HOLD');
   for(const rel of git(['ls-files']).split(/\r?\n/).filter(Boolean)) assert.doesNotThrow(()=>classifyPath(rel));
 });
@@ -33,8 +33,9 @@ test('exact source lock is authoritative for every tracked path',()=>{
   assert.equal(r.ok,true,JSON.stringify(r.errors.slice(0,5)));
   assert.equal(r.trackedPathCount,sourceLock.pathCount);
   assert.equal(r.lockedPathCount,sourceLock.pathCount);
-  assert.equal(r.trackedPathCount,2681);
-  assert.deepEqual(r.classificationCounts,{BUILD_ONLY:633,PUBLIC_STATIC:1919,HISTORICAL_EVIDENCE:54,SERVER_RUNTIME:75});
+  assert.equal(r.trackedPathCount,2682);
+  assert.deepEqual(r.classificationCounts,{BUILD_ONLY:634,PUBLIC_STATIC:1919,HISTORICAL_EVIDENCE:54,SERVER_RUNTIME:75});
+  assert.equal(sourceLock.paths.find(row=>row.path==='tests/paid-runtime-containment-v1.test.mjs')?.classification,'BUILD_ONLY');
   const core=sourceLock.paths.filter(row=>row.path.startsWith('core-v1/'));
   assert.equal(core.length,84);
   assert.equal(core.filter(row=>row.classification==='PUBLIC_STATIC').length,77);
@@ -145,8 +146,8 @@ test('two independent static builds remain deterministic and artifact-stable',()
   const rb=buildStatic({out:b,receipt:br});
   assert.equal(ra.publicFileCount,1919);
   assert.equal(ra.serverRuntimeFileCount,75);
-  // Pin the qualified integration output; metadata and PI evidence pages stay excluded.
-  assert.equal(ra.outputManifestSha256,'48341b2920e0cbebeb3a7a5c4a6d640f6160976cffd6798d1a4f5412f9bcfb83');
+  // Pin the reviewed P0-A output; the only changed public file is the existing guard.
+  assert.equal(ra.outputManifestSha256,'51332afae77757e0874d623aa136236a6912d4bae60da4a0db2804f81d1f0ae8');
   assert.equal(ra.outputManifestSha256,rb.outputManifestSha256);
   assert.deepEqual(ra.publicManifest,rb.publicManifest);
   assert.equal(ra.secretFindings.length,0);

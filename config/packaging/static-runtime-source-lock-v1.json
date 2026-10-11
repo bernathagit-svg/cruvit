@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "lockVersion": "static-runtime-source-lock-v1",
-  "reviewedAgainstParentSha": "15d42b41a51b986c2d9015a2e7b589a362108fb7",
+  "reviewedAgainstParentSha": "8cc1ff4abdc0d13898583040b04fc22760fa0737",
   "baselineProductSha": "9c36d550a2476a64b4f0013b2599543538afd4fe",
-  "pathCount": 2681,
+  "pathCount": 2682,
   "classificationCounts": {
-    "BUILD_ONLY": 633,
+    "BUILD_ONLY": 634,
     "PUBLIC_STATIC": 1919,
     "HISTORICAL_EVIDENCE": 54,
     "SERVER_RUNTIME": 75
@@ -23642,6 +23642,14 @@
       "path": "tests/integration-baseline/pi-owner-approved-assets.test.cjs",
       "classification": "BUILD_ONLY",
       "reason": "Authorized integration baseline metadata or local qualification source; never public runtime.",
+      "proposalClassifications": [
+        "BUILD_ONLY"
+      ]
+    },
+    {
+      "path": "tests/paid-runtime-containment-v1.test.mjs",
+      "classification": "BUILD_ONLY",
+      "reason": "Build, validation, schema/migration or local-provider material.",
       "proposalClassifications": [
         "BUILD_ONLY"
       ]

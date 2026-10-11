@@ -1,5 +1,7 @@
 // Plant Doctor — isolated Anthropic proxy (separate from main claude and gd-claude).
 // Keeps the API key server-side; the iframe module never handles keys.
+import { isPaidLegacyRuntimeAllowed, paidLegacyRuntimeDisabledResponse } from '../../modules/runtime-guards/paid-plant-identifier-gate-v1.js';
+
 export async function handler(event) {
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -15,6 +17,15 @@ export async function handler(event) {
 
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
+  }
+
+  if (!isPaidLegacyRuntimeAllowed()) {
+    const disabled = paidLegacyRuntimeDisabledResponse();
+    return {
+      statusCode: disabled.status,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify(disabled.body)
+    };
   }
 
   const apiKey =

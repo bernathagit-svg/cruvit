@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import { isPaidAdminRuntimeAllowed, paidAdminRuntimeHeldResponse } from '../../modules/runtime-guards/paid-plant-identifier-gate-v1.js';
 import {
   S3Client,
   GetObjectCommand,
@@ -209,6 +210,11 @@ function spendFromUsage(usage = {}) {
 
 export default async (req) => {
   if (req.method !== 'POST') return json(405, { ok:false, code:'METHOD_NOT_ALLOWED' });
+
+  if (!isPaidAdminRuntimeAllowed(process.env)) {
+    const held = paidAdminRuntimeHeldResponse();
+    return json(held.status, held.body);
+  }
 
   let body = {};
   try { body = await req.json(); }
