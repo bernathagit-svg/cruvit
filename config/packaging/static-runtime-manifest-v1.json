@@ -22,7 +22,11 @@
     "homepage-v1/index.html",
     "homepage-v1/styles.css",
     "store/index.html",
-    "store/styles.css"
+    "store/styles.css",
+    "core-v1/index.html",
+    "core-v1/plant-identification/index.html",
+    "core-v1/my-garden/index.html",
+    "core-v1/my-garden/plants/index.html"
   ],
   "classifications": [
     {
@@ -270,6 +274,102 @@
         "data/size-authority-delta-receipts-v1/000001-jaboticaba-context-state-v1.json"
       ],
       "reason": "Immutable completed Delta 001 canonical execution receipt; historical evidence only, never public runtime."
+    },
+    {
+      "classification": "PUBLIC_STATIC",
+      "exact": [
+        "core-v1/app.js",
+        "core-v1/assets/approved-shell.png",
+        "core-v1/assets/card-garden-design-center.png",
+        "core-v1/assets/card-garden-design.png",
+        "core-v1/assets/card-my-garden-side.png",
+        "core-v1/assets/card-my-garden.png",
+        "core-v1/assets/card-plant-doctor-rectified.png",
+        "core-v1/assets/card-plant-id-approved-exact.webp",
+        "core-v1/assets/card-shop-approved-hq.webp",
+        "core-v1/assets/card-smart-approved-exact.webp",
+        "core-v1/assets/garden-design-approved-motion.mp4",
+        "core-v1/assets/my-garden-approved-motion.mp4",
+        "core-v1/assets/plant-doctor-approved-motion.mp4",
+        "core-v1/assets/plant-identification-approved-motion.mp4",
+        "core-v1/assets/shop-approved-motion.mp4",
+        "core-v1/assets/smart-recommendations-approved-motion.mp4",
+        "core-v1/core-nav.js",
+        "core-v1/index.html",
+        "core-v1/motion-carousel.css",
+        "core-v1/my-garden/_acceptance/acceptance.mjs",
+        "core-v1/my-garden/_acceptance/index.html",
+        "core-v1/my-garden/assets/approved-my-garden.png",
+        "core-v1/my-garden/assets/supabase.js",
+        "core-v1/my-garden/data.mjs",
+        "core-v1/my-garden/index.html",
+        "core-v1/my-garden/plants/assets/approved-my-plants.png",
+        "core-v1/my-garden/plants/assets/catalog-apple.jpg",
+        "core-v1/my-garden/plants/assets/catalog-cache.json",
+        "core-v1/my-garden/plants/assets/catalog-monstera.jpg",
+        "core-v1/my-garden/plants/assets/supabase.js",
+        "core-v1/my-garden/plants/data.mjs",
+        "core-v1/my-garden/plants/index.html",
+        "core-v1/my-garden/plants/renderer.mjs",
+        "core-v1/my-garden/plants/styles.css",
+        "core-v1/my-garden/renderer.mjs",
+        "core-v1/my-garden/shared/integration.css",
+        "core-v1/my-garden/shared/navigation.mjs",
+        "core-v1/my-garden/shared/plant-rls.mjs",
+        "core-v1/my-garden/shared/preview-session.mjs",
+        "core-v1/my-garden/shared/screen-app.mjs",
+        "core-v1/my-garden/styles.css",
+        "core-v1/plant-identification/assets/s1-00.js",
+        "core-v1/plant-identification/assets/s1-01.js",
+        "core-v1/plant-identification/assets/s1-02.js",
+        "core-v1/plant-identification/assets/s1-03.js",
+        "core-v1/plant-identification/assets/s2-00.js",
+        "core-v1/plant-identification/assets/s2-01.js",
+        "core-v1/plant-identification/assets/s2-02.js",
+        "core-v1/plant-identification/assets/s2-03.js",
+        "core-v1/plant-identification/assets/s2-04.js",
+        "core-v1/plant-identification/assets/s3-00.js",
+        "core-v1/plant-identification/assets/s3-01.js",
+        "core-v1/plant-identification/assets/s3-02.js",
+        "core-v1/plant-identification/assets/s4-00.js",
+        "core-v1/plant-identification/assets/s4-01.js",
+        "core-v1/plant-identification/assets/s4-02.js",
+        "core-v1/plant-identification/assets/s5-00.js",
+        "core-v1/plant-identification/assets/s5-01.js",
+        "core-v1/plant-identification/assets/s5-02.js",
+        "core-v1/plant-identification/assets/s5-03.js",
+        "core-v1/plant-identification/assets/s6-00.js",
+        "core-v1/plant-identification/assets/s6-01.js",
+        "core-v1/plant-identification/assets/s6-02.js",
+        "core-v1/plant-identification/assets/s7-00.js",
+        "core-v1/plant-identification/assets/s7-01.js",
+        "core-v1/plant-identification/assets/s7-02.js",
+        "core-v1/plant-identification/assets/s8-00.js",
+        "core-v1/plant-identification/assets/s8-01.js",
+        "core-v1/plant-identification/assets/s8-02.js",
+        "core-v1/plant-identification/assets/s8-03.js",
+        "core-v1/plant-identification/atomic/add-plant-contract.js",
+        "core-v1/plant-identification/atomic/add-plant-write-repository.js",
+        "core-v1/plant-identification/atomic/boot.mjs",
+        "core-v1/plant-identification/atomic/preview-domain.mjs",
+        "core-v1/plant-identification/atomic/save-controller.mjs",
+        "core-v1/plant-identification/index.html",
+        "core-v1/styles.css"
+      ],
+      "reason": "Exact accepted Core V1 application paths from e8ffb340af7a5f9820632e569d251a414d5800ec. My Garden acceptance route is retained for this integration baseline only; RELEASE_HYGIENE_HOLD."
+    },
+    {
+      "classification": "BUILD_ONLY",
+      "exact": [
+        "core-v1/CRUVIT_GOLDEN_BASELINE_V1.json",
+        "core-v1/DATA_BINDING_CONTRACT_V1.json",
+        "core-v1/DEPENDENCY_MANIFEST_V1.json",
+        "core-v1/README.md",
+        "core-v1/plant-identification/_acceptance/index.html",
+        "core-v1/plant-identification/_acceptance/receipts.mjs",
+        "core-v1/plant-identification/owner-approved-manifest.json"
+      ],
+      "reason": "Core metadata, historical provenance and PI acceptance evidence pages; excluded from public runtime."
     }
   ],
   "forbiddenPublic": [
@@ -326,5 +426,8 @@
   "routeRewrites": {
     "app": "app.html",
     "app/": "app.html"
+  },
+  "releaseHygieneHolds": {
+    "MY_GARDEN_ACCEPTANCE_PUBLIC_ROUTE": "RELEASE_HYGIENE_HOLD"
   }
 }

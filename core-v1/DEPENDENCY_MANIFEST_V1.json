@@ -1,0 +1,173 @@
+{
+  "contract": "CRUVIT_CORE_V1_DEPENDENCY_MANIFEST_V1",
+  "governanceOnly": true,
+  "note": "No runtime files are imported by Commit 1. This manifest records the dependency-closed sets proposed for later gated commits.",
+  "plannedClosures": {
+    "homeCommit2": {
+      "source": "ux-lab-add-smart-only@c4e6ba0d6b4f140136ad1eb6408f9721ef7dd5e6",
+      "roots": [
+        "ux-lab/index.html"
+      ],
+      "files": [
+        {
+          "path": "ux-lab/index.html",
+          "staticImports": [
+            "./styles.css",
+            "./app.js"
+          ],
+          "globals": [
+            "document"
+          ]
+        },
+        {
+          "path": "ux-lab/app.js",
+          "staticImports": [],
+          "globals": [
+            "document",
+            "performance",
+            "requestAnimationFrame"
+          ]
+        },
+        {
+          "path": "ux-lab/styles.css",
+          "staticImports": [],
+          "assets": [
+            "/homepage-v1/assets/hero-garden.jpg"
+          ]
+        }
+      ],
+      "assets": [
+        "ux-lab/assets/home-approved-reference.png",
+        "ux-lab/assets/card-garden-design.png",
+        "ux-lab/assets/card-garden-design-center.png",
+        "ux-lab/assets/card-my-garden.png",
+        "ux-lab/assets/card-my-garden-side.png",
+        "ux-lab/assets/card-plant-doctor-rectified.png",
+        "ux-lab/assets/card-plant-id-approved-exact.webp",
+        "ux-lab/assets/card-smart-approved-exact.webp",
+        "ux-lab/assets/card-shop-approved-hq.webp",
+        "homepage-v1/assets/hero-garden.jpg"
+      ],
+      "coreV1ChangeAllowed": "thin shell and transparent My Garden / Plant Identification navigation only",
+      "forbiddenDependency": "app.html"
+    },
+    "plantIdentificationCommit3": {
+      "source": "plant-id-approved-flow-v2-20261005@b7d1464254477996617aeaa20ad346b30534d75e",
+      "roots": [
+        "ux-lab/plant-id-approved-flow-v2/index.html"
+      ],
+      "files": [
+        {
+          "path": "ux-lab/plant-id-approved-flow-v2/index.html",
+          "staticImports": [
+            "./assets/s1-00.js ... ./assets/s8-03.js"
+          ],
+          "globals": [
+            "window.__PI",
+            "document"
+          ],
+          "css": "inline approved review shell"
+        },
+        {
+          "path": "ux-lab/plant-id-approved-flow-v2/owner-approved-manifest.json",
+          "staticImports": []
+        }
+      ],
+      "assetSet": {
+        "pattern": "ux-lab/plant-id-approved-flow-v2/assets/s1-00.js ... s8-03.js",
+        "count": 29,
+        "assetsTreeSha": "595ea3ace7692ba616b1a1ab7d1d97c320ed5440"
+      },
+      "forbiddenDependencies": [
+        "legacy app.html",
+        "legacy plant-identifier.js UI",
+        "paid AI"
+      ]
+    },
+    "myGardenCommit4": {
+      "source": "my-garden-ui-2.10-contract-20261002@121b1e1d91aaf5fa8ce81ea8bc2429dec8abe5e3",
+      "approvedMainPixelSource": {
+        "sourceName": "image(20261002-105215).png",
+        "sha256": "ca1a929b0226d46b8ae75a8b160fdc8780dd9d2f84f9f419ee4b47410f3bd676"
+      },
+      "myPlantsRoot": "modules/my-garden-v2/my-plants-screen-controller.js",
+      "dependencyClosure": [
+        "modules/my-garden-v2/my-plants-screen-controller.js",
+        "modules/my-garden-v2/my-plants-data-adapter.js",
+        "modules/my-garden-v2/my-plants-view-model.js",
+        "modules/my-garden-v2/plant-instance-projection.js",
+        "modules/my-garden-v2/read-model.js",
+        "modules/my-garden-v2/supabase-read-repository.js",
+        "modules/my-garden-v2/garden-media-url-resolver.js",
+        "modules/my-garden-v2/approved-my-plants-renderer.js",
+        "modules/my-garden-v2/my-plants-approved-layout.js"
+      ],
+      "requiredRuntimeInputs": [
+        "Supabase client",
+        "gardenProfileId"
+      ],
+      "requiredGlobals": [],
+      "requiredApprovedAsset": {
+        "sourceName": "My Plants — APPROVED LOCKED 2026-10-02.png",
+        "sha256": "64ddc9c59a62482c4050159a8a9109d19a71d1a777ebafc888d6d598d8b531d5"
+      },
+      "explicitGate": "runtimeDataBindingStatus=UNPROVEN_FOR_ARBITRARY_PLANTS must be resolved without unapproved visual change before Commit 4 supervisor PASS.",
+      "forbiddenDependency": "app.html"
+    },
+    "atomicCommit5": {
+      "source": "PR #146 checkpoint aeddddea9ec826394fb60e13212b5d9bb3b2a331",
+      "dependencyClosure": [
+        "modules/plant-identifier/plant-identifier-mygarden-write-bridge-v1.js",
+        "modules/my-garden-v2/add-plant-contract.js",
+        "modules/my-garden-v2/add-plant-write-repository.js"
+      ],
+      "bridgeStaticImports": {
+        "modules/plant-identifier/plant-identifier-mygarden-write-bridge-v1.js": [
+          "../my-garden-v2/add-plant-contract.js",
+          "../my-garden-v2/add-plant-write-repository.js"
+        ],
+        "modules/my-garden-v2/add-plant-write-repository.js": [
+          "./add-plant-contract.js"
+        ],
+        "modules/my-garden-v2/add-plant-contract.js": []
+      },
+      "requiredInjectedPersonalDomainInterface": [
+        "getSession()",
+        "getActiveGardenId()",
+        "getSupabaseClient()",
+        "hydrateActiveGardenPlants()"
+      ],
+      "invariants": [
+        "Core V1 MUST inject personalDomain explicitly.",
+        "The legacy globalThis.cruvitPersonalDomainV0 fallback is forbidden in Core V1 runtime wiring."
+      ],
+      "dbArtifacts": [
+        "supabase/migrations/20261005175958_garden_plants_unassessed_health_v2.sql",
+        "supabase/migrations/20261005190000_add_garden_plant_atomic_v1.sql"
+      ],
+      "fixture": {
+        "commonName": "Monstera",
+        "scientificName": "Monstera deliciosa",
+        "canonicalSlug": "monstera-deliciosa",
+        "paidAI": false
+      }
+    }
+  },
+  "outOfScope": [
+    "Plant Detail in first vertical slice",
+    "Add Plant screen in first vertical slice",
+    "Upcoming",
+    "Calendar",
+    "Garden Journal",
+    "Notifications",
+    "Garden Photo editor runtime",
+    "Garden Design module implementation",
+    "Plant Doctor module implementation",
+    "Smart Recommendations module implementation",
+    "Shop module implementation",
+    "legacy app.html",
+    "full PR #140/#145/#146 merges",
+    "Production migrations or writes",
+    "paid AI"
+  ]
+}

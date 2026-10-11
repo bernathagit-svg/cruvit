@@ -22,6 +22,8 @@ const lockedPaths=()=>sourceLock.paths.map(x=>x.path).sort();
 test('packaging manifest binds exact approved baseline and classifies all tracked source paths',()=>{
   assert.equal(manifest.baselineSourceSha,'9c36d550a2476a64b4f0013b2599543538afd4fe');
   assert.equal(manifest.baselineSourceTree,'0fb518baf7f06d7adfa6c37c781137b8c12bf3be');
+  assert.equal(sourceLock.reviewedAgainstParentSha,'15d42b41a51b986c2d9015a2e7b589a362108fb7');
+  assert.equal(manifest.releaseHygieneHolds.MY_GARDEN_ACCEPTANCE_PUBLIC_ROUTE,'RELEASE_HYGIENE_HOLD');
   for(const rel of git(['ls-files']).split(/\r?\n/).filter(Boolean)) assert.doesNotThrow(()=>classifyPath(rel));
 });
 
@@ -31,8 +33,20 @@ test('exact source lock is authoritative for every tracked path',()=>{
   assert.equal(r.ok,true,JSON.stringify(r.errors.slice(0,5)));
   assert.equal(r.trackedPathCount,sourceLock.pathCount);
   assert.equal(r.lockedPathCount,sourceLock.pathCount);
-  assert.equal(r.classificationCounts.PUBLIC_STATIC,1842);
-  assert.equal(r.classificationCounts.SERVER_RUNTIME,75);
+  assert.equal(r.trackedPathCount,2681);
+  assert.deepEqual(r.classificationCounts,{BUILD_ONLY:633,PUBLIC_STATIC:1919,HISTORICAL_EVIDENCE:54,SERVER_RUNTIME:75});
+  const core=sourceLock.paths.filter(row=>row.path.startsWith('core-v1/'));
+  assert.equal(core.length,84);
+  assert.equal(core.filter(row=>row.classification==='PUBLIC_STATIC').length,77);
+  assert.deepEqual(core.filter(row=>row.classification==='BUILD_ONLY').map(row=>row.path).sort(),[
+    'core-v1/CRUVIT_GOLDEN_BASELINE_V1.json',
+    'core-v1/DATA_BINDING_CONTRACT_V1.json',
+    'core-v1/DEPENDENCY_MANIFEST_V1.json',
+    'core-v1/README.md',
+    'core-v1/plant-identification/_acceptance/index.html',
+    'core-v1/plant-identification/_acceptance/receipts.mjs',
+    'core-v1/plant-identification/owner-approved-manifest.json'
+  ]);
 });
 
 test('new tracked files under broad PUBLIC_STATIC parents fail until explicitly locked',()=>{
@@ -129,10 +143,10 @@ test('two independent static builds remain deterministic and artifact-stable',()
   fs.mkdirSync(path.dirname(ar),{recursive:true});
   const ra=buildStatic({out:a,receipt:ar});
   const rb=buildStatic({out:b,receipt:br});
-  assert.equal(ra.publicFileCount,1842);
+  assert.equal(ra.publicFileCount,1919);
   assert.equal(ra.serverRuntimeFileCount,75);
-  // WTP-R1 changes only wtp-premium-v1/index.html in the public artifact.
-  assert.equal(ra.outputManifestSha256,'2ed2f2c441ca055feaaa7df0b942d22d0180fd50ae9c1cfa35d2eb0d41483dc9');
+  // Pin the qualified integration output; metadata and PI evidence pages stay excluded.
+  assert.equal(ra.outputManifestSha256,'48341b2920e0cbebeb3a7a5c4a6d640f6160976cffd6798d1a4f5412f9bcfb83');
   assert.equal(ra.outputManifestSha256,rb.outputManifestSha256);
   assert.deepEqual(ra.publicManifest,rb.publicManifest);
   assert.equal(ra.secretFindings.length,0);
