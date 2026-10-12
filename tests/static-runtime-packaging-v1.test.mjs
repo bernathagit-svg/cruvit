@@ -22,7 +22,7 @@ const lockedPaths=()=>sourceLock.paths.map(x=>x.path).sort();
 test('packaging manifest binds exact approved baseline and classifies all tracked source paths',()=>{
   assert.equal(manifest.baselineSourceSha,'9c36d550a2476a64b4f0013b2599543538afd4fe');
   assert.equal(manifest.baselineSourceTree,'0fb518baf7f06d7adfa6c37c781137b8c12bf3be');
-  assert.equal(sourceLock.reviewedAgainstParentSha,'48a017a3272dee34d56a1b9ee6d1a838801a25e5');
+  assert.equal(sourceLock.reviewedAgainstParentSha,'754141e7467a308b2be5f02c76ce5d914fdeb883');
   assert.equal(manifest.releaseHygieneHolds.MY_GARDEN_ACCEPTANCE_PUBLIC_ROUTE,'RELEASE_HYGIENE_HOLD');
   for(const rel of git(['ls-files']).split(/\r?\n/).filter(Boolean)) assert.doesNotThrow(()=>classifyPath(rel));
 });
@@ -33,9 +33,11 @@ test('exact source lock is authoritative for every tracked path',()=>{
   assert.equal(r.ok,true,JSON.stringify(r.errors.slice(0,5)));
   assert.equal(r.trackedPathCount,sourceLock.pathCount);
   assert.equal(r.lockedPathCount,sourceLock.pathCount);
-  assert.equal(r.trackedPathCount,2683);
-  assert.deepEqual(r.classificationCounts,{BUILD_ONLY:635,PUBLIC_STATIC:1919,HISTORICAL_EVIDENCE:54,SERVER_RUNTIME:75});
+  assert.equal(r.trackedPathCount,2685);
+  assert.deepEqual(r.classificationCounts,{BUILD_ONLY:636,PUBLIC_STATIC:1920,HISTORICAL_EVIDENCE:54,SERVER_RUNTIME:75});
   assert.equal(sourceLock.paths.find(row=>row.path==='tests/paid-runtime-containment-v1.test.mjs')?.classification,'BUILD_ONLY');
+  assert.equal(sourceLock.paths.find(row=>row.path==='modules/plant-identifier/real-pi-runtime-v1.js')?.classification,'PUBLIC_STATIC');
+  assert.equal(sourceLock.paths.find(row=>row.path==='tests/pi-real-identification-v1.test.mjs')?.classification,'BUILD_ONLY');
   const core=sourceLock.paths.filter(row=>row.path.startsWith('core-v1/'));
   assert.equal(core.length,84);
   assert.equal(core.filter(row=>row.classification==='PUBLIC_STATIC').length,77);
@@ -144,10 +146,10 @@ test('two independent static builds remain deterministic and artifact-stable',()
   fs.mkdirSync(path.dirname(ar),{recursive:true});
   const ra=buildStatic({out:a,receipt:ar});
   const rb=buildStatic({out:b,receipt:br});
-  assert.equal(ra.publicFileCount,1919);
+  assert.equal(ra.publicFileCount,1920);
   assert.equal(ra.serverRuntimeFileCount,75);
-  // Pin the P0-B output; only the six authorized runtime surfaces change.
-  assert.equal(ra.outputManifestSha256,'1068b88c277a94b15d2be29c5b9d3fac24de9e8be52598bb45216e9ad3c1894a');
+  // Pin the authorized Slice 1 output; the Identify server and downstream authorities are unchanged.
+  assert.equal(ra.outputManifestSha256,'83cb61edde42305c40489106b4f713db1fe191b0a1020f26ea79116da2110d90');
   assert.equal(ra.outputManifestSha256,rb.outputManifestSha256);
   assert.deepEqual(ra.publicManifest,rb.publicManifest);
   assert.equal(ra.secretFindings.length,0);

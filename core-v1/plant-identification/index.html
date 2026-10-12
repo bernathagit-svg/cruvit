@@ -50,25 +50,28 @@ body{display:grid;place-items:start center;font-family:Arial,sans-serif;overflow
 <script src="./assets/s8-02.js"></script>
 <script src="./assets/s8-03.js"></script>
 
-<script>
+<script type="module">
+import {wireRealPiInputs} from '../../modules/plant-identifier/real-pi-runtime-v1.js';
 const screens=Array.from({length:8},(_,i)=>(window.__PI?.[i]||[]).join(""));
 const expected=[2310742,3406426,1786662,3352146,3347862,2456618,2020150,2405466];
 if(screens.some((s,i)=>s.length!==expected[i])) throw new Error("Approved asset integrity check failed");
 const titles=["Identify","Camera","Analyzing","Result","Plant Profile","Care","Suitability","Save to My Garden"];
 const hotspots={
-0:[{x:10,y:50,w:80,h:13,to:1,label:"Take a photo"}],
-1:[{x:30,y:66,w:40,h:20,to:2,label:"Capture photo"}],
-2:[{x:4,y:8,w:92,h:80,to:3,label:"Continue to result"}],
+0:[{x:10,y:50,w:80,h:13,action:"camera",label:"Take a photo"},{x:10,y:63,w:80,h:7,action:"gallery",label:"Choose from gallery"}],
+1:[{x:30,y:66,w:40,h:20,action:"capture",label:"Capture photo"},{x:10,y:71,w:15,h:9,action:"gallery",label:"Choose from gallery"},{x:7,y:5,w:11,h:7,action:"back",label:"Back"}],
+2:[],
 3:[{x:5,y:55,w:90,h:27,to:4,label:"View full profile"}],
 4:[{x:18,y:28,w:20,h:9,to:5,label:"Care"}],
 5:[{x:5,y:5,w:90,h:84,to:6,label:"Continue to suitability"}],
 6:[{x:5,y:80,w:90,h:13,to:7,label:"Save to My Garden"}],
 7:[{x:10,y:78,w:80,h:5,to:0,label:"Save to My Garden"}]
 };
-let index=0,saveAction=null,saving=false;
+let index=0,saveAction=null,saving=false,acquisition=null;
 const stage=document.getElementById("stage"),img=document.getElementById("screen");
 stage.addEventListener('cruvit-pi-save-bind',event=>{if(typeof event.detail?.save==='function')saveAction=event.detail.save;});
-function go(i){if(saving)return;index=Math.max(0,Math.min(screens.length-1,i));render()}
+// Generic navigation can only go backward. Slice 1 never exposes PI-04.
+function go(i){if(saving||i>index)return;index=Math.max(0,Math.min(2,i));render()}
+function showAcquisitionScreen(i){index=Math.max(0,Math.min(2,i));render()}
 function render(){
  stage.querySelectorAll(".hot").forEach(x=>x.remove());
  img.src=screens[index];
@@ -78,7 +81,8 @@ function render(){
   const b=document.createElement("button");
   b.className="hot";b.type="button";b.setAttribute("aria-label",h.label);
   b.style.left=h.x+"%";b.style.top=h.y+"%";b.style.width=h.w+"%";b.style.height=h.h+"%";
-  b.onclick=async e=>{e.stopPropagation();if(index!==7){go(h.to);return;}if(saving)return;
+  if(h.action){b.setAttribute('data-pi-action',h.action);b.disabled=h.action!=='back'&&['IMAGE_LOADING','IDENTIFYING'].includes(acquisition?.getState().status);}
+  b.onclick=async e=>{e.stopPropagation();if(h.action){acquisition?.activate(h.action);return;}if(index!==7){go(h.to);return;}if(saving)return;
    if(!saveAction){alert('Preview save is not ready. No data was saved.');return;}
    saving=true;b.disabled=true;stage.setAttribute('aria-busy','true');
    try{await saveAction();location.assign('/core-v1/my-garden/');}
@@ -87,19 +91,18 @@ function render(){
   };stage.appendChild(b);
  }
 }
-img.addEventListener("click",()=>{if(index<screens.length-1)go(index+1)});
 let touchStartX=null;
 stage.addEventListener("touchstart",e=>{touchStartX=e.changedTouches[0].clientX},{passive:true});
 stage.addEventListener("touchend",e=>{
  if(touchStartX===null)return;
  const dx=e.changedTouches[0].clientX-touchStartX;touchStartX=null;
- if(dx<-40&&index<screens.length-1)go(index+1);
  if(dx>40&&index>0)go(index-1);
 },{passive:true});
 document.addEventListener("keydown",e=>{
- if(e.key==="ArrowRight")go(index+1);
  if(e.key==="ArrowLeft")go(index-1);
 });
+acquisition=wireRealPiInputs({document,stage,showScreen:showAcquisitionScreen,render});
+Object.defineProperty(window,'__CRUVIT_REAL_PI_STATE',{get:acquisition.getState});
 render();
 </script>
 <script src="../my-garden/assets/supabase.js"></script>

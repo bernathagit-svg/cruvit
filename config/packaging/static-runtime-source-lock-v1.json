@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "lockVersion": "static-runtime-source-lock-v1",
-  "reviewedAgainstParentSha": "48a017a3272dee34d56a1b9ee6d1a838801a25e5",
+  "reviewedAgainstParentSha": "754141e7467a308b2be5f02c76ce5d914fdeb883",
   "baselineProductSha": "9c36d550a2476a64b4f0013b2599543538afd4fe",
-  "pathCount": 2683,
+  "pathCount": 2685,
   "classificationCounts": {
-    "BUILD_ONLY": 635,
-    "PUBLIC_STATIC": 1919,
+    "BUILD_ONLY": 636,
+    "PUBLIC_STATIC": 1920,
     "HISTORICAL_EVIDENCE": 54,
     "SERVER_RUNTIME": 75
   },
@@ -23658,6 +23658,22 @@
       "path": "tests/paid-runtime-containment-v1.test.mjs",
       "classification": "BUILD_ONLY",
       "reason": "Build, validation, schema/migration or local-provider material.",
+      "proposalClassifications": [
+        "BUILD_ONLY"
+      ]
+    },
+    {
+      "path": "modules/plant-identifier/real-pi-runtime-v1.js",
+      "classification": "PUBLIC_STATIC",
+      "reason": "Authorized Real PI Slice 1 memory-only image, identity and canonical read runtime.",
+      "proposalClassifications": [
+        "PUBLIC_STATIC"
+      ]
+    },
+    {
+      "path": "tests/pi-real-identification-v1.test.mjs",
+      "classification": "BUILD_ONLY",
+      "reason": "Real PI Slice 1 offline contract and data-flow qualification; never public runtime.",
       "proposalClassifications": [
         "BUILD_ONLY"
       ]
