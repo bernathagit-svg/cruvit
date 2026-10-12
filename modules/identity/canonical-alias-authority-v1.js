@@ -5,6 +5,7 @@
  * No fetch, Node built-ins, writes, scientific guessing, or approval decisions.
  */
 import { CANONICAL_ALIAS_DATA } from './canonical-alias-authority-data-v1.js';
+import { resolvePlantIdentity } from './plant-identity-resolver.js';
 
 export const CANONICAL_ALIAS_AUTHORITY_VERSION = '1.0.0';
 const owns = (obj, key) => !!obj && Object.prototype.hasOwnProperty.call(obj, key);
@@ -70,4 +71,46 @@ export function resolveCanonicalAliasSlug(rawSlug, authority = CANONICAL_ALIAS_A
   if (!key) return '';
   if (authority.canonicalSlugs.includes(key)) return key;
   return owns(authority.aliases, key) ? authority.aliases[key] : key;
+}
+
+/**
+ * Strict runtime read boundary. Unlike the compatibility alias API above,
+ * unknown inputs never become catalog keys. Resolve each identity hint alone:
+ * the foundation resolver's precedence must not hide conflicting stored keys.
+ * Names/care descriptions cannot override an explicit registered identity.
+ * Before the full Registry loads, only its checked-in slug projection is usable.
+ */
+export function resolveCanonicalReadSlug(input, options = {}) {
+  const present = value => value != null && value !== '';
+  const resolveOne = value => {
+    if (typeof value !== 'string' || !value.trim()) return '';
+    const key = value.trim();
+    const result = resolvePlantIdentity(key, options);
+    if (result.status === 'resolved_id' || result.status === 'resolved_canonical') {
+      return CANONICAL_ALIAS_AUTHORITY.canonicalSlugs.includes(result.canonicalSlug)
+        ? result.canonicalSlug : '';
+    }
+    if (result.status === 'ambiguous' || result.status === 'pending_conflict') return '';
+    const slug = resolveCanonicalAliasSlug(key);
+    return CANONICAL_ALIAS_AUTHORITY.canonicalSlugs.includes(slug) ? slug : '';
+  };
+  if (typeof input === 'string') return resolveOne(input);
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return '';
+  const keys = [input.plantId, input.canonicalSlug, input.profileSlug,
+    input.profile_slug, input.slug, input.meta?.slug].filter(present);
+  const scientific = [input.scientific, input.scientificName, input.scientific_name,
+    input.latin, input.species].filter(present);
+  const hints = keys.length ? keys : scientific.length ? scientific
+    : [input.localizedName, input.name].filter(present);
+  if (!hints.length) return '';
+  const slugs = hints.map(resolveOne);
+  if (slugs.some(slug => !slug || slug !== slugs[0])) return '';
+  // A recognized contradictory botanical hint is a conflict. Unregistered care
+  // prose is descriptive only (e.g. "Rubus idaeus / Rubus spp.").
+  if (keys.length) for (const value of scientific) {
+    const result = resolvePlantIdentity({ scientific: value }, options);
+    if (result.status === 'ambiguous' || result.status === 'pending_conflict'
+        || (result.canonicalSlug && result.canonicalSlug !== slugs[0])) return '';
+  }
+  return slugs[0];
 }

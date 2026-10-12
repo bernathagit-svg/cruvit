@@ -1,4 +1,6 @@
 // Read-only, isolated Preview. No fabricated session, provider lookup or write operation.
+import {resolveCanonicalReadSlug} from '../../../modules/identity/canonical-alias-authority-v1.js';
+import {loadIdentityRegistry} from '../../../modules/identity/plant-identity-resolver.js';
 export const PREVIEW_URL='https://pwgeygwafuinwkpmnzxp.supabase.co';
 export const PUBLIC_KEY='sb_publishable_FqkszZTjO3XXbZBaDojCyQ_hY85Kfbo';
 export const GARDEN_ID='a2b4080d-3858-4f71-b5ac-23847aa17e1d';
@@ -11,17 +13,19 @@ export function projectRows(garden,plants,catalog){
  const all=plants.map(p=>{
   if(!p.id||seen.has(p.id)||p.garden_profile_id!==garden.id||p.user_id!==garden.user_id)fail('Plant ownership or identity mismatch');seen.add(p.id);
   if(typeof p.archived!=='boolean'||typeof p.profile_slug!=='string'||!p.profile_slug||typeof p.name!=='string'||!p.name)fail('Incomplete plant record');
-  const c=bySlug.get(p.profile_slug);if(!c||c.slug!==p.profile_slug||!c.scientific_name)fail('Exact canonical plant missing');
+  const canonicalSlug=resolveCanonicalReadSlug({profile_slug:p.profile_slug,plantId:p.plantId});if(!canonicalSlug)fail('Unresolved or conflicting plant identity');
+  const c=bySlug.get(canonicalSlug);if(!c||c.slug!==canonicalSlug||!c.scientific_name)fail('Exact canonical plant missing');
+  if(resolveCanonicalReadSlug({slug:c.slug,scientific:c.scientific_name})!==canonicalSlug)fail('Catalog scientific identity conflict');
   if(p.scientific&&p.scientific!==c.scientific_name)fail('Scientific identity conflict');
   const m=c.media;if(c.verification_state!=='verified'||c.media_status!=='IMAGE_READY'||m?.imageStatus!=='IMAGE_READY'||!m.sourceAssetId)fail('Catalog image not approved');
-  if(m.canonicalPlantIdentity&&m.canonicalPlantIdentity!==p.profile_slug)fail('Catalog media identity mismatch');
+  if(m.canonicalPlantIdentity&&m.canonicalPlantIdentity!==canonicalSlug)fail('Catalog media identity mismatch');
   if(m.kind==='design_cutout'||m.sourceProvider==='garden-design')fail('Design cutouts forbidden');
   const systemImage={kind:'catalog',url:https(m.primaryUrl??m.url),sourceAssetId:m.sourceAssetId,attribution:m.attribution??null,licenseUrl:m.licenseUrl??null,sourcePageUrl:m.sourcePageUrl??null};
   if(m.attributionRequired&&!systemImage.attribution)fail('Image attribution missing');
   let personal=null;
   if(p.cover_media_id!=null){const a=p.cover;if(!a||a.id!==p.cover_media_id||a.user_id!==p.user_id||a.garden_profile_id!==p.garden_profile_id||a.garden_plant_id!==p.id)fail('Personal image association mismatch');if(a.validation_state!=='validated'||a.purpose!=='plant_profile'||a.storage_bucket!=='user-garden-media')fail('Personal image not validated');if(!a.storage_path||a.storage_path.includes('..')||a.storage_path.startsWith('/')||a.storage_path.includes('\\')||a.storage_path.includes('://'))fail('Unsafe media path');personal={id:a.id,path:a.storage_path};}
   if(p.garden_area_id!=null&&(!p.area||p.area.id!==p.garden_area_id||p.area.user_id!==p.user_id||p.area.garden_profile_id!==p.garden_profile_id))fail('Garden area association mismatch');
-  return {id:p.id,profileSlug:p.profile_slug,name:p.name,scientificName:c.scientific_name,status:p.status??'unknown',mark:p.mark??'unknown',areaName:p.garden_area_id?p.area.name:null,archived:p.archived,personal,image:systemImage,systemImage};
+  return {id:p.id,profileSlug:canonicalSlug,name:p.name,scientificName:c.scientific_name,status:p.status??'unknown',mark:p.mark??'unknown',areaName:p.garden_area_id?p.area.name:null,archived:p.archived,personal,image:systemImage,systemImage};
  });
  return {garden,cards:all.filter(p=>!p.archived),activeCount:all.filter(p=>!p.archived).length,archivedCount:all.filter(p=>p.archived).length};
 }
@@ -35,7 +39,8 @@ export async function loadLive(client){
  if(g.error||g.status!==200||g.data?.id!==GARDEN_ID||g.data?.user_id!==a.data.user.id)fail('This account cannot read the selected Preview garden');
  counts.databaseReads++;
  const p=await client.from('garden_plants').select(SELECT,{count:'exact'}).eq('garden_profile_id',GARDEN_ID).order('id').range(0,999);const plants=rows(p,'Plant read failed');if(!Number.isInteger(p.count)||p.count!==plants.length||p.count>1000)fail('Plant batch incomplete');
- const slugs=[...new Set(plants.map(x=>x.profile_slug))];let catalog=[];
+ if(plants.length){const identity=await loadIdentityRegistry();if(identity.status!=='ready')fail('Canonical identity registry unavailable');}
+ const slugs=[...new Set(plants.map(x=>{const slug=resolveCanonicalReadSlug({profile_slug:x.profile_slug,plantId:x.plantId});if(!slug)fail('Unresolved or conflicting plant identity');return slug;}))];let catalog=[];
  if(slugs.length){counts.databaseReads++;catalog=rows(await client.from('catalog_plants').select('slug,scientific_name,verification_state,media_status,media').in('slug',slugs),'Catalog read failed');}
  const model=projectRows(g.data,plants,catalog);const paths=[...new Set(model.cards.flatMap(p=>p.personal?[p.personal.path]:[]))];
  if(paths.length){counts.storageSignRequests++;const s=await client.storage.from('user-garden-media').createSignedUrls(paths,300);if(s.error||!Array.isArray(s.data))fail('Personal image batch signing failed');const map=new Map(s.data.map(x=>[x.path,x]));for(const p of model.cards)if(p.personal){const v=map.get(p.personal.path);if(!v?.signedUrl||v.error){p.imageWarning='Personal image unavailable; exact catalog fallback';continue}const u=new URL(v.signedUrl);if(u.origin!==PREVIEW_URL||!u.pathname.startsWith('/storage/v1/object/sign/user-garden-media/'))fail('Wrong image storage project');p.image={kind:'personal',url:v.signedUrl,mediaId:p.personal.id};}}

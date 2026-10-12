@@ -871,7 +871,7 @@
 
 /*
  * PLANT_LIBRARY — transitional inline bootstrap catalog.
- * Future global plant data belongs in data/*.json and later backend/API/database.
+ * Canonical identity belongs to Identity Registry; profile/data authority is catalog_plants.
  * Do not create new isolated plant lists inside modules; merge via catalog helpers below.
  */
 const PLANT_LIBRARY=[
@@ -922,15 +922,24 @@ const PLANT_LIBRARY=[
 {slug:'strawberry-guava',name:'Strawberry Guava',he:'גויאבה תותית',aliases:['strawberry guava','psidium cattleyanum','psidium cattleianum','cherry guava','גויאבה תותית'],scientific:'Psidium cattleyanum',icon:'🍓',status:'Evergreen fruit shrub/tree',mark:'✓',tags:['fruit','tree','shrub','sun','גויאבה תותית'],sun:'Full sun to partial sun',water:'Medium once established',growth:'Evergreen shrub or small tree',size:'2–6 m',climate:'Warm-climate fruit shrub; protect young plants from frost',season:'Prune to shape after fruiting',warnings:['Can self-seed in some regions','Fruit drop can be messy','Watch for fruit fly in some areas','Needs space if allowed to grow','Needs pruning to prevent dense growth'],guide:'Strawberry guava is an evergreen fruiting shrub or small tree for warm gardens. It grows best in sun with moderate watering and good drainage. Prune to shape and keep size manageable. Fruit can drop and attract pests, so place thoughtfully. Young plants benefit from frost protection. It can be a useful edible hedge where climate allows.',products:['Fruit tree fertilizer','Mulch','Pruning shears','Fruit fly trap']},
 {slug:'mulberry',name:'Mulberry Tree',he:'תות עץ',aliases:['mulberry','mulberry tree','morus','תות עץ','עץ תות','morus alba','morus nigra'],scientific:'Morus spp.',icon:'🌳',status:'Large fruit tree',mark:'!',tags:['fruit','tree','sun','תות'],sun:'Full sun',water:'Medium when young; drought tolerant once established',growth:'Deciduous fruit tree',size:'5–12 m depending on species/pruning',climate:'Good warm-climate tree with enough space',season:'Prune in dormancy to control size',warnings:['Can become large','Fruit stains paving and attracts birds','Roots can be strong','Needs careful placement'],guide:'Mulberry is a productive deciduous fruit tree that needs full sun and room. Water while establishing; mature trees tolerate dry periods but fruit better with some irrigation. Plant away from paving and parking areas because fruit can stain. Prune in dormancy to control size. Choose fruitless or compact varieties when mess or size is a concern. Give roots space.',products:['Pruning saw','Mulch','Fruit tree fertilizer','Bird netting']}
 ];
-const BOOTSTRAP_IDENTITY_ALIAS_TO_CANONICAL={
-  'apple-tree':'apple','pear-tree':'pear','peach-tree':'peach','plum-tree':'plum',
-  'fig-tree':'fig','grape-vine':'grapevine','passion-fruit':'passionfruit'
-};
-const SPECIES_PACKET_ALIAS_TO_CANONICAL={
-  'english-lavender':'lavender','spearmint':'mint','common-jasmine':'jasmine',
-  'bigleaf-hydrangea':'hydrangea','lesser-bougainvillea':'bougainvillea','bell-pepper':'sweet-pepper',
-  'sweet-orange':'orange'
-};
+// Registry-derived views only; inline/seed profiles are descriptive bootstrap data.
+let canonicalReadAuthority=null;
+let BOOTSTRAP_IDENTITY_ALIAS_TO_CANONICAL=Object.freeze({});
+let SPECIES_PACKET_ALIAS_TO_CANONICAL=Object.freeze({});
+const canonicalReadAuthorityReady=Promise.all([
+  import('./modules/identity/canonical-alias-authority-v1.js'),
+  import('./modules/identity/plant-identity-resolver.js')
+]).then(async ([authority,identity])=>{
+  const status=await identity.loadIdentityRegistry();
+  if(status.status!=='ready') return false;
+  canonicalReadAuthority=authority;
+  BOOTSTRAP_IDENTITY_ALIAS_TO_CANONICAL=authority.BOOTSTRAP_ALIAS_TO_CANONICAL;
+  SPECIES_PACKET_ALIAS_TO_CANONICAL=authority.SPECIES_ALIAS_TO_CANONICAL;
+  applyBoundedIdentityAliasRemapsInline();
+  applyCanonicalRuntimeClimateOverlay();
+  if(typeof render==='function') render();
+  return true;
+}).catch(()=>false);
 function applyCanonicalRuntimeClimateOverlay(){
   const payload=typeof window!=='undefined'?window.__CRUVIT_CANONICAL_CLIMATE_BOOTSTRAP:null;
   const rows=payload&&payload.ready===true&&payload.plants&&typeof payload.plants==='object'
@@ -974,7 +983,7 @@ function applyCanonicalRuntimeClimateOverlay(){
 applyCanonicalRuntimeClimateOverlay();
 const PLANT_INDEX=Object.fromEntries(PLANT_LIBRARY.map(p=>[p.slug,p]));
 /* ── Bounded identity alias remaps (canonical-wins; resolve-on-read) ── */
-(function applyBoundedIdentityAliasRemapsInline(){
+function applyBoundedIdentityAliasRemapsInline(){
   const maps=Object.assign({},BOOTSTRAP_IDENTITY_ALIAS_TO_CANONICAL,SPECIES_PACKET_ALIAS_TO_CANONICAL);
   Object.keys(maps).forEach(alias=>{
     const canon=maps[alias];
@@ -989,11 +998,22 @@ const PLANT_INDEX=Object.fromEntries(PLANT_LIBRARY.map(p=>[p.slug,p]));
       aliasCount:Object.keys(maps).length
     };
   }
-})();
+}
+applyBoundedIdentityAliasRemapsInline();
 function resolveBootstrapPlantSlug(slug){
-  const key=String(slug||'').trim().toLowerCase();
-  if(!key) return key;
-  return SPECIES_PACKET_ALIAS_TO_CANONICAL[key]||BOOTSTRAP_IDENTITY_ALIAS_TO_CANONICAL[key]||key;
+  return canonicalReadAuthority?.resolveCanonicalReadSlug(slug)||'';
+}
+
+// Reuse the existing catalog_plants projection; seed/inline data may supply
+// descriptive fields only after an exact registered catalog row is present.
+function canonicalRuntimeCatalogProfile(input){
+  const slug=canonicalReadAuthority?.resolveCanonicalReadSlug(input)||'';
+  if(!slug) return null;
+  const payload=typeof window!=='undefined'?window.__CRUVIT_CANONICAL_CLIMATE_BOOTSTRAP:null;
+  const row=payload?.ready===true&&Object.hasOwn(payload.plants||{},slug)?payload.plants[slug]:null;
+  if(!row||!row.scientific||canonicalReadAuthority.resolveCanonicalReadSlug({slug,scientific:row.scientific})!==slug) return null;
+  const descriptive=PLANT_INDEX[slug]||{};
+  return {...descriptive,slug,scientific:row.scientific};
 }
 
 
@@ -1867,12 +1887,16 @@ function careProfileForPlant(input){
 }
 function isVagueCareText(v){return !String(v||'').trim() || /verify|depends|varies by|check local|according to season|see detailed|unknown|needs verification/i.test(String(v));}
 function enrichProfileWithQuality(profile,requested){
-  if((profile?.tags||[]).includes('scan-result')) return profile;
+  // Care text is not an identity hint: resolve the explicit stored keys first.
+  const canonical=canonicalRuntimeCatalogProfile({plantId:profile?.plantId,canonicalSlug:profile?.canonicalSlug,
+    profileSlug:profile?.profileSlug,profile_slug:profile?.profile_slug,slug:profile?.slug,meta:{slug:profile?.meta?.slug}});
+  if((profile?.tags||[]).includes('scan-result')) return canonical?{...profile,slug:canonical.slug,scientific:canonical.scientific}:profile;
   const q=profile?.slug||profile?.name||profile?.commonName||profile?.scientific||requested;
   const o=careProfileForPlant(q)||careProfileForPlant(requested)||careProfileForPlant(profile?.scientific);
-  if(!o)return profile;
+  if(!o)return canonical?{...profile,slug:canonical.slug,scientific:canonical.scientific}:profile;
   const merged=Object.assign({},profile);
-  ['sun','water','growth','size','climate','season','guide','scientific','icon','he','imageSearchQuery'].forEach(k=>{if(isVagueCareText(merged[k])) merged[k]=o[k]||merged[k];});
+  if(canonical){merged.slug=canonical.slug;merged.scientific=canonical.scientific;}
+  ['sun','water','growth','size','climate','season','guide','icon','he','imageSearchQuery'].forEach(k=>{if(isVagueCareText(merged[k])) merged[k]=o[k]||merged[k];});
   if(!merged.name||isVagueCareText(merged.name)) merged.name=o.name;
   if(!merged.status||isVagueCareText(merged.status)) merged.status=o.status;
   if(!merged.mark) merged.mark=o.mark;
@@ -2053,52 +2077,14 @@ function ensureUserPlantV1Fields(plant,options){
   return p;
 }
 
-function resolvePlantProfileRawLegacy(slugOrPlant){
-  if(slugOrPlant==null||slugOrPlant==='') return null;
-  const fromSlugKey=(slug)=>{
-    const key=typeof resolveBootstrapPlantSlug==='function'?resolveBootstrapPlantSlug(String(slug||'').trim()) : String(slug||'').trim();
-    if(!key) return null;
-    return PLANT_INDEX[key]||PLANT_LIBRARY.find(p=>p.slug===key)||null;
-  };
-  if(typeof slugOrPlant==='string'){
-    const q=String(slugOrPlant).trim();
-    if(!q) return null;
-    return fromSlugKey(q)||findPlantByName(q)||null;
-  }
-  if(typeof slugOrPlant!=='object') return null;
-  const p=slugOrPlant;
-  const slugCandidates=[];
-  const pushSlug=(value)=>{
-    const key=String(value||'').trim();
-    if(key&&!slugCandidates.includes(key)) slugCandidates.push(key);
-  };
-  pushSlug(p.profileSlug);
-  if(p.meta&&typeof p.meta==='object') pushSlug(p.meta.slug);
-  pushSlug(p.slug);
-  pushSlug(deriveProfileSlug(p));
-  for(const slug of slugCandidates){
-    const hit=fromSlugKey(slug);
-    if(hit) return hit;
-  }
-  if(p.meta&&typeof p.meta==='object') return p.meta;
-  const match=findPlantByName(p.name||'');
-  if(match) return match;
-  return null;
-}
-// Thin public wrapper: legacy resolution stays authoritative and its return
-// value/object identity is returned UNCHANGED. When (and only when) the
-// developer-only shadow debug controller is explicitly enabled, an advisory
-// comparison is recorded in memory. Never awaits, never mutates, never throws
-// into callers, and calls the shadow adapter only while debug is enabled.
+// Raw/stored identity → Registry → canonicalSlug → exact catalog row.
 function resolvePlantProfileRaw(slugOrPlant){
-  const legacyResult=resolvePlantProfileRawLegacy(slugOrPlant);
+  const profile=canonicalRuntimeCatalogProfile(slugOrPlant);
   try{
     const dbg=(typeof window!=='undefined')?window.CruvitIdentityShadowDebug:null;
-    if(dbg&&typeof dbg.isEnabled==='function'&&dbg.isEnabled()){
-      dbg.record(slugOrPlant,legacyResult);
-    }
-  }catch(_e){/* advisory only — never affect legacy resolution */}
-  return legacyResult;
+    if(dbg&&typeof dbg.isEnabled==='function'&&dbg.isEnabled()) dbg.record(slugOrPlant,profile);
+  }catch(_e){/* advisory only */}
+  return profile;
 }
 
 function getPlantProfile(slugOrPlant){
@@ -3205,43 +3191,18 @@ function getExplicitPersonalCoverUrl(plant){
 }
 function resolvePlantDisplayMedia(plant){
   const api=licensedCatalogMediaApi();
-  if(api&&typeof api.resolvePlantDisplayMedia==='function') return api.resolvePlantDisplayMedia(plant);
+  if(api&&typeof api.resolvePlantDisplayMedia==='function') return api.resolvePlantDisplayMedia(api.withCanonicalCatalogMedia(plant,PLANT_INDEX));
   // Priority: explicit personal cover → catalog IMAGE_READY → placeholder
   const coverUrl=getExplicitPersonalCoverUrl(plant);
   if(coverUrl){
     return {kind:'user_cover',url:coverUrl,attributionRequired:false,attribution:null,license:null,sourcePageUrl:null,imageStatus:null,placeholder:false,authority:'garden_media.cover_media_id'};
   }
-  const media=getCatalogMediaRecord(plant);
-  const approved=isApprovedCatalogMediaRecord(media,plant);
-  if(approved.ok){
-    return {
-      kind:'catalog',url:approved.url,attributionRequired:media.attributionRequired===true,
-      attribution:media.attribution||null,author:media.author||null,license:media.license||null,
-      licenseUrl:media.licenseUrl||null,sourcePageUrl:media.sourcePageUrl||null,
-      sourceProvider:media.sourceProvider||null,imageStatus:'IMAGE_READY',placeholder:false,media,authority:'catalog_plants.media'
-    };
-  }
-  const canonSlug=typeof resolveBootstrapPlantSlug==='function'
-    ?resolveBootstrapPlantSlug(plant.profileSlug||plant.slug||'')
-    :String(plant.profileSlug||plant.slug||'');
-  const canonRef=canonSlug&&typeof PLANT_INDEX==='object'?PLANT_INDEX[canonSlug]:null;
-  const canonMedia=canonRef?getCatalogMediaRecord(canonRef):null;
-  const canonApproved=canonMedia?isApprovedCatalogMediaRecord(canonMedia,Object.assign({},canonRef||{},plant)):{ok:false};
-  if(canonApproved.ok){
-    return {
-      kind:'catalog',url:canonApproved.url,attributionRequired:canonMedia.attributionRequired===true,
-      attribution:canonMedia.attribution||null,author:canonMedia.author||null,license:canonMedia.license||null,
-      licenseUrl:canonMedia.licenseUrl||null,sourcePageUrl:canonMedia.sourcePageUrl||null,
-      sourceProvider:canonMedia.sourceProvider||null,imageStatus:'IMAGE_READY',placeholder:false,media:canonMedia,authority:'catalog_plants.media'
-    };
-  }
-  const status=media?.imageStatus||canonMedia?.imageStatus||'IMAGE_PENDING';
   return {
     kind:'placeholder',url:'',attributionRequired:false,attribution:null,license:null,sourcePageUrl:null,
-    imageStatus:status==='IMAGE_OWNER_REVIEW'?'IMAGE_OWNER_REVIEW':(status==='IMAGE_BLOCKED'?'IMAGE_BLOCKED':'IMAGE_PENDING'),
-    pendingReason:media?.blockedReason||media?.pendingReason||canonMedia?.blockedReason||approved.reason||'no-approved-catalog-media',placeholder:true,authority:'placeholder'
+    imageStatus:'IMAGE_PENDING',pendingReason:'catalog-read-authority-unavailable',placeholder:true,authority:'placeholder'
   };
 }
+
 function formatCatalogAttributionLabel(displayMedia){
   const api=licensedCatalogMediaApi();
   if(api&&typeof api.formatCatalogAttributionLabel==='function') return api.formatCatalogAttributionLabel(displayMedia);
@@ -3426,10 +3387,12 @@ function mergeLiveProfileIntoLibrary(slug,profile){
 }
 function applyProfileToPlant(plant,profile){
   if(!profile||!plant)return plant;
+  const canonical=canonicalRuntimeCatalogProfile(plant);
+  if(canonical) profile={...profile,slug:canonical.slug,scientific:canonical.scientific};
   plant.name=profile.name||plant.name;
   plant.status=profile.status||plant.status||'Healthy';
   plant.mark=profile.mark||plant.mark||'✓';
-  plant.scientific=profile.scientific||plant.scientific||'';
+  plant.scientific=canonical?.scientific||plant.scientific||'';
   const catalogMedia=profile.catalogMedia||profile.media||plant.catalogMedia||plant.media||null;
   if(catalogMedia&&typeof catalogMedia==='object'){
     plant.catalogMedia=catalogMedia;
@@ -8305,14 +8268,9 @@ function buildPlantFromReference(ref,source,options){
   return plant;
 }
 function savePlantFromLibrary(slug,source='My Garden',options={autoTasks:true,reminders:true}){
-  slug=typeof resolveBootstrapPlantSlug==='function'?resolveBootstrapPlantSlug(slug):slug;
-  let ref=PLANT_INDEX[slug]||scanProfileCache[slug]||PLANT_LIBRARY.find(p=>p.slug===slug);
-  if(ref && !PLANT_INDEX[slug]) storePlantProfile(ref);
-  if(!ref){
-    const fallbackName=String(slug||'Plant').replace(/-/g,' ');
-    ref={slug:slugify(fallbackName),name:fallbackName,status:'Needs review',mark:'!',icon:'🌿',sun:'See guide',water:'See guide',warnings:['Confirm exact species before treatment or purchase.'],guide:'Plant profile could not be found locally. Search again or use the live plant knowledge service.',products:[],tasks:[]};
-    PLANT_INDEX[ref.slug]=ref; PLANT_LIBRARY.unshift(ref);
-  }
+  // Resolve the read before entering the existing save flow; no guessed profile.
+  const ref=resolvePlantProfileRaw(slug);
+  if(!ref) return null;
   try{
     normalizeGardenDataShape();
     const plant=buildPlantFromReference(ref,source,options||{});
@@ -8734,10 +8692,9 @@ function setGardenDesignShellOpen(open){
 function getDesignCatalogIdentities(){
   const aliasMaps=Object.assign({},
     typeof BOOTSTRAP_IDENTITY_ALIAS_TO_CANONICAL==='object'?BOOTSTRAP_IDENTITY_ALIAS_TO_CANONICAL:{},
-    typeof SPECIES_PACKET_ALIAS_TO_CANONICAL==='object'?SPECIES_PACKET_ALIAS_TO_CANONICAL:{},
-    {'olive-tree':'olive','italian-cypress':'cypress'}
+    typeof SPECIES_PACKET_ALIAS_TO_CANONICAL==='object'?SPECIES_PACKET_ALIAS_TO_CANONICAL:{}
   );
-  const catalog=(Array.isArray(PLANT_LIBRARY)?PLANT_LIBRARY:[]).map((p)=>({
+  const catalog=(Array.isArray(PLANT_LIBRARY)?PLANT_LIBRARY:[]).map(p=>canonicalRuntimeCatalogProfile({slug:p.slug})).filter(Boolean).map((p)=>({
     slug:p.slug,
     name:p.name,
     scientific:p.scientific,
@@ -11013,7 +10970,7 @@ function getIdentifierAcquireIdempotency(){
 }
 function resolveCatalogIdentityDisplay(slug){
   const canon=typeof resolveBootstrapPlantSlug==='function'?resolveBootstrapPlantSlug(slug):slug;
-  const ref=PLANT_INDEX[canon]||PLANT_LIBRARY.find((p)=>p.slug===canon);
+  const ref=resolvePlantProfileRaw(canon);
   if(!ref) return null;
   const display=typeof resolvePlantDisplayMedia==='function'?resolvePlantDisplayMedia(ref):{kind:'placeholder',url:''};
   return {

@@ -6,10 +6,10 @@
  * Placement never creates garden_plants until explicit Add to My Garden.
  */
 
+import { resolveCanonicalReadSlug } from '../identity/canonical-alias-authority-v1.js';
 import { GARDEN_SOURCE_MODULES, GARDEN_EVENT_TYPES } from '../personal-domain/garden-os-spine-v1-contract.js';
 import {
-  DESIGN_ASSET_FALLBACK,
-  resolveManifestKeyToCanonical
+  DESIGN_ASSET_FALLBACK
 } from './garden-design-asset-registry-v1.js';
 import {
   ownedPlacementVisualDefaults,
@@ -187,57 +187,26 @@ function slugify(value) {
 }
 
 export function resolveDesignCanonicalSlug(input = {}, aliasMaps = {}) {
-  const maps = aliasMaps && typeof aliasMaps === 'object' ? aliasMaps : {};
-  const manifestKey = slugify(input.manifestKey || input.assetKey);
-  if (manifestKey) {
-    const fromManifest = resolveManifestKeyToCanonical(manifestKey, maps.manifestKeyToCanonical);
-    if (fromManifest) {
-      const hop = maps[fromManifest] || fromManifest;
-      return slugify(hop);
-    }
+  void aliasMaps; // Caller/asset maps cannot assign canonical botanical identity.
+  const identity = { ...input };
+  // Asset keys are consulted only when no explicit botanical key is supplied.
+  if (![input.plantId, input.canonicalSlug, input.profileSlug, input.profile_slug, input.slug].some(Boolean)) {
+    identity.slug = input.manifestKey || input.assetKey;
   }
-  const candidates = [
-    input.canonicalSlug,
-    input.profileSlug,
-    input.slug,
-    input.latin,
-    input.scientific,
-    input.name
-  ];
-  for (const raw of candidates) {
-    const key = slugify(raw);
-    if (!key) continue;
-    const hop = maps[key] || key;
-    const hopKey = slugify(hop);
-    return maps[hopKey] || hopKey;
-  }
-  return '';
+  return resolveCanonicalReadSlug(identity);
 }
 
 export function resolveDesignCanonicalIdentity(input = {}, options = {}) {
-  const aliasMaps = options.aliasMaps || {};
+  let canonicalSlug = resolveDesignCanonicalSlug(input);
   const catalog = Array.isArray(options.catalog) ? options.catalog : [];
-  let canonicalSlug = resolveDesignCanonicalSlug(input, aliasMaps);
-  const record =
-    catalog.find((p) => slugify(p.slug || p.canonicalSlug) === canonicalSlug) || null;
-  if (!record && canonicalSlug) {
-    const name = asText(input.name).toLowerCase();
-    const latin = asText(input.latin || input.scientific).toLowerCase();
-    const hit = catalog.find((p) => {
-      const names = [p.name, p.he, ...(p.aliases || [])].map((n) => asText(n).toLowerCase());
-      if (name && names.includes(name)) return true;
-      if (latin && asText(p.scientific).toLowerCase() === latin) return true;
-      return false;
-    });
-    if (hit) canonicalSlug = slugify(hit.slug || hit.canonicalSlug);
-  }
-  const resolved =
-    catalog.find((p) => slugify(p.slug || p.canonicalSlug) === canonicalSlug) || record;
+  const matches = canonicalSlug ? catalog.filter(p => (p.slug || p.canonicalSlug) === canonicalSlug) : [];
+  // Catalog data may enrich an exact Registry identity, never invent one by name.
+  if (matches.length > 1 || (matches[0] && resolveCanonicalReadSlug(matches[0]) !== canonicalSlug)) canonicalSlug = '';
   return {
     canonicalSlug: canonicalSlug || null,
-    catalogRecord: resolved || null,
+    catalogRecord: canonicalSlug ? matches[0] || null : null,
     inferredCultivar: false,
-    identityAuthority: 'canonical-catalog'
+    identityAuthority: 'data/plant-identity.registry.json'
   };
 }
 
@@ -304,7 +273,7 @@ export function shouldInventSecondLocation(classified) {
 export function createOwnedDesignPlacement(input = {}) {
   const gardenProfileId = asText(input.gardenProfileId);
   const gardenPlantId = asText(input.gardenPlantId);
-  const canonicalSlug = slugify(input.canonicalSlug);
+  const canonicalSlug = resolveCanonicalReadSlug({ canonicalSlug: input.canonicalSlug });
   if (!gardenProfileId) throw new Error('garden_profile_id is required');
   if (!gardenPlantId) throw new Error('garden_plant_id is required');
   if (!canonicalSlug) throw new Error('canonical slug is required');
@@ -334,7 +303,7 @@ export function createOwnedDesignPlacement(input = {}) {
 
 export function createProposedDesignPlacement(input = {}) {
   const gardenProfileId = asText(input.gardenProfileId);
-  const canonicalSlug = slugify(input.canonicalSlug);
+  const canonicalSlug = resolveCanonicalReadSlug({ canonicalSlug: input.canonicalSlug });
   if (!gardenProfileId) throw new Error('garden_profile_id is required');
   if (!canonicalSlug) throw new Error('canonical slug is required');
   const visual = proposedPlacementVisualDefaults();
@@ -465,7 +434,7 @@ export function confirmDesignProposalCommit(input = {}) {
   if (input.userConfirmed !== true) {
     return { ok: false, persist: false, reason: 'user-confirmation-required', duplicate: false };
   }
-  const canonicalSlug = slugify(input.canonicalSlug);
+  const canonicalSlug = resolveCanonicalReadSlug({ canonicalSlug: input.canonicalSlug });
   if (!canonicalSlug) {
     return { ok: false, persist: false, reason: 'canonical-slug-required', duplicate: false };
   }
@@ -532,10 +501,12 @@ function mapServerGardenPlantRow(row) {
   if (row.archived === true) return null;
   const gardenPlantId = asText(row.id || row.gardenPlantId);
   if (!gardenPlantId) return null;
+  const canonicalSlug = resolveCanonicalReadSlug(row);
+  if (!canonicalSlug) return null;
   return {
     gardenPlantId,
     clientInstanceId: asText(row.client_instance_id || row.clientInstanceId) || null,
-    canonicalSlug: asText(row.profile_slug || row.canonicalSlug || row.profileSlug) || null,
+    canonicalSlug,
     name: asText(row.name) || '',
     scientific: asText(row.scientific) || '',
     areaId: asText(row.garden_area_id || row.areaId) || null,
@@ -690,7 +661,7 @@ export function resolveOwnedPlacementAreaId(input = {}) {
 /** Missing approved cutouts must still render a visible, draggable placeholder. */
 export function resolveOwnedPlacementVisual(input = {}) {
   const visualReady = input.visualReady === true && !!(input.url || (input.urlCandidates && input.urlCandidates.length));
-  const canonicalSlug = slugify(input.canonicalSlug);
+  const canonicalSlug = resolveCanonicalReadSlug({ canonicalSlug: input.canonicalSlug });
   return {
     canonicalSlug,
     renderVisible: true,

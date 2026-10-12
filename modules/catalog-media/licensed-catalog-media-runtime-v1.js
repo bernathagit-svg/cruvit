@@ -1,4 +1,5 @@
 import { hasConflictingSameGenusTitle } from './licensed-image-pipeline-v1-contract.js';
+import { resolveCanonicalReadSlug } from '../identity/canonical-alias-authority-v1.js';
 
 /**
  * Licensed Catalog Media — runtime consume helpers (no network search).
@@ -101,6 +102,13 @@ export function catalogMediaCompatibleWithPlantIdentity(plant, media) {
 export function isApprovedCatalogMediaRecord(media, plant = null) {
   if (!media || typeof media !== 'object') {
     return { ok: false, reason: 'missing-media' };
+  }
+  if (plant) {
+    const slug = resolveCanonicalReadSlug(plant);
+    if (!slug) return { ok: false, reason: 'unresolved-canonical-identity' };
+    if (media.canonicalPlantIdentity && resolveCanonicalReadSlug(media.canonicalPlantIdentity) !== slug) {
+      return { ok: false, reason: 'catalog-media-identity-mismatch' };
+    }
   }
   if (String(media.imageStatus || '') !== READY) {
     return { ok: false, reason: `status:${media.imageStatus || 'none'}` };
@@ -333,15 +341,18 @@ export function mayPromoteUserMediaToCatalogImage() {
 export function withCanonicalCatalogMedia(plant, catalogBySlug) {
   if (!plant || typeof plant !== 'object') return plant;
   if (!catalogBySlug || typeof catalogBySlug !== 'object') return plant;
+  const slug = resolveCanonicalReadSlug(plant);
+  if (!slug) return plant;
   const existing = getCatalogMediaRecord(plant);
   if (existing && isApprovedCatalogMediaRecord(existing, plant).ok) return plant;
-  const slug = String(plant.profileSlug || plant.slug || '').trim().toLowerCase();
-  if (!slug) return plant;
+  if (!Object.prototype.hasOwnProperty.call(catalogBySlug, slug)) return plant;
   const hit = catalogBySlug[slug];
   if (!hit) return plant;
+  if ((hit.slug && hit.slug !== slug) || (hit.canonicalSlug && hit.canonicalSlug !== slug)
+      || ((hit.slug || hit.canonicalSlug) && resolveCanonicalReadSlug(hit) !== slug)) return plant;
   const media = hit.catalogMedia || hit.media || (hit.imageStatus ? hit : null);
-  if (!media || typeof media !== 'object') return plant;
-  return { ...plant, catalogMedia: media, media };
+  if (!media || !isApprovedCatalogMediaRecord(media, plant).ok) return plant;
+  return { ...plant, canonicalSlug: slug, catalogMedia: media, media };
 }
 
 const api = {
