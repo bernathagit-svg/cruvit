@@ -17,6 +17,10 @@ const resolver = createPlantIdentityResolver(registry);
 const app = read('app.html');
 const gd = read('modules/garden-design/index.html');
 const parent = '48a017a3272dee34d56a1b9ee6d1a838801a25e5';
+const runtimeCandidate = 'cbefb058d2a57a29c824408ae1f30bd01956fd4f';
+const git = args => execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim();
+const scopeDiff = (from, to) => git(['diff', '--name-status', '--no-renames', from,
+  ...(to ? [to] : []), '--']).split('\n').filter(Boolean).sort();
 const sourceFetch = globalThis.fetch;
 let networkAttempts = 0;
 globalThis.fetch = () => { networkAttempts++; throw Error('NETWORK_FORBIDDEN'); };
@@ -289,14 +293,41 @@ test('user photos remain personal; catalog lookup never promotes them', () => {
   assert.equal(media.withCanonicalCatalogMedia(input, { unknown: { photoUrl: photo } }), input);
 });
 
-test('preservation: all changes stay in the authorized runtime/test/package paths', () => {
-  const permitted = new Set(['modules/identity/canonical-alias-authority-v1.js', 'app.html',
+test('P0-B RUNTIME IMPLEMENTATION SCOPE: exact accepted ten paths', () => {
+  const modified = ['modules/identity/canonical-alias-authority-v1.js', 'app.html',
     'core-v1/my-garden/plants/data.mjs', 'modules/garden-design/garden-design-owned-garden-v1.js',
     'modules/garden-design/index.html', 'modules/catalog-media/licensed-catalog-media-runtime-v1.js',
-    'tests/canonical-plant-read-authority-v1.test.mjs', 'config/packaging/static-runtime-source-lock-v1.json',
-    'tests/static-runtime-packaging-v1.test.mjs', 'config/packaging/dormant-reference-garden-design-pc-wand-v1.json']);
-  const paths = execFileSync('git', ['diff', '--name-only', parent], { cwd: root, encoding: 'utf8' }).trim().split('\n').filter(Boolean);
-  for (const path of paths) assert(permitted.has(path), path);
+    'config/packaging/static-runtime-source-lock-v1.json', 'tests/static-runtime-packaging-v1.test.mjs',
+    'config/packaging/dormant-reference-garden-design-pc-wand-v1.json'];
+  const expected = [...modified.map(path => `M\t${path}`),
+    'A\ttests/canonical-plant-read-authority-v1.test.mjs'].sort();
+  assert.equal(git(['rev-parse', `${runtimeCandidate}^`]), parent,
+    'P0-B RUNTIME IMPLEMENTATION SCOPE: accepted direct parent');
+  assert.deepEqual(scopeDiff(parent, runtimeCandidate), expected,
+    'P0-B RUNTIME IMPLEMENTATION SCOPE: no extra or missing original path');
+});
+
+test('P0-B TEST-CONTRACT RECONCILIATION SCOPE: exact six modified tests', () => {
+  const expected = ['tests/core-v1-commit4/integration-contracts.test.mjs',
+    'tests/core-v1-commit4/plants-data.test.mjs', 'tests/licensed-catalog-media-runtime-v1.test.mjs',
+    'tests/smart-rec-garden-intelligence-v1.test.mjs', 'tests/canonical-runtime-climate-bootstrap-v1.test.mjs',
+    'tests/canonical-plant-read-authority-v1.test.mjs'].map(path => `M\t${path}`).sort();
+  // Before commit, qualify the exact working tree. After commit, also require
+  // the child HEAD itself to have this scope and the accepted direct parent.
+  const head = git(['rev-parse', 'HEAD']);
+  if (head !== runtimeCandidate) {
+    assert.equal(git(['rev-parse', `${head}^`]), runtimeCandidate,
+      'P0-B TEST-CONTRACT RECONCILIATION SCOPE: one direct child');
+    assert.deepEqual(scopeDiff(runtimeCandidate, head), expected,
+      'P0-B TEST-CONTRACT RECONCILIATION SCOPE: exact committed six-path diff');
+    assert.equal(git(['diff', '--name-status', 'HEAD', '--']), '',
+      'P0-B TEST-CONTRACT RECONCILIATION SCOPE: working tree matches child HEAD');
+  }
+  assert.deepEqual(scopeDiff(runtimeCandidate), expected,
+    'P0-B TEST-CONTRACT RECONCILIATION SCOPE: no runtime, extra, missing, added or deleted path');
+});
+
+test('preservation: approved visuals, Climate and Atomic Save remain unchanged', () => {
   for (const path of ['app.html', 'modules/garden-design/index.html']) {
     const before = execFileSync('git', ['show', `${parent}:${path}`], { cwd: root, encoding: 'utf8' });
     const outsideScripts = src => src.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '<script></script>');

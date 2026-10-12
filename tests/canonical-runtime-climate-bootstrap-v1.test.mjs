@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import vm from 'node:vm';
+import * as canonicalReadAuthority from '../modules/identity/canonical-alias-authority-v1.js';
 
 const app=fs.readFileSync('app.html','utf8');
 const fn=fs.readFileSync('netlify/functions/catalog-runtime-climate-bootstrap.mjs','utf8');
@@ -45,7 +47,16 @@ test('verified canonical identity promotes accepted scientific identity over leg
   const body=app.slice(overlay,index);
   assert.match(body,/canonicalIdentityVerified=row\.verificationState==='verified'&&row\.needsReview!==true/);
   assert.match(body,/row\.scientific&&\(canonicalIdentityVerified\|\|packetAlias\|\|!plant\.scientific/);
-  assert.match(app,/'lesser-bougainvillea':'bougainvillea'/);
+  assert.match(app,/SPECIES_PACKET_ALIAS_TO_CANONICAL=authority\.SPECIES_ALIAS_TO_CANONICAL/);
+  assert.doesNotMatch(app,/'lesser-bougainvillea'\s*:\s*'bougainvillea'/);
+  assert.equal(Object.hasOwn(canonicalReadAuthority.REGISTRY_ALIAS_TO_CANONICAL,'lesser-bougainvillea'),false);
+  const start=app.indexOf('function resolveBootstrapPlantSlug(');
+  const end=app.indexOf('function canonicalRuntimeCatalogProfile(',start);
+  assert.ok(start>=0&&end>start);
+  const context=vm.createContext({canonicalReadAuthority});
+  vm.runInContext(app.slice(start,end),context);
+  assert.equal(context.resolveBootstrapPlantSlug('lesser-bougainvillea'),'lesser-bougainvillea');
+  assert.equal(context.resolveBootstrapPlantSlug('bougainvillea'),'bougainvillea');
 });
 
 test('unverified canonical catalog rows cannot force a scientific identity rewrite',()=>{

@@ -1,9 +1,14 @@
 // Offline contract checks. These test values are not user sessions or live RLS evidence.
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import {judgePlantReads,judgeAnonRead} from '../../core-v1/my-garden/shared/plant-rls.mjs';
 import {isPreviewOrigin,metricDelta,GARDEN_ID,PREVIEW_URL} from '../../core-v1/my-garden/shared/preview-session.mjs';
 import {loadLive} from '../../core-v1/my-garden/plants/data.mjs';
+import {loadIdentityRegistry,resolvePlantIdentity} from '../../modules/identity/plant-identity-resolver.js';
+const registry=JSON.parse(fs.readFileSync(new URL('../../data/plant-identity.registry.json',import.meta.url),'utf8'));
+assert.equal((await loadIdentityRegistry({fetchImpl:async()=>({ok:true,json:async()=>registry})})).status,'ready');
+assert.equal(resolvePlantIdentity('Citrus × limon').canonicalSlug,'lemon');
 const goodRows=[
  {id:'079827a3-732d-4a16-acd0-b9949bc7bc53',profile_slug:'apple',name:'Apple',scientific:'Malus domestica',garden_profile_id:GARDEN_ID,user_id:'unit-a',archived:false},
  {id:'f82ded5a-8b6f-4093-be98-6972c12e4520',profile_slug:'monstera',name:'Monstera',scientific:'Monstera deliciosa',garden_profile_id:GARDEN_ID,user_id:'unit-a',archived:false}
@@ -35,11 +40,11 @@ function unitClient(number,personal){
  const garden={id:GARDEN_ID,user_id:'unit-owner',name:'Unit garden'},calls=[];
  const media={imageStatus:'IMAGE_READY',sourceAssetId:'unit-catalog',primaryUrl:'https://example.invalid/catalog.jpg'};
  const plants=Array.from({length:number},(_,i)=>({
-  id:'unit-'+i,garden_profile_id:GARDEN_ID,user_id:garden.user_id,profile_slug:'unit-plant',name:'Unit '+i,
-  scientific:'Unit species',status:'unassessed',archived:false,cover_media_id:personal?'media-'+i:null,garden_area_id:null,area:null,
+  id:'unit-'+i,garden_profile_id:GARDEN_ID,user_id:garden.user_id,profile_slug:'lemon',name:'Unit '+i,
+  scientific:'Citrus × limon',status:'unassessed',archived:false,cover_media_id:personal?'media-'+i:null,garden_area_id:null,area:null,
   cover:personal?{id:'media-'+i,user_id:garden.user_id,garden_profile_id:GARDEN_ID,garden_plant_id:'unit-'+i,validation_state:'validated',purpose:'plant_profile',storage_bucket:'user-garden-media',storage_path:'unit/cover-'+i+'.jpg'}:null
  }));
- const results={garden_profiles:{status:200,error:null,data:garden},garden_plants:response(plants),catalog_plants:response([{slug:'unit-plant',scientific_name:'Unit species',verification_state:'verified',media_status:'IMAGE_READY',media}])};
+ const results={garden_profiles:{status:200,error:null,data:garden},garden_plants:response(plants),catalog_plants:response([{slug:'lemon',scientific_name:'Citrus × limon',verification_state:'verified',media_status:'IMAGE_READY',media}])};
  const storage={from(bucket){
   assert.equal(bucket,'user-garden-media');
   return {async createSignedUrls(paths){
@@ -50,7 +55,7 @@ function unitClient(number,personal){
  return {
   calls,supabaseUrl:PREVIEW_URL,storage,
   auth:{async getUser(){calls.push('auth');return {data:{user:{id:garden.user_id,role:'authenticated'}},error:null}}},
-  from(table){calls.push(table);const query={select(){return query},eq(){return query},order(){return query},range(){return query},in(){return query},async maybeSingle(){return results[table]},then(resolve,reject){return Promise.resolve(results[table]).then(resolve,reject)}};return query}
+  from(table){calls.push(table);const query={select(){return query},eq(){return query},order(){return query},range(){return query},in(column,slugs){assert.equal(table,'catalog_plants');assert.equal(column,'slug');assert.deepEqual(slugs,['lemon']);return query},async maybeSingle(){return results[table]},then(resolve,reject){return Promise.resolve(results[table]).then(resolve,reject)}};return query}
  };
 }
 for(const number of [1,2,9,120])test('fixed batch count for '+number+' covers',async()=>{

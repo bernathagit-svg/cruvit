@@ -7,6 +7,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createPlantIdentityResolver } from '../modules/identity/plant-identity-resolver.js';
 import {
   resolvePlantDisplayMedia,
   isApprovedCatalogMediaRecord,
@@ -271,17 +272,31 @@ test('coverage generator promotes resolved registry species only with exact lice
 });
 
 
-test('coverage generator promotes approved packet identities with exact licensed cache media', async()=>{
-  const { buildActiveCanonicalImageCoverage } = await import('../modules/catalog-media/active-canonical-image-coverage-v1.js');
-  const out=buildActiveCanonicalImageCoverage(process.cwd());
+test('approved packet and licensed cache cannot promote an unregistered canonical identity', async()=>{
+  const { buildActiveCanonicalImageCoverage, resolveActiveCanonicalCatalogMedia } = await import('../modules/catalog-media/active-canonical-image-coverage-v1.js');
+  const resolver=createPlantIdentityResolver(JSON.parse(fs.readFileSync(path.join(ROOT,'data/plant-identity.registry.json'),'utf8')));
+  const out=buildActiveCanonicalImageCoverage(ROOT);
+  const cacheDir=path.join(ROOT,'data/catalog-media/cache');
   for(const slug of ['artichoke','asparagus','blackberry','tamarind']){
-    const row=out.records.find(r=>r.slug===slug);
-    assert.ok(row, slug+' must be active from approved packet/cache authority');
-    assert.equal(row.identityScope,'species',slug);
-    assert.equal(row.imageStatus,'IMAGE_READY',slug);
-    assert.equal(row.approved,true,slug);
-    assert.equal(row.inApprovedPacketCache,true,slug);
-    assert.ok(row.packetId,slug+' must retain approved packet provenance');
+    const packet=JSON.parse(fs.readFileSync(path.join(ROOT,'data/catalog-expansion/batches/bulk-batch-2-v1/packets',slug+'.packet.json'),'utf8'));
+    assert.equal(packet.identity.canonicalSlug,slug);
+    assert.equal(packet.humanApproval.approvedForIngest,true,slug+' has approved packet evidence');
+    assert.ok(packet.packetId,slug+' retains packet provenance');
+    const plant={slug,scientific:packet.identity.acceptedScientificName};
+    const cache=fs.readdirSync(cacheDir).filter(name=>name.startsWith(slug+'__')&&name.endsWith('__v1.0.0.json'))
+      .map(name=>JSON.parse(fs.readFileSync(path.join(cacheDir,name),'utf8')))
+      .find(doc=>doc.status===IMAGE_READY&&doc.scientific===plant.scientific);
+    assert.ok(cache,slug+' has exact licensed cache evidence');
+    assert.equal(isApprovedCatalogMediaRecord(cache.media).ok,true,slug+' media licensing is otherwise valid');
+    const identity=resolver.resolve(slug);
+    assert.equal(identity.status,'provisional',slug);
+    assert.equal(identity.canonicalSlug,null,slug);
+    assert.deepEqual(isApprovedCatalogMediaRecord(cache.media,plant),{ok:false,reason:'unresolved-canonical-identity'},slug);
+    assert.equal(out.records.find(r=>r.slug===slug),undefined,slug+' must not enter canonical runtime coverage');
+    assert.equal(resolveActiveCanonicalCatalogMedia(ROOT,plant),null,slug);
+    const display=resolvePlantDisplayMedia({...plant,media:cache.media});
+    assert.equal(display.kind,'placeholder',slug);
+    assert.equal(display.url,'',slug);
   }
 });
 

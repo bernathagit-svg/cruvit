@@ -7,6 +7,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createPlantIdentityResolver } from '../modules/identity/plant-identity-resolver.js';
 import {
   IMAGE_BLOCKED,
   IMAGE_READY,
@@ -32,6 +33,7 @@ import {
 } from '../modules/catalog-media/active-canonical-image-coverage-v1.js';
 import {
   mayPromoteUserMediaToCatalogImage,
+  isApprovedCatalogMediaRecord,
   resolvePlantDisplayMedia
 } from '../modules/catalog-media/licensed-catalog-media-runtime-v1.js';
 import { isPaidAiAutomatedTestAllowed } from '../modules/runtime-guards/paid-ai-tests-gate-v1.js';
@@ -87,25 +89,57 @@ test('species aliases match Catalog Images (not a second image authority)', () =
   assert.deepEqual({ ...SMART_REC_SPECIES_ALIAS_ONTO_CANONICAL }, { ...SPECIES_ALIAS_ONTO_CANONICAL });
 });
 
-test('every IMAGE_READY recommendation renders its catalog image', () => {
+test('registered IMAGE_READY recommendations render catalog images; quarantined identities fail closed', () => {
   const { coverage, catalogBySlug, plantIndex } = catalogIndexFromCoverage();
+  const resolver=createPlantIdentityResolver(JSON.parse(fs.readFileSync(path.join(ROOT,'data/plant-identity.registry.json'),'utf8')));
   const ready = coverage.records.filter((r) => r.imageStatus === IMAGE_READY);
   assert.ok(ready.length >= 100);
+  let catalogCount=0;
+  const rejected=[];
   for (const row of ready) {
     const plant = plantIndex[row.slug];
     const display = resolveSmartRecCatalogDisplay(plant, catalogBySlug);
-    assert.equal(display.kind, 'catalog', row.slug);
-    assert.match(display.url, /^https:\/\//, row.slug);
-    assert.equal(display.imageStatus, IMAGE_READY, row.slug);
+    const identity=resolver.resolve(row.slug);
     const model = buildSmartRecCardModel(plant, {
       catalogBySlug,
       suitability: { survivalFit: 80, thriveFit: 70, floweringFit: 60, fruitingFit: 50, recommendationLevel: 'good' }
     });
-    assert.equal(model.imageUrl, display.url);
-    assert.equal(model.placeholder, false);
+    if(identity.status==='resolved_id'||identity.status==='resolved_canonical'){
+      assert.equal(identity.canonicalSlug,row.slug);
+      assert.equal(display.kind,'catalog',row.slug);
+      assert.match(display.url,/^https:\/\//,row.slug);
+      assert.equal(display.imageStatus,IMAGE_READY,row.slug);
+      assert.equal(model.imageUrl,display.url);
+      assert.equal(model.placeholder,false);
+      catalogCount++;
+    }else{
+      assert.equal(identity.canonicalSlug,null,row.slug);
+      assert.equal(display.kind,'placeholder',row.slug);
+      assert.equal(display.url,'',row.slug);
+      assert.equal(display.imageStatus,'IMAGE_PENDING',row.slug);
+      assert.equal(model.imageUrl,'',row.slug);
+      assert.equal(model.placeholder,true,row.slug);
+      rejected.push(row.slug);
+    }
     assert.equal(model.userUploadRequired, false);
     assert.equal(model.renderTimeImageSearch, false);
   }
+  assert.ok(catalogCount>=100,'registered positive controls must still render catalog media');
+  assert.ok(rejected.includes('mulberry'),'Mulberry must exercise the fail-closed branch');
+  assert.equal(resolver.resolve('mulberry').status,'pending_conflict');
+  const storedMedia=loadSeed().catalogMediaByCanonicalSlug.mulberry;
+  assert.equal(storedMedia.imageStatus,IMAGE_READY,'legacy READY media remains present');
+  const mulberry={...plantIndex.mulberry,media:storedMedia,catalogMedia:storedMedia};
+  assert.deepEqual(isApprovedCatalogMediaRecord(storedMedia,mulberry),{ok:false,reason:'unresolved-canonical-identity'});
+  const display=resolveSmartRecCatalogDisplay(mulberry,{mulberry});
+  assert.equal(display.kind,'placeholder');
+  assert.equal(display.url,'');
+  assert.equal(display.imageStatus,'IMAGE_PENDING');
+  const model=buildSmartRecCardModel(mulberry,{catalogBySlug:{mulberry}});
+  assert.equal(model.placeholder,true);
+  assert.equal(model.imageUrl,'');
+  assert.equal(model.userUploadRequired,false);
+  assert.equal(model.renderTimeImageSearch,false);
 });
 
 test('IMAGE_BLOCKED recommendation falls back honestly', () => {

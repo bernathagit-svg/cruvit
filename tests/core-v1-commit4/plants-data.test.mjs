@@ -1,10 +1,21 @@
 // Offline unit assertions. No network, authentication, database writes, or deploy.
 import assert from 'node:assert/strict';import fs from'node:fs';import{projectRows,GARDEN_ID,loadLive}from'../../core-v1/my-garden/plants/data.mjs';
+import{loadIdentityRegistry,resolvePlantIdentity}from'../../modules/identity/plant-identity-resolver.js';
+const registry=JSON.parse(fs.readFileSync(new URL('../../data/plant-identity.registry.json',import.meta.url),'utf8'));
+assert.equal((await loadIdentityRegistry({fetchImpl:async()=>({ok:true,json:async()=>registry})})).status,'ready');
+assert.equal(resolvePlantIdentity('Citrus × limon').canonicalSlug,'lemon');
 const garden={id:GARDEN_ID,user_id:'unit-owner',name:'unit'};
 const media={primaryUrl:'https://example.invalid/exact-approved.jpg',imageStatus:'IMAGE_READY',sourceAssetId:'unit-approved',attributionRequired:true,attribution:'unit attribution'};
-const catalog=()=>[{slug:'unit-plant',scientific_name:'Unit species',verification_state:'verified',media_status:'IMAGE_READY',media:{...media}}];
-const plant=()=>({id:'unit-instance',garden_profile_id:GARDEN_ID,user_id:'unit-owner',profile_slug:'unit-plant',name:'Unit',scientific:'Unit species',status:'unassessed',mark:'unknown',archived:false,cover_media_id:null,garden_area_id:null,cover:null,area:null});
+const catalog=()=>[{slug:'lemon',scientific_name:'Citrus × limon',verification_state:'verified',media_status:'IMAGE_READY',media:{...media}}];
+const plant=()=>({id:'unit-instance',garden_profile_id:GARDEN_ID,user_id:'unit-owner',profile_slug:'lemon',name:'Unit',scientific:'Citrus × limon',status:'unassessed',mark:'unknown',archived:false,cover_media_id:null,garden_area_id:null,cover:null,area:null});
 const results=[];const test=(name,fn)=>{try{fn();results.push({name,pass:true})}catch(e){results.push({name,pass:false,error:e.message})}};
+test('catalog fixture alone cannot grant canonical identity',()=>{
+ const p={...plant(),profile_slug:'unit-plant',scientific:'Unit species'};
+ const c=[{...catalog()[0],slug:'unit-plant',scientific_name:'Unit species'}];
+ assert.equal(resolvePlantIdentity(p.profile_slug).status,'provisional');
+ assert.equal(resolvePlantIdentity(p.profile_slug).canonicalSlug,null);
+ assert.throws(()=>projectRows(garden,[p],c),/Unresolved or conflicting plant identity/);
+});
 test('exact source produces unassessed plant without inventing area',()=>{const m=projectRows(garden,[plant()],catalog());assert.equal(m.cards[0].status,'unassessed');assert.equal(m.cards[0].areaName,null);assert.equal(m.cards[0].image.url,media.primaryUrl)});
 test('two same-species instances retain different instance IDs',()=>{const m=projectRows(garden,[plant(),{...plant(),id:'unit-2'}],catalog());assert.equal(m.cards.length,2);assert.notEqual(m.cards[0].id,m.cards[1].id)});
 for(const [name,patch]of [['wrong garden',{garden_profile_id:'other'}],['wrong owner',{user_id:'other'}],['missing canonical',{profile_slug:'missing'}],['scientific conflict',{scientific:'Other species'}],['missing name',{name:''}],['invalid archive',{archived:null}],['dangling personal cover',{cover_media_id:'missing'}],['dangling area',{garden_area_id:'missing'}]])test(name,()=>assert.throws(()=>projectRows(garden,[{...plant(),...patch}],catalog())));
