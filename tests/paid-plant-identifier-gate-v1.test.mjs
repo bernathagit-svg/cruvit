@@ -28,8 +28,8 @@ async function invokeHandler({ env = {}, body = validBody, rawBody, headers = {}
     process.env = { ...env };
     globalThis.fetch = async (url, init) => {
       const target = String(url);
-      if (target === 'https://api.anthropic.com/v1/messages') {
-        paid.push({ ...init, body: JSON.parse(init.body) });
+      if (target === 'https://api.anthropic.com/v1/messages' || target === 'https://gateway.fixture.invalid/v1/messages') {
+        paid.push({ url: target, ...init, body: JSON.parse(init.body) });
         if (!provider) throw new Error('Unexpected paid dispatch');
         return provider(paid.length, init);
       }
@@ -117,6 +117,23 @@ test('malformed JSON, bad image and malformed request fields cost zero', async (
   }
 });
 
+test('Netlify AI Gateway takes authority over stale direct ANTHROPIC_KEY without adding a dispatch', async () => {
+  const gatewayEnv = {
+    ...enabled,
+    ANTHROPIC_KEY: 'stale-direct-key-must-not-win',
+    ANTHROPIC_API_KEY: 'gateway-fixture-key',
+    ANTHROPIC_BASE_URL: 'https://gateway.fixture.invalid/'
+  };
+  const out = await invokeHandler({
+    env: gatewayEnv,
+    provider: () => new Response(JSON.stringify({ error: { message: 'fixture gateway rejection' } }), { status: 429 })
+  });
+  assert.equal(out.status, 502);
+  assert.equal(out.paid.length, 1);
+  assert.equal(out.paid[0].url, 'https://gateway.fixture.invalid/v1/messages');
+  assert.equal(out.paid[0].headers['x-api-key'], 'gateway-fixture-key');
+  assert.notEqual(out.paid[0].headers['x-api-key'], gatewayEnv.ANTHROPIC_KEY);
+});
 test('one identify uses one server-selected Vision dispatch and preserves free GBIF verification', async () => {
   const out = await invokeHandler({ env: enabled, body: {
     ...validBody, model: 'client-cannot-select-this', max_tokens: 999999, maxCalls: 50

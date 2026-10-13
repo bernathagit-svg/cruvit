@@ -981,10 +981,17 @@ export default async function handler(request) {
     });
   }
 
-  const key =
-    process.env.ANTHROPIC_KEY ||
-    process.env.ANTHROPIC_API_KEY ||
-    process.env.CLAUDE_API_KEY;
+  const gatewayBaseUrl = cleanText(process.env.ANTHROPIC_BASE_URL).replace(/\/+$/, '');
+  const key = gatewayBaseUrl
+    ? process.env.ANTHROPIC_API_KEY
+    : (
+        process.env.ANTHROPIC_KEY ||
+        process.env.ANTHROPIC_API_KEY ||
+        process.env.CLAUDE_API_KEY
+      );
+  const providerUrl = gatewayBaseUrl
+    ? gatewayBaseUrl + '/v1/messages'
+    : 'https://api.anthropic.com/v1/messages';
   if (!key) {
     return json(503, { error: 'Plant Identifier is not configured.' });
   }
@@ -1015,7 +1022,7 @@ export default async function handler(request) {
 
   try {
     // Exactly one paid dispatch. No model fallback, recovery, redirect or retry.
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch(providerUrl, {
       method: 'POST',
       redirect: 'error',
       headers: {
