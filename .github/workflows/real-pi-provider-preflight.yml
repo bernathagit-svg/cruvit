@@ -1,0 +1,50 @@
+name: Real PI Provider Preflight
+
+on:
+  push:
+    branches:
+      - test/real-pi-provider-preflight-20261013
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    env:
+      HAS_ANTHROPIC_KEY: ${{ secrets.ANTHROPIC_KEY != '' }}
+      HAS_ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY != '' }}
+      HAS_CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY != '' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Verify exact source
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "HEAD=$(git rev-parse HEAD)"
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test -f netlify/functions/plant-identify.mjs
+          test -f modules/runtime-guards/paid-plant-identifier-gate-v1.js
+          test -f core-v1/my-garden/plants/assets/catalog-monstera.jpg
+          sha256sum core-v1/my-garden/plants/assets/catalog-monstera.jpg
+      - name: Check secret presence only
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "HAS_ANTHROPIC_KEY=$HAS_ANTHROPIC_KEY"
+          echo "HAS_ANTHROPIC_API_KEY=$HAS_ANTHROPIC_API_KEY"
+          echo "HAS_CLAUDE_API_KEY=$HAS_CLAUDE_API_KEY"
+          if [ "$HAS_ANTHROPIC_KEY" != "true" ] && [ "$HAS_ANTHROPIC_API_KEY" != "true" ] && [ "$HAS_CLAUDE_API_KEY" != "true" ]; then
+            echo "NO_ANTHROPIC_SECRET_FOUND"
+            exit 2
+          fi
+          echo "ANTHROPIC_SECRET_AVAILABLE"
+      - name: Verify paid gate remains explicit
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q "CRUVIT_ALLOW_PAID_PLANT_IDENTIFIER" modules/runtime-guards/paid-plant-identifier-gate-v1.js
+          grep -q "body?.mode !== 'identify'" netlify/functions/plant-identify.mjs
+          echo "PAID_GATE_CONTRACT_PRESENT"
