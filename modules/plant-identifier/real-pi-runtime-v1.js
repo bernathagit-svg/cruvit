@@ -3,11 +3,13 @@
 import {loadIdentityRegistry, resolvePlantIdentity} from '../identity/plant-identity-resolver.js';
 import {resolveCanonicalReadSlug} from '../identity/canonical-alias-authority-v1.js';
 import {createPreviewClient, PREVIEW_URL} from '../../core-v1/my-garden/shared/preview-session.mjs';
+import {catalogRowToRuntimePlant} from '../catalog/canonical-catalog-persistence-contract-v1.js';
+import {resolvePlantDisplayMedia, formatCatalogAttributionLabel} from '../catalog-media/licensed-catalog-media-runtime-v1.js';
 
 export const IDENTIFY_ENDPOINT = '/.netlify/functions/plant-identify';
 export const MAX_IMAGE_BYTES = 4_800_000;
 export const IMAGE_ACCEPT = 'image/jpeg,image/png,image/webp,image/gif';
-export const CATALOG_SELECT = 'slug,scientific_name,verification_state,needs_review';
+export const CATALOG_SELECT = 'slug,scientific_name,verification_state,needs_review,common_names,media_status,media';
 const MEDIA = new Set(IMAGE_ACCEPT.split(','));
 const SUCCESS = new Set(['resolved_id', 'resolved_canonical']);
 const FAILURES = new Set(['IMAGE_INVALID', 'IDENTIFY_FAILED', 'TAXONOMY_UNVERIFIED',
@@ -154,8 +156,13 @@ export function createRealPiController({
           || authority.readSlug({slug: row.slug, scientificName: row.scientific_name}) !== slug) {
         throw failure('CATALOG_CONFLICT', 'CATALOG_IDENTITY_OR_VERIFICATION_CONFLICT');
       }
+      const display = {};
+      // Extend the same exact row read, never use provider/observation display fields.
+      for (const key of ['common_names', 'media_status', 'media']) {
+        if (Object.hasOwn(row, key)) display[key] = structuredClone(row[key]);
+      }
       return frozen({slug: row.slug, scientific_name: row.scientific_name,
-        verification_state: row.verification_state, needs_review: row.needs_review});
+        verification_state: row.verification_state, needs_review: row.needs_review, ...display});
     } catch (error) {
       if (FAILURES.has(error?.status)) throw error;
       throw failure('CATALOG_READ_FAILED', 'AUTHENTICATED_CATALOG_READ_UNAVAILABLE');
@@ -229,6 +236,100 @@ export function createRealPiController({
 
   return Object.freeze({selectImage, identify, getState: () => state,
     subscribe(listener) { listeners.add(listener); return () => listeners.delete(listener); }});
+}
+
+// PI-04 is a view of the existing canonical row, not a new plant/media authority.
+export function canonicalPiResult(state) {
+  const unavailable = reason => Object.freeze({available: false, reason, name: '', scientific: '', confidence: '', media: null});
+  if (state?.status !== 'CANONICAL_READY' || state.readyForResult !== true) return unavailable('RESULT_NOT_READY');
+  const row = state.catalogRow, slug = state.identity?.canonicalSlug;
+  if (!slug || row?.slug !== slug || row.verification_state !== 'verified' || row.needs_review !== false
+      || resolveCanonicalReadSlug({slug, scientific: row.scientific_name}) !== slug) return unavailable('CATALOG_IDENTITY_UNAVAILABLE');
+  const plant = catalogRowToRuntimePlant(row);
+  const name = text(plant?.names?.en), scientific = text(plant?.scientific);
+  const accepted = state.evidence?.candidates?.find(candidate => candidate.gbifVerified === true);
+  const confidence = accepted?.confidence === 'high' ? 'High confidence' : '';
+  // The row adapter has no observation photo or personal-cover fields. Use the
+  // same catalog-media resolver as the other catalog consumers, catalog kind only.
+  const resolved = resolvePlantDisplayMedia(plant);
+  const media = row.media_status === 'IMAGE_READY' && resolved.kind === 'catalog'
+    && resolved.authority === 'catalog_plants.media' && /^https:\/\//i.test(resolved.url)
+    && row.media?.sourceAssetId && row.media?.kind !== 'design_cutout'
+    && row.media?.sourceProvider !== 'garden-design' ? resolved : null;
+  const reason = !name || !scientific ? 'CATALOG_NAME_UNAVAILABLE'
+    : !confidence ? 'CONFIDENCE_UNAVAILABLE' : !media ? 'CATALOG_IMAGE_UNAVAILABLE' : null;
+  return frozen({available: !reason, reason, canonicalSlug: slug, name, scientific, confidence, media});
+}
+
+// Coordinates are content slots in the unchanged 940 × 1672 approved PI-04.
+// Everything outside these slots is still the exact approved raster.
+export const PI_RESULT_SLOTS = Object.freeze({
+  photo: [0, 174, 526, 622], photoTail: [0, 796, 40, 204],
+  name: [535, 301, 375, 125], scientific: [535, 432, 375, 51],
+  confidence: [574, 505, 336, 35], evidence: [534, 547, 372, 34],
+  type: [497, 708, 133, 61], light: [642, 708, 133, 61], water: [787, 708, 135, 61],
+  description: [190, 826, 475, 140],
+  careLight: [47, 1192, 190, 67], careWater: [265, 1192, 192, 67],
+  careSoil: [487, 1192, 194, 67], careTemperature: [706, 1192, 194, 67],
+  similar1: [39, 1349, 270, 125], similar2: [336, 1349, 267, 125], similar3: [633, 1349, 270, 125]
+});
+
+export function createPiResultView({document, stage}) {
+  let root = null, renderedState = null;
+  function update(state, visible) {
+    if (!visible) { root?.remove(); root = null; renderedState = null; return; }
+    if (root && renderedState === state) return;
+    root?.remove(); renderedState = state;
+    const model = canonicalPiResult(state);
+    root = document.createElement('section');
+    root.className = 'pi-result'; root.setAttribute('aria-label', 'Identification result');
+    root.setAttribute('data-pi-result', model.available ? 'IMAGE_LOADING' : 'RESULT_UNAVAILABLE');
+    root.setAttribute('data-canonical-slug', model.canonicalSlug || '');
+    const slots = {};
+    for (const [key, [x, y, width, height]] of Object.entries(PI_RESULT_SLOTS)) {
+      const slot = document.createElement('div'); slot.className = 'pi-result-slot pi-result-' + key;
+      slot.setAttribute('data-pi-slot', key);
+      Object.assign(slot.style, {left: x / 940 * 100 + '%', top: y / 1672 * 100 + '%',
+        width: width / 940 * 100 + '%', height: height / 1672 * 100 + '%'});
+      root.appendChild(slot); slots[key] = slot;
+    }
+    slots.name.textContent = model.name || 'Plant details unavailable';
+    if ((model.name || '').length > 10) slots.name.style.fontSize = '4.8cqw';
+    slots.scientific.textContent = model.scientific || 'Scientific name unavailable';
+    slots.confidence.textContent = model.confidence || 'Confidence unavailable';
+    slots.evidence.textContent = model.confidence ? 'Species verified' : 'Evidence unavailable';
+    slots.description.textContent = 'Further plant details are not available yet.';
+    for (const key of ['type', 'light', 'water', 'careLight', 'careWater', 'careSoil', 'careTemperature', 'similar1', 'similar2', 'similar3']) slots[key].textContent = 'Not available';
+    const message = document.createElement('span'); message.className = 'pi-result-image-message';
+    message.textContent = model.available ? 'Loading catalog image…' : 'Catalog result unavailable';
+    message.setAttribute('role', 'status'); slots.photo.appendChild(message);
+    if (model.available) {
+      const photo = document.createElement('img'), currentRoot = root;
+      photo.alt = model.name + ' — canonical catalog image'; photo.referrerPolicy = 'no-referrer';
+      photo.setAttribute('data-pi-catalog-image', model.canonicalSlug);
+      photo.onload = () => {
+        if (root !== currentRoot) return;
+        message.hidden = true; currentRoot.setAttribute('data-pi-result', 'RESULT_READY');
+      };
+      photo.onerror = () => {
+        if (root !== currentRoot) return;
+        photo.hidden = true; message.hidden = false; message.textContent = 'Catalog image unavailable';
+        currentRoot.setAttribute('data-pi-result', 'RESULT_UNAVAILABLE');
+      };
+      slots.photo.appendChild(photo); photo.src = model.media.url;
+      const credit = document.createElement('div'); credit.className = 'pi-result-credit';
+      credit.textContent = formatCatalogAttributionLabel(model.media);
+      // Preserve required attribution and source/license access without opening PI-05.
+      for (const [label, url] of [['Source', model.media.sourcePageUrl], ['License', model.media.licenseUrl]]) {
+        if (!/^https:\/\//i.test(url || '')) continue;
+        const link = document.createElement('a'); link.textContent = label; link.href = url;
+        link.target = '_blank'; link.rel = 'noopener noreferrer'; credit.appendChild(link);
+      }
+      slots.photo.appendChild(credit);
+    }
+    stage.appendChild(root);
+  }
+  return Object.freeze({update});
 }
 
 // Bind native pickers once. The unchanged raster is never used as image evidence.

@@ -5,11 +5,15 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
-import {createRealPiController, wireRealPiInputs, decodeBrowserImage, loadPIIdentityAuthority,
+import {createRealPiController, wireRealPiInputs, decodeBrowserImage, loadPIIdentityAuthority, createPiResultView, canonicalPiResult, PI_RESULT_SLOTS,
   IDENTIFY_ENDPOINT, IMAGE_ACCEPT, MAX_IMAGE_BYTES, CATALOG_SELECT} from '../modules/plant-identifier/real-pi-runtime-v1.js';
 import {createPlantIdentityResolver, loadIdentityRegistry} from '../modules/identity/plant-identity-resolver.js';
 import {resolveCanonicalReadSlug} from '../modules/identity/canonical-alias-authority-v1.js';
 import {PREVIEW_URL} from '../core-v1/my-garden/shared/preview-session.mjs';
+import {catalogRowToRuntimePlant} from '../modules/catalog/canonical-catalog-persistence-contract-v1.js';
+import {resolvePlantDisplayMedia} from '../modules/catalog-media/licensed-catalog-media-runtime-v1.js';
+import {resolveSmartRecCatalogDisplay} from '../modules/smart-recommendations/smart-rec-garden-intelligence-v1.js';
+import {projectRows, GARDEN_ID} from '../core-v1/my-garden/plants/data.mjs';
 
 const root = new URL('../', import.meta.url);
 const read = path => fs.readFileSync(new URL(path, root), 'utf8');
@@ -367,7 +371,7 @@ function navigatorFixture(f = fixture()) {
   const window = {__PI: approvedContext.window.__PI};
   const context = vm.createContext({window, document, location: {assign() { throw Error('NAVIGATION_FORBIDDEN'); }},
     alert() { throw Error('ATOMIC_SAVE_FORBIDDEN'); },
-    wireRealPiInputs: args => wireRealPiInputs({...args, controller: f.controller})});
+    wireRealPiInputs: args => wireRealPiInputs({...args, controller: f.controller}), createPiResultView});
   const script = [...html.matchAll(/<script type="module">([\s\S]*?)<\/script>/g)][0][1];
   assert.equal((script.match(/^import /gm) || []).length, 1);
   vm.runInContext(script.replace(/^import .*;\n/m, ''), context);
@@ -597,4 +601,146 @@ test('Slice 2: both readiness fields are strict and revocation hides an already 
   assert.match(f.screen.alt, /Camera$/);
   await blockedResultNavigation(f);
   assert.deepEqual(visits.filter(screen => screen >= 4), [4]);
+});
+
+// Slice 3 uses existing catalog-media cache records as controlled catalog fixtures.
+// These fixtures are test-only; runtime never reads this cache or a plant/image map.
+const witnessFixtures = [
+  ['lemon', 'Lemon', 'lemon__citrus___limon__v1.0.0.json'],
+  ['pomegranate', 'Pomegranate', 'pomegranate__punica_granatum__v1.0.0.json'],
+  ['raspberry', 'Raspberry', 'raspberry__rubus_idaeus__v1.0.0.json']
+];
+function displayRow(slug = 'lemon') {
+  const [, name, cache] = witnessFixtures.find(w => w[0] === slug);
+  return {...row(slug), common_names: {en: name}, media_status: 'IMAGE_READY',
+    media: JSON.parse(read('data/catalog-media/cache/' + cache)).media};
+}
+const displayState = (slug = 'lemon') => ({status: 'CANONICAL_READY', readyForResult: true,
+  actionId: 'display-' + slug, identity: {canonicalSlug: slug}, catalogRow: displayRow(slug), evidence: evidence(slug)});
+const resultElement = f => f.stage.children.find(e => e.className === 'pi-result');
+const contentSlot = (view, key) => view.children.find(e => e.attrs['data-pi-slot'] === key);
+
+for (const [slug, name] of witnessFixtures) test('Slice 3: ' + slug + ' binds its exact canonical row, confidence and shared catalog image', async () => {
+  const canonical = displayRow(slug), payload = evidence(slug);
+  payload.candidates[0].commonName = 'WRONG_PROVIDER_NAME';
+  payload.imageUrl = 'https://provider.invalid/wrong.jpg';
+  payload.confidencePercent = 96;
+  const f = navigatorFixture(fixture({slug, payload,
+    catalogResponse: {status: 200, error: null, count: 1, data: [canonical]}}));
+  await f.button('gallery').click(); f.input('gallery').files = [file()]; await f.input('gallery').fire('change');
+  const state = f.controller.getState(), model = canonicalPiResult(state), view = resultElement(f);
+  assert.equal(model.available, true); assert.equal(model.canonicalSlug, slug);
+  assert.equal(model.name, name); assert.equal(model.scientific, canonical.scientific_name);
+  assert.equal(model.confidence, 'High confidence'); assert.equal(model.media.authority, 'catalog_plants.media');
+  assert.deepEqual(state.catalogRow, canonical);
+  assert.equal(model.media.url, canonical.media.primaryUrl);
+  const shared = catalogRowToRuntimePlant(canonical);
+  assert.equal(model.media.url, resolvePlantDisplayMedia(shared).url);
+  assert.equal(model.media.url, resolveSmartRecCatalogDisplay({slug, scientific: canonical.scientific_name}, {[slug]: shared}).url);
+  const garden = projectRows({id: GARDEN_ID, user_id: 'fixture-owner'}, [{id: 'plant-' + slug,
+    user_id: 'fixture-owner', garden_profile_id: GARDEN_ID, profile_slug: slug,
+    scientific: canonical.scientific_name, name, archived: false}], [canonical]);
+  assert.equal(model.media.url, garden.cards[0].systemImage.url);
+  assert.equal(contentSlot(view, 'name').textContent, name);
+  assert.equal(contentSlot(view, 'scientific').textContent, canonical.scientific_name);
+  const photo = contentSlot(view, 'photo').children.find(e => e.tag === 'img');
+  assert.equal(photo.src, canonical.media.primaryUrl);
+  assert.notEqual(photo.src, f.calls.decode[0].url);
+  photo.onload(); assert.equal(view.attrs['data-pi-result'], 'RESULT_READY');
+  assert.equal(f.calls.http.length, 1); assert.equal(f.calls.catalog.length, 1);
+  assert.match(f.calls.catalog[0].columns, /common_names,media_status,media$/);
+  assert.equal(f.stage.querySelectorAll('.hot').length, 0);
+  assert.equal(JSON.stringify(model).includes('PROVIDER'), false);
+  assert.equal(JSON.stringify(model).includes('data:image'), false);
+  assert.equal(contentSlot(view, 'evidence').textContent.includes('96'), false);
+  const credit = contentSlot(view, 'photo').children.find(e => e.className === 'pi-result-credit');
+  assert.ok(credit.textContent.includes(canonical.media.license));
+  assert.equal(credit.children.find(e => e.textContent === 'Source').href, canonical.media.sourcePageUrl);
+  assert.equal(credit.children.find(e => e.textContent === 'License').href, canonical.media.licenseUrl);
+});
+
+for (const [name, mutate, reason] of [
+  ['not ready', s => {s.status = 'IDENTIFYING';}, 'RESULT_NOT_READY'],
+  ['non-boolean ready', s => {s.readyForResult = 'true';}, 'RESULT_NOT_READY'],
+  ['wrong canonical row', s => {s.catalogRow.slug = 'pomegranate';}, 'CATALOG_IDENTITY_UNAVAILABLE'],
+  ['wrong scientific name', s => {s.catalogRow.scientific_name = 'Punica granatum';}, 'CATALOG_IDENTITY_UNAVAILABLE'],
+  ['missing common name', s => {delete s.catalogRow.common_names;}, 'CATALOG_NAME_UNAVAILABLE'],
+  ['missing scientific name', s => {s.catalogRow.scientific_name = '';}, 'CATALOG_NAME_UNAVAILABLE'],
+  ['missing confidence', s => {s.evidence = null;}, 'CONFIDENCE_UNAVAILABLE'],
+  ['missing media', s => {delete s.catalogRow.media;}, 'CATALOG_IMAGE_UNAVAILABLE'],
+  ['pending media status', s => {s.catalogRow.media_status = 'IMAGE_PENDING';}, 'CATALOG_IMAGE_UNAVAILABLE'],
+  ['pending media record', s => {s.catalogRow.media.imageStatus = 'IMAGE_PENDING';}, 'CATALOG_IMAGE_UNAVAILABLE'],
+  ['unlicensed media', s => {s.catalogRow.media.commercialUseAllowed = false;}, 'CATALOG_IMAGE_UNAVAILABLE'],
+  ['cross-plant media', s => {s.catalogRow.media.canonicalPlantIdentity = 'pomegranate';}, 'CATALOG_IMAGE_UNAVAILABLE'],
+  ['scan as data URL', s => {s.catalogRow.media.primaryUrl = 'data:image/png;base64,forbidden';}, 'CATALOG_IMAGE_UNAVAILABLE'],
+  ['design cutout', s => {s.catalogRow.media.kind = 'design_cutout';}, 'CATALOG_IMAGE_UNAVAILABLE']
+]) test('Slice 3: ' + name + ' fails honestly without a reference-plant or scan-photo fallback', () => {
+  const state = displayState(); mutate(state);
+  const model = canonicalPiResult(state);
+  assert.equal(model.available, false); assert.equal(model.reason, reason);
+  const stage = new Element('main'), document = {createElement: tag => new Element(tag)};
+  createPiResultView({document, stage}).update(state, true);
+  const view = stage.children[0];
+  assert.equal(view.attrs['data-pi-result'], 'RESULT_UNAVAILABLE');
+  assert.equal(contentSlot(view, 'photo').children.some(e => e.tag === 'img'), false);
+});
+
+test('Slice 3: changing witnesses replaces all content in identical approved slots; stale image callbacks cannot leak', () => {
+  const stage = new Element('main'), document = {createElement: tag => new Element(tag)};
+  const view = createPiResultView({document, stage}); let geometry, oldPhoto;
+  const urls = new Set();
+  for (const [slug, name] of witnessFixtures) {
+    const state = displayState(slug); view.update(state, true);
+    assert.equal(stage.children.length, 1);
+    const root = stage.children[0], slots = root.children;
+    const nextGeometry = slots.map(slot => ({key: slot.attrs['data-pi-slot'], style: slot.style}));
+    // Text fitting is content-dependent; the approved rectangles remain identical.
+    const rectangles = nextGeometry.map(({key, style}) => ({key, left: style.left, top: style.top, width: style.width, height: style.height}));
+    if (geometry) assert.deepEqual(rectangles, geometry); else geometry = rectangles;
+    assert.equal(contentSlot(root, 'name').textContent, name);
+    if (oldPhoto) { oldPhoto.onerror(); oldPhoto.onload(); assert.equal(root.attrs['data-pi-result'], 'IMAGE_LOADING'); }
+    const photo = contentSlot(root, 'photo').children.find(e => e.tag === 'img'); urls.add(photo.src);
+    photo.onload(); assert.equal(root.attrs['data-pi-result'], 'RESULT_READY');
+    view.update(state, true); assert.equal(stage.children[0], root, 're-render does not reload catalog media');
+    oldPhoto = photo;
+  }
+  assert.equal(urls.size, 3);
+  view.update({status: 'IMAGE_LOADING'}, false); assert.equal(stage.children.length, 0);
+  oldPhoto.onload(); assert.equal(stage.children.length, 0);
+});
+
+test('Slice 3: a failed image hides it and reports unavailable, with no fallback request', () => {
+  const stage = new Element('main'), document = {createElement: tag => new Element(tag)};
+  const renderer = createPiResultView({document, stage}); const state = displayState(); renderer.update(state, true);
+  const view = stage.children[0], slot = contentSlot(view, 'photo');
+  const photo = slot.children.find(e => e.tag === 'img'), src = photo.src;
+  photo.onerror();
+  assert.equal(view.attrs['data-pi-result'], 'RESULT_UNAVAILABLE');
+  assert.equal(photo.hidden, true); assert.equal(photo.src, src);
+  assert.equal(slot.children.find(e => e.tag === 'span').textContent, 'Catalog image unavailable');
+  renderer.update(state, true); assert.equal(stage.children[0], view);
+});
+
+test('Slice 3: no personal cover, provider profile or scan photo can override canonical catalog media', () => {
+  const state = displayState();
+  state.catalogRow.coverMediaId = 'forbidden'; state.catalogRow.coverSignedUrl = 'https://scan.invalid/cover.jpg';
+  state.catalogRow.photoUrl = 'https://scan.invalid/photo.jpg'; state.catalogRow.scanPhotoUrl = 'data:image/png;base64,scan';
+  state.evidence.imageUrl = 'https://provider.invalid/wrong.jpg'; state.evidence.profile = {name: 'WRONG'};
+  const model = canonicalPiResult(state);
+  assert.equal(model.media.kind, 'catalog'); assert.equal(model.media.url, displayRow().media.primaryUrl);
+  assert.equal(JSON.stringify(model).includes('forbidden'), false);
+  assert.equal(JSON.stringify(model).includes('scan.invalid'), false);
+});
+
+test('Slice 3: approved layout/base CSS, acquisition code and navigation gate are unchanged', () => {
+  const parent = execFileSync('git', ['show', '2f85ab4a52585d2288ea30be326d621d2fe71792:core-v1/plant-identification/index.html'], {cwd: root, encoding: 'utf8'});
+  assert.equal(html.match(/<style>[\s\S]*?<\/style>/)[0], parent.match(/<style>[\s\S]*?<\/style>/)[0]);
+  for (const [start, end] of [['function go(i)', ' stage.querySelectorAll'], ['let touchStartX', 'Object.defineProperty']]) {
+    assert.equal(html.slice(html.indexOf(start), html.indexOf(end, html.indexOf(start))), parent.slice(parent.indexOf(start), parent.indexOf(end, parent.indexOf(start))));
+  }
+  const runtime = read('modules/plant-identifier/real-pi-runtime-v1.js');
+  const before = execFileSync('git', ['show', '2f85ab4a52585d2288ea30be326d621d2fe71792:modules/plant-identifier/real-pi-runtime-v1.js'], {cwd: root, encoding: 'utf8'});
+  assert.equal(runtime.slice(runtime.indexOf('export function wireRealPiInputs')), before.slice(before.indexOf('export function wireRealPiInputs')));
+  assert.equal(Object.keys(PI_RESULT_SLOTS).length, 17);
+  assert.doesNotMatch(runtime, /PROVIDER_|lemon|pomegranate|raspberry|plants\.seed|catalog-media\/cache/);
 });
