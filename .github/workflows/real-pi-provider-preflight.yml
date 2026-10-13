@@ -12,19 +12,19 @@ jobs:
   preflight:
     runs-on: ubuntu-latest
     env:
-      HAS_ANTHROPIC_KEY: ${{ secrets.ANTHROPIC_KEY != '' }}
-      HAS_ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY != '' }}
-      HAS_CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY != '' }}
+      HAS_NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN != '' }}
+      HAS_NETLIFY_TOKEN: ${{ secrets.NETLIFY_TOKEN != '' }}
+      HAS_NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID != '' }}
     steps:
-      - name: Check secret presence only
+      - name: Check Netlify secret presence only
         shell: bash
         run: |
           set -euo pipefail
-          echo "HAS_ANTHROPIC_KEY=$HAS_ANTHROPIC_KEY"
-          echo "HAS_ANTHROPIC_API_KEY=$HAS_ANTHROPIC_API_KEY"
-          echo "HAS_CLAUDE_API_KEY=$HAS_CLAUDE_API_KEY"
-          if [ "$HAS_ANTHROPIC_KEY" != "true" ] && [ "$HAS_ANTHROPIC_API_KEY" != "true" ] && [ "$HAS_CLAUDE_API_KEY" != "true" ]; then
-            echo "NO_ANTHROPIC_SECRET_FOUND"
+          echo "HAS_NETLIFY_AUTH_TOKEN=$HAS_NETLIFY_AUTH_TOKEN"
+          echo "HAS_NETLIFY_TOKEN=$HAS_NETLIFY_TOKEN"
+          echo "HAS_NETLIFY_SITE_ID=$HAS_NETLIFY_SITE_ID"
+          if [ "$HAS_NETLIFY_AUTH_TOKEN" != "true" ] && [ "$HAS_NETLIFY_TOKEN" != "true" ]; then
+            echo "NO_NETLIFY_TOKEN_FOUND"
             exit 2
           fi
-          echo "ANTHROPIC_SECRET_AVAILABLE"
+          echo "NETLIFY_TOKEN_AVAILABLE"
