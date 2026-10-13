@@ -14,8 +14,15 @@ const enabled = { [PAID_PLANT_IDENTIFIER_ENV_FLAG]: 'true', ANTHROPIC_API_KEY: F
 const validBody = { mode: 'identify', imageBase64: 'AAAAAAAAAAAAAAAA', mediaType: 'image/png' };
 const validPlant = { scientific_name: 'Rosa canina', common_name: 'Dog rose', confidence: 'high' };
 const providerResult = result => new Response(JSON.stringify({
-  content: [{ type: 'text', text: JSON.stringify(result) }]
-}));
+  id: 'msg_fixture',
+  type: 'message',
+  role: 'assistant',
+  model: 'claude-sonnet-4-6',
+  content: [{ type: 'text', text: JSON.stringify(result) }],
+  stop_reason: 'end_turn',
+  stop_sequence: null,
+  usage: { input_tokens: 1, output_tokens: 1 }
+}), { headers: { 'Content-Type': 'application/json' } });
 
 async function invokeHandler({ env = {}, body = validBody, rawBody, headers = {}, provider, research } = {}) {
   const previousEnv = process.env;
@@ -131,8 +138,9 @@ test('Netlify AI Gateway takes authority over stale direct ANTHROPIC_KEY without
   assert.equal(out.status, 502);
   assert.equal(out.paid.length, 1);
   assert.equal(out.paid[0].url, 'https://gateway.fixture.invalid/v1/messages');
-  assert.equal(out.paid[0].headers['x-api-key'], 'gateway-fixture-key');
-  assert.notEqual(out.paid[0].headers['x-api-key'], gatewayEnv.ANTHROPIC_KEY);
+  const paidHeaders = new Headers(out.paid[0].headers);
+  assert.equal(paidHeaders.get('x-api-key'), 'gateway-fixture-key');
+  assert.notEqual(paidHeaders.get('x-api-key'), gatewayEnv.ANTHROPIC_KEY);
 });
 test('one identify uses one server-selected Vision dispatch and preserves free GBIF verification', async () => {
   const out = await invokeHandler({ env: enabled, body: {

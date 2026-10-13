@@ -134,7 +134,13 @@ async function loadContainedEndpoint(endpoint, authority = {}) {
     FormData, Blob, AbortController, TextEncoder, TextDecoder,
     setTimeout, clearTimeout
   });
+  class ForbiddenAnthropic {
+    constructor() {
+      throw new Error('ANTHROPIC_SDK_CONSTRUCTION_FORBIDDEN_IN_CONTAINMENT_TEST');
+    }
+  }
   const builtinModules = new Map([
+    ['@anthropic-ai/sdk', { default: ForbiddenAnthropic }],
     ['node:crypto', { default: crypto, ...crypto }],
     ['node:path', { default: path, ...path }],
     ['node:url', { ...nodeUrl }],

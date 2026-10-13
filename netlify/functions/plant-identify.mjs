@@ -1,3 +1,4 @@
+import Anthropic from '@anthropic-ai/sdk';
 import {
   isPaidPlantIdentifierAllowed,
   paidPlantIdentifierDisabledResponse,
@@ -982,19 +983,28 @@ export default async function handler(request) {
   }
 
   const gatewayBaseUrl = cleanText(process.env.ANTHROPIC_BASE_URL).replace(/\/+$/, '');
-  const key = gatewayBaseUrl
-    ? process.env.ANTHROPIC_API_KEY
-    : (
-        process.env.ANTHROPIC_KEY ||
-        process.env.ANTHROPIC_API_KEY ||
-        process.env.CLAUDE_API_KEY
-      );
-  const providerUrl = gatewayBaseUrl
-    ? gatewayBaseUrl + '/v1/messages'
-    : 'https://api.anthropic.com/v1/messages';
+  const gatewayKey = cleanText(process.env.ANTHROPIC_API_KEY);
+  const directKey =
+    process.env.ANTHROPIC_KEY ||
+    process.env.ANTHROPIC_API_KEY ||
+    process.env.CLAUDE_API_KEY;
+  const useGateway = Boolean(gatewayBaseUrl && gatewayKey);
+  const key = useGateway ? gatewayKey : directKey;
   if (!key) {
     return json(503, { error: 'Plant Identifier is not configured.' });
   }
+
+  const transport = (input, init = {}) =>
+    globalThis.fetch(input, { ...init, redirect: 'error' });
+  const anthropic = useGateway
+    ? new Anthropic({ maxRetries: 0, timeout: 28000, fetch: transport })
+    : new Anthropic({
+        apiKey: key,
+        baseURL: 'https://api.anthropic.com',
+        maxRetries: 0,
+        timeout: 28000,
+        fetch: transport
+      });
 
   let image;
   let prompt;
@@ -1013,48 +1023,35 @@ export default async function handler(request) {
   }
 
   const model = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 28000);
   const failed = () => json(502, {
     error: 'The plant could not be identified.',
     code: 'PAID_PLANT_IDENTIFIER_FAILED'
   });
 
   try {
-    // Exactly one paid dispatch. No model fallback, recovery, redirect or retry.
-    const response = await fetch(providerUrl, {
-      method: 'POST',
-      redirect: 'error',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model,
-        max_tokens: 1500,
-        messages: [
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'image',
-                source: {
-                  type: 'base64',
-                  media_type: image.mediaType,
-                  data: image.data
-                }
-              },
-              { type: 'text', text: prompt }
-            ]
-          }
-        ]
-      }),
-      signal: controller.signal
+    // Exactly one paid dispatch through the official Anthropic SDK.
+    // maxRetries: 0 above keeps the paid-call contract fail-closed.
+    const payload = await anthropic.messages.create({
+      model,
+      max_tokens: 1500,
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'image',
+              source: {
+                type: 'base64',
+                media_type: image.mediaType,
+                data: image.data
+              }
+            },
+            { type: 'text', text: prompt }
+          ]
+        }
+      ]
     });
-
-    const payload = await response.json();
-    if (!response.ok || payload?.error) return failed();
+    if (payload?.error) return failed();
 
     const text = (payload?.content || [])
       .filter(part => part?.type === 'text')
@@ -1100,8 +1097,6 @@ export default async function handler(request) {
   } catch {
     // Provider/network/parse/downstream failures never trigger a second call or leak diagnostics.
     return failed();
-  } finally {
-    clearTimeout(timer);
   }
 }
 
