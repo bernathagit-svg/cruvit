@@ -66,18 +66,24 @@ const hotspots={
 6:[{x:5,y:80,w:90,h:13,to:7,label:"Save to My Garden"}],
 7:[{x:10,y:78,w:80,h:5,to:0,label:"Save to My Garden"}]
 };
-let index=0,saveAction=null,saving=false,acquisition=null;
+let index=0,saveAction=null,saving=false,acquisition=null,shownResultActionId=null;
 const stage=document.getElementById("stage"),img=document.getElementById("screen");
 stage.addEventListener('cruvit-pi-save-bind',event=>{if(typeof event.detail?.save==='function')saveAction=event.detail.save;});
-// Generic navigation can only go backward. Slice 1 never exposes PI-04.
+// Manual navigation stays within acquisition. Only qualified controller state opens PI-04.
 function go(i){if(saving||i>index)return;index=Math.max(0,Math.min(2,i));render()}
 function showAcquisitionScreen(i){index=Math.max(0,Math.min(2,i));render()}
 function render(){
+ const state=acquisition?.getState();
+ const resultReady=state?.status==='CANONICAL_READY'&&state.readyForResult===true;
+ if(resultReady&&state.actionId&&state.actionId!==shownResultActionId){
+  shownResultActionId=state.actionId;index=3;
+ }else if(index===3&&!resultReady){index=1;}
  stage.querySelectorAll(".hot").forEach(x=>x.remove());
  img.src=screens[index];
  img.alt="CRUVIT Plant Identification — "+titles[index];
  document.title="CRUVIT · Plant Identification · "+titles[index];
- for(const h of (hotspots[index]||[])){
+ // The approved result raster is visible, but PI-05 through PI-08 remain closed.
+ for(const h of (index<3?hotspots[index]||[]:[])){
   const b=document.createElement("button");
   b.className="hot";b.type="button";b.setAttribute("aria-label",h.label);
   b.style.left=h.x+"%";b.style.top=h.y+"%";b.style.width=h.w+"%";b.style.height=h.h+"%";

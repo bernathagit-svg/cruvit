@@ -148,8 +148,8 @@ test('two independent static builds remain deterministic and artifact-stable',()
   const rb=buildStatic({out:b,receipt:br});
   assert.equal(ra.publicFileCount,1920);
   assert.equal(ra.serverRuntimeFileCount,75);
-  // Pin the authorized Slice 1 output; the Identify server and downstream authorities are unchanged.
-  assert.equal(ra.outputManifestSha256,'83cb61edde42305c40489106b4f713db1fe191b0a1020f26ea79116da2110d90');
+  // Pin Slice 2 output: only the gated PI-04 page changes from its accepted parent.
+  assert.equal(ra.outputManifestSha256,'26a796307b8f35e87e1a8ed853fe18a9e823ec0668f3bb457cdbbc22c8ed05c2');
   assert.equal(ra.outputManifestSha256,rb.outputManifestSha256);
   assert.deepEqual(ra.publicManifest,rb.publicManifest);
   assert.equal(ra.secretFindings.length,0);

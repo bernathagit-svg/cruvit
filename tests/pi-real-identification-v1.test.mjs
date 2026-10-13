@@ -467,3 +467,134 @@ test('CSS, all downstream PI definitions and Atomic Save entry remain unchanged;
   const runtime = read('modules/plant-identifier/real-pi-runtime-v1.js');
   assert.doesNotMatch(runtime, /plants\.seed|PLANT_LIBRARY|localCare|speciesCare|\.rpc\(|\.insert\(|\.upsert\(|\.update\(|\.upload\(|localStorage|sessionStorage|CRUVIT_ALLOW_PAID/);
 });
+
+// Slice 2 exercises the actual page renderer; all Slice 1 tests above are retained.
+function observePiTransitions(f) {
+  const images = Array.from({length: 8}, (_, i) => approvedContext.window.__PI[i].join(''));
+  const visits = [];
+  let current = f.screen.src;
+  Object.defineProperty(f.screen, 'src', {
+    get: () => current,
+    set(value) { if (value !== current) visits.push(images.indexOf(value) + 1); current = value; }
+  });
+  return visits;
+}
+async function blockedResultNavigation(f) {
+  await forbiddenForward(f);
+  for (const target of [3, 4, 5, 6, 7, 99]) {
+    vm.runInContext('go(' + target + '); render();', f.context);
+    assert.doesNotMatch(f.screen.alt, /Result|Plant Profile|Care|Suitability|Save to My Garden/);
+    vm.runInContext('showAcquisitionScreen(' + target + '); render();', f.context);
+    assert.match(f.screen.alt, /Analyzing$/);
+    assert.equal(f.stage.querySelectorAll('.hot').length, 0, 'no forward result hotspot');
+  }
+}
+
+for (const slug of ['lemon', 'pomegranate', 'raspberry']) test('Slice 2: ' + slug + ' opens exact PI-04 once after the canonical catalog read completes', async () => {
+  const pendingIdentify = deferred(), pendingCatalog = deferred();
+  const f = navigatorFixture(fixture({slug, transport: () => pendingIdentify.promise,
+    catalogTransport: () => pendingCatalog.promise}));
+  const visits = observePiTransitions(f);
+  await blockedResultNavigation(f);
+  vm.runInContext('go(0);', f.context);
+  await f.button('gallery').click();
+  const input = f.input('gallery'); input.files = [file()];
+  const change = input.fire('change');
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(f.calls.http.length, 1);
+  await blockedResultNavigation(f);
+  pendingIdentify.resolve(httpResponse(evidence(slug)));
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(f.calls.catalog.length, 1);
+  assert.equal(f.controller.getState().status, 'IDENTIFYING');
+  await blockedResultNavigation(f);
+  assert.equal(visits.includes(4), false, 'provider evidence alone never opens PI-04');
+  pendingCatalog.resolve({status: 200, error: null, count: 1, data: [row(slug)]});
+  await change;
+  assert.equal(f.controller.getState().status, 'CANONICAL_READY');
+  assert.equal(f.controller.getState().readyForResult, true);
+  assert.deepEqual(f.controller.getState().catalogRow, row(slug));
+  assert.match(f.screen.alt, /Result$/);
+  assert.equal(f.screen.src, approvedContext.window.__PI[3].join(''));
+  assert.equal(f.stage.querySelectorAll('.hot').length, 0, 'PI-04 cannot open PI-05');
+  await forbiddenForward(f);
+  vm.runInContext('render(); render(); go(4); go(5); go(6); go(7);', f.context);
+  assert.match(f.screen.alt, /Result$/);
+  assert.deepEqual(visits.filter(screen => screen >= 4), [4]);
+  await f.document.fire('keydown', {key: 'ArrowLeft'});
+  assert.match(f.screen.alt, /Analyzing$/);
+  await blockedResultNavigation(f);
+  assert.deepEqual(visits.filter(screen => screen >= 4), [4], 'same completed action cannot reopen PI-04');
+  assert.equal(f.calls.http.length, 1);
+});
+
+test('Slice 2: a second explicit selection gets one new result transition; invalid replacement revokes the result', async () => {
+  const f = navigatorFixture(), visits = observePiTransitions(f);
+  const actionIds = [];
+  for (const kind of ['png', 'jpeg']) {
+    vm.runInContext('go(0);', f.context);
+    await f.button('gallery').click();
+    f.input('gallery').files = [file(kind)]; await f.input('gallery').fire('change');
+    assert.match(f.screen.alt, /Result$/);
+    actionIds.push(f.controller.getState().actionId);
+    vm.runInContext('render(); render();', f.context);
+  }
+  assert.notEqual(actionIds[0], actionIds[1]);
+  assert.equal(f.calls.http.length, 2);
+  assert.deepEqual(visits.filter(screen => screen >= 4), [4, 4]);
+  await f.controller.selectImage(new File(['invalid'], 'invalid.png', {type: 'image/png'}));
+  assert.equal(f.controller.getState().status, 'IMAGE_INVALID');
+  assert.match(f.screen.alt, /Camera$/);
+  await blockedResultNavigation(f);
+  assert.deepEqual(visits.filter(screen => screen >= 4), [4, 4]);
+  assert.equal(f.calls.http.length, 2);
+});
+
+for (const [status, options, invalidImage] of [
+  ['IMAGE_INVALID', {}, true],
+  ['IDENTIFY_FAILED', {transport: async () => ({ok: false})}],
+  ['TAXONOMY_UNVERIFIED', {payload: {candidates: []}}],
+  ['IDENTITY_UNRESOLVED', {payload: {...evidence(), scientificName: 'Inventus exampleus'}}],
+  ['CATALOG_NOT_FOUND', {catalogResponse: {status: 200, error: null, count: 0, data: []}}],
+  ['CATALOG_CONFLICT', {catalogResponse: {status: 200, error: null, count: 2, data: [row(), row()]}}],
+  ['CATALOG_READ_FAILED', {catalogError: Error('offline')}]
+]) test('Slice 2: ' + status + ' remains in acquisition and never renders PI-04', async () => {
+  const f = navigatorFixture(fixture(options)), visits = observePiTransitions(f);
+  await f.button('gallery').click();
+  f.input('gallery').files = [invalidImage ? new File(['invalid'], 'invalid.png', {type: 'image/png'}) : file()];
+  await f.input('gallery').fire('change');
+  assert.equal(f.controller.getState().status, status);
+  assert.equal(f.controller.getState().readyForResult, false);
+  assert.match(f.screen.alt, /Camera$/);
+  await blockedResultNavigation(f);
+  assert.equal(visits.some(screen => screen >= 4), false);
+  assert.equal(f.calls.http.length, invalidImage ? 0 : 1);
+});
+
+test('Slice 2: both readiness fields are strict and revocation hides an already visible result', async () => {
+  let state = {status: 'NO_IMAGE', readyForResult: false, actionId: null};
+  const listeners = [];
+  const f = navigatorFixture({controller: {getState: () => state, subscribe: listener => listeners.push(listener)}});
+  const visits = observePiTransitions(f);
+  const publish = next => { state = next; for (const listener of listeners) listener(state); };
+  const notReady = [
+    ...['NO_IMAGE', 'IMAGE_LOADING', 'IMAGE_READY', 'IDENTIFYING', 'IMAGE_INVALID', 'IDENTIFY_FAILED',
+      'TAXONOMY_UNVERIFIED', 'IDENTITY_UNRESOLVED', 'CATALOG_NOT_FOUND', 'CATALOG_CONFLICT',
+      'CATALOG_READ_FAILED', 'canonical_ready', 'CANONICAL_READY '].map(status => ({status, readyForResult: true})),
+    ...[false, undefined, null, 0, 1, 'true'].map(readyForResult => ({status: 'CANONICAL_READY', readyForResult}))
+  ];
+  for (const [i, fields] of notReady.entries()) {
+    publish({status: 'IDENTIFYING', readyForResult: false, actionId: 'pending-' + i});
+    publish({...fields, actionId: 'unqualified-' + i});
+    await blockedResultNavigation(f);
+  }
+  assert.equal(visits.some(screen => screen >= 4), false);
+  publish({status: 'CANONICAL_READY', readyForResult: true, actionId: 'qualified'});
+  assert.match(f.screen.alt, /Result$/);
+  publish({...state}); publish({...state});
+  assert.deepEqual(visits.filter(screen => screen >= 4), [4]);
+  publish({...state, readyForResult: false});
+  assert.match(f.screen.alt, /Camera$/);
+  await blockedResultNavigation(f);
+  assert.deepEqual(visits.filter(screen => screen >= 4), [4]);
+});
