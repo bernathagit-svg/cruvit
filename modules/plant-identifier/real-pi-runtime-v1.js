@@ -9,7 +9,7 @@ import {resolvePlantDisplayMedia, formatCatalogAttributionLabel} from '../catalo
 export const IDENTIFY_ENDPOINT = '/.netlify/functions/plant-identify';
 export const MAX_IMAGE_BYTES = 4_800_000;
 export const IMAGE_ACCEPT = 'image/jpeg,image/png,image/webp,image/gif';
-export const CATALOG_SELECT = 'slug,scientific_name,verification_state,needs_review,common_names,media_status,media';
+export const CATALOG_SELECT = 'slug,scientific_name,verification_state,needs_review,common_names,media_status,media,climate_traits';
 const MEDIA = new Set(IMAGE_ACCEPT.split(','));
 const SUCCESS = new Set(['resolved_id', 'resolved_canonical']);
 const FAILURES = new Set(['IMAGE_INVALID', 'IDENTIFY_FAILED', 'TAXONOMY_UNVERIFIED',
@@ -158,7 +158,7 @@ export function createRealPiController({
       }
       const display = {};
       // Extend the same exact row read, never use provider/observation display fields.
-      for (const key of ['common_names', 'media_status', 'media']) {
+      for (const key of ['common_names', 'media_status', 'media', 'climate_traits']) {
         if (Object.hasOwn(row, key)) display[key] = structuredClone(row[key]);
       }
       return frozen({slug: row.slug, scientific_name: row.scientific_name,
@@ -274,12 +274,12 @@ export const PI_RESULT_SLOTS = Object.freeze({
   similar1: [39, 1349, 270, 125], similar2: [336, 1349, 267, 125], similar3: [633, 1349, 270, 125]
 });
 
-export function createPiResultView({document, stage}) {
-  let root = null, renderedState = null;
+export function createPiResultView({document, stage, onReady = () => {}}) {
+  let root = null, renderedState = null, readyState = null;
   function update(state, visible) {
-    if (!visible) { root?.remove(); root = null; renderedState = null; return; }
+    if (!visible) { root?.remove(); root = null; renderedState = null; readyState = null; return; }
     if (root && renderedState === state) return;
-    root?.remove(); renderedState = state;
+    root?.remove(); renderedState = state; readyState = null;
     const model = canonicalPiResult(state);
     root = document.createElement('section');
     root.className = 'pi-result'; root.setAttribute('aria-label', 'Identification result');
@@ -310,22 +310,102 @@ export function createPiResultView({document, stage}) {
       photo.onload = () => {
         if (root !== currentRoot) return;
         message.hidden = true; currentRoot.setAttribute('data-pi-result', 'RESULT_READY');
+        readyState = state; onReady();
       };
       photo.onerror = () => {
         if (root !== currentRoot) return;
         photo.hidden = true; message.hidden = false; message.textContent = 'Catalog image unavailable';
         currentRoot.setAttribute('data-pi-result', 'RESULT_UNAVAILABLE');
+        readyState = null; onReady();
       };
       slots.photo.appendChild(photo); photo.src = model.media.url;
       const credit = document.createElement('div'); credit.className = 'pi-result-credit';
       credit.textContent = formatCatalogAttributionLabel(model.media);
-      // Preserve required attribution and source/license access without opening PI-05.
+      // Preserve required attribution and source/license access.
       for (const [label, url] of [['Source', model.media.sourcePageUrl], ['License', model.media.licenseUrl]]) {
         if (!/^https:\/\//i.test(url || '')) continue;
         const link = document.createElement('a'); link.textContent = label; link.href = url;
         link.target = '_blank'; link.rel = 'noopener noreferrer'; credit.appendChild(link);
       }
       slots.photo.appendChild(credit);
+    }
+    stage.appendChild(root);
+  }
+  return Object.freeze({update, isReady: state => !!root && renderedState === state && readyState === state});
+}
+
+// PI-05 projects the very same canonical row used by PI-04. No profile lookup,
+// provider prose, observation image, or per-plant fallback is consulted.
+export function canonicalPiProfile(state) {
+  const result = canonicalPiResult(state);
+  if (!result.available) return result;
+  const plant = catalogRowToRuntimePlant(state.catalogRow), facts = [];
+  if (!plant.needsReview) {
+    if (plant.growthHabit) facts.push('Growth habit: ' + plant.growthHabit + '.');
+    const leaf = plant.seasonalityEvidence;
+    const labels = {EVERGREEN: 'evergreen', DECIDUOUS: 'deciduous', CONTEXT_DEPENDENT: 'context dependent'};
+    if (leaf?.evidenceClass === 'SOURCE_SUPPORTED' && labels[leaf.state]
+        && (!leaf.canonicalSlug || leaf.canonicalSlug === result.canonicalSlug)) {
+      facts.push('Foliage: ' + labels[leaf.state] + '.');
+    }
+  }
+  return frozen({...result, description: facts.join(' ') || 'Plant profile details are not available.'});
+}
+
+// Plant-specific regions of the unchanged 940 × 1674 approved PI-05.
+// The photo mask retains the approved panel, navigation and button chrome.
+export const PI_PROFILE_SLOTS = Object.freeze({
+  photo: [0, 0, 940, 1460], name: [76, 567, 790, 68],
+  scientific: [76, 637, 790, 59], description: [72, 829, 796, 106],
+  credit: [76, 1390, 790, 58]
+});
+const PROFILE_PHOTO_MASK = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 1460"><path fill="white" fill-rule="evenodd" d="M0 0H940V1460H0Z M72 792H868Q916 792 916 840V1334Q916 1382 868 1382H72Q24 1382 24 1334V840Q24 792 72 792Z M163 140A52 52 0 1 0 59 140A52 52 0 1 0 163 140Z M885 140A52 52 0 1 0 781 140A52 52 0 1 0 885 140Z M106 707H356A30 30 0 0 1 356 767H106A30 30 0 0 1 106 707Z M548 1532A80 80 0 1 0 388 1532A80 80 0 1 0 548 1532Z"/></svg>');
+
+export function createPiProfileView({document, stage}) {
+  let root = null, renderedState = null;
+  function update(state, visible) {
+    const model = visible ? canonicalPiProfile(state) : null;
+    if (!model?.available) { root?.remove(); root = null; renderedState = null; return; }
+    if (root && renderedState === state) return;
+    root?.remove(); renderedState = state;
+    root = document.createElement('section'); root.className = 'pi-profile';
+    root.setAttribute('aria-label', 'Canonical plant profile');
+    root.setAttribute('data-pi-profile', 'IMAGE_LOADING');
+    root.setAttribute('data-canonical-slug', model.canonicalSlug);
+    root.setAttribute('data-identify-action', state.actionId);
+    const slots = {};
+    for (const [key, [x, y, width, height]] of Object.entries(PI_PROFILE_SLOTS)) {
+      const slot = document.createElement('div'); slot.className = 'pi-profile-slot pi-profile-' + key;
+      slot.setAttribute('data-pi-profile-slot', key);
+      Object.assign(slot.style, {left: x / 940 * 100 + '%', top: y / 1674 * 100 + '%',
+        width: width / 940 * 100 + '%', height: height / 1674 * 100 + '%'});
+      root.appendChild(slot); slots[key] = slot;
+    }
+    slots.name.textContent = model.name; slots.scientific.textContent = model.scientific;
+    slots.description.textContent = model.description;
+    // The preserved badge says High confidence, exactly the accepted evidence.
+    slots.name.setAttribute('aria-description', model.confidence);
+    slots.photo.style.maskImage = 'url("' + PROFILE_PHOTO_MASK + '")';
+    const photo = document.createElement('img'), currentRoot = root;
+    photo.alt = model.name + ' — canonical catalog image'; photo.referrerPolicy = 'no-referrer';
+    photo.setAttribute('data-pi-profile-image', model.canonicalSlug);
+    const message = document.createElement('span'); message.className = 'pi-profile-image-message';
+    message.setAttribute('role', 'status'); message.textContent = 'Loading catalog image…';
+    photo.onload = () => {
+      if (root !== currentRoot) return;
+      message.hidden = true; currentRoot.setAttribute('data-pi-profile', 'PROFILE_READY');
+    };
+    photo.onerror = () => {
+      if (root !== currentRoot) return;
+      photo.hidden = true; message.hidden = false; message.textContent = 'Catalog image unavailable';
+      currentRoot.setAttribute('data-pi-profile', 'PROFILE_UNAVAILABLE');
+    };
+    slots.photo.appendChild(photo); slots.photo.appendChild(message); photo.src = model.media.url;
+    slots.credit.textContent = formatCatalogAttributionLabel(model.media);
+    for (const [label, url] of [['Source', model.media.sourcePageUrl], ['License', model.media.licenseUrl]]) {
+      if (!/^https:\/\//i.test(url || '')) continue;
+      const link = document.createElement('a'); link.textContent = label; link.href = url;
+      link.target = '_blank'; link.rel = 'noopener noreferrer'; slots.credit.appendChild(link);
     }
     stage.appendChild(root);
   }

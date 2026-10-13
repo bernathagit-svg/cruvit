@@ -148,8 +148,8 @@ test('two independent static builds remain deterministic and artifact-stable',()
   const rb=buildStatic({out:b,receipt:br});
   assert.equal(ra.publicFileCount,1920);
   assert.equal(ra.serverRuntimeFileCount,75);
-  // Pin Slice 3 output: canonical PI-04 content binding; approved assets unchanged.
-  assert.equal(ra.outputManifestSha256,'4429c09dacb2ea0c7363ce209ec81ba211699d145ab8e69bd0cc7756aa50c280');
+  // Pin Slice 4 output: canonical PI-05 profile binding; approved assets unchanged.
+  assert.equal(ra.outputManifestSha256,'70b2b972c43316db27aa3550117eb88c7c9d58339349763c9b241a9d0fbe4ad6');
   assert.equal(ra.outputManifestSha256,rb.outputManifestSha256);
   assert.deepEqual(ra.publicManifest,rb.publicManifest);
   assert.equal(ra.secretFindings.length,0);

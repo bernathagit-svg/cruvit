@@ -35,6 +35,20 @@ body{display:grid;place-items:start center;font-family:Arial,sans-serif;overflow
 .pi-result-careLight,.pi-result-careWater,.pi-result-careSoil,.pi-result-careTemperature{background:#faf9f5;justify-content:center;text-align:center;font-size:2.25cqw;align-items:flex-start;padding:.3em}
 .pi-result-similar1,.pi-result-similar2,.pi-result-similar3{background:#e8eadd;border-radius:2.8cqw 2.8cqw 0 0;border:1px solid #cbd3c1;justify-content:center;font-size:2.25cqw}
 </style>
+<style id="pi-profile-style">
+.pi-profile{position:absolute;inset:0;container-type:inline-size;pointer-events:none;font-family:Arial,sans-serif;color:#fff}
+.pi-profile-slot{position:absolute;overflow:hidden;line-height:1.25}
+.pi-profile-photo{background:#294532;mask-size:100% 100%;mask-repeat:no-repeat}
+.pi-profile-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pi-profile-photo:after{content:"";position:absolute;inset:32% 0 44%;background:linear-gradient(transparent,rgba(15,34,19,.6));pointer-events:none}
+.pi-profile-photo img[hidden],.pi-profile-image-message[hidden]{display:none}
+.pi-profile-image-message{position:absolute;top:25%;left:8%;right:8%;padding:1em;text-align:center;background:#294532;font-size:3cqw}
+.pi-profile-name{font-size:5.75cqw;font-weight:600;text-shadow:0 1px 3px #183921}
+.pi-profile-scientific{font-size:4.55cqw;text-shadow:0 1px 3px #183921}
+.pi-profile-description{background:#faf9f2;color:#2b4330;font-size:3.83cqw;line-height:1.3;padding:.1em}
+.pi-profile-credit{background:#f7f6eff2;color:#294532;font-size:max(9px,2.1cqw);line-height:1.2;padding:.3em}
+.pi-profile-credit a{margin-left:.6em;color:inherit;pointer-events:auto}
+</style>
 </head>
 <body>
 <main class="stage" id="stage"><img id="screen" alt=""></main>
@@ -69,7 +83,7 @@ body{display:grid;place-items:start center;font-family:Arial,sans-serif;overflow
 <script src="./assets/s8-03.js"></script>
 
 <script type="module">
-import {wireRealPiInputs,createPiResultView} from '../../modules/plant-identifier/real-pi-runtime-v1.js';
+import {wireRealPiInputs,createPiResultView,createPiProfileView,canonicalPiProfile} from '../../modules/plant-identifier/real-pi-runtime-v1.js';
 const screens=Array.from({length:8},(_,i)=>(window.__PI?.[i]||[]).join(""));
 const expected=[2310742,3406426,1786662,3352146,3347862,2456618,2020150,2405466];
 if(screens.some((s,i)=>s.length!==expected[i])) throw new Error("Approved asset integrity check failed");
@@ -84,9 +98,10 @@ const hotspots={
 6:[{x:5,y:80,w:90,h:13,to:7,label:"Save to My Garden"}],
 7:[{x:10,y:78,w:80,h:5,to:0,label:"Save to My Garden"}]
 };
-let index=0,saveAction=null,saving=false,acquisition=null,shownResultActionId=null;
+let index=0,saveAction=null,saving=false,acquisition=null,shownResultActionId=null,profileState=null;
 const stage=document.getElementById("stage"),img=document.getElementById("screen");
-const resultView=createPiResultView({document,stage});
+const resultView=createPiResultView({document,stage,onReady:()=>render()});
+const profileView=createPiProfileView({document,stage});
 stage.addEventListener('cruvit-pi-save-bind',event=>{if(typeof event.detail?.save==='function')saveAction=event.detail.save;});
 // Manual navigation stays within acquisition. Only qualified controller state opens PI-04.
 function go(i){if(saving||i>index)return;index=Math.max(0,Math.min(2,i));render()}
@@ -97,19 +112,41 @@ function render(){
  if(resultReady&&state.actionId&&state.actionId!==shownResultActionId){
   shownResultActionId=state.actionId;index=3;
  }else if(index===3&&!resultReady){index=1;}
+ // A profile permit is the current immutable controller state, captured only by
+ // the bound PI-04 button. URL/DOM fields and numeric navigation are not permits.
+ if(!Number.isInteger(index)||index>=4&&(index!==4||profileState!==state||!canonicalPiProfile(state).available)){
+  profileState=null;index=1;
+ }
+ if(index!==4)profileState=null;
  stage.querySelectorAll(".hot").forEach(x=>x.remove());
  img.src=screens[index];
  img.alt="CRUVIT Plant Identification — "+titles[index];
  document.title="CRUVIT · Plant Identification · "+titles[index];
  resultView.update(state,index===3&&resultReady);
- img.setAttribute('aria-hidden',String(index===3));
- // Only canonical content overlays PI-04; PI-05 through PI-08 remain closed.
- for(const h of (index<3?hotspots[index]||[]:[])){
+ profileView.update(state,index===4&&profileState===state);
+ img.setAttribute('aria-hidden',String(index===3||index===4));
+ // The approved Learn more button opens the full profile. All PI-05 cards and
+ // its onward button remain inactive; PI-06 through PI-08 remain closed.
+ const activeHotspots=index<3?hotspots[index]||[]:index===3&&resultView.isReady(state)
+  ?[{...hotspots[3][0],x:72,y:51.6,w:21,h:4}]
+  :index===4?[{x:6.2,y:5.3,w:11.1,h:6.2,label:"Back to result"}]:[];
+ for(const h of activeHotspots){
   const b=document.createElement("button");
   b.className="hot";b.type="button";b.setAttribute("aria-label",h.label);
   b.style.left=h.x+"%";b.style.top=h.y+"%";b.style.width=h.w+"%";b.style.height=h.h+"%";
   if(h.action){b.setAttribute('data-pi-action',h.action);b.disabled=h.action!=='back'&&['IMAGE_LOADING','IDENTIFYING'].includes(acquisition?.getState().status);}
-  b.onclick=async e=>{e.stopPropagation();if(h.action){acquisition?.activate(h.action);return;}if(index!==7){go(h.to);return;}if(saving)return;
+  if(index===3)b.setAttribute('data-pi-profile-open','');
+  b.onclick=async e=>{e.stopPropagation();
+   if(index===3){
+    if(e.isTrusted===true&&h.to===4&&acquisition.getState()===state&&resultView.isReady(state)){
+     profileState=state;index=4;render();
+    }return;
+   }
+   if(index===4){
+    if(e.isTrusted===true&&h.label==='Back to result'&&profileState===state&&acquisition.getState()===state){index=3;render();}
+    return;
+   }
+   if(h.action){acquisition?.activate(h.action);return;}if(index!==7){go(h.to);return;}if(saving)return;
    if(!saveAction){alert('Preview save is not ready. No data was saved.');return;}
    saving=true;b.disabled=true;stage.setAttribute('aria-busy','true');
    try{await saveAction();location.assign('/core-v1/my-garden/');}

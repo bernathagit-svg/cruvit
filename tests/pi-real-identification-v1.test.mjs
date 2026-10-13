@@ -6,6 +6,7 @@ import vm from 'node:vm';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {createRealPiController, wireRealPiInputs, decodeBrowserImage, loadPIIdentityAuthority, createPiResultView, canonicalPiResult, PI_RESULT_SLOTS,
+  createPiProfileView, canonicalPiProfile, PI_PROFILE_SLOTS,
   IDENTIFY_ENDPOINT, IMAGE_ACCEPT, MAX_IMAGE_BYTES, CATALOG_SELECT} from '../modules/plant-identifier/real-pi-runtime-v1.js';
 import {createPlantIdentityResolver, loadIdentityRegistry} from '../modules/identity/plant-identity-resolver.js';
 import {resolveCanonicalReadSlug} from '../modules/identity/canonical-alias-authority-v1.js';
@@ -371,7 +372,7 @@ function navigatorFixture(f = fixture()) {
   const window = {__PI: approvedContext.window.__PI};
   const context = vm.createContext({window, document, location: {assign() { throw Error('NAVIGATION_FORBIDDEN'); }},
     alert() { throw Error('ATOMIC_SAVE_FORBIDDEN'); },
-    wireRealPiInputs: args => wireRealPiInputs({...args, controller: f.controller}), createPiResultView});
+    wireRealPiInputs: args => wireRealPiInputs({...args, controller: f.controller}), createPiResultView, createPiProfileView, canonicalPiProfile});
   const script = [...html.matchAll(/<script type="module">([\s\S]*?)<\/script>/g)][0][1];
   assert.equal((script.match(/^import /gm) || []).length, 1);
   vm.runInContext(script.replace(/^import .*;\n/m, ''), context);
@@ -648,8 +649,8 @@ for (const [slug, name] of witnessFixtures) test('Slice 3: ' + slug + ' binds it
   assert.notEqual(photo.src, f.calls.decode[0].url);
   photo.onload(); assert.equal(view.attrs['data-pi-result'], 'RESULT_READY');
   assert.equal(f.calls.http.length, 1); assert.equal(f.calls.catalog.length, 1);
-  assert.match(f.calls.catalog[0].columns, /common_names,media_status,media$/);
-  assert.equal(f.stage.querySelectorAll('.hot').length, 0);
+  assert.equal(f.calls.catalog[0].columns, CATALOG_SELECT);
+  assert.equal(f.stage.querySelectorAll('.hot').length, 1, 'Slice 4 enables only the bound profile entry');
   assert.equal(JSON.stringify(model).includes('PROVIDER'), false);
   assert.equal(JSON.stringify(model).includes('data:image'), false);
   assert.equal(contentSlot(view, 'evidence').textContent.includes('96'), false);
@@ -735,7 +736,7 @@ test('Slice 3: no personal cover, provider profile or scan photo can override ca
 test('Slice 3: approved layout/base CSS, acquisition code and navigation gate are unchanged', () => {
   const parent = execFileSync('git', ['show', '2f85ab4a52585d2288ea30be326d621d2fe71792:core-v1/plant-identification/index.html'], {cwd: root, encoding: 'utf8'});
   assert.equal(html.match(/<style>[\s\S]*?<\/style>/)[0], parent.match(/<style>[\s\S]*?<\/style>/)[0]);
-  for (const [start, end] of [['function go(i)', ' stage.querySelectorAll'], ['let touchStartX', 'Object.defineProperty']]) {
+  for (const [start, end] of [['function go(i)', 'function render()'], ['let touchStartX', 'Object.defineProperty']]) {
     assert.equal(html.slice(html.indexOf(start), html.indexOf(end, html.indexOf(start))), parent.slice(parent.indexOf(start), parent.indexOf(end, parent.indexOf(start))));
   }
   const runtime = read('modules/plant-identifier/real-pi-runtime-v1.js');
@@ -743,4 +744,147 @@ test('Slice 3: approved layout/base CSS, acquisition code and navigation gate ar
   assert.equal(runtime.slice(runtime.indexOf('export function wireRealPiInputs')), before.slice(before.indexOf('export function wireRealPiInputs')));
   assert.equal(Object.keys(PI_RESULT_SLOTS).length, 17);
   assert.doesNotMatch(runtime, /PROVIDER_|lemon|pomegranate|raspberry|plants\.seed|catalog-media\/cache/);
+});
+
+// Slice 4: profile facts come from the same controlled canonical row. The two
+// seasonality records below are existing source-supported catalog fixtures;
+// Lemon deliberately has no supported profile facts and must say unavailable.
+function profileRow(slug = 'lemon') {
+  const paths = {
+    pomegranate: 'data/catalog/end-to-end-batch-b/seasonality/pomegranate.json',
+    raspberry: 'data/catalog/full-catalog/seasonality-seven/raspberry.json'
+  };
+  return {...displayRow(slug), climate_traits: paths[slug]
+    ? {seasonalityEvidence: JSON.parse(read(paths[slug])).result} : {}};
+}
+const profileElement = f => f.stage.children.find(e => e.className === 'pi-profile');
+const profileSlot = (view, key) => view.children.find(e => e.attrs['data-pi-profile-slot'] === key);
+const profileButton = f => f.stage.children.find(e => Object.hasOwn(e.attrs, 'data-pi-profile-open'));
+const resultPhoto = f => contentSlot(resultElement(f), 'photo').children.find(e => e.tag === 'img');
+const trustedClick = b => b.onclick({isTrusted: true, stopPropagation() {}});
+async function readyProfileFixture(slug = 'lemon') {
+  const canonical = profileRow(slug);
+  const f = navigatorFixture(fixture({slug, catalogResponse: {status: 200, error: null, count: 1, data: [canonical]}}));
+  await f.button('gallery').click(); f.input('gallery').files = [file()]; await f.input('gallery').fire('change');
+  return f;
+}
+
+for (const [slug, name] of witnessFixtures) test('Slice 4: ' + slug + ' opens only its current canonical profile after the bound result', async () => {
+  const f = await readyProfileFixture(slug), visits = observePiTransitions(f);
+  assert.equal(profileButton(f), undefined, 'image must load before profile entry exists');
+  vm.runInContext('go(4); render();', f.context); assert.match(f.screen.alt, /Result$/);
+  resultPhoto(f).onload();
+  const state = f.controller.getState(), model = canonicalPiProfile(state);
+  assert.equal(model.canonicalSlug, canonicalPiResult(state).canonicalSlug);
+  assert.equal(model.name, name); assert.equal(model.scientific, profileRow(slug).scientific_name);
+  assert.equal(model.media.url, canonicalPiResult(state).media.url);
+  assert.equal(model.description, slug === 'lemon' ? 'Plant profile details are not available.'
+    : slug === 'pomegranate' ? 'Foliage: deciduous.' : 'Foliage: context dependent.');
+  const button = profileButton(f);
+  await button.click(); assert.match(f.screen.alt, /Result$/, 'synthetic click is not a profile action');
+  await trustedClick(button); assert.match(f.screen.alt, /Plant Profile$/);
+  const view = profileElement(f);
+  assert.equal(view.attrs['data-canonical-slug'], slug); assert.equal(view.attrs['data-identify-action'], state.actionId);
+  assert.equal(profileSlot(view, 'name').textContent, name);
+  assert.equal(profileSlot(view, 'scientific').textContent, profileRow(slug).scientific_name);
+  assert.equal(profileSlot(view, 'description').textContent, model.description);
+  const photo = profileSlot(view, 'photo').children.find(e => e.tag === 'img');
+  assert.equal(photo.src, model.media.url); assert.notEqual(photo.src, f.calls.decode[0].url);
+  photo.onload(); assert.equal(view.attrs['data-pi-profile'], 'PROFILE_READY');
+  await trustedClick(button); vm.runInContext('render(); render();', f.context);
+  assert.equal(profileElement(f), view); assert.deepEqual(visits, [5], 'one profile transition, stale button inert');
+  assert.equal(f.calls.http.length, 1); assert.equal(f.calls.catalog.length, 1, 'profile needs no additional catalog read');
+  assert.equal(f.stage.querySelectorAll('.hot').length, 1, 'only Back to result is enabled');
+  await forbiddenForward(f);
+  for (const i of [5, 6, 7, 99]) { vm.runInContext('go(' + i + '); render();', f.context); assert.match(f.screen.alt, /Plant Profile$/); }
+  assert.equal(visits.some(i => i >= 6), false);
+  await trustedClick(f.stage.querySelectorAll('.hot')[0]); assert.match(f.screen.alt, /Result$/);
+  assert.equal(profileElement(f), undefined, 'back removes profile data');
+});
+
+for (const status of ['NO_IMAGE', 'IMAGE_LOADING', 'IMAGE_READY', 'IDENTIFYING', 'IMAGE_INVALID', 'IDENTIFY_FAILED',
+  'TAXONOMY_UNVERIFIED', 'IDENTITY_UNRESOLVED', 'CATALOG_NOT_FOUND', 'CATALOG_CONFLICT', 'CATALOG_READ_FAILED']) {
+  test('Slice 4: ' + status + ' cannot render a profile through state or helper bypasses', () => {
+    const state = {...displayState(), status};
+    const f = navigatorFixture({controller: {getState: () => state, subscribe() {}}});
+    vm.runInContext('index=4; render(); go(4); showAcquisitionScreen(4); render();', f.context);
+    assert.equal(profileElement(f), undefined); assert.equal(profileButton(f), undefined);
+    assert.doesNotMatch(f.screen.alt, /Plant Profile|Care|Suitability|Save to My Garden/);
+    const stage = new Element('main'); createPiProfileView({stage, document: f.document}).update(state, true);
+    assert.equal(stage.children.length, 0);
+  });
+}
+
+test('Slice 4: a current canonical state alone is not a profile navigation permit', async () => {
+  const f = await readyProfileFixture(); resultPhoto(f).onload();
+  const oldButton = profileButton(f);
+  vm.runInContext('index=4; render();', f.context);
+  assert.match(f.screen.alt, /Camera$/); assert.equal(profileElement(f), undefined);
+  await trustedClick(oldButton); assert.equal(profileElement(f), undefined);
+  for (const value of ['5', '6', '7', '99', 'NaN', 'Infinity']) {
+    vm.runInContext('index=' + value + '; render();', f.context);
+    assert.match(f.screen.alt, /Camera$/); assert.equal(profileElement(f), undefined);
+  }
+});
+
+test('Slice 4: replacement selection immediately clears PI-05 and invalidates old buttons and callbacks', async () => {
+  const options = {catalogResponse: {status: 200, error: null, count: 1, data: [profileRow()]}, payload: evidence()};
+  const f = navigatorFixture(fixture(options));
+  let previousButton, previousPhoto;
+  for (const slug of ['lemon', 'pomegranate', 'raspberry']) {
+    options.payload.candidates = evidence(slug).candidates;
+    options.payload.scientificName = entry(slug).acceptedScientificName;
+    options.payload.identification.scientific_name = entry(slug).acceptedScientificName;
+    options.catalogResponse.data = [profileRow(slug)];
+    vm.runInContext('showAcquisitionScreen(0);', f.context);
+    assert.equal(profileElement(f), undefined);
+    await f.button('gallery').click(); f.input('gallery').files = [file()]; const change = f.input('gallery').fire('change');
+    assert.equal(profileElement(f), undefined);
+    if (previousButton) { await trustedClick(previousButton); previousPhoto.onload(); previousPhoto.onerror(); }
+    await change; resultPhoto(f).onload();
+    await trustedClick(profileButton(f));
+    const view = profileElement(f); assert.equal(view.attrs['data-canonical-slug'], slug);
+    assert.equal(profileSlot(view, 'description').textContent, canonicalPiProfile(f.controller.getState()).description);
+    previousPhoto = profileSlot(view, 'photo').children.find(e => e.tag === 'img');
+    previousButton = f.stage.querySelectorAll('.hot')[0];
+    assert.equal(Object.isFrozen(f.controller.getState().catalogRow.climate_traits), true);
+  }
+  await f.controller.selectImage(new File(['bad'], 'bad.txt', {type: 'text/plain'}));
+  assert.equal(profileElement(f), undefined); assert.equal(f.controller.getState().catalogRow, null);
+  await trustedClick(previousButton); previousPhoto.onload(); assert.equal(profileElement(f), undefined);
+  assert.equal(f.calls.http.length, 3); assert.equal(f.calls.catalog.length, 3);
+});
+
+test('Slice 4: unsupported or review-needed facts stay unavailable; provider prose and images never enter PI-05', () => {
+  const s = displayState(); s.catalogRow.climate_traits = {growthHabit: 'tree', traitEvidenceClasses: {growthHabit: 'HEURISTIC_ASSERTION'},
+    seasonalityEvidence: {state: 'EVERGREEN', evidenceClass: 'UNKNOWN'}};
+  s.catalogRow.profile = s.evidence.profile = 'WRONG_PROVIDER_PROFILE'; s.evidence.imageUrl = 'https://scan.invalid/photo.jpg';
+  assert.equal(canonicalPiProfile(s).description, 'Plant profile details are not available.');
+  s.catalogRow.climate_traits.traitEvidenceClasses.growthHabit = 'SOURCE_SUPPORTED';
+  assert.equal(canonicalPiProfile(s).description, 'Growth habit: tree.');
+  s.catalogRow.climate_traits.needsReview = true;
+  assert.equal(canonicalPiProfile(s).description, 'Plant profile details are not available.');
+  assert.equal(canonicalPiProfile(s).media.url, displayRow().media.primaryUrl);
+  assert.doesNotMatch(JSON.stringify(canonicalPiProfile(s)), /WRONG_PROVIDER|scan.invalid|Monstera|Swiss Cheese/);
+});
+
+test('Slice 4: missing readiness, identity or media fails closed; image errors do not fall back or reopen navigation', async () => {
+  for (const mutate of [s => {s.readyForResult = 'true';}, s => {s.catalogRow.slug = 'raspberry';},
+    s => {s.catalogRow.media = null;}, s => {s.catalogRow.common_names = {};}]) {
+    const s = displayState(); mutate(s); assert.equal(canonicalPiProfile(s).available, false);
+  }
+  const f = await readyProfileFixture(); const image = resultPhoto(f); image.onerror();
+  assert.equal(profileButton(f), undefined);
+  image.onload(); await trustedClick(profileButton(f));
+  const view = profileElement(f), photo = profileSlot(view, 'photo').children.find(e => e.tag === 'img');
+  photo.onerror(); assert.equal(photo.hidden, true); assert.equal(view.attrs['data-pi-profile'], 'PROFILE_UNAVAILABLE');
+  assert.equal(photo.src, profileRow().media.primaryUrl);
+  assert.equal(f.calls.http.length, 1); assert.equal(f.calls.catalog.length, 1);
+});
+
+test('Slice 4: profile slots and PI-04 styling preserve the approved layout and protected runtime scope', () => {
+  assert.deepEqual(Object.keys(PI_PROFILE_SLOTS), ['photo', 'name', 'scientific', 'description', 'credit']);
+  const before = execFileSync('git', ['show', '2ccab3b34c3e3964b3d996022e8921f96b9eac98:core-v1/plant-identification/index.html'], {cwd: root, encoding: 'utf8'});
+  assert.equal(html.match(/<style id="pi-result-style">[\s\S]*?<\/style>/)[0], before.match(/<style id="pi-result-style">[\s\S]*?<\/style>/)[0]);
+  assert.equal(html.slice(html.indexOf('let touchStartX'), html.indexOf('Object.defineProperty')), before.slice(before.indexOf('let touchStartX'), before.indexOf('Object.defineProperty')));
 });
