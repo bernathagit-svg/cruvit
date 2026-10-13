@@ -5,6 +5,8 @@ import {resolveCanonicalReadSlug} from '../identity/canonical-alias-authority-v1
 import {createPreviewClient, PREVIEW_URL} from '../../core-v1/my-garden/shared/preview-session.mjs';
 import {catalogRowToRuntimePlant} from '../catalog/canonical-catalog-persistence-contract-v1.js';
 import {resolvePlantDisplayMedia, formatCatalogAttributionLabel} from '../catalog-media/licensed-catalog-media-runtime-v1.js';
+import {readPlantKnowledge} from '../catalog-expansion/plant-knowledge-warnings-v1-contract.js';
+import {readOptionalNumericThreshold} from '../catalog-expansion/plant-climate-quantitative-evidence-v1-contract.js';
 
 export const IDENTIFY_ENDPOINT = '/.netlify/functions/plant-identify';
 export const MAX_IMAGE_BYTES = 4_800_000;
@@ -361,13 +363,13 @@ export const PI_PROFILE_SLOTS = Object.freeze({
 });
 const PROFILE_PHOTO_MASK = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 1460"><path fill="white" fill-rule="evenodd" d="M0 0H940V1460H0Z M72 792H868Q916 792 916 840V1334Q916 1382 868 1382H72Q24 1382 24 1334V840Q24 792 72 792Z M163 140A52 52 0 1 0 59 140A52 52 0 1 0 163 140Z M885 140A52 52 0 1 0 781 140A52 52 0 1 0 885 140Z M106 707H356A30 30 0 0 1 356 767H106A30 30 0 0 1 106 707Z M548 1532A80 80 0 1 0 388 1532A80 80 0 1 0 548 1532Z"/></svg>');
 
-export function createPiProfileView({document, stage}) {
-  let root = null, renderedState = null;
+export function createPiProfileView({document, stage, onReady = () => {}}) {
+  let root = null, renderedState = null, readyState = null;
   function update(state, visible) {
     const model = visible ? canonicalPiProfile(state) : null;
-    if (!model?.available) { root?.remove(); root = null; renderedState = null; return; }
+    if (!model?.available) { root?.remove(); root = null; renderedState = null; readyState = null; return; }
     if (root && renderedState === state) return;
-    root?.remove(); renderedState = state;
+    root?.remove(); renderedState = state; readyState = null;
     root = document.createElement('section'); root.className = 'pi-profile';
     root.setAttribute('aria-label', 'Canonical plant profile');
     root.setAttribute('data-pi-profile', 'IMAGE_LOADING');
@@ -394,11 +396,13 @@ export function createPiProfileView({document, stage}) {
     photo.onload = () => {
       if (root !== currentRoot) return;
       message.hidden = true; currentRoot.setAttribute('data-pi-profile', 'PROFILE_READY');
+      readyState = state; onReady();
     };
     photo.onerror = () => {
       if (root !== currentRoot) return;
       photo.hidden = true; message.hidden = false; message.textContent = 'Catalog image unavailable';
       currentRoot.setAttribute('data-pi-profile', 'PROFILE_UNAVAILABLE');
+      readyState = null; onReady();
     };
     slots.photo.appendChild(photo); slots.photo.appendChild(message); photo.src = model.media.url;
     slots.credit.textContent = formatCatalogAttributionLabel(model.media);
@@ -408,6 +412,137 @@ export function createPiProfileView({document, stage}) {
       link.target = '_blank'; link.rel = 'noopener noreferrer'; slots.credit.appendChild(link);
     }
     stage.appendChild(root);
+  }
+  return Object.freeze({update, isReady: state => !!root && renderedState === state && readyState === state});
+}
+
+// PI-06 is another projection of the same exact canonical row. Enum labels are
+// presentation only; no care values, schedules, or records are created here.
+const CARE_UNAVAILABLE = 'Not available';
+const careUnknown = () => ({value: CARE_UNAVAILABLE, note: 'Not available yet.', source: null, supported: false});
+const hasSources = provenance => Array.isArray(provenance?.sourceIds)
+  && provenance.sourceIds.length > 0 && provenance.sourceIds.every(id => !!text(id))
+  && !!text(provenance.shortExcerpt);
+
+export function canonicalPiCare(state) {
+  const profile = canonicalPiProfile(state);
+  if (!profile.available) return profile;
+  const plant = catalogRowToRuntimePlant(state.catalogRow), ct = plant.climateTraits;
+  const usable = !plant.needsReview && (!ct.canonicalSlug || ct.canonicalSlug === profile.canonicalSlug);
+  const card = (key, labels, note) => {
+    const evidence = ct.traitProvenance?.[key], value = ct[key];
+    if (!usable || ct.traitEvidenceClasses?.[key] !== 'SOURCE_SUPPORTED'
+        || evidence?.evidenceClass !== 'SOURCE_SUPPORTED' || evidence.status !== 'asserted'
+        || !hasSources(evidence) || !Object.hasOwn(labels, value)) return careUnknown();
+    return {value: labels[value], note, source: 'catalog_plants.climate_traits.' + key, supported: true};
+  };
+  const cards = {
+    light: card('sunNeeds', {full_sun: 'Full sun', partial_shade: 'Partial shade',
+      full_shade: 'Full shade', sun_to_partial_shade: 'Sun to partial shade'}, 'Canonical light requirement.'),
+    temperature: careUnknown(),
+    humidity: card('humidityTolerance', {low: 'Low tolerance', medium: 'Medium tolerance', high: 'High tolerance'},
+      'Tolerance of humid conditions; target humidity unavailable.'),
+    soil: card('drainageNeeds', {low: 'Low drainage need', medium: 'Medium drainage need', high: 'High drainage need'},
+      'Canonical drainage requirement. Soil mix unavailable.'),
+    watering: card('waterNeeds', {low: 'Low water needs', medium: 'Medium water needs', high: 'High water needs'},
+      'Watering schedule not available.'),
+    // Systemic backlog: CANONICAL CARE — FERTILIZING AUTHORITY GAP.
+    // Shared Catalog/Data Enrichment owns this gap. Neither care.guide nor an
+    // arbitrary maintenance/provider field is a canonical fertilizing contract.
+    fertilizing: careUnknown()
+  };
+  const temperature = ['preferred_minimum_temperature_c', 'preferred_maximum_temperature_c'];
+  const values = temperature.map(key => readOptionalNumericThreshold(plant, key));
+  if (usable && values.every((value, i) => value !== null
+      && typeof ct.quantitativeEvidence?.[temperature[i]] === 'number'
+      && hasSources(ct.quantitativeProvenance?.[temperature[i]])
+      && (!ct.quantitativeProvenance[temperature[i]].evidenceClass
+        || ct.quantitativeProvenance[temperature[i]].evidenceClass === 'SOURCE_SUPPORTED')
+      && (!ct.quantitativeProvenance[temperature[i]].status
+        || ct.quantitativeProvenance[temperature[i]].status === 'asserted')) && values[0] <= values[1]) {
+    cards.temperature = {value: values[0] + '–' + values[1] + '°C', note: 'Canonical preferred temperature range.',
+      source: 'catalog_plants.climate_traits.quantitativeEvidence', supported: true};
+  }
+  const knowledge = readPlantKnowledge(plant), acidic = knowledge?.soilRequirements?.acidicSoil;
+  if (usable && (!knowledge?.canonicalSlug || knowledge.canonicalSlug === profile.canonicalSlug)
+      && acidic?.value === true && acidic.status === 'asserted' && acidic.evidenceClass === 'SOURCE_SUPPORTED'
+      && hasSources(acidic) && acidic.sourceIds.every(id => knowledge.sources?.some(s => s.sourceId === id))) {
+    cards.soil = {...cards.soil, value: cards.soil.supported ? cards.soil.value : 'Acidic soil',
+      note: 'Acidic soil required. Soil mix unavailable.', supported: true,
+      source: [cards.soil.source, 'catalog_plants.climate_traits.plantKnowledge.soilRequirements.acidicSoil'].filter(Boolean).join('; ')};
+  }
+  const leaf = plant.seasonalityEvidence;
+  const leafLabels = {EVERGREEN: 'Evergreen', DECIDUOUS: 'Deciduous', CONTEXT_DEPENDENT: 'Context dependent'};
+  const foliage = usable && leaf?.evidenceClass === 'SOURCE_SUPPORTED'
+    && (!leaf.canonicalSlug || leaf.canonicalSlug === profile.canonicalSlug) && leafLabels[leaf.state];
+  return frozen({...profile, cards, growth: usable && plant.growthHabit || CARE_UNAVAILABLE,
+    foliage: foliage || CARE_UNAVAILABLE});
+}
+
+// Only plant-specific regions of the unchanged 941 × 1672 approved PI-06.
+// Neutral bars remove the mockup's unsupported quantitative care ratings.
+export const PI_CARE_SLOTS = Object.freeze({
+  photo: [86, 92, 356, 392], name: [472, 157, 404, 43], scientific: [473, 205, 403, 32],
+  confidence: [693, 98, 121, 41], growth: [473, 249, 114, 49], environment: [597, 249, 108, 49],
+  foliage: [717, 249, 138, 49], air: [473, 306, 152, 45], ease: [637, 306, 128, 45],
+  description: [473, 369, 402, 111],
+  lightValue: [178, 764, 257, 26], lightNote: [98, 821, 320, 66], lightBar: [99, 797, 337, 20],
+  temperatureValue: [597, 764, 246, 26], temperatureNote: [510, 820, 321, 68], temperatureBar: [510, 797, 334, 20],
+  humidityValue: [178, 949, 257, 28], humidityNote: [98, 1005, 320, 66], humidityBar: [99, 982, 337, 20],
+  soilValue: [597, 949, 246, 28], soilNote: [510, 1005, 321, 67], soilBar: [510, 982, 334, 20],
+  wateringValue: [178, 1137, 257, 27], wateringNote: [98, 1194, 320, 51], wateringBar: [99, 1170, 337, 20],
+  fertilizingValue: [597, 1137, 246, 27], fertilizingNote: [510, 1194, 321, 51], fertilizingBar: [510, 1170, 334, 20]
+});
+
+export function createPiCareView({document, stage}) {
+  let root = null, renderedState = null;
+  function update(state, visible) {
+    const model = visible ? canonicalPiCare(state) : null;
+    if (!model?.available) { root?.remove(); root = null; renderedState = null; return; }
+    if (root && renderedState === state) return;
+    root?.remove(); renderedState = state;
+    root = document.createElement('section'); root.className = 'pi-care';
+    root.setAttribute('aria-label', 'Canonical plant care'); root.setAttribute('data-pi-care', 'IMAGE_LOADING');
+    root.setAttribute('data-canonical-slug', model.canonicalSlug); root.setAttribute('data-identify-action', state.actionId);
+    const slots = {};
+    for (const [key, [x, y, width, height]] of Object.entries(PI_CARE_SLOTS)) {
+      const slot = document.createElement('div'); slot.className = 'pi-care-slot pi-care-' + key;
+      slot.setAttribute('data-pi-care-slot', key);
+      Object.assign(slot.style, {left: x / 941 * 100 + '%', top: y / 1672 * 100 + '%',
+        width: width / 941 * 100 + '%', height: height / 1672 * 100 + '%'});
+      root.appendChild(slot); slots[key] = slot;
+    }
+    for (const key of ['name', 'scientific', 'confidence', 'growth', 'foliage', 'description']) slots[key].textContent = model[key];
+    for (const key of ['environment', 'air', 'ease']) slots[key].textContent = CARE_UNAVAILABLE;
+    for (const [key, card] of Object.entries(model.cards)) {
+      slots[key + 'Value'].textContent = card.value; slots[key + 'Note'].textContent = card.note;
+      slots[key + 'Value'].setAttribute('data-care-supported', String(card.supported));
+      slots[key + 'Value'].setAttribute('data-care-source', card.source || '');
+      slots[key + 'Bar'].setAttribute('aria-hidden', 'true');
+    }
+    const photo = document.createElement('img'), currentRoot = root;
+    photo.alt = model.name + ' — canonical catalog image'; photo.referrerPolicy = 'no-referrer';
+    photo.setAttribute('data-pi-care-image', model.canonicalSlug);
+    const message = document.createElement('span'); message.className = 'pi-care-image-message';
+    message.setAttribute('role', 'status'); message.textContent = 'Loading catalog image…';
+    photo.onload = () => {
+      if (root !== currentRoot) return;
+      message.hidden = true; currentRoot.setAttribute('data-pi-care', 'CARE_READY');
+    };
+    photo.onerror = () => {
+      if (root !== currentRoot) return;
+      photo.hidden = true; message.hidden = false; message.textContent = 'Catalog image unavailable';
+      currentRoot.setAttribute('data-pi-care', 'CARE_IMAGE_UNAVAILABLE');
+    };
+    slots.photo.appendChild(photo); slots.photo.appendChild(message); photo.src = model.media.url;
+    const credit = document.createElement('div'); credit.className = 'pi-care-credit';
+    credit.textContent = formatCatalogAttributionLabel(model.media);
+    for (const [label, url] of [['Source', model.media.sourcePageUrl], ['License', model.media.licenseUrl]]) {
+      if (!/^https:\/\//i.test(url || '')) continue;
+      const link = document.createElement('a'); link.textContent = label; link.href = url;
+      link.target = '_blank'; link.rel = 'noopener noreferrer'; credit.appendChild(link);
+    }
+    slots.photo.appendChild(credit); stage.appendChild(root);
   }
   return Object.freeze({update});
 }

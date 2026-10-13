@@ -7,6 +7,7 @@ import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {createRealPiController, wireRealPiInputs, decodeBrowserImage, loadPIIdentityAuthority, createPiResultView, canonicalPiResult, PI_RESULT_SLOTS,
   createPiProfileView, canonicalPiProfile, PI_PROFILE_SLOTS,
+  createPiCareView, canonicalPiCare, PI_CARE_SLOTS,
   IDENTIFY_ENDPOINT, IMAGE_ACCEPT, MAX_IMAGE_BYTES, CATALOG_SELECT} from '../modules/plant-identifier/real-pi-runtime-v1.js';
 import {createPlantIdentityResolver, loadIdentityRegistry} from '../modules/identity/plant-identity-resolver.js';
 import {resolveCanonicalReadSlug} from '../modules/identity/canonical-alias-authority-v1.js';
@@ -15,6 +16,7 @@ import {catalogRowToRuntimePlant} from '../modules/catalog/canonical-catalog-per
 import {resolvePlantDisplayMedia} from '../modules/catalog-media/licensed-catalog-media-runtime-v1.js';
 import {resolveSmartRecCatalogDisplay} from '../modules/smart-recommendations/smart-rec-garden-intelligence-v1.js';
 import {projectRows, GARDEN_ID} from '../core-v1/my-garden/plants/data.mjs';
+import {materializePlantCatalogItemFromPacket} from '../modules/catalog-expansion/catalog-expansion-v1-contract.js';
 
 const root = new URL('../', import.meta.url);
 const read = path => fs.readFileSync(new URL(path, root), 'utf8');
@@ -372,7 +374,7 @@ function navigatorFixture(f = fixture()) {
   const window = {__PI: approvedContext.window.__PI};
   const context = vm.createContext({window, document, location: {assign() { throw Error('NAVIGATION_FORBIDDEN'); }},
     alert() { throw Error('ATOMIC_SAVE_FORBIDDEN'); },
-    wireRealPiInputs: args => wireRealPiInputs({...args, controller: f.controller}), createPiResultView, createPiProfileView, canonicalPiProfile});
+    wireRealPiInputs: args => wireRealPiInputs({...args, controller: f.controller}), createPiResultView, createPiProfileView, canonicalPiProfile, createPiCareView});
   const script = [...html.matchAll(/<script type="module">([\s\S]*?)<\/script>/g)][0][1];
   assert.equal((script.match(/^import /gm) || []).length, 1);
   vm.runInContext(script.replace(/^import .*;\n/m, ''), context);
@@ -794,7 +796,7 @@ for (const [slug, name] of witnessFixtures) test('Slice 4: ' + slug + ' opens on
   await trustedClick(button); vm.runInContext('render(); render();', f.context);
   assert.equal(profileElement(f), view); assert.deepEqual(visits, [5], 'one profile transition, stale button inert');
   assert.equal(f.calls.http.length, 1); assert.equal(f.calls.catalog.length, 1, 'profile needs no additional catalog read');
-  assert.equal(f.stage.querySelectorAll('.hot').length, 1, 'only Back to result is enabled');
+  assert.equal(f.stage.querySelectorAll('.hot').length, 2, 'only Back to result and the authorized Slice 5 Care entry are enabled');
   await forbiddenForward(f);
   for (const i of [5, 6, 7, 99]) { vm.runInContext('go(' + i + '); render();', f.context); assert.match(f.screen.alt, /Plant Profile$/); }
   assert.equal(visits.some(i => i >= 6), false);
@@ -887,4 +889,185 @@ test('Slice 4: profile slots and PI-04 styling preserve the approved layout and 
   const before = execFileSync('git', ['show', '2ccab3b34c3e3964b3d996022e8921f96b9eac98:core-v1/plant-identification/index.html'], {cwd: root, encoding: 'utf8'});
   assert.equal(html.match(/<style id="pi-result-style">[\s\S]*?<\/style>/)[0], before.match(/<style id="pi-result-style">[\s\S]*?<\/style>/)[0]);
   assert.equal(html.slice(html.indexOf('let touchStartX'), html.indexOf('Object.defineProperty')), before.slice(before.indexOf('let touchStartX'), before.indexOf('Object.defineProperty')));
+});
+
+// Slice 5 fixtures reuse existing ingestion facts, never runtime plant maps.
+function careRow(slug = 'lemon') {
+  const canonical = profileRow(slug);
+  if (slug !== 'lemon') {
+    const packet = JSON.parse(read('data/catalog-expansion/batches/bulk-batch-3-v1/packets/' + slug + '.packet.json'));
+    const materialized = materializePlantCatalogItemFromPacket(packet);
+    assert.equal(materialized.ok, true);
+    const ct = materialized.item.climateTraits;
+    for (const key of ['sunNeeds', 'waterNeeds', 'drainageNeeds', 'humidityTolerance', 'traitEvidenceClasses', 'traitProvenance']) {
+      if (Object.hasOwn(ct, key)) canonical.climate_traits[key] = ct[key];
+    }
+  }
+  return canonical;
+}
+const careElement = f => f.stage.children.find(e => e.className === 'pi-care');
+const careSlot = (view, key) => view.children.find(e => e.attrs['data-pi-care-slot'] === key);
+const careButton = f => f.stage.children.find(e => Object.hasOwn(e.attrs, 'data-pi-care-open'));
+const profilePhoto = f => profileSlot(profileElement(f), 'photo').children.find(e => e.tag === 'img');
+async function openCareFixture(slug = 'lemon') {
+  const f = navigatorFixture(fixture({slug, catalogResponse: {status: 200, error: null, count: 1, data: [careRow(slug)]}}));
+  await f.button('gallery').click(); f.input('gallery').files = [file()]; await f.input('gallery').fire('change');
+  resultPhoto(f).onload(); await trustedClick(profileButton(f));
+  return f;
+}
+for (const [slug, name] of witnessFixtures) test('Slice 5: ' + slug + ' keeps exact canonical continuity PI-04 → PI-05 → PI-06', async () => {
+  const f = await openCareFixture(slug), visits = observePiTransitions(f), state = f.controller.getState();
+  assert.equal(careButton(f), undefined, 'loading profile cannot open care');
+  vm.runInContext('go(5); render();', f.context); assert.match(f.screen.alt, /Plant Profile$/);
+  profilePhoto(f).onload(); const button = careButton(f);
+  await button.click(); assert.match(f.screen.alt, /Plant Profile$/, 'synthetic click is not a care action');
+  await trustedClick(button); assert.match(f.screen.alt, /Care$/);
+  assert.equal(f.screen.src, approvedContext.window.__PI[5].join(''));
+  const model = canonicalPiCare(state), view = careElement(f);
+  assert.equal(model.name, name); assert.equal(model.scientific, state.catalogRow.scientific_name);
+  assert.equal(view.attrs['data-canonical-slug'], slug); assert.equal(view.attrs['data-identify-action'], state.actionId);
+  assert.equal(careSlot(view, 'name').textContent, name);
+  assert.equal(careSlot(view, 'scientific').textContent, model.scientific);
+  assert.equal(careSlot(view, 'confidence').textContent, 'High confidence');
+  const photo = careSlot(view, 'photo').children.find(e => e.tag === 'img');
+  assert.equal(photo.src, canonicalPiResult(state).media.url); assert.notEqual(photo.src, f.calls.decode[0].url);
+  photo.onload(); assert.equal(view.attrs['data-pi-care'], 'CARE_READY');
+  assert.equal(model.cards.watering.value, slug === 'lemon' ? 'Not available' : slug === 'pomegranate' ? 'Low water needs' : 'Medium water needs');
+  for (const key of ['temperature', 'humidity', 'fertilizing']) assert.equal(model.cards[key].supported, false);
+  for (const [key, card] of Object.entries(model.cards)) {
+    assert.equal(careSlot(view, key + 'Value').textContent, card.value);
+    assert.equal(careSlot(view, key + 'Note').textContent, card.note);
+  }
+  assert.doesNotMatch(JSON.stringify(model), /Monstera|Swiss Cheese|PROVIDER_|2–3 cm|1–2 weeks|4–6 weeks|spring–summer|95%/);
+  await trustedClick(button); await forbiddenForward(f);
+  vm.runInContext('render(); render(); go(6); go(7); go(99);', f.context);
+  assert.equal(careElement(f), view); assert.deepEqual(visits, [6]);
+  assert.equal(f.stage.querySelectorAll('.hot').length, 1, 'care has only Back to profile');
+  assert.equal(f.calls.http.length, 1); assert.equal(f.calls.catalog.length, 1);
+  await trustedClick(f.stage.querySelectorAll('.hot')[0]); assert.match(f.screen.alt, /Plant Profile$/);
+  assert.equal(careElement(f), undefined); assert.equal(careButton(f), undefined, 'returned profile must bind before care entry');
+});
+for (const status of ['NO_IMAGE', 'IMAGE_LOADING', 'IMAGE_READY', 'IDENTIFYING', 'IMAGE_INVALID', 'IDENTIFY_FAILED',
+  'TAXONOMY_UNVERIFIED', 'IDENTITY_UNRESOLVED', 'CATALOG_NOT_FOUND', 'CATALOG_CONFLICT', 'CATALOG_READ_FAILED']) {
+  test('Slice 5: ' + status + ' cannot expose care by state, helpers or fabricated view readiness', () => {
+    const state = {...displayState(), status};
+    const f = navigatorFixture({controller: {getState: () => state, subscribe() {}}});
+    vm.runInContext('index=5; render(); go(5); showAcquisitionScreen(5); render();', f.context);
+    assert.equal(careElement(f), undefined); assert.equal(careButton(f), undefined);
+    const stage = new Element('main'); createPiCareView({stage, document: f.document}).update(state, true);
+    assert.equal(stage.children.length, 0); assert.doesNotMatch(f.screen.alt, /Care|Suitability|Save to My Garden/);
+  });
+}
+
+test('Slice 5: canonical state and bound profile alone cannot mint a care permit', async () => {
+  const f = await openCareFixture(); profilePhoto(f).onload(); const oldButton = careButton(f);
+  profileElement(f).setAttribute('data-pi-profile', 'PROFILE_READY');
+  vm.runInContext('index=5; render();', f.context); assert.match(f.screen.alt, /Camera$/);
+  await trustedClick(oldButton); assert.equal(careElement(f), undefined);
+  for (const target of ['5', '6', '7', '99', 'NaN', 'Infinity']) {
+    vm.runInContext('index=' + target + '; render();', f.context);
+    assert.equal(careElement(f), undefined); assert.match(f.screen.alt, /Camera$/);
+  }
+});
+
+test('Slice 5: profile image failure cannot open care; DOM readiness forgery is inert', async () => {
+  const f = await openCareFixture(), photo = profilePhoto(f);
+  photo.onerror(); profileElement(f).setAttribute('data-pi-profile', 'PROFILE_READY');
+  vm.runInContext('render();', f.context); assert.equal(careButton(f), undefined);
+  await forbiddenForward(f); assert.match(f.screen.alt, /Plant Profile$/); assert.equal(careElement(f), undefined);
+});
+
+test('Slice 5: same-session plant switching clears old care and rejects old buttons/image callbacks', async () => {
+  const options = {payload: evidence(), catalogResponse: {status: 200, error: null, count: 1, data: [careRow()]}};
+  const f = navigatorFixture(fixture(options)); let oldButton, oldPhoto;
+  const values = [];
+  for (const slug of ['lemon', 'pomegranate', 'raspberry']) {
+    Object.assign(options.payload, evidence(slug)); options.catalogResponse.data = [careRow(slug)];
+    vm.runInContext('showAcquisitionScreen(0);', f.context); assert.equal(careElement(f), undefined);
+    await f.button('gallery').click(); f.input('gallery').files = [file()]; const change = f.input('gallery').fire('change');
+    assert.equal(careElement(f), undefined);
+    if (oldButton) { await trustedClick(oldButton); oldPhoto.onload(); oldPhoto.onerror(); }
+    await change; resultPhoto(f).onload(); await trustedClick(profileButton(f)); profilePhoto(f).onload();
+    oldButton = careButton(f); await trustedClick(oldButton);
+    const view = careElement(f); assert.equal(view.attrs['data-canonical-slug'], slug);
+    oldPhoto = careSlot(view, 'photo').children.find(e => e.tag === 'img'); oldPhoto.onload();
+    values.push(careSlot(view, 'wateringValue').textContent);
+    assert.equal(f.controller.getState().catalogRow.slug, slug);
+  }
+  assert.equal(new Set(values).size, 3);
+  await f.controller.selectImage(new File(['bad'], 'bad.txt', {type: 'text/plain'}));
+  await trustedClick(oldButton); oldPhoto.onload(); assert.equal(careElement(f), undefined);
+  assert.equal(f.controller.getState().catalogRow, null); assert.equal(f.calls.http.length, 3);
+});
+
+test('Slice 5: care facts need source support; unknown, heuristic, disputed, missing provenance and review stay unavailable', () => {
+  for (const mutate of [ct => {ct.needsReview = true;}, ct => {ct.canonicalSlug = 'lemon';},
+    ct => {ct.traitEvidenceClasses.waterNeeds = 'UNKNOWN';}, ct => {ct.traitProvenance.waterNeeds.evidenceClass = 'HEURISTIC_ASSERTION';},
+    ct => {ct.traitProvenance.waterNeeds.status = 'disputed';}, ct => {ct.traitProvenance.waterNeeds.sourceIds = [];},
+    ct => {ct.traitProvenance.waterNeeds.shortExcerpt = '';}, ct => {ct.waterNeeds = 'PROVIDER_WATER';}]) {
+    const state = {...displayState('raspberry'), catalogRow: careRow('raspberry')}; mutate(state.catalogRow.climate_traits);
+    assert.equal(canonicalPiCare(state).cards.watering.supported, false);
+  }
+});
+
+test('Slice 5: fertilizer gap never consumes care.guide, maintenance inventions, provider care or scan media', () => {
+  const state = {...displayState('raspberry'), catalogRow: careRow('raspberry')};
+  state.catalogRow.climate_traits.plantKnowledge = {maintenance: {fertilizing: {value: 'POISON_FEEDING', evidenceClass: 'SOURCE_SUPPORTED', status: 'asserted', sourceIds: ['fixture'], shortExcerpt: 'POISON_FEEDING'}}};
+  state.catalogRow.care = {guide: 'POISON_FEEDING'}; state.evidence.care = {fertilizing: 'POISON_FEEDING'};
+  state.catalogRow.profile = 'POISON_PROFILE'; state.image = {dataUrl: 'data:image/jpeg;base64,POISON_SCAN'};
+  const model = canonicalPiCare(state);
+  assert.deepEqual(model.cards.fertilizing, {value: 'Not available', note: 'Not available yet.', source: null, supported: false});
+  assert.doesNotMatch(JSON.stringify(model), /POISON_|Monstera/);
+});
+
+test('Slice 5: only provenanced preferred temperatures display; survival limits, guessed numbers and reversed ranges do not', () => {
+  const state = displayState(), ct = state.catalogRow.climate_traits = {};
+  const keys = ['preferred_minimum_temperature_c', 'preferred_maximum_temperature_c'];
+  ct.quantitativeEvidence = {[keys[0]]: 12, [keys[1]]: 24};
+  ct.quantitativeProvenance = Object.fromEntries(keys.map(key => [key, {sourceIds: ['contract-fixture'], shortExcerpt: 'Controlled canonical preferred-temperature contract fixture.'}]));
+  assert.equal(canonicalPiCare(state).cards.temperature.value, '12–24°C');
+  ct.quantitativeProvenance[keys[0]].status = 'unknown'; assert.equal(canonicalPiCare(state).cards.temperature.supported, false);
+  delete ct.quantitativeProvenance[keys[0]].status;
+  ct.quantitativeProvenance[keys[0]].evidenceClass = 'HEURISTIC_ASSERTION'; assert.equal(canonicalPiCare(state).cards.temperature.supported, false);
+  delete ct.quantitativeProvenance[keys[0]].evidenceClass;
+  ct.quantitativeEvidence[keys[1]] = 4; assert.equal(canonicalPiCare(state).cards.temperature.supported, false);
+  ct.quantitativeEvidence[keys[1]] = '24'; assert.equal(canonicalPiCare(state).cards.temperature.supported, false);
+  ct.quantitativeEvidence = {minimum_survival_temperature_c: 12, maximum_tolerated_temperature_c: 24};
+  assert.equal(canonicalPiCare(state).cards.temperature.supported, false);
+});
+
+test('Slice 5: humidity is tolerance, never an invented humidity target; soil knowledge uses the existing provenanced leaf', () => {
+  const state = {...displayState('raspberry'), catalogRow: careRow('raspberry')}, ct = state.catalogRow.climate_traits;
+  ct.humidityTolerance = 'low'; ct.traitEvidenceClasses.humidityTolerance = 'SOURCE_SUPPORTED';
+  ct.traitProvenance.humidityTolerance = {evidenceClass: 'SOURCE_SUPPORTED', status: 'asserted', sourceIds: ['fixture'], shortExcerpt: 'Controlled tolerance contract fixture.'};
+  assert.equal(canonicalPiCare(state).cards.humidity.value, 'Low tolerance');
+  assert.doesNotMatch(canonicalPiCare(state).cards.humidity.note, /\d|misting|prefers/i);
+  ct.plantKnowledge = {sources: [{sourceId: 'fixture'}], soilRequirements: {acidicSoil: {
+    value: true, evidenceClass: 'SOURCE_SUPPORTED', status: 'asserted', sourceIds: ['fixture'], shortExcerpt: 'Controlled acidic-soil contract fixture.'}}};
+  assert.match(canonicalPiCare(state).cards.soil.note, /Acidic soil required/);
+  ct.plantKnowledge.canonicalSlug = 'cranberry'; assert.doesNotMatch(canonicalPiCare(state).cards.soil.note, /Acidic/);
+});
+
+test('Slice 5: care image failure stays honest and uses no fallback; reset removes every slot', async () => {
+  const f = await openCareFixture(); profilePhoto(f).onload(); await trustedClick(careButton(f));
+  const view = careElement(f), photo = careSlot(view, 'photo').children.find(e => e.tag === 'img');
+  photo.onerror(); assert.equal(photo.hidden, true); assert.equal(view.attrs['data-pi-care'], 'CARE_IMAGE_UNAVAILABLE');
+  assert.equal(photo.src, careRow().media.primaryUrl); assert.equal(f.calls.http.length, 1);
+  vm.runInContext('go(0);', f.context); assert.equal(careElement(f), undefined);
+  photo.onload(); assert.equal(careElement(f), undefined);
+});
+
+test('Slice 5: PI-01–05 styles/acquisition and canonical controller/Save authorities remain unchanged', () => {
+  const base = '1240e2007b5f6654e20767bffa9891304a64afcc';
+  const beforeHtml = execFileSync('git', ['show', base + ':core-v1/plant-identification/index.html'], {cwd: root, encoding: 'utf8'});
+  for (const id of ['pi-result-style', 'pi-profile-style']) {
+    const re = new RegExp('<style id="' + id + '">[\\s\\S]*?<\\/style>');
+    assert.equal(html.match(re)[0], beforeHtml.match(re)[0]);
+  }
+  const runtime = read('modules/plant-identifier/real-pi-runtime-v1.js');
+  const before = execFileSync('git', ['show', base + ':modules/plant-identifier/real-pi-runtime-v1.js'], {cwd: root, encoding: 'utf8'});
+  assert.equal(runtime.slice(runtime.indexOf('export const IDENTIFY_ENDPOINT'), runtime.indexOf('// Coordinates')), before.slice(before.indexOf('export const IDENTIFY_ENDPOINT'), before.indexOf('// Coordinates')));
+  assert.equal(runtime.slice(runtime.indexOf('// Bind native pickers once')), before.slice(before.indexOf('// Bind native pickers once')));
+  assert.equal(Object.keys(PI_CARE_SLOTS).length, 28);
+  assert.match(runtime, /CANONICAL CARE — FERTILIZING AUTHORITY GAP/);
 });

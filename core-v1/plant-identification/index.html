@@ -49,6 +49,23 @@ body{display:grid;place-items:start center;font-family:Arial,sans-serif;overflow
 .pi-profile-credit{background:#f7f6eff2;color:#294532;font-size:max(9px,2.1cqw);line-height:1.2;padding:.3em}
 .pi-profile-credit a{margin-left:.6em;color:inherit;pointer-events:auto}
 </style>
+<style id="pi-care-style">
+.pi-care{position:absolute;inset:0;container-type:inline-size;pointer-events:none;font-family:Arial,sans-serif;color:#092d32}
+.pi-care-slot{position:absolute;overflow:hidden;line-height:1.18;background:#fdfdf9;font-size:2.12cqw}
+.pi-care-name{font-size:4.15cqw;line-height:1;font-weight:700}
+.pi-care-scientific{font-size:2.7cqw}
+.pi-care-confidence{background:#eaf5e8;color:#174c32;font-size:1.9cqw;line-height:1.05;display:flex;align-items:center}
+.pi-care-growth,.pi-care-environment,.pi-care-foliage,.pi-care-air,.pi-care-ease{background:#e9f3e6;border-radius:2cqw;display:flex;align-items:center;justify-content:center;text-align:center;color:#174c32;font-size:2cqw;padding:.25em}
+.pi-care-description{color:#285586;font-size:2.28cqw;line-height:1.28}
+.pi-care-slot[data-pi-care-slot$="Value"],.pi-care-slot[data-pi-care-slot$="Note"]{color:#285586;background:#fbfcf7}
+.pi-care-slot[data-pi-care-slot$="Bar"]{background:repeating-linear-gradient(90deg,#e1e4e4 0,#e1e4e4 13.6%,#fbfcf7 13.6%,#fbfcf7 14.2857%);border-top:2px solid #fbfcf7;border-bottom:2px solid #fbfcf7;border-radius:.5cqw}
+.pi-care-photo{border-radius:2.2cqw;background:#efefe5;display:flex;align-items:center;justify-content:center;text-align:center}
+.pi-care-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pi-care-photo img[hidden],.pi-care-image-message[hidden]{display:none}
+.pi-care-image-message{position:relative;padding:1em;background:#efefe5}
+.pi-care-credit{position:absolute;bottom:0;left:0;right:0;background:#f7f6eff2;color:#294532;font-size:max(9px,2.1cqw);line-height:1.2;padding:.35em;text-align:left}
+.pi-care-credit a{margin-left:.6em;color:inherit;pointer-events:auto}
+</style>
 </head>
 <body>
 <main class="stage" id="stage"><img id="screen" alt=""></main>
@@ -83,7 +100,7 @@ body{display:grid;place-items:start center;font-family:Arial,sans-serif;overflow
 <script src="./assets/s8-03.js"></script>
 
 <script type="module">
-import {wireRealPiInputs,createPiResultView,createPiProfileView,canonicalPiProfile} from '../../modules/plant-identifier/real-pi-runtime-v1.js';
+import {wireRealPiInputs,createPiResultView,createPiProfileView,canonicalPiProfile,createPiCareView} from '../../modules/plant-identifier/real-pi-runtime-v1.js';
 const screens=Array.from({length:8},(_,i)=>(window.__PI?.[i]||[]).join(""));
 const expected=[2310742,3406426,1786662,3352146,3347862,2456618,2020150,2405466];
 if(screens.some((s,i)=>s.length!==expected[i])) throw new Error("Approved asset integrity check failed");
@@ -98,10 +115,11 @@ const hotspots={
 6:[{x:5,y:80,w:90,h:13,to:7,label:"Save to My Garden"}],
 7:[{x:10,y:78,w:80,h:5,to:0,label:"Save to My Garden"}]
 };
-let index=0,saveAction=null,saving=false,acquisition=null,shownResultActionId=null,profileState=null;
+let index=0,saveAction=null,saving=false,acquisition=null,shownResultActionId=null,profileState=null,careState=null;
 const stage=document.getElementById("stage"),img=document.getElementById("screen");
 const resultView=createPiResultView({document,stage,onReady:()=>render()});
-const profileView=createPiProfileView({document,stage});
+const profileView=createPiProfileView({document,stage,onReady:()=>render()});
+const careView=createPiCareView({document,stage});
 stage.addEventListener('cruvit-pi-save-bind',event=>{if(typeof event.detail?.save==='function')saveAction=event.detail.save;});
 // Manual navigation stays within acquisition. Only qualified controller state opens PI-04.
 function go(i){if(saving||i>index)return;index=Math.max(0,Math.min(2,i));render()}
@@ -112,30 +130,36 @@ function render(){
  if(resultReady&&state.actionId&&state.actionId!==shownResultActionId){
   shownResultActionId=state.actionId;index=3;
  }else if(index===3&&!resultReady){index=1;}
- // A profile permit is the current immutable controller state, captured only by
- // the bound PI-04 button. URL/DOM fields and numeric navigation are not permits.
- if(!Number.isInteger(index)||index>=4&&(index!==4||profileState!==state||!canonicalPiProfile(state).available)){
-  profileState=null;index=1;
+ // Each permit is the current immutable controller state, captured only by its
+ // preceding bound button. URL/DOM fields and numeric navigation are not permits.
+ if(!Number.isInteger(index)||index>=4&&(![4,5].includes(index)||profileState!==state
+   ||!canonicalPiProfile(state).available||index===5&&careState!==state)){
+  profileState=null;careState=null;index=1;
  }
- if(index!==4)profileState=null;
+ if(index!==4&&index!==5)profileState=null;
+ if(index!==5)careState=null;
  stage.querySelectorAll(".hot").forEach(x=>x.remove());
  img.src=screens[index];
  img.alt="CRUVIT Plant Identification — "+titles[index];
  document.title="CRUVIT · Plant Identification · "+titles[index];
  resultView.update(state,index===3&&resultReady);
  profileView.update(state,index===4&&profileState===state);
- img.setAttribute('aria-hidden',String(index===3||index===4));
- // The approved Learn more button opens the full profile. All PI-05 cards and
- // its onward button remain inactive; PI-06 through PI-08 remain closed.
+ careView.update(state,index===5&&careState===state);
+ img.setAttribute('aria-hidden',String(index===3||index===4||index===5));
+ // Only the approved Care tile in a successfully bound profile opens PI-06.
+ // PI-07/PI-08 and the remaining onward/save controls stay closed.
  const activeHotspots=index<3?hotspots[index]||[]:index===3&&resultView.isReady(state)
   ?[{...hotspots[3][0],x:72,y:51.6,w:21,h:4}]
-  :index===4?[{x:6.2,y:5.3,w:11.1,h:6.2,label:"Back to result"}]:[];
+  :index===4?[{x:6.2,y:5.3,w:11.1,h:6.2,label:"Back to result"},
+   ...(profileView.isReady(state)?[{x:6.4,y:57.5,w:20.5,h:13.5,label:"Care",to:5}]:[])]
+  :index===5?[{x:9.5,y:1.5,w:16,h:3,label:"Back to profile"}]:[];
  for(const h of activeHotspots){
   const b=document.createElement("button");
   b.className="hot";b.type="button";b.setAttribute("aria-label",h.label);
   b.style.left=h.x+"%";b.style.top=h.y+"%";b.style.width=h.w+"%";b.style.height=h.h+"%";
   if(h.action){b.setAttribute('data-pi-action',h.action);b.disabled=h.action!=='back'&&['IMAGE_LOADING','IDENTIFYING'].includes(acquisition?.getState().status);}
   if(index===3)b.setAttribute('data-pi-profile-open','');
+  if(index===4&&h.to===5)b.setAttribute('data-pi-care-open','');
   b.onclick=async e=>{e.stopPropagation();
    if(index===3){
     if(e.isTrusted===true&&h.to===4&&acquisition.getState()===state&&resultView.isReady(state)){
@@ -143,7 +167,15 @@ function render(){
     }return;
    }
    if(index===4){
-    if(e.isTrusted===true&&h.label==='Back to result'&&profileState===state&&acquisition.getState()===state){index=3;render();}
+    if(e.isTrusted===true&&profileState===state&&acquisition.getState()===state){
+     if(h.label==='Back to result'){index=3;render();}
+     else if(h.to===5&&profileView.isReady(state)){careState=state;index=5;render();}
+    }
+    return;
+   }
+   if(index===5){
+    if(e.isTrusted===true&&h.label==='Back to profile'&&profileState===state&&careState===state
+      &&acquisition.getState()===state){index=4;render();}
     return;
    }
    if(h.action){acquisition?.activate(h.action);return;}if(index!==7){go(h.to);return;}if(saving)return;
