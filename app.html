@@ -11308,5 +11308,31 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/garden-design/garden-design-server-persistence-v1.js?v=20260920id1"></script>
 <script type="module" src="modules/garden-design/asset-factory-v1/calibration-garden-source-host-v1.js?v=20260919f"></script>
 <script type="module" src="modules/garden-design/asset-factory-v1/calibration-review-host-v1.js?v=20260919f"></script>
+<script type="module" id="core-pi-suitability-host">
+import {createPiSuitabilityHost, CORE_PI_ROUTE} from './modules/plant-identifier/suitability-context-handoff-v1.js';
+// Explicit live-host entry, following the existing Garden Design iframe pattern.
+// Existing navigation is unchanged. No host state is copied into route/storage.
+let corePiFrame = null;
+const corePiHandoff = createPiSuitabilityHost({window,
+  getReadiness: () => window.cruvitPersonalDomainV0?.getGardenContextReadiness?.(),
+  getLocationContext: () => getIdentifierGardenLocationContext(),
+  hasTrustedLocation: () => hasTrustedAppLocation(),
+  getClimateProfile: () => getAppClimateProfile(),
+  getSiteContext: () => smartRecProtectionContext(),
+  resolveCanonicalPlant: input => canonicalRuntimeCatalogProfile(input),
+  evaluateSuitability: slug => evaluateIdentifierGardenSuitability(slug)
+});
+Object.defineProperty(window, 'cruvitCorePiHost', {value: Object.freeze({
+  open() {
+    if (corePiFrame?.isConnected) return;
+    corePiFrame = document.createElement('iframe');
+    corePiFrame.title = 'CRUVIT Plant Identification'; corePiFrame.src = CORE_PI_ROUTE;
+    corePiFrame.allow = 'camera';
+    corePiFrame.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;border:0;z-index:10000';
+    document.body.appendChild(corePiFrame); corePiHandoff.bind(corePiFrame);
+  },
+  close() { corePiHandoff.unbind(); corePiFrame?.remove(); corePiFrame = null; }
+})});
+</script>
 </body>
 </html>

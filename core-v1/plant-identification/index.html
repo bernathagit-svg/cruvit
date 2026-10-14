@@ -203,5 +203,17 @@ render();
 </script>
 <script src="../my-garden/assets/supabase.js"></script>
 <script type="module" src="./atomic/boot.mjs"></script>
+<script type="module" id="core-pi-suitability-client">
+import {createPiSuitabilityClient} from '../../modules/plant-identifier/suitability-context-handoff-v1.js';
+import {canonicalPiResult} from '../../modules/plant-identifier/real-pi-runtime-v1.js';
+// No automatic evaluation or screen change. PI-07/08 remain closed.
+Object.defineProperty(window, 'cruvitCorePiSuitability', {value: createPiSuitabilityClient({window,
+  readCanonicalResult() {
+    const state = window.__CRUVIT_REAL_PI_STATE, result = canonicalPiResult(state);
+    return result.available ? {state, actionId: state.actionId,
+      canonicalSlug: result.canonicalSlug, scientific: result.scientific} : null;
+  }
+})});
+</script>
 </body>
 </html>
