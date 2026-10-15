@@ -220,14 +220,21 @@ test('6A: accepted client wiring, prior PI styles and all eight approved rasters
   assert.equal(hashes[6], 'c6ad1fc59e28622b3aedbcfa2e2a4cfe6cf435aa0c81e9a74eedeead75ce7e59');
   assert.equal(hashes.length, 8);
 });
-test('6A: host composition uses existing authority callbacks; evaluator, registry, care, Save and location code are unchanged', () => {
+test('6A: host/evaluator/registry/care/location remain unchanged; only the authorized Atomic controller/readback may differ', () => {
   const app = read('app.html'), old = execFileSync('git', ['show', base + ':app.html'], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000});
   const added = app.match(/<script type="module" id="core-pi-suitability-host">[\s\S]*?<\/script>\n/)[0];
   assert.equal(app.replace(added, ''), old);
   for (const name of ['getGardenContextReadiness', 'getIdentifierGardenLocationContext', 'hasTrustedAppLocation',
     'getAppClimateProfile', 'smartRecProtectionContext', 'canonicalRuntimeCatalogProfile', 'evaluateIdentifierGardenSuitability']) assert.ok(added.includes(name));
   const changed = execFileSync('git', ['diff', '--name-only', base], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000}).trim().split('\n');
-  assert.ok(!changed.some(p => /atomic\/|garden-profile|specific-plant-suitability|real-pi-runtime|netlify\/functions|identity\//.test(p)));
+  // PI-08 foundation authorizes these two existing authority implementations only.
+  // All other Atomic files, including the command, intent contract and boot, stay locked.
+  const controllerRefactor = new Set([
+    'core-v1/plant-identification/atomic/save-controller.mjs',
+    'core-v1/plant-identification/atomic/preview-domain.mjs'
+  ]);
+  assert.ok(!changed.some(p => /atomic\/|garden-profile|specific-plant-suitability|real-pi-runtime|netlify\/functions|identity\//.test(p)
+    && !controllerRefactor.has(p)));
   const bridge = read('modules/plant-identifier/suitability-context-handoff-v1.js');
   assert.doesNotMatch(bridge, /localStorage|sessionStorage|indexedDB|\bfetch\s*\(|XMLHttpRequest|navigator\.geolocation|BroadcastChannel|\.rpc\(|\.upsert\(|\.insert\(/);
   assert.doesNotMatch(bridge, /survivalFit\s*[=:]|thriveFit\s*[=:]|frostSensitivity\s*[=:]|new Map\(.*garden/i);

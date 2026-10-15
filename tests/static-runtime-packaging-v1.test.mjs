@@ -151,8 +151,8 @@ test('two independent static builds remain deterministic and artifact-stable',()
   const rb=buildStatic({out:b,receipt:br});
   assert.equal(ra.publicFileCount,1922);
   assert.equal(ra.serverRuntimeFileCount,75);
-  // Pin controlled Slice 6 replacement output; approved assets and authorities stay unchanged.
-  assert.equal(ra.outputManifestSha256,'dc1d94232893692107c0105f0db780c0d6d044b7bb6c35fc1e50f25a401bda7f');
+  // Pin the controller/readback-only refactor; no UI, handoff, command or raster changes.
+  assert.equal(ra.outputManifestSha256,'5dc9850c7f7a11b7c82f742fc9b2c113221e8b81c4c3961d481747fd3c06656e');
   assert.equal(ra.outputManifestSha256,rb.outputManifestSha256);
   assert.deepEqual(ra.publicManifest,rb.publicManifest);
   assert.equal(ra.secretFindings.length,0);
