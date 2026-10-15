@@ -17,6 +17,7 @@ import {resolvePlantDisplayMedia} from '../modules/catalog-media/licensed-catalo
 import {resolveSmartRecCatalogDisplay} from '../modules/smart-recommendations/smart-rec-garden-intelligence-v1.js';
 import {projectRows, GARDEN_ID} from '../core-v1/my-garden/plants/data.mjs';
 import {materializePlantCatalogItemFromPacket} from '../modules/catalog-expansion/catalog-expansion-v1-contract.js';
+import {createPiSuitabilityView, readPiSuitability, PI_SUITABILITY_SLOTS} from '../modules/plant-identifier/pi-suitability-view-v1.js';
 
 const root = new URL('../', import.meta.url);
 const read = path => fs.readFileSync(new URL(path, root), 'utf8');
@@ -374,10 +375,10 @@ function navigatorFixture(f = fixture()) {
   const window = {__PI: approvedContext.window.__PI};
   const context = vm.createContext({window, document, location: {assign() { throw Error('NAVIGATION_FORBIDDEN'); }},
     alert() { throw Error('ATOMIC_SAVE_FORBIDDEN'); },
-    wireRealPiInputs: args => wireRealPiInputs({...args, controller: f.controller}), createPiResultView, createPiProfileView, canonicalPiProfile, createPiCareView});
+    wireRealPiInputs: args => wireRealPiInputs({...args, controller: f.controller}), createPiResultView, createPiProfileView, canonicalPiProfile, createPiCareView, createPiSuitabilityView});
   const script = [...html.matchAll(/<script type="module">([\s\S]*?)<\/script>/g)][0][1];
-  assert.equal((script.match(/^import /gm) || []).length, 1);
-  vm.runInContext(script.replace(/^import .*;\n/m, ''), context);
+  assert.equal((script.match(/^import /gm) || []).length, 2);
+  vm.runInContext(script.replace(/^import .*;\n/gm, ''), context);
   return {...f, window, context, stage, screen, document,
     button: action => stage.children.find(child => child.attrs['data-pi-action'] === action),
     input: source => stage.children.find(child => child.attrs['data-pi-input'] === source)};
@@ -942,7 +943,8 @@ for (const [slug, name] of witnessFixtures) test('Slice 5: ' + slug + ' keeps ex
   await trustedClick(button); await forbiddenForward(f);
   vm.runInContext('render(); render(); go(6); go(7); go(99);', f.context);
   assert.equal(careElement(f), view); assert.deepEqual(visits, [6]);
-  assert.equal(f.stage.querySelectorAll('.hot').length, 1, 'care has only Back to profile');
+  assert.deepEqual(f.stage.querySelectorAll('.hot').map(button => button.attrs['aria-label']),
+    ['Back to profile', 'Growing Conditions'], 'only the explicit PI-07 entry is added; Save stays locked');
   assert.equal(f.calls.http.length, 1); assert.equal(f.calls.catalog.length, 1);
   await trustedClick(f.stage.querySelectorAll('.hot')[0]); assert.match(f.screen.alt, /Plant Profile$/);
   assert.equal(careElement(f), undefined); assert.equal(careButton(f), undefined, 'returned profile must bind before care entry');
@@ -1070,4 +1072,204 @@ test('Slice 5: PI-01–05 styles/acquisition and canonical controller/Save autho
   assert.equal(runtime.slice(runtime.indexOf('// Bind native pickers once')), before.slice(before.indexOf('// Bind native pickers once')));
   assert.equal(Object.keys(PI_CARE_SLOTS).length, 28);
   assert.match(runtime, /CANONICAL CARE — FERTILIZING AUTHORITY GAP/);
+});
+
+// Controlled Slice 6 replacement: test-only handoff responses exercise the real
+// view/navigation. The existing 6A suite separately exercises host/client authority;
+// Chromium qualification runs the unchanged host evaluator and canonical witnesses.
+const suitabilityElement = f => f.stage.children.find(e => e.className === 'pi-suitability');
+const suitabilitySlot = (view, key) => view.children.find(e => e.attrs['data-pi-suitability-slot'] === key);
+const suitabilityButton = f => f.stage.children.find(e => Object.hasOwn(e.attrs, 'data-pi-suitability-open'));
+const settleSuitability = () => new Promise(resolve => setImmediate(resolve));
+function suitabilityFixture(state = {...displayState(), catalogRow: careRow()}) {
+  const context = {
+    readiness: {status: 'READY', authenticated: true, gardenProfileId: 'garden-a'},
+    trusted: true, location: {useForSuitability: true, gardenProfileId: 'garden-a', label: 'Confirmed garden A'},
+    siteContext: {plantingMode: 'ground', frostProtection: 'unknown'},
+    climateProfile: {structuralClimateStatus: 'unknown'}
+  };
+  const evaluation = {ok: true, engine: 'smartRecEvaluateSuitability', paidAiCalls: 0,
+    gardenProfileId: 'garden-a', locationLabel: 'Confirmed garden A', recommendationLevel: 'borderline',
+    suitabilityScore: null, outcomes: {survival: 'Unknown', growth: 'Unknown', flowering: 'Unknown', fruiting: 'Unknown'},
+    warnings: ['Missing climate evidence'], primaryLimiter: 'Climate evidence unavailable'};
+  const calls = {context: 0, evaluate: []};
+  const result = {ok: true, context, evaluation,
+    identity: {canonicalSlug: state.identity.canonicalSlug, scientific: state.catalogRow.scientific_name, actionId: state.actionId}};
+  const client = {
+    async readContext() { calls.context++; return {ok: true, context: structuredClone(context)}; },
+    async evaluateCurrent() { calls.evaluate.push(state.identity.canonicalSlug); return structuredClone(result); }
+  };
+  return {state, context, evaluation, calls, result, client,
+    read: (isCurrent = () => true) => readPiSuitability({state, client, isCurrent})};
+}
+async function readyCareFixture(slug = 'lemon') {
+  const f = await openCareFixture(slug);
+  profilePhoto(f).onload(); await trustedClick(careButton(f));
+  return f;
+}
+
+for (const [slug, name] of witnessFixtures) test('Slice 6: ' + slug + ' enters PI-07 once with the same PI-04/05/06 canonical row', async () => {
+  const f = await readyCareFixture(slug), state = f.controller.getState(), visits = observePiTransitions(f);
+  const host = suitabilityFixture(state); f.window.cruvitCorePiSuitability = host.client;
+  const button = suitabilityButton(f);
+  await button.click(); assert.match(f.screen.alt, /Care$/); assert.equal(host.calls.context, 0);
+  await trustedClick(button); await settleSuitability();
+  const view = suitabilityElement(f), model = canonicalPiCare(state);
+  assert.equal(view.attrs['data-pi-suitability'], 'SUITABILITY_READY');
+  assert.equal(view.attrs['data-canonical-slug'], slug); assert.equal(view.attrs['data-identify-action'], state.actionId);
+  assert.equal(suitabilitySlot(view, 'name').textContent, name);
+  assert.equal(suitabilitySlot(view, 'scientific').textContent, entry(slug).acceptedScientificName);
+  assert.equal(model.canonicalSlug, canonicalPiProfile(state).canonicalSlug);
+  assert.equal(model.canonicalSlug, canonicalPiResult(state).canonicalSlug);
+  assert.equal(f.controller.getState(), state); assert.deepEqual(state.catalogRow, careRow(slug));
+  assert.equal(suitabilitySlot(view, 'photo').children.find(e => e.tag === 'img').src, model.media.url);
+  for (const [key, card] of Object.entries(model.cards)) {
+    assert.equal(suitabilitySlot(view, key + 'Value').textContent, card.value);
+    assert.equal(suitabilitySlot(view, key + 'Note').textContent, card.note);
+  }
+  assert.equal(suitabilitySlot(view, 'verdict').textContent, 'Borderline');
+  assert.equal(suitabilitySlot(view, 'location').textContent, host.evaluation.locationLabel);
+  assert.match(suitabilitySlot(view, 'evidence').textContent, /Survival: Unknown.*Growth: Unknown/);
+  assert.match(suitabilitySlot(view, 'evidence').textContent, /Climate evidence unavailable/);
+  assert.equal(suitabilitySlot(view, 'score').textContent, 'Suitability score unavailable');
+  assert.deepEqual(host.calls.evaluate, [slug]); assert.equal(host.calls.context, 2);
+  assert.deepEqual(visits, [7]); assert.equal(f.screen.src, approvedContext.window.__PI[6].join(''));
+  await trustedClick(button); await forbiddenForward(f);
+  vm.runInContext('render(); render(); go(7); go(99);', f.context);
+  assert.equal(suitabilityElement(f), view); assert.deepEqual(host.calls.evaluate, [slug]);
+  assert.deepEqual(visits, [7]);
+  assert.deepEqual(f.stage.querySelectorAll('.hot').map(b => b.attrs['aria-label']), ['Back to care']);
+  // A later explicit entry must obtain the changed garden, never reuse a result.
+  await trustedClick(f.stage.querySelectorAll('.hot')[0]); assert.equal(suitabilityElement(f), undefined);
+  host.context.readiness.gardenProfileId = host.context.location.gardenProfileId = 'garden-b';
+  host.context.location.label = host.evaluation.locationLabel = 'Confirmed garden B';
+  host.evaluation.gardenProfileId = 'garden-b';
+  await trustedClick(suitabilityButton(f)); await settleSuitability();
+  assert.equal(suitabilityElement(f).attrs['data-garden-id'], 'garden-b');
+  assert.equal(suitabilitySlot(suitabilityElement(f), 'location').textContent, 'Confirmed garden B');
+  assert.deepEqual(host.calls.evaluate, [slug, slug]); assert.equal(host.calls.context, 4);
+  assert.deepEqual(visits, [7, 6, 7]); assert.equal(visits.includes(8), false);
+  assert.equal(f.calls.http.length, 1); assert.equal(f.calls.catalog.length, 1);
+});
+
+for (const [name, mutate] of [
+  ['untrusted', c => {c.trusted = false;}],
+  ['missing location', c => {c.location = null;}],
+  ['signed out', c => {c.readiness.authenticated = false; c.readiness.status = 'SIGNED_OUT';}],
+  ['restoring', c => {c.readiness.status = 'RESTORING';}],
+  ['no garden', c => {c.readiness.gardenProfileId = null;}],
+  ['different location garden', c => {c.location.gardenProfileId = 'other-garden';}]
+]) test('Slice 6: ' + name + ' blocks before evaluation', async () => {
+  const f = suitabilityFixture(); mutate(f.context);
+  const result = await f.read(); assert.equal(result.ok, false); assert.equal(result.reason, 'HOST_CONTEXT_NOT_READY');
+  assert.equal(result.evaluation, null); assert.deepEqual(result.context, f.context);
+  assert.equal(f.calls.context, 1); assert.deepEqual(f.calls.evaluate, []);
+});
+
+test('Slice 6: standalone remains unavailable, with no evaluator and no retry', async () => {
+  const f = await readyCareFixture(), visits = observePiTransitions(f);
+  await trustedClick(suitabilityButton(f)); await settleSuitability();
+  const view = suitabilityElement(f);
+  assert.equal(view.attrs['data-pi-suitability'], 'SUITABILITY_UNAVAILABLE');
+  assert.equal(view.attrs['data-reason'], 'HOST_UNAVAILABLE');
+  assert.equal(suitabilitySlot(view, 'verdict').textContent, 'Not assessed');
+  assert.match(suitabilitySlot(view, 'location').textContent, /active garden/);
+  assert.match(suitabilitySlot(view, 'score').textContent, /No garden suitability score/);
+  vm.runInContext('render(); render(); go(7);', f.context); await forbiddenForward(f);
+  assert.equal(suitabilityElement(f), view); assert.deepEqual(visits, [7]);
+  assert.equal(f.calls.http.length, 1); assert.equal(f.calls.catalog.length, 1);
+});
+
+test('Slice 6: stale read, plant switch and lost context never publish suitability', async () => {
+  for (const phase of ['before', 'evaluation', 'after']) {
+    const f = suitabilityFixture(); let current = true;
+    const readContext = f.client.readContext, evaluate = f.client.evaluateCurrent;
+    f.client.readContext = async () => {
+      const result = await readContext();
+      if (phase === 'before' || phase === 'after' && f.calls.context === 2) current = false;
+      return result;
+    };
+    f.client.evaluateCurrent = async () => { const result = await evaluate(); if (phase === 'evaluation') current = false; return result; };
+    const result = await f.read(() => current);
+    assert.equal(result.reason, 'PI_RESULT_CHANGED'); assert.equal(result.evaluation, null);
+    assert.equal(f.calls.evaluate.length, phase === 'before' ? 0 : 1);
+  }
+  for (const phase of ['evaluation', 'after']) {
+    const f = suitabilityFixture(), readContext = f.client.readContext;
+    f.client.readContext = async () => {
+      if (phase === 'after' && f.calls.context === 1) f.context.siteContext.plantingMode = 'container';
+      return readContext();
+    };
+    if (phase === 'evaluation') f.client.evaluateCurrent = async () => {
+      f.calls.evaluate.push('lemon'); const result = structuredClone(f.result); result.context.trusted = false; return result;
+    };
+    assert.equal((await f.read()).reason, 'HOST_CONTEXT_CHANGED'); assert.equal(f.calls.evaluate.length, 1);
+  }
+  const f = suitabilityFixture(); f.client.readContext = async () => {throw Error('offline');};
+  assert.equal((await f.read()).reason, 'HOST_AUTHORITY_UNAVAILABLE'); assert.equal(f.calls.evaluate.length, 0);
+});
+
+for (const [name, mutate, reason] of [
+  ['slug', r => {r.identity.canonicalSlug = 'raspberry';}, 'HOST_CANONICAL_IDENTITY_UNAVAILABLE'],
+  ['scientific', r => {r.identity.scientific = 'Rubus idaeus';}, 'HOST_CANONICAL_IDENTITY_UNAVAILABLE'],
+  ['action', r => {r.identity.actionId = 'other-action';}, 'HOST_CANONICAL_IDENTITY_UNAVAILABLE'],
+  ['garden', r => {r.evaluation.gardenProfileId = 'other-garden';}, 'HOST_EVALUATOR_UNAVAILABLE'],
+  ['engine', r => {r.evaluation.engine = 'alternateEvaluator';}, 'HOST_EVALUATOR_UNAVAILABLE'],
+  ['paid', r => {r.evaluation.paidAiCalls = 1;}, 'HOST_EVALUATOR_UNAVAILABLE'],
+  ['invalid evaluator', r => {r.evaluation.ok = false;}, 'HOST_EVALUATOR_UNAVAILABLE'],
+  ['unknown verdict', r => {r.evaluation.recommendationLevel = 'invented-positive';}, 'HOST_EVALUATOR_UNAVAILABLE']
+]) test('Slice 6: mismatched ' + name + ' fails closed without fallback', async () => {
+  const f = suitabilityFixture(); mutate(f.result);
+  const result = await f.read(); assert.equal(result.ok, false); assert.equal(result.reason, reason);
+  assert.equal(result.evaluation, null); assert.deepEqual(f.calls.evaluate, ['lemon']); assert.equal(f.calls.context, 1);
+});
+
+test('Slice 6: canonical Care context alone and direct helper/index manipulation cannot create a PI-07 permit', async () => {
+  const f = await readyCareFixture(), host = suitabilityFixture(f.controller.getState());
+  f.window.cruvitCorePiSuitability = host.client; const oldButton = suitabilityButton(f);
+  await oldButton.click(); await forbiddenForward(f);
+  vm.runInContext('go(6); go(7); render();', f.context);
+  assert.match(f.screen.alt, /Care$/); assert.equal(suitabilityElement(f), undefined);
+  for (const target of ['6', '7', '99', 'NaN', 'Infinity']) {
+    vm.runInContext('index=' + target + '; render();', f.context);
+    assert.equal(suitabilityElement(f), undefined); assert.match(f.screen.alt, /Camera$/);
+    await trustedClick(oldButton); assert.equal(suitabilityElement(f), undefined);
+  }
+  assert.equal(host.calls.context, 0); assert.deepEqual(host.calls.evaluate, []);
+  for (const state of [{...displayState(), status: 'IDENTIFY_FAILED'}, {...displayState(), readyForResult: false},
+    {...displayState(), catalogRow: {...careRow(), slug: 'raspberry'}}]) {
+    const result = await readPiSuitability({state, client: host.client, isCurrent: () => true});
+    assert.equal(result.reason, 'PI_RESULT_NOT_READY');
+  }
+  assert.equal(host.calls.context, 0);
+});
+
+test('Slice 6: same-session acquisition reset clears PI-07 and ignores late evaluation completion', async () => {
+  const f = await readyCareFixture(), state = f.controller.getState(), host = suitabilityFixture(state), pending = deferred();
+  host.client.evaluateCurrent = () => {host.calls.evaluate.push(state.identity.canonicalSlug); return pending.promise;};
+  f.window.cruvitCorePiSuitability = host.client;
+  await trustedClick(suitabilityButton(f)); await settleSuitability();
+  const oldView = suitabilityElement(f), oldBack = f.stage.querySelectorAll('.hot')[0];
+  assert.equal(oldView.attrs['data-pi-suitability'], 'CHECKING');
+  await f.controller.selectImage(new File(['invalid'], 'bad.txt', {type: 'text/plain'}));
+  assert.equal(suitabilityElement(f), undefined); assert.equal(f.controller.getState().catalogRow, null);
+  pending.resolve(host.result); await settleSuitability(); await trustedClick(oldBack);
+  assert.equal(suitabilityElement(f), undefined); assert.match(f.screen.alt, /Camera$/);
+  assert.equal(oldView.attrs['data-pi-suitability'], 'CHECKING');
+  assert.deepEqual(host.calls.evaluate, ['lemon']); assert.equal(host.calls.context, 1);
+  assert.equal(f.calls.http.length, 1);
+});
+
+test('Slice 6: view has no evaluator, location record, network, persistence or per-plant lookup', () => {
+  const view = read('modules/plant-identifier/pi-suitability-view-v1.js');
+  assert.doesNotMatch(view, /\bfetch\s*\(|XMLHttpRequest|localStorage|sessionStorage|indexedDB|navigator\.geolocation|\.rpc\(|\.insert\(|\.upsert\(|\.upload\(/);
+  assert.doesNotMatch(view, /lemon|pomegranate|raspberry|Monstera|plants\.seed|catalog-media\/cache|evaluateSpecificPlantSuitability\s*\(/);
+  assert.doesNotMatch(view, /function\s+smartRecEvaluateSuitability|function\s+evaluateIdentifierGardenSuitability/);
+  assert.match(view, /client\.readContext\(\)/); assert.match(view, /client\.evaluateCurrent\(\)/);
+  assert.equal(Object.keys(PI_SUITABILITY_SLOTS).length, 30);
+  const parent = '48aafecdb17f8581611f10d9f5e86754250f03ce';
+  for (const path of ['app.html', 'modules/plant-identifier/suitability-context-handoff-v1.js',
+    'modules/plant-identifier/real-pi-runtime-v1.js', 'modules/personal-domain/specific-plant-suitability-contract.js']) {
+    assert.equal(read(path), execFileSync('git', ['show', parent + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000}));
+  }
 });

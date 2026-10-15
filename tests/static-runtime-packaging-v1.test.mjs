@@ -33,12 +33,13 @@ test('exact source lock is authoritative for every tracked path',()=>{
   assert.equal(r.ok,true,JSON.stringify(r.errors.slice(0,5)));
   assert.equal(r.trackedPathCount,sourceLock.pathCount);
   assert.equal(r.lockedPathCount,sourceLock.pathCount);
-  assert.equal(r.trackedPathCount,2687);
-  assert.deepEqual(r.classificationCounts,{BUILD_ONLY:637,PUBLIC_STATIC:1921,HISTORICAL_EVIDENCE:54,SERVER_RUNTIME:75});
+  assert.equal(r.trackedPathCount,2688);
+  assert.deepEqual(r.classificationCounts,{BUILD_ONLY:637,PUBLIC_STATIC:1922,HISTORICAL_EVIDENCE:54,SERVER_RUNTIME:75});
   assert.equal(sourceLock.paths.find(row=>row.path==='tests/paid-runtime-containment-v1.test.mjs')?.classification,'BUILD_ONLY');
   assert.equal(sourceLock.paths.find(row=>row.path==='modules/plant-identifier/real-pi-runtime-v1.js')?.classification,'PUBLIC_STATIC');
   assert.equal(sourceLock.paths.find(row=>row.path==='tests/pi-real-identification-v1.test.mjs')?.classification,'BUILD_ONLY');
   assert.equal(sourceLock.paths.find(row=>row.path==='modules/plant-identifier/suitability-context-handoff-v1.js')?.classification,'PUBLIC_STATIC');
+  assert.equal(sourceLock.paths.find(row=>row.path==='modules/plant-identifier/pi-suitability-view-v1.js')?.classification,'PUBLIC_STATIC');
   assert.equal(sourceLock.paths.find(row=>row.path==='tests/pi-suitability-handoff-v1.test.mjs')?.classification,'BUILD_ONLY');
   const core=sourceLock.paths.filter(row=>row.path.startsWith('core-v1/'));
   assert.equal(core.length,84);
@@ -148,10 +149,10 @@ test('two independent static builds remain deterministic and artifact-stable',()
   fs.mkdirSync(path.dirname(ar),{recursive:true});
   const ra=buildStatic({out:a,receipt:ar});
   const rb=buildStatic({out:b,receipt:br});
-  assert.equal(ra.publicFileCount,1921);
+  assert.equal(ra.publicFileCount,1922);
   assert.equal(ra.serverRuntimeFileCount,75);
-  // Pin Slice 6A output: read-only host handoff; approved assets unchanged.
-  assert.equal(ra.outputManifestSha256,'34fc1608cf07e032e3c1608d385de79a7425ab9b8a3d457a8625b638ba314aa9');
+  // Pin controlled Slice 6 replacement output; approved assets and authorities stay unchanged.
+  assert.equal(ra.outputManifestSha256,'dc1d94232893692107c0105f0db780c0d6d044b7bb6c35fc1e50f25a401bda7f');
   assert.equal(ra.outputManifestSha256,rb.outputManifestSha256);
   assert.deepEqual(ra.publicManifest,rb.publicManifest);
   assert.equal(ra.secretFindings.length,0);

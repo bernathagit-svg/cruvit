@@ -196,12 +196,20 @@ test('6A: no session, credentials, observation photo or client profile is includ
   assert.doesNotMatch(JSON.stringify(f.traffic), /PRIVATE_|PROVIDER_|access_token|refresh_token|scanPhoto|providerCare/);
   assert.ok(f.traffic.every(t => t.targetOrigin === f.hostWindow.location.origin)); f.close();
 });
-test('6A: existing PI-01–06 program/styles and all eight approved rasters remain byte-identical', () => {
+test('6A: accepted client wiring, prior PI styles and all eight approved rasters remain byte-identical', () => {
   const html = read('core-v1/plant-identification/index.html');
   const prior = execFileSync('git', ['show', base + ':core-v1/plant-identification/index.html'], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000});
-  const module = /<script type="module">[\s\S]*?<\/script>/;
-  assert.equal(html.match(module)[0], prior.match(module)[0]);
-  assert.deepEqual(html.match(/<style[\s\S]*?<\/style>/g), prior.match(/<style[\s\S]*?<\/style>/g));
+  const acceptedBase = '48aafecdb17f8581611f10d9f5e86754250f03ce';
+  const accepted = execFileSync('git', ['show', acceptedBase + ':core-v1/plant-identification/index.html'], {cwd: root, encoding: 'utf8'});
+  const client = /<script type="module" id="core-pi-suitability-client">[\s\S]*?<\/script>/;
+  assert.equal(html.match(client)[0], accepted.match(client)[0]);
+  const pi07Style = /<style id="pi-suitability-style">[\s\S]*?<\/style>/;
+  assert.equal((html.match(/<style id="pi-suitability-style">/g) || []).length, 1);
+  assert.deepEqual(html.replace(pi07Style, '').match(/<style[\s\S]*?<\/style>/g), prior.match(/<style[\s\S]*?<\/style>/g));
+  for (const path of ['app.html', 'modules/plant-identifier/suitability-context-handoff-v1.js',
+    'modules/plant-identifier/real-pi-runtime-v1.js']) {
+    assert.equal(read(path), execFileSync('git', ['show', acceptedBase + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000}));
+  }
   const ctx = vm.createContext({window: {}});
   for (const match of html.matchAll(/<script src="\.\/assets\/(s\d-\d+\.js)"><\/script>/g)) {
     const rel = 'core-v1/plant-identification/assets/' + match[1], current = read(rel);

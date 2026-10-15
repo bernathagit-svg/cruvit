@@ -3,10 +3,10 @@
   "lockVersion": "static-runtime-source-lock-v1",
   "reviewedAgainstParentSha": "754141e7467a308b2be5f02c76ce5d914fdeb883",
   "baselineProductSha": "9c36d550a2476a64b4f0013b2599543538afd4fe",
-  "pathCount": 2687,
+  "pathCount": 2688,
   "classificationCounts": {
     "BUILD_ONLY": 637,
-    "PUBLIC_STATIC": 1921,
+    "PUBLIC_STATIC": 1922,
     "HISTORICAL_EVIDENCE": 54,
     "SERVER_RUNTIME": 75
   },
@@ -23676,6 +23676,14 @@
       "reason": "Real PI Slice 1 offline contract and data-flow qualification; never public runtime.",
       "proposalClassifications": [
         "BUILD_ONLY"
+      ]
+    },
+    {
+      "path": "modules/plant-identifier/pi-suitability-view-v1.js",
+      "classification": "PUBLIC_STATIC",
+      "reason": "Canonical PI-07 presentation through the existing read-only Slice 6A suitability handoff.",
+      "proposalClassifications": [
+        "PUBLIC_STATIC"
       ]
     },
     {

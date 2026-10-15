@@ -66,6 +66,25 @@ body{display:grid;place-items:start center;font-family:Arial,sans-serif;overflow
 .pi-care-credit{position:absolute;bottom:0;left:0;right:0;background:#f7f6eff2;color:#294532;font-size:max(9px,2.1cqw);line-height:1.2;padding:.35em;text-align:left}
 .pi-care-credit a{margin-left:.6em;color:inherit;pointer-events:auto}
 </style>
+<style id="pi-suitability-style">
+.pi-suitability{position:absolute;inset:0;container-type:inline-size;pointer-events:none;font-family:Arial,sans-serif;color:#092d32}
+.pi-suitability-slot{position:absolute;overflow:hidden;line-height:1.2;background:#fdfdf9;font-size:2.15cqw}
+.pi-suitability-name{font-size:4.1cqw;font-weight:700;line-height:1}
+.pi-suitability-scientific{font-size:2.85cqw}
+.pi-suitability-growth,.pi-suitability-environment,.pi-suitability-foliage,.pi-suitability-ease{background:#eaf3e6;border-radius:2cqw;display:flex;align-items:center;justify-content:center;text-align:center;color:#174c32;font-size:2cqw;padding:.2em}
+.pi-suitability-description{font-size:2.6cqw;color:#285586;background:#f5f7ee}
+.pi-suitability-slot[data-pi-suitability-slot$="Value"],.pi-suitability-slot[data-pi-suitability-slot$="Note"]{color:#285586;background:#fbfcf7}
+.pi-suitability-slot[data-pi-suitability-slot$="Bar"]{background:repeating-linear-gradient(90deg,#e1e4e4 0,#e1e4e4 13.6%,#fbfcf7 13.6%,#fbfcf7 14.2857%);border-top:2px solid #fbfcf7;border-bottom:2px solid #fbfcf7;border-radius:.5cqw}
+.pi-suitability-location,.pi-suitability-score,.pi-suitability-evidence{background:#ecf7e7;color:#285586;font-size:1.95cqw}
+.pi-suitability-verdict{background:#ecf7e7;color:#365d4c;font-size:2.4cqw;font-weight:700;display:flex;align-items:center}
+.pi-suitability-evidence{background:#eaf5e3;overflow:auto;pointer-events:auto;white-space:pre-line;font-size:1.95cqw;line-height:1.25}
+.pi-suitability-photo{border-radius:2.5cqw;background:#efefe5;display:flex;align-items:center;justify-content:center;text-align:center}
+.pi-suitability-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pi-suitability-photo img[hidden],.pi-suitability-image-message[hidden]{display:none}
+.pi-suitability-image-message{position:relative;padding:.5em;background:#efefe5;font-size:2cqw}
+.pi-suitability-credit{position:absolute;bottom:0;left:0;right:0;max-height:36%;overflow:auto;pointer-events:auto;background:#f7f6eff2;font-size:max(8px,1.8cqw);line-height:1.1;padding:.25em;text-align:left}
+.pi-suitability-credit a{margin-left:.4em;color:inherit}
+</style>
 </head>
 <body>
 <main class="stage" id="stage"><img id="screen" alt=""></main>
@@ -101,6 +120,7 @@ body{display:grid;place-items:start center;font-family:Arial,sans-serif;overflow
 
 <script type="module">
 import {wireRealPiInputs,createPiResultView,createPiProfileView,canonicalPiProfile,createPiCareView} from '../../modules/plant-identifier/real-pi-runtime-v1.js';
+import {createPiSuitabilityView} from '../../modules/plant-identifier/pi-suitability-view-v1.js';
 const screens=Array.from({length:8},(_,i)=>(window.__PI?.[i]||[]).join(""));
 const expected=[2310742,3406426,1786662,3352146,3347862,2456618,2020150,2405466];
 if(screens.some((s,i)=>s.length!==expected[i])) throw new Error("Approved asset integrity check failed");
@@ -115,11 +135,13 @@ const hotspots={
 6:[{x:5,y:80,w:90,h:13,to:7,label:"Save to My Garden"}],
 7:[{x:10,y:78,w:80,h:5,to:0,label:"Save to My Garden"}]
 };
-let index=0,saveAction=null,saving=false,acquisition=null,shownResultActionId=null,profileState=null,careState=null;
+let index=0,saveAction=null,saving=false,acquisition=null,shownResultActionId=null,profileState=null,careState=null,suitabilityState=null;
 const stage=document.getElementById("stage"),img=document.getElementById("screen");
 const resultView=createPiResultView({document,stage,onReady:()=>render()});
 const profileView=createPiProfileView({document,stage,onReady:()=>render()});
 const careView=createPiCareView({document,stage});
+const suitabilityView=createPiSuitabilityView({document,stage,window,
+ readState:()=>acquisition?.getState(),getClient:()=>window.cruvitCorePiSuitability});
 stage.addEventListener('cruvit-pi-save-bind',event=>{if(typeof event.detail?.save==='function')saveAction=event.detail.save;});
 // Manual navigation stays within acquisition. Only qualified controller state opens PI-04.
 function go(i){if(saving||i>index)return;index=Math.max(0,Math.min(2,i));render()}
@@ -132,12 +154,14 @@ function render(){
  }else if(index===3&&!resultReady){index=1;}
  // Each permit is the current immutable controller state, captured only by its
  // preceding bound button. URL/DOM fields and numeric navigation are not permits.
- if(!Number.isInteger(index)||index>=4&&(![4,5].includes(index)||profileState!==state
-   ||!canonicalPiProfile(state).available||index===5&&careState!==state)){
-  profileState=null;careState=null;index=1;
+ if(!Number.isInteger(index)||index>=4&&(![4,5,6].includes(index)||profileState!==state
+   ||!canonicalPiProfile(state).available||index>=5&&careState!==state
+   ||index===6&&(suitabilityState!==state||!suitabilityView.isCurrent(state)))){
+  profileState=null;careState=null;suitabilityState=null;index=1;
  }
- if(index!==4&&index!==5)profileState=null;
- if(index!==5)careState=null;
+ if(![4,5,6].includes(index))profileState=null;
+ if(index!==5&&index!==6)careState=null;
+ if(index!==6)suitabilityState=null;
  stage.querySelectorAll(".hot").forEach(x=>x.remove());
  img.src=screens[index];
  img.alt="CRUVIT Plant Identification — "+titles[index];
@@ -145,14 +169,17 @@ function render(){
  resultView.update(state,index===3&&resultReady);
  profileView.update(state,index===4&&profileState===state);
  careView.update(state,index===5&&careState===state);
- img.setAttribute('aria-hidden',String(index===3||index===4||index===5));
+ suitabilityView.update(state,index===6&&suitabilityState===state);
+ img.setAttribute('aria-hidden',String(index>=3&&index<=6));
  // Only the approved Care tile in a successfully bound profile opens PI-06.
- // PI-07/PI-08 and the remaining onward/save controls stay closed.
+ // PI-07 requires its own current Care permit; PI-08/save remain closed.
  const activeHotspots=index<3?hotspots[index]||[]:index===3&&resultView.isReady(state)
   ?[{...hotspots[3][0],x:72,y:51.6,w:21,h:4}]
   :index===4?[{x:6.2,y:5.3,w:11.1,h:6.2,label:"Back to result"},
    ...(profileView.isReady(state)?[{x:6.4,y:57.5,w:20.5,h:13.5,label:"Care",to:5}]:[])]
-  :index===5?[{x:9.5,y:1.5,w:16,h:3,label:"Back to profile"}]:[];
+  :index===5?[{x:9.5,y:1.5,w:16,h:3,label:"Back to profile"},
+   {x:39.5,y:30.4,w:23,h:5.1,label:"Growing Conditions",to:6}]
+  :index===6?[{x:9.5,y:1.5,w:16,h:3,label:"Back to care"}]:[];
  for(const h of activeHotspots){
   const b=document.createElement("button");
   b.className="hot";b.type="button";b.setAttribute("aria-label",h.label);
@@ -160,7 +187,9 @@ function render(){
   if(h.action){b.setAttribute('data-pi-action',h.action);b.disabled=h.action!=='back'&&['IMAGE_LOADING','IDENTIFYING'].includes(acquisition?.getState().status);}
   if(index===3)b.setAttribute('data-pi-profile-open','');
   if(index===4&&h.to===5)b.setAttribute('data-pi-care-open','');
+  if(index===5&&h.to===6)b.setAttribute('data-pi-suitability-open','');
   b.onclick=async e=>{e.stopPropagation();
+   if(index>=3&&!Array.from(stage.querySelectorAll('.hot')).includes(b))return;
    if(index===3){
     if(e.isTrusted===true&&h.to===4&&acquisition.getState()===state&&resultView.isReady(state)){
      profileState=state;index=4;render();
@@ -174,8 +203,15 @@ function render(){
     return;
    }
    if(index===5){
-    if(e.isTrusted===true&&h.label==='Back to profile'&&profileState===state&&careState===state
-      &&acquisition.getState()===state){index=4;render();}
+    if(e.isTrusted===true&&profileState===state&&careState===state&&acquisition.getState()===state){
+     if(h.label==='Back to profile'){index=4;render();}
+     else if(h.to===6&&suitabilityView.start(state)){suitabilityState=state;index=6;render();}
+    }
+    return;
+   }
+   if(index===6){
+    if(e.isTrusted===true&&h.label==='Back to care'&&suitabilityState===state
+      &&acquisition.getState()===state){index=5;render();}
     return;
    }
    if(h.action){acquisition?.activate(h.action);return;}if(index!==7){go(h.to);return;}if(saving)return;
