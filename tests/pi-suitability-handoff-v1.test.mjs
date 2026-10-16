@@ -1,3 +1,4 @@
+import {withoutSaveUi} from './helpers/pi-save-ui-source-compat.mjs';
 import {withoutTargetBinding} from './helpers/pi-target-binding-source-compat.mjs';
 import {withoutAcceptedReview} from './helpers/pi-accepted-review-source-compat.mjs';
 import test, {after} from 'node:test';
@@ -21,7 +22,7 @@ const withoutCatalogTransport = source => source
   .replace(/      (?:const client = clientForRead\(\);|let response;)[\s\S]*?(?=      if \(response\?\.error)/, '[catalog read]\n');
 const withoutCatalogHost = source => source.replace(/<script type="module" id="core-pi-catalog-host">[\s\S]*?<\/script>\n/, '');
 
-const root = new URL('../', import.meta.url), read = p => fs.readFileSync(new URL(p, root), 'utf8');
+const root = new URL('../', import.meta.url), read = p => withoutSaveUi(fs.readFileSync(new URL(p, root), 'utf8'));
 const base = 'e2f3082bd10ae67d44e7a870b3a6461548422919';
 const originalFetch = globalThis.fetch;
 let network = 0;

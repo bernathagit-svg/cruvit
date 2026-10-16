@@ -1,3 +1,4 @@
+import {withoutSaveUi} from './helpers/pi-save-ui-source-compat.mjs';
 import {withoutTargetBinding} from './helpers/pi-target-binding-source-compat.mjs';
 import {withoutAcceptedReview} from './helpers/pi-accepted-review-source-compat.mjs';
 import test, {after} from 'node:test';
@@ -19,7 +20,7 @@ const withoutCatalogTransport = source => source
 const withoutCatalogHost = source => source.replace(/<script type="module" id="core-pi-catalog-host">[\s\S]*?<\/script>\n/, '');
 
 const root = new URL('../', import.meta.url);
-const read = path => fs.readFileSync(new URL(path, root), 'utf8');
+const read = path => withoutSaveUi(fs.readFileSync(new URL(path, root), 'utf8'));
 const parent = 'b1666eb3843d07151bdd83be8cd1b7ce85b34796';
 const origin = 'https://offline.cruvit.invalid';
 const route = '/core-v1/plant-identification/';
@@ -410,7 +411,7 @@ test('8B composition is only the exact surviving transport blocks; no UI or lock
   const hashes = {'app.html': '12cff17f30c34b8c3d2daa801976bcff288e8a277d45c8bb66825f3137da766d',
     'core-v1/plant-identification/index.html': 'c6468f2a75dd94eb1fa26c8669e15dc29a8bfbfe4e1a2a722c6bf2e068ee3468',
     'modules/plant-identifier/atomic-save-handoff-v1.js': '007bfb113c14f8b63b4d85dd52e2a62375cd9e1dafa57243c6b13d497e499997'};
-  for (const [path, hash] of Object.entries(hashes)) assert.equal(createHash('sha256').update(path === 'app.html' ? withoutCatalogHost(withoutAcceptedReview(withoutTargetBinding(read(path)))) : Buffer.from(withoutAcceptedReview(withoutTargetBinding(fs.readFileSync(new URL(path, root), 'utf8'))))).digest('hex'), hash);
+  for (const [path, hash] of Object.entries(hashes)) assert.equal(createHash('sha256').update(path === 'app.html' ? withoutCatalogHost(withoutAcceptedReview(withoutTargetBinding(read(path)))) : Buffer.from(withoutAcceptedReview(withoutTargetBinding(withoutSaveUi(fs.readFileSync(new URL(path, root), 'utf8')))))).digest('hex'), hash);
   for (const [path, id] of [['app.html', 'core-pi-atomic-save-host'], ['core-v1/plant-identification/index.html', 'core-pi-atomic-save-client']]) {
     const source = withoutCatalogHost(withoutAcceptedReview(withoutTargetBinding(read(path)))), block = new RegExp('<script type="module" id="' + id + '">[\\s\\S]*?<\\/script>\\n');
     assert.equal((source.match(new RegExp('id="' + id + '"', 'g')) || []).length, 1);

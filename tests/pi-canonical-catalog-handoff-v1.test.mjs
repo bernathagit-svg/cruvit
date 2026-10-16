@@ -1,3 +1,4 @@
+import {withoutSaveUi} from './helpers/pi-save-ui-source-compat.mjs';
 import {withoutTargetBinding} from './helpers/pi-target-binding-source-compat.mjs';
 import {withoutAcceptedReview} from './helpers/pi-accepted-review-source-compat.mjs';
 import test, {after} from 'node:test';
@@ -9,7 +10,7 @@ import {createPiCatalogHost, createPiCatalogClient, CATALOG_SELECT} from '../mod
 import {createRealPiController} from '../modules/plant-identifier/real-pi-runtime-v1.js';
 import {createPlantIdentityResolver} from '../modules/identity/plant-identity-resolver.js';
 import {resolveCanonicalReadSlug} from '../modules/identity/canonical-alias-authority-v1.js';
-const root = new URL('../', import.meta.url), read = p => fs.readFileSync(new URL(p, root), 'utf8');
+const root = new URL('../', import.meta.url), read = p => withoutSaveUi(fs.readFileSync(new URL(p, root), 'utf8'));
 const origin = 'https://isolated-cruvit-preview.invalid', route = '/core-v1/plant-identification/';
 const REQUEST = 'cruvit:core-pi-catalog-request', RESPONSE = 'cruvit:core-pi-catalog-response';
 const registry = JSON.parse(read('data/plant-identity.registry.json'));

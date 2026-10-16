@@ -1,3 +1,4 @@
+import {withoutSaveUi} from './helpers/pi-save-ui-source-compat.mjs';
 import {withoutTargetBinding} from './helpers/pi-target-binding-source-compat.mjs';
 import {withoutAcceptedReview} from './helpers/pi-accepted-review-source-compat.mjs';
 // Slice 1 qualification: native Node + DOM/transport stubs. No hosted/browser/provider claim.
@@ -32,7 +33,7 @@ const withoutCatalogTransport = source => source
 const withoutCatalogHost = source => source.replace(/<script type="module" id="core-pi-catalog-host">[\s\S]*?<\/script>\n/, '');
 
 const root = new URL('../', import.meta.url);
-const read = path => fs.readFileSync(new URL(path, root), 'utf8');
+const read = path => withoutSaveUi(fs.readFileSync(new URL(path, root), 'utf8'));
 const registry = JSON.parse(read('data/plant-identity.registry.json'));
 const authorityFor = (data = registry) => {
   const resolver = createPlantIdentityResolver(data);

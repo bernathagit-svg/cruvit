@@ -85,6 +85,15 @@ body{display:grid;place-items:start center;font-family:Arial,sans-serif;overflow
 .pi-suitability-credit{position:absolute;bottom:0;left:0;right:0;max-height:36%;overflow:auto;pointer-events:auto;background:#f7f6eff2;font-size:max(8px,1.8cqw);line-height:1.1;padding:.25em;text-align:left}
 .pi-suitability-credit a{margin-left:.4em;color:inherit}
 </style>
+<style id="pi-save-style">
+.pi-save{position:absolute;inset:0;pointer-events:none;container-type:inline-size;color:#254d39;font-family:Arial,sans-serif}
+.pi-save-slot{position:absolute;overflow:hidden;background:#f5f4ed;line-height:1.2;font-size:2.65cqw}
+.pi-save-name{font-size:3.4cqw;font-weight:700}
+.pi-save-scientific{font-size:2.8cqw;direction:ltr}
+.pi-save-photo{border-radius:2cqw;font-size:2cqw}
+.pi-save-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pi-save-status{font-size:2.6cqw}
+</style>
 </head>
 <body>
 <main class="stage" id="stage"><img id="screen" alt=""></main>
@@ -120,6 +129,7 @@ body{display:grid;place-items:start center;font-family:Arial,sans-serif;overflow
 
 <script type="module">
 import {wireRealPiInputs,createPiResultView,createPiProfileView,canonicalPiProfile,createPiCareView} from '../../modules/plant-identifier/real-pi-runtime-v1.js';
+import {createPiSaveUi} from '../../modules/plant-identifier/pi-save-ui-v1.js';
 import {createPiSuitabilityView} from '../../modules/plant-identifier/pi-suitability-view-v1.js';
 const screens=Array.from({length:8},(_,i)=>(window.__PI?.[i]||[]).join(""));
 const expected=[2310742,3406426,1786662,3352146,3347862,2456618,2020150,2405466];
@@ -135,7 +145,7 @@ const hotspots={
 6:[{x:5,y:80,w:90,h:13,to:7,label:"Save to My Garden"}],
 7:[{x:10,y:78,w:80,h:5,to:0,label:"Save to My Garden"}]
 };
-let index=0,saveAction=null,saving=false,acquisition=null,shownResultActionId=null,profileState=null,careState=null,suitabilityState=null;
+let index=0,saving=false,acquisition=null,shownResultActionId=null,profileState=null,careState=null,suitabilityState=null;
 const stage=document.getElementById("stage"),img=document.getElementById("screen");
 const resultView=createPiResultView({document,stage,onReady:()=>render()});
 const profileView=createPiProfileView({document,stage,onReady:()=>render()});
@@ -146,7 +156,36 @@ const suitabilityView=createPiSuitabilityView({document,stage,window,
 Object.defineProperty(window,'cruvitCorePiReviewSurface',{value:Object.freeze({
  read:suitabilityView.readAcceptedReview,subscribe:suitabilityView.observeAcceptedReview
 })});
-stage.addEventListener('cruvit-pi-save-bind',event=>{if(typeof event.detail?.save==='function')saveAction=event.detail.save;});
+const saveUi=createPiSaveUi({readState:()=>acquisition?.getState(),getClient:()=>window.cruvitCorePiSave,
+ readContext(){
+  if(window.parent===window||window.parent.location.origin!==window.location.origin)return null;
+  return {review:window.parent.cruvitCorePiAcceptedReview?.read(),
+   readiness:window.parent.cruvitPersonalDomainV0?.getGardenContextReadiness?.()};
+ },onChange:()=>{if(index===7)renderSaveState();}});
+suitabilityView.observeAcceptedReview(()=>{if(index===6)render();});
+for(const name of ['cruvit:garden-context-ready','cruvit:auth-session-changed']){
+ try{if(window.parent!==window)window.parent.addEventListener(name,()=>saveUi.refresh());}catch{}
+}
+function renderSaveState(){
+ const ui=saveUi.getState(),b=stage.querySelector('[data-pi-save-action]');
+ if(b){b.disabled=!ui.enabled;b.setAttribute('aria-label',ui.status==='UNKNOWN'?'Check save status':'Add to My Garden');}
+ const message=stage.querySelector('[data-pi-save-status]');if(message){message.textContent=ui.message;message.setAttribute('data-save-state',ui.status);}
+ stage.setAttribute('aria-busy',String(ui.status==='SAVING'));
+}
+function bindSaveContent(state){
+ const plant=canonicalPiProfile(state);if(!plant.available)return;
+ const root=document.createElement('section');root.className='pi-save';root.setAttribute('aria-label','Save canonical plant to the reviewed garden');
+ const slots={photo:[506,557,114,118],name:[641,589,255,43],scientific:[641,637,260,37],status:[410,1180,475,59]};
+ for(const [key,[x,y,w,h]] of Object.entries(slots)){
+  const slot=document.createElement('div');slot.className='pi-save-slot pi-save-'+key;
+  Object.assign(slot.style,{left:x/940*100+'%',top:y/1672*100+'%',width:w/940*100+'%',height:h/1672*100+'%'});
+  if(key==='photo'){const photo=document.createElement('img');photo.alt=plant.name+' — canonical catalog image';photo.referrerPolicy='no-referrer';photo.src=plant.media.url;slot.textContent='Image unavailable';photo.onerror=()=>photo.remove();slot.appendChild(photo);}
+  else if(key==='status'){slot.setAttribute('data-pi-save-status','');slot.setAttribute('role','status');slot.setAttribute('aria-live','polite');}
+  else slot.textContent=key==='name'?plant.name:plant.scientific;
+  root.appendChild(slot);
+ }
+ stage.appendChild(root);
+}
 // Manual navigation stays within acquisition. Only qualified controller state opens PI-04.
 function go(i){if(saving||i>index)return;index=Math.max(0,Math.min(2,i));render()}
 function showAcquisitionScreen(i){index=Math.max(0,Math.min(2,i));render()}
@@ -158,15 +197,16 @@ function render(){
  }else if(index===3&&!resultReady){index=1;}
  // Each permit is the current immutable controller state, captured only by its
  // preceding bound button. URL/DOM fields and numeric navigation are not permits.
- if(!Number.isInteger(index)||index>=4&&(![4,5,6].includes(index)||profileState!==state
+ if(!Number.isInteger(index)||index>=4&&(![4,5,6,7].includes(index)||profileState!==state
    ||!canonicalPiProfile(state).available||index>=5&&careState!==state
-   ||index===6&&(suitabilityState!==state||!suitabilityView.isCurrent(state)))){
+   ||index===6&&(suitabilityState!==state||!suitabilityView.isCurrent(state))
+   ||index===7&&(suitabilityState!==state||!suitabilityView.readAcceptedReview()))){
   profileState=null;careState=null;suitabilityState=null;index=1;
  }
- if(![4,5,6].includes(index))profileState=null;
- if(index!==5&&index!==6)careState=null;
- if(index!==6)suitabilityState=null;
- stage.querySelectorAll(".hot").forEach(x=>x.remove());
+ if(![4,5,6,7].includes(index))profileState=null;
+ if(index!==5&&index!==6&&index!==7)careState=null;
+ if(index!==6&&index!==7)suitabilityState=null;
+ stage.querySelectorAll(".hot,.pi-save").forEach(x=>x.remove());
  img.src=screens[index];
  img.alt="CRUVIT Plant Identification — "+titles[index];
  document.title="CRUVIT · Plant Identification · "+titles[index];
@@ -176,14 +216,18 @@ function render(){
  suitabilityView.update(state,index===6&&suitabilityState===state);
  img.setAttribute('aria-hidden',String(index>=3&&index<=6));
  // Only the approved Care tile in a successfully bound profile opens PI-06.
- // PI-07 requires its own current Care permit; PI-08/save remain closed.
+ // PI-08 requires the current accepted review; the host revalidates before intent and Save.
  const activeHotspots=index<3?hotspots[index]||[]:index===3&&resultView.isReady(state)
   ?[{...hotspots[3][0],x:72,y:51.6,w:21,h:4}]
   :index===4?[{x:6.2,y:5.3,w:11.1,h:6.2,label:"Back to result"},
    ...(profileView.isReady(state)?[{x:6.4,y:57.5,w:20.5,h:13.5,label:"Care",to:5}]:[])]
   :index===5?[{x:9.5,y:1.5,w:16,h:3,label:"Back to profile"},
    {x:39.5,y:30.4,w:23,h:5.1,label:"Growing Conditions",to:6}]
-  :index===6?[{x:9.5,y:1.5,w:16,h:3,label:"Back to care"}]:[];
+  :index===6?[{x:9.5,y:1.5,w:16,h:3,label:"Back to care"},
+   ...(suitabilityView.readAcceptedReview()?[{x:5,y:86,w:90,h:3.5,label:"Add to My Garden",to:7}]:[])]
+  :index===7?[{x:4,y:3.5,w:11,h:6,label:"Back to suitability"},
+   {x:4,y:77.3,w:92,h:6.4,label:"Add to My Garden"}]:[];
+ if(index===7)bindSaveContent(state);
  for(const h of activeHotspots){
   const b=document.createElement("button");
   b.className="hot";b.type="button";b.setAttribute("aria-label",h.label);
@@ -192,6 +236,7 @@ function render(){
   if(index===3)b.setAttribute('data-pi-profile-open','');
   if(index===4&&h.to===5)b.setAttribute('data-pi-care-open','');
   if(index===5&&h.to===6)b.setAttribute('data-pi-suitability-open','');
+  if(index===7&&h.label==='Add to My Garden')b.setAttribute('data-pi-save-action','');
   b.onclick=async e=>{e.stopPropagation();
    if(index>=3&&!Array.from(stage.querySelectorAll('.hot')).includes(b))return;
    if(index===3){
@@ -213,19 +258,22 @@ function render(){
     }
     return;
    }
+   if(index===7){
+    if(e.isTrusted!==true||acquisition.getState()!==state)return;
+    if(h.label==='Back to suitability'){if(saveUi.getState().status!=='SAVING'){index=5;render();}return;}
+    await saveUi.activate({explicitUserAction:true});return;
+   }
    if(index===6){
+    if(e.isTrusted===true&&h.to===7&&suitabilityState===state&&acquisition.getState()===state
+     &&suitabilityView.readAcceptedReview()&&saveUi.open()){index=7;render();return;}
     if(e.isTrusted===true&&h.label==='Back to care'&&suitabilityState===state
       &&acquisition.getState()===state){index=5;render();}
     return;
    }
-   if(h.action){acquisition?.activate(h.action);return;}if(index!==7){go(h.to);return;}if(saving)return;
-   if(!saveAction){alert('Preview save is not ready. No data was saved.');return;}
-   saving=true;b.disabled=true;stage.setAttribute('aria-busy','true');
-   try{await saveAction();location.assign('/core-v1/my-garden/');}
-   catch(error){alert('Save not completed: '+error.message+' No second save was attempted automatically.');}
-   finally{saving=false;b.disabled=false;stage.removeAttribute('aria-busy');}
+   if(h.action){acquisition?.activate(h.action);return;}go(h.to);
   };stage.appendChild(b);
  }
+ if(index===7)renderSaveState();
 }
 let touchStartX=null;
 stage.addEventListener("touchstart",e=>{touchStartX=e.changedTouches[0].clientX},{passive:true});
@@ -258,7 +306,7 @@ Object.defineProperty(window, 'cruvitCorePiSuitability', {value: createPiSuitabi
 <script type="module" id="core-pi-atomic-save-client">
 import {createPiAtomicSaveClient} from '../../modules/plant-identifier/atomic-save-handoff-v1.js';
 import {canonicalPiResult} from '../../modules/plant-identifier/real-pi-runtime-v1.js';
-// Infrastructure only: no Save button binding, screen exposure or automatic request.
+// Explicit UI activation only. The host owns review authorization and Save execution.
 Object.defineProperty(window, 'cruvitCorePiSave', {value: createPiAtomicSaveClient({window,
   readCanonicalResult() {
     const state = window.__CRUVIT_REAL_PI_STATE, result = canonicalPiResult(state);

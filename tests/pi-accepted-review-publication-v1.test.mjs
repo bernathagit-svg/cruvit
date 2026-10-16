@@ -1,3 +1,4 @@
+import {withoutSaveUi} from './helpers/pi-save-ui-source-compat.mjs';
 import {withoutTargetBinding} from './helpers/pi-target-binding-source-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -40,7 +41,7 @@ test('fresh Garden B review replaces invalid Garden A',()=>{const f=fixture();f.
 for(const mutation of ['origin','route','query','hash','disconnect','frame'])test('frame lifecycle '+mutation+' invalidates',()=>{const f=fixture();f.accept(f.start());if(mutation==='origin')f.child.location=new URL('https://evil.invalid'+route);if(mutation==='route')f.child.location=new URL(origin+'/other');if(mutation==='query')f.child.location.search='?garden=evil';if(mutation==='hash')f.child.location.hash='#evil';if(mutation==='disconnect')f.frame.isConnected=false;if(mutation==='frame')f.frame.contentWindow={};assert.equal(f.read().valid,false);f.publication.dispose();});
 test('unbind invalidates accepted and queued callbacks',()=>{const f=fixture(),r=f.start();f.accept(r);f.publication.unbind();f.accept(r);assert.equal(f.read().valid,false);f.publication.dispose();});
 const root=new URL('../',import.meta.url);
-test('legacy source preservation excludes only exact observer additions; every other byte identical',()=>{for(const p of ['app.html','core-v1/plant-identification/index.html','modules/plant-identifier/pi-suitability-view-v1.js','modules/plant-identifier/suitability-context-handoff-v1.js'])assert.equal(withoutAcceptedReview(withoutTargetBinding(readFileSync(new URL(p,root),'utf8'))),execFileSync('git',['show','9117a0b0161c68ccb75239f2e31bf232e5aa69b5:'+p],{cwd:root,encoding:'utf8',maxBuffer:1e7}));});
+test('legacy source preservation excludes only exact observer additions; every other byte identical',()=>{for(const p of ['app.html','core-v1/plant-identification/index.html','modules/plant-identifier/pi-suitability-view-v1.js','modules/plant-identifier/suitability-context-handoff-v1.js'])assert.equal(withoutAcceptedReview(withoutTargetBinding(withoutSaveUi(readFileSync(new URL(p,root),'utf8')))),execFileSync('git',['show','9117a0b0161c68ccb75239f2e31bf232e5aa69b5:'+p],{cwd:root,encoding:'utf8',maxBuffer:1e7}));});
 // Compare real original/current host replies, including malicious messages and failed authority.
 const oldSource=execFileSync('git',['show','9117a0b0161c68ccb75239f2e31bf232e5aa69b5:modules/plant-identifier/suitability-context-handoff-v1.js'],{cwd:root,encoding:'utf8'});
 const {createPiSuitabilityHost:oldHost}=await import('data:text/javascript;base64,'+Buffer.from(oldSource).toString('base64'));
