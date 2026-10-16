@@ -6,6 +6,16 @@ import {createHash, randomUUID} from 'node:crypto';
 import {createPiAtomicSaveHost, createPiAtomicSaveClient, bindPiAtomicSaveHostFrame} from '../modules/plant-identifier/atomic-save-handoff-v1.js';
 import {createCanonicalIdentifierSaveController} from '../core-v1/plant-identification/atomic/save-controller.mjs';
 
+
+// Catalog transport is the only newly authorized runtime variation. Preserve
+// every acquisition, canonical qualification and presentation statement outside it.
+const withoutCatalogTransport = source => source
+  .replace(/^(?:import[^\n]*|export \{CATALOG_SELECT\}[^\n]*)\n/gm, '')
+  .replace(/^export const CATALOG_SELECT[^\n]*\n/gm, '')
+  .replace(/  (?:let previewRuntime;|\/\/ Explicit legacy fixture clients retain)[\s\S]*?(?=  let image = null)/, '[catalog source]\n')
+  .replace(/      (?:const client = clientForRead\(\);|let response;)[\s\S]*?(?=      if \(response\?\.error)/, '[catalog read]\n');
+const withoutCatalogHost = source => source.replace(/<script type="module" id="core-pi-catalog-host">[\s\S]*?<\/script>\n/, '');
+
 const root = new URL('../', import.meta.url);
 const read = path => fs.readFileSync(new URL(path, root), 'utf8');
 const parent = 'b1666eb3843d07151bdd83be8cd1b7ce85b34796';
@@ -394,9 +404,9 @@ test('8B composition is only the exact surviving transport blocks; no UI or lock
   const hashes = {'app.html': '12cff17f30c34b8c3d2daa801976bcff288e8a277d45c8bb66825f3137da766d',
     'core-v1/plant-identification/index.html': 'c6468f2a75dd94eb1fa26c8669e15dc29a8bfbfe4e1a2a722c6bf2e068ee3468',
     'modules/plant-identifier/atomic-save-handoff-v1.js': '007bfb113c14f8b63b4d85dd52e2a62375cd9e1dafa57243c6b13d497e499997'};
-  for (const [path, hash] of Object.entries(hashes)) assert.equal(createHash('sha256').update(fs.readFileSync(new URL(path, root))).digest('hex'), hash);
+  for (const [path, hash] of Object.entries(hashes)) assert.equal(createHash('sha256').update(path === 'app.html' ? withoutCatalogHost(read(path)) : fs.readFileSync(new URL(path, root))).digest('hex'), hash);
   for (const [path, id] of [['app.html', 'core-pi-atomic-save-host'], ['core-v1/plant-identification/index.html', 'core-pi-atomic-save-client']]) {
-    const source = read(path), block = new RegExp('<script type="module" id="' + id + '">[\\s\\S]*?<\\/script>\\n');
+    const source = withoutCatalogHost(read(path)), block = new RegExp('<script type="module" id="' + id + '">[\\s\\S]*?<\\/script>\\n');
     assert.equal((source.match(new RegExp('id="' + id + '"', 'g')) || []).length, 1);
     assert.equal(source.replace(block, ''), execFileSync('git', ['show', parent + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10000000}));
   }
@@ -404,7 +414,9 @@ test('8B composition is only the exact surviving transport blocks; no UI or lock
     'modules/plant-identifier/real-pi-runtime-v1.js', 'core-v1/plant-identification/atomic/save-controller.mjs',
     'core-v1/plant-identification/atomic/preview-domain.mjs', 'core-v1/plant-identification/atomic/add-plant-contract.js',
     'core-v1/plant-identification/atomic/add-plant-write-repository.js', 'data/plant-identity.registry.json']) {
-    assert.equal(read(path), execFileSync('git', ['show', parent + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10000000}));
+    const before = execFileSync('git', ['show', parent + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10000000});
+    assert.equal(path.endsWith('real-pi-runtime-v1.js') ? withoutCatalogTransport(read(path)) : read(path),
+      path.endsWith('real-pi-runtime-v1.js') ? withoutCatalogTransport(before) : before);
   }
   const source = read('modules/plant-identifier/atomic-save-handoff-v1.js');
   assert.doesNotMatch(source, /localStorage|sessionStorage|indexedDB|\bfetch\s*\(|XMLHttpRequest|navigator\.geolocation|\.insert\(|\.upsert\(|\.upload\(/);

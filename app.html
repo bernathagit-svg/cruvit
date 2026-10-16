@@ -11340,5 +11340,12 @@ import {createPiAtomicSaveHost, bindPiAtomicSaveHostFrame} from './modules/plant
 const saveHost = createPiAtomicSaveHost({window, getPersonalDomain: () => window.cruvitPersonalDomainV0});
 bindPiAtomicSaveHostFrame({window, document, host: saveHost});
 </script>
+<script type="module" id="core-pi-catalog-host">
+import {createPiCatalogHost} from './modules/plant-identifier/canonical-catalog-handoff-v1.js';
+import {bindPiAtomicSaveHostFrame as bindCorePiHostFrame} from './modules/plant-identifier/atomic-save-handoff-v1.js';
+// Reuse the qualified frame binder only. Catalog transport has no Save operation.
+const catalogHost = createPiCatalogHost({window, getPersonalDomain: () => window.cruvitPersonalDomainV0});
+bindCorePiHostFrame({window, document, host: catalogHost});
+</script>
 </body>
 </html>

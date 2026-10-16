@@ -19,6 +19,16 @@ import {projectRows, GARDEN_ID} from '../core-v1/my-garden/plants/data.mjs';
 import {materializePlantCatalogItemFromPacket} from '../modules/catalog-expansion/catalog-expansion-v1-contract.js';
 import {createPiSuitabilityView, readPiSuitability, PI_SUITABILITY_SLOTS} from '../modules/plant-identifier/pi-suitability-view-v1.js';
 
+
+// Catalog transport is the only newly authorized runtime variation. Preserve
+// every acquisition, canonical qualification and presentation statement outside it.
+const withoutCatalogTransport = source => source
+  .replace(/^(?:import[^\n]*|export \{CATALOG_SELECT\}[^\n]*)\n/gm, '')
+  .replace(/^export const CATALOG_SELECT[^\n]*\n/gm, '')
+  .replace(/  (?:let previewRuntime;|\/\/ Explicit legacy fixture clients retain)[\s\S]*?(?=  let image = null)/, '[catalog source]\n')
+  .replace(/      (?:const client = clientForRead\(\);|let response;)[\s\S]*?(?=      if \(response\?\.error)/, '[catalog read]\n');
+const withoutCatalogHost = source => source.replace(/<script type="module" id="core-pi-catalog-host">[\s\S]*?<\/script>\n/, '');
+
 const root = new URL('../', import.meta.url);
 const read = path => fs.readFileSync(new URL(path, root), 'utf8');
 const registry = JSON.parse(read('data/plant-identity.registry.json'));
@@ -1068,7 +1078,7 @@ test('Slice 5: PI-01–05 styles/acquisition and canonical controller/Save autho
   }
   const runtime = read('modules/plant-identifier/real-pi-runtime-v1.js');
   const before = execFileSync('git', ['show', base + ':modules/plant-identifier/real-pi-runtime-v1.js'], {cwd: root, encoding: 'utf8'});
-  assert.equal(runtime.slice(runtime.indexOf('export const IDENTIFY_ENDPOINT'), runtime.indexOf('// Coordinates')), before.slice(before.indexOf('export const IDENTIFY_ENDPOINT'), before.indexOf('// Coordinates')));
+  assert.equal(withoutCatalogTransport(runtime.slice(runtime.indexOf('export const IDENTIFY_ENDPOINT'), runtime.indexOf('// Coordinates'))), withoutCatalogTransport(before.slice(before.indexOf('export const IDENTIFY_ENDPOINT'), before.indexOf('// Coordinates'))));
   assert.equal(runtime.slice(runtime.indexOf('// Bind native pickers once')), before.slice(before.indexOf('// Bind native pickers once')));
   assert.equal(Object.keys(PI_CARE_SLOTS).length, 28);
   assert.match(runtime, /CANONICAL CARE — FERTILIZING AUTHORITY GAP/);
@@ -1271,8 +1281,8 @@ test('Slice 6: view has no evaluator, location record, network, persistence or p
   for (const path of ['app.html', 'modules/plant-identifier/suitability-context-handoff-v1.js',
     'modules/plant-identifier/real-pi-runtime-v1.js', 'modules/personal-domain/specific-plant-suitability-contract.js']) {
     const current = path === 'app.html'
-      ? read(path).replace(/<script type="module" id="core-pi-atomic-save-host">[\s\S]*?<\/script>\n/, '')
-      : read(path);
-    assert.equal(current, execFileSync('git', ['show', parent + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000}));
+      ? withoutCatalogHost(read(path)).replace(/<script type="module" id="core-pi-atomic-save-host">[\s\S]*?<\/script>\n/, '')
+      : path.endsWith('real-pi-runtime-v1.js') ? withoutCatalogTransport(read(path)) : read(path);
+    assert.equal(current, path.endsWith('real-pi-runtime-v1.js') ? withoutCatalogTransport(execFileSync('git', ['show', parent + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000})) : execFileSync('git', ['show', parent + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000}));
   }
 });

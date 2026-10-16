@@ -9,6 +9,16 @@ import {classifyIdentifierGardenLocationContext} from '../modules/plant-identifi
 import {classifyPersonalDomainGardenReadiness} from '../modules/personal-domain/garden-context-ready-v1.js';
 import {resolveCanonicalReadSlug} from '../modules/identity/canonical-alias-authority-v1.js';
 
+
+// Catalog transport is the only newly authorized runtime variation. Preserve
+// every acquisition, canonical qualification and presentation statement outside it.
+const withoutCatalogTransport = source => source
+  .replace(/^(?:import[^\n]*|export \{CATALOG_SELECT\}[^\n]*)\n/gm, '')
+  .replace(/^export const CATALOG_SELECT[^\n]*\n/gm, '')
+  .replace(/  (?:let previewRuntime;|\/\/ Explicit legacy fixture clients retain)[\s\S]*?(?=  let image = null)/, '[catalog source]\n')
+  .replace(/      (?:const client = clientForRead\(\);|let response;)[\s\S]*?(?=      if \(response\?\.error)/, '[catalog read]\n');
+const withoutCatalogHost = source => source.replace(/<script type="module" id="core-pi-catalog-host">[\s\S]*?<\/script>\n/, '');
+
 const root = new URL('../', import.meta.url), read = p => fs.readFileSync(new URL(p, root), 'utf8');
 const base = 'e2f3082bd10ae67d44e7a870b3a6461548422919';
 const originalFetch = globalThis.fetch;
@@ -209,9 +219,10 @@ test('6A: accepted client wiring, prior PI styles and all eight approved rasters
   for (const path of ['app.html', 'modules/plant-identifier/suitability-context-handoff-v1.js',
     'modules/plant-identifier/real-pi-runtime-v1.js']) {
     const current = path === 'app.html'
-      ? read(path).replace(/<script type="module" id="core-pi-atomic-save-host">[\s\S]*?<\/script>\n/, '')
-      : read(path);
-    assert.equal(current, execFileSync('git', ['show', acceptedBase + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000}));
+      ? withoutCatalogHost(read(path)).replace(/<script type="module" id="core-pi-atomic-save-host">[\s\S]*?<\/script>\n/, '')
+      : path.endsWith('real-pi-runtime-v1.js') ? withoutCatalogTransport(read(path)) : read(path);
+    const priorRuntime = execFileSync('git', ['show', acceptedBase + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000});
+    assert.equal(current, path.endsWith('real-pi-runtime-v1.js') ? withoutCatalogTransport(priorRuntime) : priorRuntime);
   }
   const ctx = vm.createContext({window: {}});
   for (const match of html.matchAll(/<script src="\.\/assets\/(s\d-\d+\.js)"><\/script>/g)) {
@@ -228,7 +239,7 @@ test('6A: host/evaluator/registry/care/location remain unchanged; only the autho
   const added = app.match(/<script type="module" id="core-pi-suitability-host">[\s\S]*?<\/script>\n/)[0];
   const saveHost = /<script type="module" id="core-pi-atomic-save-host">[\s\S]*?<\/script>\n/;
   assert.equal((app.match(/id="core-pi-atomic-save-host"/g) || []).length, 1);
-  assert.equal(app.replace(added, '').replace(saveHost, ''), old);
+  assert.equal(withoutCatalogHost(app).replace(added, '').replace(saveHost, ''), old);
   for (const name of ['getGardenContextReadiness', 'getIdentifierGardenLocationContext', 'hasTrustedAppLocation',
     'getAppClimateProfile', 'smartRecProtectionContext', 'canonicalRuntimeCatalogProfile', 'evaluateIdentifierGardenSuitability']) assert.ok(added.includes(name));
   const changed = execFileSync('git', ['diff', '--name-only', base], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000}).trim().split('\n');
@@ -236,7 +247,8 @@ test('6A: host/evaluator/registry/care/location remain unchanged; only the autho
   // All other Atomic files, including the command, intent contract and boot, stay locked.
   const controllerRefactor = new Set([
     'core-v1/plant-identification/atomic/save-controller.mjs',
-    'core-v1/plant-identification/atomic/preview-domain.mjs'
+    'core-v1/plant-identification/atomic/preview-domain.mjs',
+    'modules/plant-identifier/real-pi-runtime-v1.js' // catalog transport only; comparison above preserves its canonical core
   ]);
   assert.ok(!changed.some(p => /atomic\/|garden-profile|specific-plant-suitability|real-pi-runtime|netlify\/functions|identity\//.test(p)
     && !controllerRefactor.has(p)));

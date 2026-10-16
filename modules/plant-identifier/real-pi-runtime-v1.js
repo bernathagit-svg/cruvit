@@ -2,7 +2,9 @@
 // Rendering PI-04 and all persistence remain outside this controller.
 import {loadIdentityRegistry, resolvePlantIdentity} from '../identity/plant-identity-resolver.js';
 import {resolveCanonicalReadSlug} from '../identity/canonical-alias-authority-v1.js';
-import {createPreviewClient, PREVIEW_URL} from '../../core-v1/my-garden/shared/preview-session.mjs';
+import {PREVIEW_URL} from '../../core-v1/my-garden/shared/preview-session.mjs';
+import {createPiCatalogClient, CATALOG_SELECT} from './canonical-catalog-handoff-v1.js';
+export {CATALOG_SELECT} from './canonical-catalog-handoff-v1.js';
 import {catalogRowToRuntimePlant} from '../catalog/canonical-catalog-persistence-contract-v1.js';
 import {resolvePlantDisplayMedia, formatCatalogAttributionLabel} from '../catalog-media/licensed-catalog-media-runtime-v1.js';
 import {readPlantKnowledge} from '../catalog-expansion/plant-knowledge-warnings-v1-contract.js';
@@ -11,7 +13,6 @@ import {readOptionalNumericThreshold} from '../catalog-expansion/plant-climate-q
 export const IDENTIFY_ENDPOINT = '/.netlify/functions/plant-identify';
 export const MAX_IMAGE_BYTES = 4_800_000;
 export const IMAGE_ACCEPT = 'image/jpeg,image/png,image/webp,image/gif';
-export const CATALOG_SELECT = 'slug,scientific_name,verification_state,needs_review,common_names,media_status,media,climate_traits';
 const MEDIA = new Set(IMAGE_ACCEPT.split(','));
 const SUCCESS = new Set(['resolved_id', 'resolved_canonical']);
 const FAILURES = new Set(['IMAGE_INVALID', 'IDENTIFY_FAILED', 'TAXONOMY_UNVERIFIED',
@@ -88,11 +89,9 @@ export function createRealPiController({
   getCatalogClient,
   requestTimeoutMs = 55_000
 } = {}) {
-  let previewRuntime;
-  const clientForRead = getCatalogClient || (() => {
-    previewRuntime ||= createPreviewClient({atomicSave: false});
-    return previewRuntime.client;
-  });
+  // Explicit legacy fixture clients retain their existing contract. The normal
+  // browser runtime reads through the live authenticated host, never Preview Auth.
+  let hostCatalog;
   let image = null, imageVersion = 0, actionNumber = 0, inFlight = null;
   const listeners = new Set();
   let state = frozen({status: 'NO_IMAGE', readyForResult: false, image: null,
@@ -139,12 +138,18 @@ export function createRealPiController({
 
   async function exactCatalogRead(slug, authority) {
     try {
-      const client = clientForRead();
-      if (client?.supabaseUrl?.replace(/\/$/, '') !== PREVIEW_URL) throw Error('PREVIEW_CLIENT_REQUIRED');
-      const auth = await client.auth.getUser();
-      if (auth.error || !auth.data?.user?.id || auth.data.user.role !== 'authenticated') throw Error('AUTH_REQUIRED');
-      const response = await client.from('catalog_plants').select(CATALOG_SELECT, {count: 'exact'})
-        .eq('slug', slug).limit(2);
+      let response;
+      if (getCatalogClient) {
+        const client = getCatalogClient();
+        if (client?.supabaseUrl?.replace(/\/$/, '') !== PREVIEW_URL) throw Error('PREVIEW_CLIENT_REQUIRED');
+        const auth = await client.auth.getUser();
+        if (auth.error || !auth.data?.user?.id || auth.data.user.role !== 'authenticated') throw Error('AUTH_REQUIRED');
+        response = await client.from('catalog_plants').select(CATALOG_SELECT, {count: 'exact'})
+          .eq('slug', slug).limit(2);
+      } else {
+        hostCatalog ||= createPiCatalogClient({window: globalThis.window});
+        response = await hostCatalog.readCanonicalRow(slug);
+      }
       if (response?.error || response?.status !== 200 || !Array.isArray(response.data)
           || !Number.isInteger(response.count) || response.count !== response.data.length) {
         throw failure('CATALOG_READ_FAILED', 'EXACT_CATALOG_READ_FAILED');
