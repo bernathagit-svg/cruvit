@@ -3,10 +3,10 @@
   "lockVersion": "static-runtime-source-lock-v1",
   "reviewedAgainstParentSha": "754141e7467a308b2be5f02c76ce5d914fdeb883",
   "baselineProductSha": "9c36d550a2476a64b4f0013b2599543538afd4fe",
-  "pathCount": 2692,
+  "pathCount": 2695,
   "classificationCounts": {
-    "BUILD_ONLY": 639,
-    "PUBLIC_STATIC": 1924,
+    "BUILD_ONLY": 641,
+    "PUBLIC_STATIC": 1925,
     "HISTORICAL_EVIDENCE": 54,
     "SERVER_RUNTIME": 75
   },
@@ -23730,6 +23730,30 @@
       "path": "tests/pi-canonical-catalog-handoff-v1.test.mjs",
       "classification": "BUILD_ONLY",
       "reason": "Offline canonical catalog bridge qualification; no real provider or writes.",
+      "proposalClassifications": [
+        "BUILD_ONLY"
+      ]
+    },
+    {
+      "path": "modules/plant-identifier/accepted-review-publication-v1.js",
+      "classification": "PUBLIC_STATIC",
+      "reason": "PI-07 host-only accepted-review observer and narrowly scoped qualification.",
+      "proposalClassifications": [
+        "PUBLIC_STATIC"
+      ]
+    },
+    {
+      "path": "tests/helpers/pi-accepted-review-source-compat.mjs",
+      "classification": "BUILD_ONLY",
+      "reason": "PI-07 host-only accepted-review observer and narrowly scoped qualification.",
+      "proposalClassifications": [
+        "BUILD_ONLY"
+      ]
+    },
+    {
+      "path": "tests/pi-accepted-review-publication-v1.test.mjs",
+      "classification": "BUILD_ONLY",
+      "reason": "PI-07 host-only accepted-review observer and narrowly scoped qualification.",
       "proposalClassifications": [
         "BUILD_ONLY"
       ]

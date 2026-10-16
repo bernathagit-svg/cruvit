@@ -70,7 +70,12 @@ function unavailableMessage(result) {
 
 export function createPiSuitabilityView({document, stage, window, readState, getClient}) {
   let root = null, current = null, run = null, slots = null;
-  function clear() { run = null; current = null; root?.remove(); root = null; slots = null; }
+  let accepted = null, acceptedState = null;
+  const reviewListeners = new Set();
+  const notifyReview = () => { for (const listener of reviewListeners) { try { listener(); } catch {} } };
+  const revokeReview = () => { if (accepted) { accepted = null; acceptedState = null; notifyReview(); } };
+  const freeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
+  function clear() { if (acceptedState && readState() !== acceptedState) revokeReview(); run = null; current = null; root?.remove(); root = null; slots = null; }
   function show(result) {
     if (!root) return;
     root.setAttribute('data-pi-suitability', result.ok ? 'SUITABILITY_READY' : 'SUITABILITY_UNAVAILABLE');
@@ -93,6 +98,7 @@ export function createPiSuitabilityView({document, stage, window, readState, get
     slots.evidence.textContent = outcomes.join(' · ') + (factors.length ? '\n' + [...new Set(factors)].join('\n') : '');
   }
   function invalidate() {
+    revokeReview();
     if (!current) return;
     run = null; show(unavailable('HOST_CONTEXT_CHANGED'));
   }
@@ -108,7 +114,7 @@ export function createPiSuitabilityView({document, stage, window, readState, get
   const hidden = () => { if (document.hidden) invalidate(); };
   document.addEventListener('visibilitychange', hidden);
   function dispose() {
-    clear(); for (const name of events) host?.removeEventListener(name, invalidate);
+    revokeReview(); reviewListeners.clear(); clear(); for (const name of events) host?.removeEventListener(name, invalidate);
     window?.removeEventListener?.('message', closed); window?.removeEventListener?.('pagehide', dispose);
     document.removeEventListener?.('visibilitychange', hidden);
   }
@@ -116,9 +122,15 @@ export function createPiSuitabilityView({document, stage, window, readState, get
   return Object.freeze({
     start(state) {
       if (readState() !== state || !canonicalPiCare(state).available) return false;
-      clear(); current = state; const task = {}; run = task;
+      revokeReview(); clear(); current = state; const task = {}; run = task;
       void readPiSuitability({state, client: getClient(), isCurrent: () => run === task && readState() === state})
-        .then(result => { if (run === task && readState() === state) show(result); });
+        .then(result => { if (run === task && readState() === state) {
+          show(result);
+          // Publish only after the existing complete acceptance path and render.
+          if (result.ok === true) {
+            acceptedState = state; accepted = freeze(structuredClone(result)); notifyReview();
+          }
+        } });
       return true;
     },
     update(state, visible) {
@@ -165,6 +177,11 @@ export function createPiSuitabilityView({document, stage, window, readState, get
         link.target = '_blank'; link.rel = 'noopener noreferrer'; credit.appendChild(link);
       }
       slots.photo.appendChild(credit); stage.appendChild(root);
+    },
+    readAcceptedReview() { return acceptedState && readState() === acceptedState ? accepted : null; },
+    observeAcceptedReview(listener) {
+      if (typeof listener !== 'function') throw Error('Read-only observer required');
+      reviewListeners.add(listener); return () => reviewListeners.delete(listener);
     },
     isCurrent: state => current === state && readState() === state,
     dispose

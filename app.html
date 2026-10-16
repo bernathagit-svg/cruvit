@@ -11310,6 +11310,9 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/garden-design/asset-factory-v1/calibration-review-host-v1.js?v=20260919f"></script>
 <script type="module" id="core-pi-suitability-host">
 import {createPiSuitabilityHost, CORE_PI_ROUTE} from './modules/plant-identifier/suitability-context-handoff-v1.js';
+import {createPiAcceptedReviewPublication} from './modules/plant-identifier/accepted-review-publication-v1.js';
+const acceptedPiReview = createPiAcceptedReviewPublication({window});
+Object.defineProperty(window,'cruvitCorePiAcceptedReview',{value:Object.freeze({read:acceptedPiReview.read})});
 // Explicit live-host entry, following the existing Garden Design iframe pattern.
 // Existing navigation is unchanged. No host state is copied into route/storage.
 let corePiFrame = null;
@@ -11320,7 +11323,8 @@ const corePiHandoff = createPiSuitabilityHost({window,
   getClimateProfile: () => getAppClimateProfile(),
   getSiteContext: () => smartRecProtectionContext(),
   resolveCanonicalPlant: input => canonicalRuntimeCatalogProfile(input),
-  evaluateSuitability: slug => evaluateIdentifierGardenSuitability(slug)
+  evaluateSuitability: slug => evaluateIdentifierGardenSuitability(slug),
+  reviewObserver: acceptedPiReview.observer
 });
 Object.defineProperty(window, 'cruvitCorePiHost', {value: Object.freeze({
   open() {
@@ -11329,9 +11333,9 @@ Object.defineProperty(window, 'cruvitCorePiHost', {value: Object.freeze({
     corePiFrame.title = 'CRUVIT Plant Identification'; corePiFrame.src = CORE_PI_ROUTE;
     corePiFrame.allow = 'camera';
     corePiFrame.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;border:0;z-index:10000';
-    document.body.appendChild(corePiFrame); corePiHandoff.bind(corePiFrame);
+    document.body.appendChild(corePiFrame); acceptedPiReview.bind(corePiFrame); corePiHandoff.bind(corePiFrame);
   },
-  close() { corePiHandoff.unbind(); corePiFrame?.remove(); corePiFrame = null; }
+  close() { acceptedPiReview.unbind(); corePiHandoff.unbind(); corePiFrame?.remove(); corePiFrame = null; }
 })});
 </script>
 <script type="module" id="core-pi-atomic-save-host">

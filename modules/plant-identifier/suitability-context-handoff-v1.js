@@ -13,7 +13,7 @@ const locationKeys = ['status', 'askForLocation', 'useForSuitability', 'lat', 'l
 const readinessKeys = ['status', 'authenticated', 'gardenProfileId', 'gardenCount', 'profilesHydrated'];
 
 export function createPiSuitabilityHost({window, getReadiness, getLocationContext, hasTrustedLocation,
-  getClimateProfile, getSiteContext, resolveCanonicalPlant, evaluateSuitability}) {
+  getClimateProfile, getSiteContext, resolveCanonicalPlant, evaluateSuitability, reviewObserver = null}) {
   let frame = null, disposed = false;
   const origin = window.location.origin;
   function target() {
@@ -38,11 +38,14 @@ export function createPiSuitabilityHost({window, getReadiness, getLocationContex
   }
   const currentSelection = value => JSON.stringify({readiness: value.readiness,
     location: value.location, trusted: value.trusted, siteContext: value.siteContext});
+  // Host-only observer. It cannot change child-facing replies or their validation.
+  const observe = (method, value) => { try { reviewObserver?.[method]?.(value); } catch {} };
   function receive(event) {
     const child = target(), request = event.data;
     if (origin === 'null' || !child || event.source !== child || event.origin !== origin || request?.type !== REQUEST
         || !['context', 'evaluate'].includes(request.operation)
         || typeof request.requestId !== 'string' || request.requestId.length > 100) return;
+    if (request.operation === 'evaluate') observe('pending', {child, operationId: request.requestId});
     let result;
     try {
       const current = context();
@@ -71,10 +74,18 @@ export function createPiSuitabilityHost({window, getReadiness, getLocationContex
         }
       }
     } catch { result = unavailable('HOST_AUTHORITY_UNAVAILABLE'); }
+    if (request.operation === 'evaluate') {
+      if (result.ok === true && target() === child) {
+        const selected = currentSelection(result.context);
+        observe('validated', {child, operationId: request.requestId, result: copy(result),
+          isCurrent: () => target() === child && currentSelection(context()) === selected});
+      } else observe('invalidate', 'EVALUATION_REJECTED');
+    }
     if (target() === child) child.postMessage({type: RESPONSE, requestId: request.requestId,
       operation: request.operation, result}, origin);
   }
   function unbind() {
+    observe('invalidate', 'HOST_UNBOUND');
     const child = target(); frame = null;
     child?.postMessage({type: CLOSED}, origin);
   }

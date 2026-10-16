@@ -142,6 +142,10 @@ const profileView=createPiProfileView({document,stage,onReady:()=>render()});
 const careView=createPiCareView({document,stage});
 const suitabilityView=createPiSuitabilityView({document,stage,window,
  readState:()=>acquisition?.getState(),getClient:()=>window.cruvitCorePiSuitability});
+// Read-only acceptance surface: no emit, setter, garden input, or Save behavior.
+Object.defineProperty(window,'cruvitCorePiReviewSurface',{value:Object.freeze({
+ read:suitabilityView.readAcceptedReview,subscribe:suitabilityView.observeAcceptedReview
+})});
 stage.addEventListener('cruvit-pi-save-bind',event=>{if(typeof event.detail?.save==='function')saveAction=event.detail.save;});
 // Manual navigation stays within acquisition. Only qualified controller state opens PI-04.
 function go(i){if(saving||i>index)return;index=Math.max(0,Math.min(2,i));render()}

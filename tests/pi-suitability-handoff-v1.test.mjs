@@ -1,3 +1,4 @@
+import {withoutAcceptedReview} from './helpers/pi-accepted-review-source-compat.mjs';
 import test, {after} from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -207,7 +208,7 @@ test('6A: no session, credentials, observation photo or client profile is includ
   assert.ok(f.traffic.every(t => t.targetOrigin === f.hostWindow.location.origin)); f.close();
 });
 test('6A: accepted client wiring, prior PI styles and all eight approved rasters remain byte-identical', () => {
-  const html = read('core-v1/plant-identification/index.html');
+  const html = withoutAcceptedReview(read('core-v1/plant-identification/index.html'));
   const prior = execFileSync('git', ['show', base + ':core-v1/plant-identification/index.html'], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000});
   const acceptedBase = '48aafecdb17f8581611f10d9f5e86754250f03ce';
   const accepted = execFileSync('git', ['show', acceptedBase + ':core-v1/plant-identification/index.html'], {cwd: root, encoding: 'utf8'});
@@ -219,14 +220,14 @@ test('6A: accepted client wiring, prior PI styles and all eight approved rasters
   for (const path of ['app.html', 'modules/plant-identifier/suitability-context-handoff-v1.js',
     'modules/plant-identifier/real-pi-runtime-v1.js']) {
     const current = path === 'app.html'
-      ? withoutCatalogHost(read(path)).replace(/<script type="module" id="core-pi-atomic-save-host">[\s\S]*?<\/script>\n/, '')
-      : path.endsWith('real-pi-runtime-v1.js') ? withoutCatalogTransport(read(path)) : read(path);
+      ? withoutCatalogHost(withoutAcceptedReview(read(path))).replace(/<script type="module" id="core-pi-atomic-save-host">[\s\S]*?<\/script>\n/, '')
+      : path.endsWith('real-pi-runtime-v1.js') ? withoutCatalogTransport(withoutAcceptedReview(read(path))) : withoutAcceptedReview(read(path));
     const priorRuntime = execFileSync('git', ['show', acceptedBase + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000});
     assert.equal(current, path.endsWith('real-pi-runtime-v1.js') ? withoutCatalogTransport(priorRuntime) : priorRuntime);
   }
   const ctx = vm.createContext({window: {}});
   for (const match of html.matchAll(/<script src="\.\/assets\/(s\d-\d+\.js)"><\/script>/g)) {
-    const rel = 'core-v1/plant-identification/assets/' + match[1], current = read(rel);
+    const rel = 'core-v1/plant-identification/assets/' + match[1], current = withoutAcceptedReview(read(rel));
     assert.equal(current, execFileSync('git', ['show', base + ':' + rel], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000}));
     vm.runInContext(current, ctx);
   }

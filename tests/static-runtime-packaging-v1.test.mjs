@@ -33,8 +33,8 @@ test('exact source lock is authoritative for every tracked path',()=>{
   assert.equal(r.ok,true,JSON.stringify(r.errors.slice(0,5)));
   assert.equal(r.trackedPathCount,sourceLock.pathCount);
   assert.equal(r.lockedPathCount,sourceLock.pathCount);
-  assert.equal(r.trackedPathCount,2692);
-  assert.deepEqual(r.classificationCounts,{BUILD_ONLY:639,PUBLIC_STATIC:1924,HISTORICAL_EVIDENCE:54,SERVER_RUNTIME:75});
+  assert.equal(r.trackedPathCount,2695);
+  assert.deepEqual(r.classificationCounts,{BUILD_ONLY:641,PUBLIC_STATIC:1925,HISTORICAL_EVIDENCE:54,SERVER_RUNTIME:75});
   assert.equal(sourceLock.paths.find(row=>row.path==='tests/paid-runtime-containment-v1.test.mjs')?.classification,'BUILD_ONLY');
   assert.equal(sourceLock.paths.find(row=>row.path==='modules/plant-identifier/real-pi-runtime-v1.js')?.classification,'PUBLIC_STATIC');
   assert.equal(sourceLock.paths.find(row=>row.path==='tests/pi-real-identification-v1.test.mjs')?.classification,'BUILD_ONLY');
@@ -151,10 +151,10 @@ test('two independent static builds remain deterministic and artifact-stable',()
   fs.mkdirSync(path.dirname(ar),{recursive:true});
   const ra=buildStatic({out:a,receipt:ar});
   const rb=buildStatic({out:b,receipt:br});
-  assert.equal(ra.publicFileCount,1924);
+  assert.equal(ra.publicFileCount,1925);
   assert.equal(ra.serverRuntimeFileCount,75);
   // Pin the replacement's exact public bytes; all controllers, UI and raster authorities stay locked.
-  assert.equal(ra.outputManifestSha256,'b62caa4edc2ff02effea3370b78b827985d927614b7944fd6b1d3ca6f0e964a4');
+  assert.equal(ra.outputManifestSha256,'9eb5dbdc033761ab8f623d7981e73d821402fed70b933997a7eb76c8ca7b9695');
   assert.equal(ra.outputManifestSha256,rb.outputManifestSha256);
   assert.deepEqual(ra.publicManifest,rb.publicManifest);
   assert.equal(ra.secretFindings.length,0);
