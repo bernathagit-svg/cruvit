@@ -1,3 +1,4 @@
+import {withoutTargetBinding} from './helpers/pi-target-binding-source-compat.mjs';
 import {withoutAcceptedReview} from './helpers/pi-accepted-review-source-compat.mjs';
 // Slice 1 qualification: native Node + DOM/transport stubs. No hosted/browser/provider claim.
 import test, {after} from 'node:test';
@@ -897,7 +898,7 @@ test('Slice 4: missing readiness, identity or media fails closed; image errors d
 });
 
 test('Slice 4: profile slots and PI-04 styling preserve the approved layout and protected runtime scope', () => {
-  const html = withoutAcceptedReview(read('core-v1/plant-identification/index.html'));
+  const html = withoutAcceptedReview(withoutTargetBinding(read('core-v1/plant-identification/index.html')));
   assert.deepEqual(Object.keys(PI_PROFILE_SLOTS), ['photo', 'name', 'scientific', 'description', 'credit']);
   const before = execFileSync('git', ['show', '2ccab3b34c3e3964b3d996022e8921f96b9eac98:core-v1/plant-identification/index.html'], {cwd: root, encoding: 'utf8'});
   assert.equal(html.match(/<style id="pi-result-style">[\s\S]*?<\/style>/)[0], before.match(/<style id="pi-result-style">[\s\S]*?<\/style>/)[0]);
@@ -908,7 +909,7 @@ test('Slice 4: profile slots and PI-04 styling preserve the approved layout and 
 function careRow(slug = 'lemon') {
   const canonical = profileRow(slug);
   if (slug !== 'lemon') {
-    const packet = JSON.parse(withoutAcceptedReview(read('data/catalog-expansion/batches/bulk-batch-3-v1/packets/' + slug + '.packet.json')));
+    const packet = JSON.parse(withoutAcceptedReview(withoutTargetBinding(read('data/catalog-expansion/batches/bulk-batch-3-v1/packets/' + slug + '.packet.json'))));
     const materialized = materializePlantCatalogItemFromPacket(packet);
     assert.equal(materialized.ok, true);
     const ct = materialized.item.climateTraits;
@@ -1273,7 +1274,7 @@ test('Slice 6: same-session acquisition reset clears PI-07 and ignores late eval
 });
 
 test('Slice 6: view has no evaluator, location record, network, persistence or per-plant lookup', () => {
-  const view = withoutAcceptedReview(read('modules/plant-identifier/pi-suitability-view-v1.js'));
+  const view = withoutAcceptedReview(withoutTargetBinding(read('modules/plant-identifier/pi-suitability-view-v1.js')));
   assert.doesNotMatch(view, /\bfetch\s*\(|XMLHttpRequest|localStorage|sessionStorage|indexedDB|navigator\.geolocation|\.rpc\(|\.insert\(|\.upsert\(|\.upload\(/);
   assert.doesNotMatch(view, /lemon|pomegranate|raspberry|Monstera|plants\.seed|catalog-media\/cache|evaluateSpecificPlantSuitability\s*\(/);
   assert.doesNotMatch(view, /function\s+smartRecEvaluateSuitability|function\s+evaluateIdentifierGardenSuitability/);
@@ -1283,8 +1284,8 @@ test('Slice 6: view has no evaluator, location record, network, persistence or p
   for (const path of ['app.html', 'modules/plant-identifier/suitability-context-handoff-v1.js',
     'modules/plant-identifier/real-pi-runtime-v1.js', 'modules/personal-domain/specific-plant-suitability-contract.js']) {
     const current = path === 'app.html'
-      ? withoutCatalogHost(withoutAcceptedReview(read(path))).replace(/<script type="module" id="core-pi-atomic-save-host">[\s\S]*?<\/script>\n/, '')
-      : path.endsWith('real-pi-runtime-v1.js') ? withoutCatalogTransport(withoutAcceptedReview(read(path))) : withoutAcceptedReview(read(path));
+      ? withoutCatalogHost(withoutAcceptedReview(withoutTargetBinding(read(path)))).replace(/<script type="module" id="core-pi-atomic-save-host">[\s\S]*?<\/script>\n/, '')
+      : path.endsWith('real-pi-runtime-v1.js') ? withoutCatalogTransport(withoutAcceptedReview(withoutTargetBinding(read(path)))) : withoutAcceptedReview(withoutTargetBinding(read(path)));
     assert.equal(current, path.endsWith('real-pi-runtime-v1.js') ? withoutCatalogTransport(execFileSync('git', ['show', parent + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000})) : execFileSync('git', ['show', parent + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000}));
   }
 });

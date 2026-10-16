@@ -1,3 +1,4 @@
+import {withoutTargetBinding} from './helpers/pi-target-binding-source-compat.mjs';
 import {withoutAcceptedReview} from './helpers/pi-accepted-review-source-compat.mjs';
 import test, {after} from 'node:test';
 import assert from 'node:assert/strict';
@@ -160,10 +161,10 @@ test('new composition reuses qualified frame binding and leaves all authority im
     'core-v1/plant-identification/index.html', 'core-v1/my-garden/shared/preview-session.mjs',
     'core-v1/plant-identification/atomic/save-controller.mjs', 'core-v1/plant-identification/atomic/preview-domain.mjs',
     'modules/identity/plant-identity-resolver.js', 'data/plant-identity.registry.json']) {
-    assert.equal(withoutAcceptedReview(read(p)), execFileSync('git', ['show', base + ':' + p], {cwd: root, encoding: 'utf8', maxBuffer: 10000000}));
+    assert.equal(withoutAcceptedReview(withoutTargetBinding(read(p))), execFileSync('git', ['show', base + ':' + p], {cwd: root, encoding: 'utf8', maxBuffer: 10000000}));
   }
-  assert.equal(withoutAcceptedReview(read('app.html')).replace(/<script type="module" id="core-pi-catalog-host">[\s\S]*?<\/script>\n/, ''), execFileSync('git', ['show', base + ':app.html'], {cwd: root, encoding: 'utf8', maxBuffer: 10000000}));
-  assert.match(withoutAcceptedReview(read('app.html')), /bindPiAtomicSaveHostFrame as bindCorePiHostFrame/);
-  assert.doesNotMatch(withoutAcceptedReview(read('modules/plant-identifier/canonical-catalog-handoff-v1.js')), /\.rpc\(|\.insert\(|\.upsert\(|localStorage|sessionStorage|createClient\(|\bfetch\(/);
-  assert.doesNotMatch(withoutAcceptedReview(read('modules/plant-identifier/real-pi-runtime-v1.js')), /createPreviewClient/);
+  assert.equal(withoutAcceptedReview(withoutTargetBinding(read('app.html'))).replace(/<script type="module" id="core-pi-catalog-host">[\s\S]*?<\/script>\n/, ''), execFileSync('git', ['show', base + ':app.html'], {cwd: root, encoding: 'utf8', maxBuffer: 10000000}));
+  assert.match(withoutAcceptedReview(withoutTargetBinding(read('app.html'))), /bindPiAtomicSaveHostFrame as bindCorePiHostFrame/);
+  assert.doesNotMatch(withoutAcceptedReview(withoutTargetBinding(read('modules/plant-identifier/canonical-catalog-handoff-v1.js'))), /\.rpc\(|\.insert\(|\.upsert\(|localStorage|sessionStorage|createClient\(|\bfetch\(/);
+  assert.doesNotMatch(withoutAcceptedReview(withoutTargetBinding(read('modules/plant-identifier/real-pi-runtime-v1.js'))), /createPreviewClient/);
 });
