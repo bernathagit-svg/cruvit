@@ -208,7 +208,10 @@ test('6A: accepted client wiring, prior PI styles and all eight approved rasters
   assert.deepEqual(html.replace(pi07Style, '').match(/<style[\s\S]*?<\/style>/g), prior.match(/<style[\s\S]*?<\/style>/g));
   for (const path of ['app.html', 'modules/plant-identifier/suitability-context-handoff-v1.js',
     'modules/plant-identifier/real-pi-runtime-v1.js']) {
-    assert.equal(read(path), execFileSync('git', ['show', acceptedBase + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000}));
+    const current = path === 'app.html'
+      ? read(path).replace(/<script type="module" id="core-pi-atomic-save-host">[\s\S]*?<\/script>\n/, '')
+      : read(path);
+    assert.equal(current, execFileSync('git', ['show', acceptedBase + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000}));
   }
   const ctx = vm.createContext({window: {}});
   for (const match of html.matchAll(/<script src="\.\/assets\/(s\d-\d+\.js)"><\/script>/g)) {
@@ -223,7 +226,9 @@ test('6A: accepted client wiring, prior PI styles and all eight approved rasters
 test('6A: host/evaluator/registry/care/location remain unchanged; only the authorized Atomic controller/readback may differ', () => {
   const app = read('app.html'), old = execFileSync('git', ['show', base + ':app.html'], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000});
   const added = app.match(/<script type="module" id="core-pi-suitability-host">[\s\S]*?<\/script>\n/)[0];
-  assert.equal(app.replace(added, ''), old);
+  const saveHost = /<script type="module" id="core-pi-atomic-save-host">[\s\S]*?<\/script>\n/;
+  assert.equal((app.match(/id="core-pi-atomic-save-host"/g) || []).length, 1);
+  assert.equal(app.replace(added, '').replace(saveHost, ''), old);
   for (const name of ['getGardenContextReadiness', 'getIdentifierGardenLocationContext', 'hasTrustedAppLocation',
     'getAppClimateProfile', 'smartRecProtectionContext', 'canonicalRuntimeCatalogProfile', 'evaluateIdentifierGardenSuitability']) assert.ok(added.includes(name));
   const changed = execFileSync('git', ['diff', '--name-only', base], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000}).trim().split('\n');

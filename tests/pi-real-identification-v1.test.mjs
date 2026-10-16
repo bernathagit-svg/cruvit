@@ -1270,6 +1270,9 @@ test('Slice 6: view has no evaluator, location record, network, persistence or p
   const parent = '48aafecdb17f8581611f10d9f5e86754250f03ce';
   for (const path of ['app.html', 'modules/plant-identifier/suitability-context-handoff-v1.js',
     'modules/plant-identifier/real-pi-runtime-v1.js', 'modules/personal-domain/specific-plant-suitability-contract.js']) {
-    assert.equal(read(path), execFileSync('git', ['show', parent + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000}));
+    const current = path === 'app.html'
+      ? read(path).replace(/<script type="module" id="core-pi-atomic-save-host">[\s\S]*?<\/script>\n/, '')
+      : read(path);
+    assert.equal(current, execFileSync('git', ['show', parent + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000}));
   }
 });

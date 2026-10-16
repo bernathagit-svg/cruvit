@@ -251,5 +251,17 @@ Object.defineProperty(window, 'cruvitCorePiSuitability', {value: createPiSuitabi
   }
 })});
 </script>
+<script type="module" id="core-pi-atomic-save-client">
+import {createPiAtomicSaveClient} from '../../modules/plant-identifier/atomic-save-handoff-v1.js';
+import {canonicalPiResult} from '../../modules/plant-identifier/real-pi-runtime-v1.js';
+// Infrastructure only: no Save button binding, screen exposure or automatic request.
+Object.defineProperty(window, 'cruvitCorePiSave', {value: createPiAtomicSaveClient({window,
+  readCanonicalResult() {
+    const state = window.__CRUVIT_REAL_PI_STATE, result = canonicalPiResult(state);
+    return result.available ? {state, actionId: state.actionId, canonicalSlug: result.canonicalSlug,
+      scientific: result.scientific, name: result.name} : null;
+  }
+})});
+</script>
 </body>
 </html>

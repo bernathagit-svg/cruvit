@@ -33,14 +33,16 @@ test('exact source lock is authoritative for every tracked path',()=>{
   assert.equal(r.ok,true,JSON.stringify(r.errors.slice(0,5)));
   assert.equal(r.trackedPathCount,sourceLock.pathCount);
   assert.equal(r.lockedPathCount,sourceLock.pathCount);
-  assert.equal(r.trackedPathCount,2688);
-  assert.deepEqual(r.classificationCounts,{BUILD_ONLY:637,PUBLIC_STATIC:1922,HISTORICAL_EVIDENCE:54,SERVER_RUNTIME:75});
+  assert.equal(r.trackedPathCount,2690);
+  assert.deepEqual(r.classificationCounts,{BUILD_ONLY:638,PUBLIC_STATIC:1923,HISTORICAL_EVIDENCE:54,SERVER_RUNTIME:75});
   assert.equal(sourceLock.paths.find(row=>row.path==='tests/paid-runtime-containment-v1.test.mjs')?.classification,'BUILD_ONLY');
   assert.equal(sourceLock.paths.find(row=>row.path==='modules/plant-identifier/real-pi-runtime-v1.js')?.classification,'PUBLIC_STATIC');
   assert.equal(sourceLock.paths.find(row=>row.path==='tests/pi-real-identification-v1.test.mjs')?.classification,'BUILD_ONLY');
   assert.equal(sourceLock.paths.find(row=>row.path==='modules/plant-identifier/suitability-context-handoff-v1.js')?.classification,'PUBLIC_STATIC');
   assert.equal(sourceLock.paths.find(row=>row.path==='modules/plant-identifier/pi-suitability-view-v1.js')?.classification,'PUBLIC_STATIC');
   assert.equal(sourceLock.paths.find(row=>row.path==='tests/pi-suitability-handoff-v1.test.mjs')?.classification,'BUILD_ONLY');
+  assert.equal(sourceLock.paths.find(row=>row.path==='modules/plant-identifier/atomic-save-handoff-v1.js')?.classification,'PUBLIC_STATIC');
+  assert.equal(sourceLock.paths.find(row=>row.path==='tests/pi-atomic-save-handoff-v1.test.mjs')?.classification,'BUILD_ONLY');
   const core=sourceLock.paths.filter(row=>row.path.startsWith('core-v1/'));
   assert.equal(core.length,84);
   assert.equal(core.filter(row=>row.classification==='PUBLIC_STATIC').length,77);
@@ -149,10 +151,10 @@ test('two independent static builds remain deterministic and artifact-stable',()
   fs.mkdirSync(path.dirname(ar),{recursive:true});
   const ra=buildStatic({out:a,receipt:ar});
   const rb=buildStatic({out:b,receipt:br});
-  assert.equal(ra.publicFileCount,1922);
+  assert.equal(ra.publicFileCount,1923);
   assert.equal(ra.serverRuntimeFileCount,75);
-  // Pin the controller/readback-only refactor; no UI, handoff, command or raster changes.
-  assert.equal(ra.outputManifestSha256,'5dc9850c7f7a11b7c82f742fc9b2c113221e8b81c4c3961d481747fd3c06656e');
+  // Pin the replacement's exact public bytes; all controllers, UI and raster authorities stay locked.
+  assert.equal(ra.outputManifestSha256,'7aba41f9677dd707ab35adcd0bc7b62b293106650a6f84a1504113fff37a0ca4');
   assert.equal(ra.outputManifestSha256,rb.outputManifestSha256);
   assert.deepEqual(ra.publicManifest,rb.publicManifest);
   assert.equal(ra.secretFindings.length,0);

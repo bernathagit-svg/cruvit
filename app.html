@@ -11334,5 +11334,11 @@ Object.defineProperty(window, 'cruvitCorePiHost', {value: Object.freeze({
   close() { corePiHandoff.unbind(); corePiFrame?.remove(); corePiFrame = null; }
 })});
 </script>
+<script type="module" id="core-pi-atomic-save-host">
+import {createPiAtomicSaveHost, bindPiAtomicSaveHostFrame} from './modules/plant-identifier/atomic-save-handoff-v1.js';
+// No UI action, automatic save or navigation. Authority is read fresh at execution.
+const saveHost = createPiAtomicSaveHost({window, getPersonalDomain: () => window.cruvitPersonalDomainV0});
+bindPiAtomicSaveHostFrame({window, document, host: saveHost});
+</script>
 </body>
 </html>
