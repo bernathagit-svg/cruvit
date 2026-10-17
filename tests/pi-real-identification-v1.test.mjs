@@ -32,6 +32,8 @@ const withoutCatalogTransport = source => source
   .replace(/      (?:const client = clientForRead\(\);|let response;)[\s\S]*?(?=      if \(response\?\.error)/, '[catalog read]\n');
 const withoutCatalogHost = source => source.replace(/<script type="module" id="core-pi-catalog-host">[\s\S]*?<\/script>\n/, '');
 
+// The only new runtime delta is the independently qualified PI-04 presentation.
+const withoutPi04Presentation = source => source.slice(0, source.indexOf('// Coordinates')) + '[approved PI-04 presentation]\n' + source.slice(source.indexOf('// PI-05 projects'));
 const root = new URL('../', import.meta.url);
 const read = path => withoutSaveUi(fs.readFileSync(new URL(path, root), 'utf8'));
 const registry = JSON.parse(read('data/plant-identity.registry.json'));
@@ -461,7 +463,7 @@ test('all eight approved embedded strings and decoded rasters retain exact SHA-2
     '04303beddb52041c92b220160754de58ca5801f4abc460cba6cb539802cfa23f',
     'b5e2bdca9e7d011643dfb2bf2e3282288ca9fa0ae1cb309d3188454f112a26b9',
     '2ead19875112aea36e28c75ad9399a307c99fd406b50d3320921e8e542125e78',
-    'ad43490fd6cabf84335c40e1b1264e25f4874bd60e0e443dbe8d462815269d84',
+    '55ccffc31a7abc83bb05f4cbd57559dfbd0d061153abf6e583a1f64c4ce593ad',
     '799346b5d3c8a0e2d441c0e9ec8d8cb6d51805f5db43a0a3c883e71f60ddf255',
     '3d5a9b2f8c1208630e0b91f839daf997c3bba2e3f4b8de7212daeb8f074f1278',
     '129e45d64b62f5a1cc4766231c10880a44b4c66a74c76bc87482ffaaa9f236aa',
@@ -481,7 +483,7 @@ test('CSS, all downstream PI definitions and Atomic Save entry remain unchanged;
   const baseline = execFileSync('git', ['show', '754141e7467a308b2be5f02c76ce5d914fdeb883:core-v1/plant-identification/index.html'], {cwd: root, encoding: 'utf8'});
   assert.equal(html.match(/<style>[\s\S]*?<\/style>/)[0], baseline.match(/<style>[\s\S]*?<\/style>/)[0]);
   const downstream = source => source.slice(source.indexOf('3:[{'), source.indexOf('\n};', source.indexOf('3:[{')));
-  assert.equal(downstream(html), downstream(baseline));
+  assert.equal(downstream(html).replace('to:4,label:"Learn more"', 'to:4,label:"View full profile"'), downstream(baseline));
   const saveBody = source => source.slice(source.indexOf("if(!saveAction)"), source.indexOf('};stage.appendChild(b)'));
   assert.equal(saveBody(html), saveBody(baseline));
   assert.match(html, /<script type="module" src="\.\/atomic\/boot\.mjs"><\/script>/);
@@ -669,7 +671,8 @@ for (const [slug, name] of witnessFixtures) test('Slice 3: ' + slug + ' binds it
   assert.equal(f.stage.querySelectorAll('.hot').length, 1, 'Slice 4 enables only the bound profile entry');
   assert.equal(JSON.stringify(model).includes('PROVIDER'), false);
   assert.equal(JSON.stringify(model).includes('data:image'), false);
-  assert.equal(contentSlot(view, 'evidence').textContent.includes('96'), false);
+  assert.doesNotMatch(contentSlot(view, 'confidence').textContent, /[0-9]|%/);
+  assert.equal(contentSlot(view, 'evidence'), undefined, 'No fabricated confidence/progress evidence');
   const credit = contentSlot(view, 'photo').children.find(e => e.className === 'pi-result-credit');
   assert.ok(credit.textContent.includes(canonical.media.license));
   assert.equal(credit.children.find(e => e.textContent === 'Source').href, canonical.media.sourcePageUrl);
@@ -758,7 +761,7 @@ test('Slice 3: approved layout/base CSS, acquisition code and navigation gate ar
   const runtime = read('modules/plant-identifier/real-pi-runtime-v1.js');
   const before = execFileSync('git', ['show', '2f85ab4a52585d2288ea30be326d621d2fe71792:modules/plant-identifier/real-pi-runtime-v1.js'], {cwd: root, encoding: 'utf8'});
   assert.equal(runtime.slice(runtime.indexOf('export function wireRealPiInputs')), before.slice(before.indexOf('export function wireRealPiInputs')));
-  assert.equal(Object.keys(PI_RESULT_SLOTS).length, 17);
+  assert.equal(Object.keys(PI_RESULT_SLOTS).length, 16);
   assert.doesNotMatch(runtime, /PROVIDER_|lemon|pomegranate|raspberry|plants\.seed|catalog-media\/cache/);
 });
 
@@ -902,7 +905,7 @@ test('Slice 4: profile slots and PI-04 styling preserve the approved layout and 
   const html = withoutAcceptedReview(withoutTargetBinding(read('core-v1/plant-identification/index.html')));
   assert.deepEqual(Object.keys(PI_PROFILE_SLOTS), ['photo', 'name', 'scientific', 'description', 'credit']);
   const before = execFileSync('git', ['show', '2ccab3b34c3e3964b3d996022e8921f96b9eac98:core-v1/plant-identification/index.html'], {cwd: root, encoding: 'utf8'});
-  assert.equal(html.match(/<style id="pi-result-style">[\s\S]*?<\/style>/)[0], before.match(/<style id="pi-result-style">[\s\S]*?<\/style>/)[0]);
+  assert.equal(createHash('sha256').update(html.match(/<style id="pi-result-style">[\s\S]*?<\/style>/)[0]).digest('hex'), 'cbc831c7b1c682a650b3a5566312be0f0380fefd2d52559df7001033e52146e1', 'Exact approved PI-04 presentation revision');
   assert.equal(html.slice(html.indexOf('let touchStartX'), html.indexOf('Object.defineProperty')), before.slice(before.indexOf('let touchStartX'), before.indexOf('Object.defineProperty')));
 });
 
@@ -1076,7 +1079,7 @@ test('Slice 5: care image failure stays honest and uses no fallback; reset remov
 test('Slice 5: PI-01–05 styles/acquisition and canonical controller/Save authorities remain unchanged', () => {
   const base = '1240e2007b5f6654e20767bffa9891304a64afcc';
   const beforeHtml = execFileSync('git', ['show', base + ':core-v1/plant-identification/index.html'], {cwd: root, encoding: 'utf8'});
-  for (const id of ['pi-result-style', 'pi-profile-style']) {
+  for (const id of ['pi-profile-style']) {
     const re = new RegExp('<style id="' + id + '">[\\s\\S]*?<\\/style>');
     assert.equal(html.match(re)[0], beforeHtml.match(re)[0]);
   }
@@ -1287,7 +1290,7 @@ test('Slice 6: view has no evaluator, location record, network, persistence or p
     const current = path === 'app.html'
       ? withoutCatalogHost(withoutAcceptedReview(withoutTargetBinding(read(path)))).replace(/<script type="module" id="core-pi-atomic-save-host">[\s\S]*?<\/script>\n/, '')
       : path.endsWith('real-pi-runtime-v1.js') ? withoutCatalogTransport(withoutAcceptedReview(withoutTargetBinding(read(path)))) : withoutAcceptedReview(withoutTargetBinding(read(path)));
-    assert.equal(current, path.endsWith('real-pi-runtime-v1.js') ? withoutCatalogTransport(execFileSync('git', ['show', parent + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000})) : execFileSync('git', ['show', parent + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000}));
+    assert.equal(path.endsWith('real-pi-runtime-v1.js') ? withoutPi04Presentation(current) : current, path.endsWith('real-pi-runtime-v1.js') ? withoutPi04Presentation(withoutCatalogTransport(execFileSync('git', ['show', parent + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000}))) : execFileSync('git', ['show', parent + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000}));
   }
 });
 
@@ -1349,4 +1352,16 @@ test('Core PI host restores exact prior styles and nonzero scroll through close,
   assert.equal(html.getAttribute('style'),'overflow-y:scroll!important;color:red');assert.equal(body.getAttribute('style'),null);assert.equal(window.scrollX,13);assert.equal(window.scrollY,237);
   const baseline=unbound;window.dispatchEvent(new Event('pagehide'));assert.equal(unbound,baseline);
  }
+});
+
+test('PI-04 approved revision keeps scientific/common hierarchy and the existing guarded profile continuation', () => {
+  assert.deepEqual(PI_RESULT_SLOTS, {"photo":[0,155,482,599],"photoTail":[0,754,38,389],"name":[513,411,354,47],"scientific":[513,286,354,114],"confidence":[547,478,308,44],"type":[481,675,120,60],"light":[616,675,120,60],"water":[750,675,120,60],"description":[185,986,438,128],"careLight":[49,1338,179,66],"careWater":[258,1338,179,66],"careSoil":[468,1338,179,66],"careTemperature":[678,1338,179,66],"similar1":[40,1487,252,113],"similar2":[320,1487,252,113],"similar3":[600,1487,252,113]});
+  const source=fs.readFileSync(new URL('core-v1/plant-identification/index.html',root),'utf8');
+  assert.match(source,/to:4,label:"Learn more"/);
+  assert.match(source,/x:72,y:58,w:21,h:3\.6/);
+  for(const id of ['pi-profile-style','pi-care-style','pi-suitability-style','pi-save-style']){
+    const before=execFileSync('git',['show','fcc44ec71650ffdd3b16208c28cdac725370d222:core-v1/plant-identification/index.html'],{cwd:root,encoding:'utf8'});
+    const re=new RegExp('<style id="'+id+'">[\\s\\S]*?<\\/style>');
+    assert.equal(source.match(re)[0],before.match(re)[0],id+' unchanged');
+  }
 });

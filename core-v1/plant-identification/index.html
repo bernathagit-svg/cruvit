@@ -19,11 +19,10 @@ body{display:grid;place-items:start center;font-family:Arial,sans-serif;overflow
 </style>
 <style id="pi-result-style">
 .pi-result{position:absolute;inset:0;container-type:inline-size;pointer-events:none;color:#103c2e;font-family:Arial,sans-serif}
-.pi-result-slot{position:absolute;overflow:hidden;display:flex;align-items:center;background:#f7f6ef;font-size:2.65cqw;line-height:1.25}
-.pi-result-name{font-size:6.3cqw;line-height:1.04;font-weight:700;overflow-wrap:anywhere;align-items:flex-start}
-.pi-result-scientific{font-size:3.15cqw;font-style:italic;align-items:flex-start}
+.pi-result-slot{position:absolute;overflow:hidden;display:flex;align-items:center;background:#f8f7f2;font-size:2.65cqw;line-height:1.25}
+.pi-result-name{font-size:3.35cqw;line-height:1.15;overflow-wrap:anywhere;align-items:flex-start}
+.pi-result-scientific{font-size:6.1cqw;line-height:1.04;font-weight:700;font-style:normal;direction:ltr;overflow-wrap:anywhere;align-items:flex-start}
 .pi-result-confidence{font-size:2.5cqw}
-.pi-result-evidence{font-size:2.25cqw;border:1px solid #d6ddcf;border-radius:3cqw;justify-content:center}
 .pi-result-photo{background:#efefe5;justify-content:center;text-align:center}
 .pi-result-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .pi-result-photo img[hidden],.pi-result-image-message[hidden]{display:none}
@@ -132,14 +131,14 @@ import {wireRealPiInputs,createPiResultView,createPiProfileView,canonicalPiProfi
 import {createPiSaveUi} from '../../modules/plant-identifier/pi-save-ui-v1.js';
 import {createPiSuitabilityView} from '../../modules/plant-identifier/pi-suitability-view-v1.js';
 const screens=Array.from({length:8},(_,i)=>(window.__PI?.[i]||[]).join(""));
-const expected=[2310742,3406426,1786662,3352146,3347862,2456618,2020150,2405466];
+const expected=[2310742,3406426,1786662,3391582,3347862,2456618,2020150,2405466];
 if(screens.some((s,i)=>s.length!==expected[i])) throw new Error("Approved asset integrity check failed");
 const titles=["Identify","Camera","Analyzing","Result","Plant Profile","Care","Suitability","Save to My Garden"];
 const hotspots={
 0:[{x:6,y:92,w:10,h:8,action:"home",label:"Home"},{x:10,y:50,w:80,h:13,action:"camera",label:"Take a photo"},{x:10,y:63,w:80,h:7,action:"gallery",label:"Choose from gallery"}],
 1:[{x:30,y:66,w:40,h:20,action:"capture",label:"Capture photo"},{x:10,y:71,w:15,h:9,action:"gallery",label:"Choose from gallery"},{x:7,y:5,w:11,h:7,action:"back",label:"Back"}],
 2:[],
-3:[{x:5,y:55,w:90,h:27,to:4,label:"View full profile"}],
+3:[{x:5,y:55,w:90,h:27,to:4,label:"Learn more"}],
 4:[{x:18,y:28,w:20,h:9,to:5,label:"Care"}],
 5:[{x:5,y:5,w:90,h:84,to:6,label:"Continue to suitability"}],
 6:[{x:5,y:80,w:90,h:13,to:7,label:"Save to My Garden"}],
@@ -227,7 +226,7 @@ function render(){
  // Only the approved Care tile in a successfully bound profile opens PI-06.
  // PI-08 requires the current accepted review; the host revalidates before intent and Save.
  const activeHotspots=index<3?hotspots[index]||[]:index===3&&resultView.isReady(state)
-  ?[{...hotspots[3][0],x:72,y:51.6,w:21,h:4}]
+  ?[{...hotspots[3][0],x:72,y:58,w:21,h:3.6}]
   :index===4?[{x:6.2,y:5.3,w:11.1,h:6.2,label:"Back to result"},
    ...(profileView.isReady(state)?[{x:6.4,y:57.5,w:20.5,h:13.5,label:"Care",to:5}]:[])]
   :index===5?[{x:9.5,y:1.5,w:16,h:3,label:"Back to profile"},

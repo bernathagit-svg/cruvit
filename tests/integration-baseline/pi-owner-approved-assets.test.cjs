@@ -13,7 +13,7 @@ const expected = [
   ['PI-01', 'Identify', 'c7f5e042079b0739a8a161283da51d94a81a21b7ff017d5c283d7f3817f881e9', 2310742],
   ['PI-02', 'Camera', '5d4b74d17ebb12cf29e069c0c2a02d685b05554b2267cccadd45f29e67593dd0', 3406426],
   ['PI-03', 'Analyzing', '13bba1f5b4258a3e97f3034ab01d01b69b069d102809682fc3ed00d4bbc0e906', 1786662],
-  ['PI-04', 'Result', 'd5586de26a3f6223a717f861df933f1cc58df8c7adebd83a347c367b7db2d4c1', 3352146],
+  ['PI-04', 'Result', 'c2956e34f6dd2bf22c0351f044f7aa54095957cb099b244981aad81b737ec107', 3391582],
   ['PI-05', 'Plant Profile', '05ac40be70dcbf7376639747a69af9deb083916cafe81cd009b89241e2e7ca35', 3347862],
   ['PI-06', 'Care', '04d8fb6f3c9df16f7334e11b854e489870c2626d91b1c052a3d124410d6f168f', 2456618],
   ['PI-07', 'Suitability', 'c6ad1fc59e28622b3aedbcfa2e2a4cfe6cf435aa0c81e9a74eedeead75ce7e59', 2020150],
@@ -105,4 +105,13 @@ test('Golden baseline distinguishes historical provenance from the final cumulat
       sha256: '7de39ba43c2b4f5f9d96ca236a693adb79430c4acb6d52974675b04569ca09ed',
     },
   });
+});
+
+test('PI-04 revision preserves historical approval provenance and pins the exact new Owner asset', () => {
+  const revision=manifest.visual_revisions['PI-04'];
+  assert.equal(revision.implementation_base, 'fcc44ec71650ffdd3b16208c28cdac725370d222');
+  assert.equal(revision.sha256, 'c2956e34f6dd2bf22c0351f044f7aa54095957cb099b244981aad81b737ec107');
+  assert.equal(revision.previous_sha256, 'd5586de26a3f6223a717f861df933f1cc58df8c7adebd83a347c367b7db2d4c1');
+  assert.deepEqual([revision.width,revision.height,revision.asset_string_length],[891,1765,3391582]);
+  assert.deepEqual(golden.plantIdentification.screens[3].visualRevision,revision);
 });

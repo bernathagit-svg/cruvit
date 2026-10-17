@@ -268,17 +268,25 @@ export function canonicalPiResult(state) {
   return frozen({available: !reason, reason, canonicalSlug: slug, name, scientific, confidence, media});
 }
 
-// Coordinates are content slots in the unchanged 940 × 1672 approved PI-04.
+// Coordinates are content slots in the Owner-approved 891 × 1765 PI-04 revision.
 // Everything outside these slots is still the exact approved raster.
 export const PI_RESULT_SLOTS = Object.freeze({
-  photo: [0, 174, 526, 622], photoTail: [0, 796, 40, 204],
-  name: [535, 301, 375, 125], scientific: [535, 432, 375, 51],
-  confidence: [574, 505, 336, 35], evidence: [534, 547, 372, 34],
-  type: [497, 708, 133, 61], light: [642, 708, 133, 61], water: [787, 708, 135, 61],
-  description: [190, 826, 475, 140],
-  careLight: [47, 1192, 190, 67], careWater: [265, 1192, 192, 67],
-  careSoil: [487, 1192, 194, 67], careTemperature: [706, 1192, 194, 67],
-  similar1: [39, 1349, 270, 125], similar2: [336, 1349, 267, 125], similar3: [633, 1349, 270, 125]
+  photo: [0, 155, 482, 599],
+  photoTail: [0, 754, 38, 389],
+  name: [513, 411, 354, 47],
+  scientific: [513, 286, 354, 114],
+  confidence: [547, 478, 308, 44],
+  type: [481, 675, 120, 60],
+  light: [616, 675, 120, 60],
+  water: [750, 675, 120, 60],
+  description: [185, 986, 438, 128],
+  careLight: [49, 1338, 179, 66],
+  careWater: [258, 1338, 179, 66],
+  careSoil: [468, 1338, 179, 66],
+  careTemperature: [678, 1338, 179, 66],
+  similar1: [40, 1487, 252, 113],
+  similar2: [320, 1487, 252, 113],
+  similar3: [600, 1487, 252, 113]
 });
 
 export function createPiResultView({document, stage, onReady = () => {}}) {
@@ -296,15 +304,13 @@ export function createPiResultView({document, stage, onReady = () => {}}) {
     for (const [key, [x, y, width, height]] of Object.entries(PI_RESULT_SLOTS)) {
       const slot = document.createElement('div'); slot.className = 'pi-result-slot pi-result-' + key;
       slot.setAttribute('data-pi-slot', key);
-      Object.assign(slot.style, {left: x / 940 * 100 + '%', top: y / 1672 * 100 + '%',
-        width: width / 940 * 100 + '%', height: height / 1672 * 100 + '%'});
+      Object.assign(slot.style, {left: x / 891 * 100 + '%', top: y / 1765 * 100 + '%',
+        width: width / 891 * 100 + '%', height: height / 1765 * 100 + '%'});
       root.appendChild(slot); slots[key] = slot;
     }
     slots.name.textContent = model.name || 'Plant details unavailable';
-    if ((model.name || '').length > 10) slots.name.style.fontSize = '4.8cqw';
     slots.scientific.textContent = model.scientific || 'Scientific name unavailable';
     slots.confidence.textContent = model.confidence || 'Confidence unavailable';
-    slots.evidence.textContent = model.confidence ? 'Species verified' : 'Evidence unavailable';
     slots.description.textContent = 'Further plant details are not available yet.';
     for (const key of ['type', 'light', 'water', 'careLight', 'careWater', 'careSoil', 'careTemperature', 'similar1', 'similar2', 'similar3']) slots[key].textContent = 'Not available';
     const message = document.createElement('span'); message.className = 'pi-result-image-message';
