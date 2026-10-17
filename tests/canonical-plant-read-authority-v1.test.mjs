@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import * as authority from '../modules/identity/canonical-alias-authority-v1.js';
 import { createPlantIdentityResolver, loadIdentityRegistry } from '../modules/identity/plant-identity-resolver.js';
 import { projectRows, loadLive, GARDEN_ID, PREVIEW_URL } from '../core-v1/my-garden/plants/data.mjs';
@@ -18,6 +19,8 @@ const app = read('app.html');
 const gd = read('modules/garden-design/index.html');
 const parent = '48a017a3272dee34d56a1b9ee6d1a838801a25e5';
 const runtimeCandidate = 'cbefb058d2a57a29c824408ae1f30bd01956fd4f';
+const qualifiedPiProduct = 'f15f520807da74caa51fe8e3ab360aea82504aeb';
+const qualifiedPiParent = '8e2fc24239f152246123e2c58a04f612bf73e01f';
 const git = args => execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim();
 const scopeDiff = (from, to) => git(['diff', '--name-status', '--no-renames', from,
   ...(to ? [to] : []), '--']).split('\n').filter(Boolean).sort();
@@ -307,37 +310,94 @@ test('P0-B RUNTIME IMPLEMENTATION SCOPE: exact accepted ten paths', () => {
     'P0-B RUNTIME IMPLEMENTATION SCOPE: no extra or missing original path');
 });
 
-test('P0-B TEST-CONTRACT RECONCILIATION SCOPE: exact six modified tests', () => {
-  const expected = ['tests/core-v1-commit4/integration-contracts.test.mjs',
+test('P0-B TEST-CONTRACT RECONCILIATION SCOPE: historical six tests and approved PI lineage', () => {
+  const historicalReconciliation = '754141e7467a308b2be5f02c76ce5d914fdeb883';
+  const historicalScope = ['tests/core-v1-commit4/integration-contracts.test.mjs',
     'tests/core-v1-commit4/plants-data.test.mjs', 'tests/licensed-catalog-media-runtime-v1.test.mjs',
     'tests/smart-rec-garden-intelligence-v1.test.mjs', 'tests/canonical-runtime-climate-bootstrap-v1.test.mjs',
-    'tests/canonical-plant-read-authority-v1.test.mjs'].map(path => `M\t${path}`).sort();
-  // Before commit, qualify the exact working tree. After commit, also require
-  // the child HEAD itself to have this scope and the accepted direct parent.
+    'tests/canonical-plant-read-authority-v1.test.mjs'].map(path => 'M\t' + path).sort();
+  // Preserve the original six-path authority at its actual immutable commit.
+  assert.equal(git(['rev-parse', historicalReconciliation + '^']), runtimeCandidate,
+    'original reconciliation remains a direct child of the P0-B runtime');
+  assert.deepEqual(scopeDiff(runtimeCandidate, historicalReconciliation), historicalScope,
+    'original reconciliation retains exactly its accepted six test paths');
+  assert.equal(git(['merge-base', historicalReconciliation, qualifiedPiProduct]), historicalReconciliation,
+    'the qualified PI product descends from the accepted P0-B reconciliation');
+  assert.equal(git(['rev-parse', qualifiedPiProduct + '^']), qualifiedPiParent,
+    'qualified PI product retains its approved direct parent');
+  assert.equal(git(['rev-parse', qualifiedPiParent + '^']), '810125a43b0902aecde7d0af8ada4e5aa4f0f7d6',
+    'the approved PI UI parent retains the target-garden-binding lineage');
+  assert.equal(git(['rev-parse', qualifiedPiProduct + '^{tree}']), '8f9983ab461ba85ee7631f5fe83be071b35c580e',
+    'the qualified PI product retains its exact approved tree');
+
+  const currentScope = ['M\ttests/canonical-plant-read-authority-v1.test.mjs'];
   const head = git(['rev-parse', 'HEAD']);
-  if (head !== runtimeCandidate) {
-    assert.equal(git(['rev-parse', `${head}^`]), runtimeCandidate,
-      'P0-B TEST-CONTRACT RECONCILIATION SCOPE: one direct child');
-    assert.deepEqual(scopeDiff(runtimeCandidate, head), expected,
-      'P0-B TEST-CONTRACT RECONCILIATION SCOPE: exact committed six-path diff');
+  // Before commit require the exact test-only working diff; afterwards require
+  // one direct test-only child and no subsequent tracked working-tree changes.
+  if (head !== qualifiedPiProduct) {
+    assert.equal(git(['rev-parse', head + '^']), qualifiedPiProduct,
+      'current reconciliation is one direct child of the qualified PI product');
+    assert.deepEqual(scopeDiff(qualifiedPiProduct, head), currentScope,
+      'current committed reconciliation changes only this contract file');
     assert.equal(git(['diff', '--name-status', 'HEAD', '--']), '',
-      'P0-B TEST-CONTRACT RECONCILIATION SCOPE: working tree matches child HEAD');
+      'working tree matches the test-only child HEAD');
   }
-  assert.deepEqual(scopeDiff(runtimeCandidate), expected,
-    'P0-B TEST-CONTRACT RECONCILIATION SCOPE: no runtime, extra, missing, added or deleted path');
+  assert.deepEqual(scopeDiff(qualifiedPiProduct), currentScope,
+    'no product, extra, missing, added or deleted path is authorized');
 });
 
 test('preservation: approved visuals, Climate and Atomic Save remain unchanged', () => {
-  for (const path of ['app.html', 'modules/garden-design/index.html']) {
-    const before = execFileSync('git', ['show', `${parent}:${path}`], { cwd: root, encoding: 'utf8' });
-    const outsideScripts = src => src.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '<script></script>');
-    assert.equal(outsideScripts(read(path)), outsideScripts(before), `${path}: markup/CSS/assets preserved`);
-  }
-  const baseline = execFileSync('git', ['show', `${parent}:app.html`], { cwd: root, encoding: 'utf8' });
+  const historicalApp = execFileSync('git', ['show', parent + ':app.html'], { cwd: root, encoding: 'utf8' });
+  const qualifiedApp = execFileSync('git', ['show', qualifiedPiProduct + ':app.html'], { cwd: root, encoding: 'utf8' });
+  const outsideScripts = src => src.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '<script></script>');
+  const scriptStructure = src => src.replace(/(<script\b[^>]*>)[\s\S]*?<\/script>/gi, '$1</script>');
+  // Only these three byte-exact, approved integration blocks may be removed
+  // from the historical markup comparison. Their order/placement and every
+  // script opening tag must also match the locked qualified product.
+  const approvedHostWrappers = new Map([
+    ['core-pi-suitability-host', 'b03c6ea0b6294f1d0a6f26316e40b83cd4d1d58c50ebfbad7dfa045ccc7c5448'],
+    ['core-pi-atomic-save-host', 'dbeb77a419332565b806a28ce017808e3f302a3fb51143313bbfdc8fc2227559'],
+    ['core-pi-catalog-host', 'a42cd25a3955d12444eaf50848c0ceb9cd25828e7054596136ae672011fc30d2']
+  ]);
+  const withoutApprovedHostWrappers = src => {
+    for (const [id, expectedHash] of approvedHostWrappers) {
+      const matches = [...src.matchAll(/<script\b([^>]*)>[\s\S]*?<\/script>/gi)]
+        .filter(match => match[1].includes('id="' + id + '"'));
+      assert.equal(matches.length, 1, id + ': exactly one approved wrapper');
+      const match = matches[0];
+      assert.equal(createHash('sha256').update(match[0]).digest('hex'), expectedHash,
+        id + ': complete wrapper bytes remain approved');
+      assert.equal(src[match.index + match[0].length], '\n', id + ': approved delimiter');
+      src = src.slice(0, match.index) + src.slice(match.index + match[0].length + 1);
+    }
+    return src;
+  };
+  const assertPreservedAppMarkup = src => {
+    assert.equal(outsideScripts(withoutApprovedHostWrappers(src)), outsideScripts(historicalApp),
+      'app.html: historical markup/CSS/assets preserved except the three approved wrappers');
+    assert.equal(scriptStructure(src), scriptStructure(qualifiedApp),
+      'app.html: no unrelated DOM, script tag, ordering or placement change');
+  };
+  assertPreservedAppMarkup(app);
+  const historicalDesign = execFileSync('git', ['show', parent + ':modules/garden-design/index.html'], { cwd: root, encoding: 'utf8' });
+  assert.equal(outsideScripts(gd), outsideScripts(historicalDesign),
+    'modules/garden-design/index.html: markup/CSS/assets preserved');
+
+  // Demonstrate that the narrow exception cannot hide unrelated integration.
+  assert.throws(() => assertPreservedAppMarkup(app + '<aside>unauthorized</aside>'));
+  assert.throws(() => assertPreservedAppMarkup(app + '<script>unauthorized()</script>'));
+  assert.throws(() => assertPreservedAppMarkup(app.replace('const saveHost = createPiAtomicSaveHost',
+    'let saveHost = createPiAtomicSaveHost')));
+  const wrappers = [...app.matchAll(/<script\b[^>]*id="core-pi-[^"]+"[^>]*>[\s\S]*?<\/script>/gi)];
+  assert.equal(wrappers.length, 3);
+  assert.throws(() => assertPreservedAppMarkup(app + wrappers[0][0] + '\n'));
+  assert.throws(() => assertPreservedAppMarkup(app.replace(wrappers[0][0], '__PI_WRAPPER__')
+    .replace(wrappers[1][0], wrappers[0][0]).replace('__PI_WRAPPER__', wrappers[1][0])));
+
   assert.equal(between(app, 'function applyCanonicalRuntimeClimateOverlay()', '\napplyCanonicalRuntimeClimateOverlay();'),
-    between(baseline, 'function applyCanonicalRuntimeClimateOverlay()', '\napplyCanonicalRuntimeClimateOverlay();'));
+    between(historicalApp, 'function applyCanonicalRuntimeClimateOverlay()', '\napplyCanonicalRuntimeClimateOverlay();'));
   const saveBody = src => { const body=between(src,'function savePlantFromLibrary(', '\nfunction findPlantByName(');return body.slice(body.indexOf('  try{')); };
-  assert.equal(saveBody(app), saveBody(baseline), 'existing save/write body unchanged');
+  assert.equal(saveBody(app), saveBody(historicalApp), 'existing save/write body unchanged');
 });
 
 test('scoped HTML scripts compile with unchanged classic-script globals', () => {
