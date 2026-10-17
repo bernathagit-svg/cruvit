@@ -136,7 +136,7 @@ const expected=[2310742,3406426,1786662,3352146,3347862,2456618,2020150,2405466]
 if(screens.some((s,i)=>s.length!==expected[i])) throw new Error("Approved asset integrity check failed");
 const titles=["Identify","Camera","Analyzing","Result","Plant Profile","Care","Suitability","Save to My Garden"];
 const hotspots={
-0:[{x:10,y:50,w:80,h:13,action:"camera",label:"Take a photo"},{x:10,y:63,w:80,h:7,action:"gallery",label:"Choose from gallery"}],
+0:[{x:6,y:92,w:10,h:8,action:"home",label:"Home"},{x:10,y:50,w:80,h:13,action:"camera",label:"Take a photo"},{x:10,y:63,w:80,h:7,action:"gallery",label:"Choose from gallery"}],
 1:[{x:30,y:66,w:40,h:20,action:"capture",label:"Capture photo"},{x:10,y:71,w:15,h:9,action:"gallery",label:"Choose from gallery"},{x:7,y:5,w:11,h:7,action:"back",label:"Back"}],
 2:[],
 3:[{x:5,y:55,w:90,h:27,to:4,label:"View full profile"}],
@@ -163,9 +163,18 @@ const saveUi=createPiSaveUi({readState:()=>acquisition?.getState(),getClient:()=
    readiness:window.parent.cruvitPersonalDomainV0?.getGardenContextReadiness?.()};
  },onChange:()=>{if(index===7)renderSaveState();}});
 suitabilityView.observeAcceptedReview(()=>{if(index===6)render();});
-for(const name of ['cruvit:garden-context-ready','cruvit:auth-session-changed']){
- try{if(window.parent!==window)window.parent.addEventListener(name,()=>saveUi.refresh());}catch{}
+const saveContextEvents=['cruvit:garden-context-ready','cruvit:auth-session-changed'];
+const refreshSaveContext=()=>saveUi.refresh();
+function releaseSaveContextListeners(){
+ for(const name of saveContextEvents){
+  try{if(window.parent!==window)window.parent.removeEventListener(name,refreshSaveContext);}catch{}
+ }
+ window.removeEventListener('pagehide',releaseSaveContextListeners);
 }
+for(const name of saveContextEvents){
+ try{if(window.parent!==window)window.parent.addEventListener(name,refreshSaveContext);}catch{}
+}
+window.addEventListener('pagehide',releaseSaveContextListeners,{once:true});
 function renderSaveState(){
  const ui=saveUi.getState(),b=stage.querySelector('[data-pi-save-action]');
  if(b){b.disabled=!ui.enabled;b.setAttribute('aria-label',ui.status==='UNKNOWN'?'Check save status':'Add to My Garden');}
@@ -268,6 +277,12 @@ function render(){
      &&suitabilityView.readAcceptedReview()&&saveUi.open()){index=7;render();return;}
     if(e.isTrusted===true&&h.label==='Back to care'&&suitabilityState===state
       &&acquisition.getState()===state){index=5;render();}
+    return;
+   }
+   if(h.action==='home'){
+    if(e.isTrusted===true&&window.parent!==window){
+     try{if(window.parent.location.origin===window.location.origin)window.parent.cruvitCorePiHost?.close();}catch{}
+    }
     return;
    }
    if(h.action){acquisition?.activate(h.action);return;}go(h.to);

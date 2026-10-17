@@ -154,7 +154,7 @@ test('two independent static builds remain deterministic and artifact-stable',()
   assert.equal(ra.publicFileCount,1926);
   assert.equal(ra.serverRuntimeFileCount,75);
   // Pin the replacement's exact public bytes; all controllers, UI and raster authorities stay locked.
-  assert.equal(ra.outputManifestSha256,'652bcd71c6093c3f08619e883c01736fa7d96649a76e391ee03ca515aa84672a');
+  assert.equal(ra.outputManifestSha256,'d966e7e69331cbb7db20c2737dc2846fc59b79c1a15f8a5d132613a25647a1d4');
   assert.equal(ra.outputManifestSha256,rb.outputManifestSha256);
   assert.deepEqual(ra.publicManifest,rb.publicManifest);
   assert.equal(ra.secretFindings.length,0);

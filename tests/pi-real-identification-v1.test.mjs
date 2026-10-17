@@ -1290,3 +1290,63 @@ test('Slice 6: view has no evaluator, location record, network, persistence or p
     assert.equal(current, path.endsWith('real-pi-runtime-v1.js') ? withoutCatalogTransport(execFileSync('git', ['show', parent + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000})) : execFileSync('git', ['show', parent + ':' + path], {cwd: root, encoding: 'utf8', maxBuffer: 10_000_000}));
   }
 });
+
+
+test('Visible Identify entry delegates only to the existing Core PI host', async () => {
+ const app=fs.readFileSync(new URL('../app.html',import.meta.url),'utf8');
+ const entry=app.slice(app.indexOf('async function openPlantIdentifierScanAsync(){'),app.indexOf('function openGardenDashboardWithHealth()'));
+ let opens=0; const errors=[];
+ const context=vm.createContext({window:{cruvitCorePiHost:{open(){opens++;}}},console:{error(...x){errors.push(x);}},alert(x){errors.push(x);}});
+ vm.runInContext(entry,context);
+ await vm.runInContext('openPlantIdentifierScanAsync()',context);
+ assert.equal(opens,1);assert.equal(errors.length,0);
+ assert.doesNotMatch(entry,/loadPlantIdentifierScript|initPlantIdentifierModule|PlantIdentifier\.openHome|setPlantIdentifierShellOpen|dismissEntryScreen/);
+ assert.match(app,/function openPlantIdentifierScan\(\)\{\s*void openPlantIdentifierScanAsync\(\);/);
+});
+test('Visible Identify entry fails closed while the host is unavailable', async () => {
+ const app=fs.readFileSync(new URL('../app.html',import.meta.url),'utf8');
+ const entry=app.slice(app.indexOf('async function openPlantIdentifierScanAsync(){'),app.indexOf('function openGardenDashboardWithHealth()'));
+ const messages=[];const context=vm.createContext({window:{},console:{error(){}},alert(x){messages.push(x);}});
+ vm.runInContext(entry,context);await vm.runInContext('openPlantIdentifierScanAsync()',context);
+ assert.deepEqual(messages,['Plant identifier is not available yet. Please try again.']);
+});
+
+
+test('Approved PI-01 Home binds only trusted same-origin embedded activation to existing host close',()=>{
+ const html=fs.readFileSync(new URL('../core-v1/plant-identification/index.html',import.meta.url),'utf8');
+ assert.match(html,/0:\[\{x:6,y:92,w:10,h:8,action:"home",label:"Home"\}/);
+ const handler=html.slice(html.indexOf("   if(h.action==='home')"),html.indexOf('   if(h.action){acquisition?'));
+ assert.match(handler,/e.isTrusted===true&&window.parent!==window/);
+ assert.match(handler,/window.parent.location.origin===window.location.origin/);
+ assert.match(handler,/window.parent.cruvitCorePiHost\?\.close\(\)/);
+ assert.doesNotMatch(handler,/postMessage|location.assign|history|save|intent|PlantIdentifier/);
+});
+
+
+test('PI Save context lifecycle removes exact callbacks on pagehide and preserves active event handling',()=>{
+ const html=fs.readFileSync(new URL('../core-v1/plant-identification/index.html',import.meta.url),'utf8');
+ const script=html.slice(html.indexOf('const saveContextEvents='),html.indexOf('function renderSaveState()'));
+ const parent=new EventTarget(),window=new EventTarget();window.parent=parent;let refreshes=0;
+ const context=vm.createContext({window,saveUi:{refresh(){refreshes++;}}});vm.runInContext(script,context);
+ for(const name of ['cruvit:auth-session-changed','cruvit:garden-context-ready'])parent.dispatchEvent(new Event(name));
+ assert.equal(refreshes,2);window.dispatchEvent(new Event('pagehide'));
+ for(const name of ['cruvit:auth-session-changed','cruvit:garden-context-ready'])parent.dispatchEvent(new Event(name));
+ assert.equal(refreshes,2);window.dispatchEvent(new Event('pagehide'));assert.equal(refreshes,2);
+});
+
+test('Core PI host restores exact prior styles and nonzero scroll through close, disposal and failed open',()=>{
+ const app=fs.readFileSync(new URL('../app.html',import.meta.url),'utf8');
+ const source=app.slice(app.indexOf('// The existing host owns this temporary background-scroll lifecycle.'),app.indexOf('\n</script>',app.indexOf('// The existing host owns this temporary background-scroll lifecycle.')));
+ for(const exit of ['close','pagehide','bind-failure']){
+  const makeElement=initial=>{let attribute=initial;return {getAttribute:()=>attribute,setAttribute:(k,v)=>{attribute=v;},removeAttribute:()=>{attribute=null;},style:{setProperty:(k,v,p)=>{attribute=(attribute||'')+`${k}:${v}!${p};`;}}};};
+  const html=makeElement('overflow-y:scroll!important;color:red'),body=makeElement(null),window=new EventTarget();window.scrollX=13;window.scrollY=237;window.scrollTo=({left,top})=>{window.scrollX=left;window.scrollY=top;};
+  let appended=0,unbound=0;const document={documentElement:html,body,createElement:()=>({style:{},isConnected:false,remove(){this.isConnected=false;}})};
+  body.appendChild=frame=>{frame.isConnected=true;appended++;};
+  const context=vm.createContext({window,document,CORE_PI_ROUTE:'/core-v1/plant-identification/',acceptedPiReview:{bind(){if(exit==='bind-failure')throw Error('binding unavailable');},unbind(){unbound++;}},corePiHandoff:{bind(){},unbind(){}}});
+  vm.runInContext('let corePiFrame=null;'+source,context);
+  if(exit==='bind-failure')assert.throws(()=>window.cruvitCorePiHost.open(),/binding unavailable/);
+  else{window.cruvitCorePiHost.open();window.cruvitCorePiHost.open();assert.equal(appended,1);assert.match(html.getAttribute('style'),/height:100%/);window.scrollX=0;window.scrollY=0;if(exit==='close')window.cruvitCorePiHost.close();else window.dispatchEvent(new Event('pagehide'));}
+  assert.equal(html.getAttribute('style'),'overflow-y:scroll!important;color:red');assert.equal(body.getAttribute('style'),null);assert.equal(window.scrollX,13);assert.equal(window.scrollY,237);
+  const baseline=unbound;window.dispatchEvent(new Event('pagehide'));assert.equal(unbound,baseline);
+ }
+});

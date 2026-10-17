@@ -10763,16 +10763,11 @@ function closeSmartRecommendations(){
 
 async function openPlantIdentifierScanAsync(){
   try{
-    await loadPlantIdentifierScript();
-    if(!initPlantIdentifierModule()) throw new Error('Plant identifier init failed');
-    dismissEntryScreen();
-    setPlantIdentifierShellOpen(true);
-    PlantIdentifier.openHome();
+    if(typeof window.cruvitCorePiHost?.open!=='function') throw new Error('Plant identifier is not available yet. Please try again.');
+    window.cruvitCorePiHost.open();
   }catch(err){
     console.error('Plant identifier unavailable',err);
-    setPlantIdentifierShellOpen(false);
-    alert((err&&err.message)||'Plant identifier is not available. Open DevTools → Network and check modules/plant-identifier/plant-identifier.js');
-    showEntryScreen();
+    alert((err&&err.message)||'Plant identifier is not available.');
   }
 }
 
@@ -11326,16 +11321,41 @@ const corePiHandoff = createPiSuitabilityHost({window,
   evaluateSuitability: slug => evaluateIdentifierGardenSuitability(slug),
   reviewObserver: acceptedPiReview.observer
 });
+// The existing host owns this temporary background-scroll lifecycle.
+let corePiScrollState = null;
+function restoreCorePiScroll() {
+  const state = corePiScrollState; if (!state) return;
+  corePiScrollState = null;
+  for (const [element, style] of state.styles) {
+    if (style === null) element.removeAttribute('style'); else element.setAttribute('style', style);
+  }
+  window.scrollTo({left: state.x, top: state.y, behavior: 'instant'});
+}
+function closeCorePiHost() {
+  window.removeEventListener('pagehide', closeCorePiHost);
+  try { acceptedPiReview.unbind(); corePiHandoff.unbind(); }
+  finally { corePiFrame?.remove(); corePiFrame = null; restoreCorePiScroll(); }
+}
 Object.defineProperty(window, 'cruvitCorePiHost', {value: Object.freeze({
   open() {
     if (corePiFrame?.isConnected) return;
-    corePiFrame = document.createElement('iframe');
-    corePiFrame.title = 'CRUVIT Plant Identification'; corePiFrame.src = CORE_PI_ROUTE;
-    corePiFrame.allow = 'camera';
-    corePiFrame.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;border:0;z-index:10000';
-    document.body.appendChild(corePiFrame); acceptedPiReview.bind(corePiFrame); corePiHandoff.bind(corePiFrame);
+    restoreCorePiScroll();
+    corePiScrollState = {x: window.scrollX, y: window.scrollY,
+      styles: [document.documentElement, document.body].map(element => [element, element.getAttribute('style')])};
+    try {
+      for (const [element] of corePiScrollState.styles) {
+        element.style.setProperty('height', '100%', 'important');
+        element.style.setProperty('overflow', 'hidden', 'important');
+      }
+      window.addEventListener('pagehide', closeCorePiHost);
+      corePiFrame = document.createElement('iframe');
+      corePiFrame.title = 'CRUVIT Plant Identification'; corePiFrame.src = CORE_PI_ROUTE;
+      corePiFrame.allow = 'camera';
+      corePiFrame.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;border:0;z-index:10000';
+      document.body.appendChild(corePiFrame); acceptedPiReview.bind(corePiFrame); corePiHandoff.bind(corePiFrame);
+    } catch (error) { closeCorePiHost(); throw error; }
   },
-  close() { acceptedPiReview.unbind(); corePiHandoff.unbind(); corePiFrame?.remove(); corePiFrame = null; }
+  close: closeCorePiHost
 })});
 </script>
 <script type="module" id="core-pi-atomic-save-host">
